@@ -1,11 +1,9 @@
 import torch.nn as nn
 import json
 import torch
-import os
 import numpy as np
 from torch.utils.data import DataLoader
 
-from Utilities import loader_handler as lc
 from Utilities import loss_functions as lf
 from Utilities import nn_trainner as nnt
 from Utilities import model_handler as mh
