@@ -1,4 +1,4 @@
-# Deep Learning Surrogate for Lattice Boltzmann Method (LBM) Simulations
+# Deep Learning for Lattice Boltzmann Method (LBM) Simulations in Porous Media
 
 ## Overview
 This repository provides a PyTorch-based training pipeline for developing deep learning surrogates of Lattice Boltzmann Method (LBM) simulations.
