@@ -14,7 +14,7 @@ This repository provides a PyTorch-based training pipeline for developing deep l
 
 ## Configuration Parameters
 
-The `config.json` file controls all aspects of the model, dataset handling, and training process.
+The following variables controls all aspects of the model, dataset handling, and training process.
 
 ```json
     "model_name": "danny_z",
