@@ -503,10 +503,10 @@ if directional==0:
     
 
     # DATASETS COMPARISON
-    """
+    #"""
     model_aux       = DannyKo_Net_Original()
     danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_13_March_2026_02-11PM_Job16070/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-11PM_Job16070/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
@@ -515,7 +515,7 @@ if directional==0:
     
     model_aux       = DannyKo_Net_Original()
     danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
@@ -524,7 +524,7 @@ if directional==0:
     
     model_aux       = DannyKo_Net_Original()
     danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
@@ -533,19 +533,19 @@ if directional==0:
     
     model_aux       = DannyKo_Net_Original()
     danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
     models["Danny Arq. - STA"] = danny_model
     print_n_params(danny_model, pytorch=True)
-    """
+    #"""
     
     
     # ARCHITECTURES COMPARISON
     model_aux       = DannyKo_Net_Original()
     danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
@@ -553,7 +553,7 @@ if directional==0:
     print_n_params(danny_model, pytorch=True)
 
     javier_model = Corrected_MS_Net()
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
     javier_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     javier_model.eval()
     javier_model.bin_input = False
@@ -562,7 +562,7 @@ if directional==0:
 
     model_aux       = DannyKo_Net_Original()
     danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_16_March_2026_12-08PM_Job16226/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_16_March_2026_12-08PM_Job16226/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
