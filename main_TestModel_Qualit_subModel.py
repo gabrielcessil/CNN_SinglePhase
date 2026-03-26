@@ -74,7 +74,6 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
     
     inp, tar    = dataset[sample_idx]
     inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32)
-
     
     # Prepare target to plot
     tar_z           = tar.squeeze(0)    # Remove batch dim,
