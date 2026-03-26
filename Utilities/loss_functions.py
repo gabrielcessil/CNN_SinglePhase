@@ -108,10 +108,11 @@ class PRPE(nn.Module):
     
 
 class PearsonCorr(nn.Module):
-    def __init__(self, N_samples, eps=1e-8):
+    def __init__(self, N_samples, eps=1e-16, reverse=False):
         super(PearsonCorr, self).__init__()
         self.eps=eps
         self.N_samples=N_samples 
+        self.reverse = reverse
         
     def forward(self, output, target):
         if output.shape != target.shape:
@@ -131,227 +132,11 @@ class PearsonCorr(nn.Module):
         
         numerator   = torch.sum(x_mu * y_mu)
         denominator = torch.sqrt(torch.sum(x_mu**2)) * torch.sqrt(torch.sum(y_mu**2))
-                
-        return (numerator / (denominator + self.eps))
-    
+        corr = (numerator / (denominator + self.eps))
         
-    
-# The 'weights' parameter should be a list of lists or a 2D torch.Tensor
-# with shape (num_channels, num_spatial_dims).
-#
-# - The number of rows (list elements) must equal the number of channels.
-#   (e.g., U, V, W for velocity)
-#
-# - The number of columns (elements in each inner list) must equal
-#   the number of spatial dimensions.
-#   (e.g., 2 for (x, y) or 3 for (x, y, z))
-#
-# The weight element i,j actuates on dU_i / de_j (e.g, w(1,3) = dUx/dz)
-            
-class MeanJacobianError(nn.Module):
-    def __init__(self):
-        super(MeanJacobianError, self).__init__()
-
-    def forward(self, output, target):
-        if output.size() != target.size():
-            raise ValueError(f"Shape mismatch: {output.size()} vs {target.size()}")
-        
-        # Determine the number of spatial dimensions.
-        if output.ndim == 4:  # (B, C, X, Y)
-            spatial_dims = 2
-        elif output.ndim == 5:  # (B, C, X, Y, Z)
-            spatial_dims = 3
-        else:
-            raise ValueError(f"Tensor shape not supported. Expected 4 or 5 dimensions (B, C, spatial...) but got {output.shape}")
-
-        num_channels = output.shape[1]
-        loss = 0.0
-
-        # Loop over each output channel (e.g., u, v, w)
-        for c in range(num_channels):
-            # Extract a single channel from the output and target tensors
-            # Shape becomes (B, X, Y, Z) or (B, X, Y)
-            output_channel = output[:, c, ...]
-            target_channel = target[:, c, ...]
-
-            # Compute the gradients of the current channel with respect to all spatial dimensions.
-            # torch.gradient returns a tuple, one tensor for each spatial dimension.
-            # e.g., for 3D, it returns (grad_x, grad_y, grad_z)
-            output_grads = torch.gradient(output_channel, dim=tuple(range(1, 1 + spatial_dims)))
-            target_grads = torch.gradient(target_channel, dim=tuple(range(1, 1 + spatial_dims)))
-
-            # Sum the mean squared error for each gradient component.
-            for i in range(spatial_dims):
-                # We are now comparing d(output_channel)/d(spatial_dim[i]) with d(target_channel)/d(spatial_dim[i])
-                loss += ((output_grads[i] - target_grads[i])**2).mean()
-                
-
-        return loss / (num_channels * spatial_dims)
+        return corr if not self.reverse else 1-corr
     
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-"""
-class IterativeGradLoss(nn.Module):
-
-    def __init__(self, weights, edge_order=2):
-        super().__init__()
-        if not isinstance(weights, (list, tuple)) or len(weights) < 1:
-            raise ValueError("`weights` must be a non-empty list/tuple.")
-        self.weights = [float(w) for w in weights]
-        self.edge_order = int(edge_order)
-
-    @staticmethod
-    def _check_shapes(output, target):
-        if output.size() != target.size():
-            raise ValueError(f"Shape mismatch: {output.size()} vs {target.size()}")
-        if output.ndim not in (4, 5):
-            raise ValueError(f"Expected 4D (B,C,X,Y) or 5D (B,C,X,Y,Z), got {tuple(output.shape)}")
-
-    @staticmethod
-    def _order_loss(list_out, list_tgt):
-        if len(list_out) != len(list_tgt):
-            raise RuntimeError("Derivative lists size mismatch.")
-        loss = list_out[0].new_tensor(0.0)
-        for a, b in zip(list_out, list_tgt):
-            loss = loss + F.mse_loss(a, b)
-        return loss / len(list_out)
-
-    def forward(self, output, target):
-        self._check_shapes(output, target)
-        C = output.shape[1]
-        total = output.new_tensor(0.0)
-
-        for c in range(C):
-            # Start with the base scalar field for this channel: (B, X, Y[, Z])
-            out_cur = [output[:, c, ...]]
-            tgt_cur = [target[:, c, ...]]
-
-            # Spatial meta
-            spatial_dims = out_cur[0].ndim - 1
-            dims = tuple(range(1, 1 + spatial_dims))
-
-            # Build orders iteratively
-            for order_idx, w in enumerate(self.weights, start=1):
-                # Take gradient of every tensor in the previous order along all axes
-                out_next, tgt_next = [], []
-                for o_prev, t_prev in zip(out_cur, tgt_cur):
-                    # torch.gradient returns a tuple of len(spatial_dims)
-                    o_grads = torch.gradient(o_prev, dim=dims, edge_order=self.edge_order)
-                    t_grads = torch.gradient(t_prev, dim=dims, edge_order=self.edge_order)
-                    # Append each axis derivative as a separate component
-                    out_next.extend(o_grads)
-                    tgt_next.extend(t_grads)
-
-                # Compute this order's loss:
-                # For order 1, this averages MSE over gradient components (axes).
-                # For order 2, this averages over all Hessian entries, etc.
-                if w != 0.0:
-                    # (optional) normalize by spatial_dims to keep order-1 on similar scale
-                    # but since we average over all components already, no extra /spatial_dims needed
-                    total = total + w * self._order_loss(out_next, tgt_next)
-
-                # Prepare for next order (gradients of gradients, etc.)
-                out_cur, tgt_cur = out_next, tgt_next
-
-        # Average across channels so batch/scale is consistent
-        return total / C
-"""
-
-
-class IterativeGradLoss(nn.Module):
-    """
-    Weighted sum of errors of different orders, starting with MSE on the inputs.
-    
-    weights[0] -> 0-th order (MSE on the tensors themselves)
-    weights[1] -> 1st order (∇u components)
-    weights[2] -> 2nd order (Hessian entries: ∂²/∂x_i∂x_j)
-    
-    The loss for each order k is:
-    - calculated as the average MSE across all tensors of that order.
-    - multiplied by weights[k].
-    - accumulated into the total loss.
-    """
-    def __init__(self, weights, edge_order=2):
-        super().__init__()
-        if not isinstance(weights, (list, tuple)) or len(weights) < 1:
-            raise ValueError("`weights` must be a non-empty list/tuple.")
-        self.weights = [float(w) for w in weights]
-        self.edge_order = int(edge_order)
-
-    @staticmethod
-    def _check_shapes(output, target):
-        if output.size() != target.size():
-            raise ValueError(f"Shape mismatch: {output.size()} vs {target.size()}")
-        if output.ndim not in (4, 5):
-            raise ValueError(f"Expected 4D (B,C,X,Y) or 5D (B,C,X,Y,Z), got {tuple(output.shape)}")
-
-    @staticmethod
-    def _order_loss(list_out, list_tgt):
-        """Average MSE over a list of tensors (same structure/order)."""
-        if len(list_out) != len(list_tgt):
-            raise RuntimeError("Derivative lists size mismatch.")
-        loss = list_out[0].new_tensor(0.0) # Create loss sum initially as 0.0 with same type (float) as list_out[0]
-        for a, b in zip(list_out, list_tgt): # Unzip tuple (gradx, grady, gradz)
-            
-            loss += F.mse_loss(a, b)
-        return loss / len(list_out)
-
-    def forward(self, output, target):
-        self._check_shapes(output, target)
-        C = output.shape[1]    # Number of channels (3=(Uz,Uy,Ux), 2=(Ux,Uy), 1=(Uz))
-        total = output.new_tensor(0.0)
-        
-        # Start with the base tensors for each channel: Separate the tensor of each direction as a list element
-        out_cur = [output[:, c, ...] for c in range(C)] # [Ux, Uy, Uz]
-        tgt_cur = [target[:, c, ...] for c in range(C)]
-
-        # 0th-order loss: MSE over the original velocity directions
-        total += self.weights[0] * self._order_loss(out_cur, tgt_cur)
-
-        # For each desired order: Build derivates iteratively
-        
-        # for each channel
-        for c in range(C):
-            for order_idx, w in enumerate(self.weights[1:], start=1):  
-                
-                
-                output[:, c, ...]
-                target[:, c, ...]
-        """
-        for order_idx, w in enumerate(self.weights[1:], start=1): 
-            #print(f"Computing Order {order_idx}")
-            out_next, tgt_next = [], []
-            # For each previous variable, add it gradients to be computed next
-            for o_prev, t_prev in zip(out_cur, tgt_cur):  
-                spatial_dims    = o_prev.ndim - 1 # Total tensor dimensions (B,C, X,Y) or (B,C, Z,X,Y)
-                dims            = tuple(range(1, 1 + spatial_dims))  # Sets derivative of each spatial dimension (last 1 2 or 3)
-                
-                # Take gradient of every tensor in the previous order along all axes
-                # Append each axis derivative as a separate component of a list
-                out_next.extend(torch.gradient(o_prev, dim=dims, edge_order=self.edge_order))
-                tgt_next.extend(torch.gradient(t_prev, dim=dims, edge_order=self.edge_order))
-
-            # Compute this order's loss and add it to the total
-            total += w * self._order_loss(out_next, tgt_next)
-
-            # Prepare for next order (gradients of gradients, etc.)
-            out_cur, tgt_cur = out_next, tgt_next
-        """
-        return total
-    
-class STAFE(nn.Module):
-    def __init__(self, dim =0):
-        super(STAFE, self).__init__()
-        
-    def forward(self, output, target):
-        # Ensure the output and target tensors have the same shape.
-        if output.size() != target.size():
-            raise ValueError(f"Shape mismatch: {output.size()} vs {target.size()}")    
-        
-        return torch.sum( torch.abs(torch.sum(output, dim=0)-torch.sum(target, dim=0)) )  / (torch.sum( torch.abs(torch.sum(target, dim=0)) ))
-    
 class MultiScaleLoss(nn.Module):
     # 'normalize_mode' can be : 
     #  - 'none' to return the raw sum, 
@@ -436,20 +221,6 @@ class MultiScaleLoss(nn.Module):
         else: raise ValueError(f"Scale factor not understood: {scale_factor}")
        
     
-
-
-class LogTransform(nn.Module):
-    def __init__(self, fun, order=3):
-        super(LogTransform, self).__init__()
-        self.fun   = fun
-        self.order = order
-    def forward(self, output, target):
-        # Ensure the output and target tensors have the same shape.
-        if output.size() != target.size():
-            raise ValueError(f"Shape mismatch: {output.size()} vs {target.size()}")    
-        error = self.fun(output, target)
-        return torch.pow(error, 1.0 / self.order) #error ** (1.0 / self.order)
-            
 class MSE(nn.Module):
     def __init__(self):
         super(MSE, self).__init__()
