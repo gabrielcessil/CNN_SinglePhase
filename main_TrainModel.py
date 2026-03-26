@@ -135,8 +135,8 @@ print("Loading Model ... ")
 if model_name=="javier_z":
     model       = Models.MS_Net()
     # Restrict
-    train_ds.uni_directional = 0
-    valid_ds.uni_directional = 0
+    train_ds.component = 0
+    valid_ds.component = 0
     # Make loss function multiscale 
     for loss_name, items in loss_functions.items():
         # If it is not prediction mode
@@ -148,8 +148,8 @@ elif model_name=="danny_z":
     model_aux   = Models.Extended_DannyKo()
     model       = model_aux.z_model
     # Restrict
-    train_ds.uni_directional = 0
-    valid_ds.uni_directional = 0
+    train_ds.component = 0
+    valid_ds.component = 0
     
     model.bin_input =binary_input
     
@@ -157,8 +157,8 @@ elif model_name=="danny_y":
     model_aux   = Models.Extended_DannyKo()
     model       = model_aux.y_model
     # Restrict
-    train_ds.uni_directional = 1
-    valid_ds.uni_directional = 1
+    train_ds.component = 1
+    valid_ds.component = 1
     
     model.bin_input =binary_input
     
@@ -166,8 +166,8 @@ elif model_name=="danny_x":
     model_aux   = Models.Extended_DannyKo()
     model       = model_aux.x_model
     # Restrict
-    train_ds.uni_directional = 2
-    valid_ds.uni_directional = 2
+    train_ds.component = 2
+    valid_ds.component = 2
     
     model.bin_input =binary_input
     
@@ -175,8 +175,8 @@ elif model_name=="danny_p":
     model_aux   = Models.Extended_DannyKo()
     model       = model_aux.p_model
     # Restrict
-    train_ds.uni_directional = 3
-    valid_ds.uni_directional = 3
+    train_ds.component = 3
+    valid_ds.component = 3
     
     model.bin_input =binary_input
     

@@ -115,7 +115,7 @@ class LazyDatasetTorch(Dataset):
         self.list_ids       = list_ids
         self.x_dtype        = x_dtype
         self.y_dtype        = y_dtype
-        self.uni_directional= None
+        self.component= None
         self._validate_file()
         
     def _validate_file(self):
@@ -174,7 +174,7 @@ class LazyDatasetTorch(Dataset):
             edt         = f["edt"][sample_indices]
             n_valid     = f["n_valid"][sample_indices]
             
-            if self.uni_directional == 0:
+            if self.component == 0:
                 # Load batch data
                 vel_z       = f["vel_z"][sample_indices]
             
@@ -202,7 +202,7 @@ class LazyDatasetTorch(Dataset):
                 Y        = vel_z_3d.unsqueeze(1)
                 del vel_z_3d
                 
-            elif self.uni_directional == 1:
+            elif self.component == 1:
                 # Load batch data
                 vel_y       = f["vel_y"][sample_indices]
                 # Create solid regions
@@ -229,7 +229,7 @@ class LazyDatasetTorch(Dataset):
                 # Delete data after using
                 del vel_y_3d
                 
-            elif self.uni_directional == 2:
+            elif self.component == 2:
                 # Load batch data
                 vel_x       = f["vel_x"][sample_indices]
 
@@ -257,7 +257,7 @@ class LazyDatasetTorch(Dataset):
                 # Delete data after using
                 del vel_x_3d
                 
-            elif self.uni_directional == 3:
+            elif self.component == 3:
                 # Load batch data
                 press       = f["press"][sample_indices]
 
@@ -284,7 +284,7 @@ class LazyDatasetTorch(Dataset):
                 Y       = press_3d.unsqueeze(1)
                 # Delete data after using
                 del press_3d
-            elif self.uni_directional == 4:
+            elif self.component == 4:
                 # Load batch data
                 vel_z = vel_y = vel_x = None 
                 vel_z       = f["vel_z"][sample_indices]
