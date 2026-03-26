@@ -1,5 +1,5 @@
 {
-  "model_name":             "javier_z",
+  "model_name":             "danny_z",
   "binary_input":           true,
   "NN_dataset_folder":      "../NN_Datasets/",
   "dataset_train_name":     "PressureDriven/Train_Danny_120_120_120_PressureWalls.h5",

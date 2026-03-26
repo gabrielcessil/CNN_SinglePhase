@@ -6,7 +6,7 @@ from scipy.stats          import gaussian_kde
 from matplotlib.ticker    import LogLocator, LogFormatterSciNotation
 from torch.utils.data     import DataLoader
 
-from Architectures.Models import Corrected_MS_Net, DannyKo_Net_Original
+from Architectures.Models import MS_Net, DannyKo_Net_Original, MS_Net_Extended, Extended_DannyKo
 from Utilities            import dataset_reader as dr
 from Danny_Original.architecture import Danny_KerasModel
 
@@ -75,7 +75,6 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
     inp, tar    = dataset[sample_idx]
     inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32)
 
-    
     
     # Prepare target to plot
     tar_z           = tar.squeeze(0)    # Remove batch dim,
@@ -462,7 +461,7 @@ if z_direction_only:
     models["Danny Arq. - STA"] = danny_model
     print_n_params(danny_model, pytorch=True)
     
-    javier_model = Corrected_MS_Net()
+    javier_model = MS_Net()
     model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
     javier_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     javier_model.eval()

@@ -144,7 +144,6 @@ if model_name=="javier_z":
             loss_functions[loss_name]["obj"] = lf.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
     
 elif model_name=="danny_z":
-    #model_aux   = Models.DannyKo_Net()
     model_aux   = Models.Extended_DannyKo()
     model       = model_aux.z_model
     # Restrict
