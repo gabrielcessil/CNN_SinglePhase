@@ -54,6 +54,11 @@ The `config.json` file controls all aspects of the model, dataset handling, and 
 
 ```json
 {
+## Configuration Parameters
+
+The following variables controls all aspects of the model, dataset handling, and training process.
+
+```json
     "model_name": "danny_z",
     "binary_input": true,
     "NN_dataset_folder": "../NN_Datasets/",
