@@ -64,7 +64,7 @@ def get_masked_slices(inp, tar, slice_idx, axis='front'):
 ####################################################### 
 
 import os
-def Plot_Front_Comparison(models, datapath, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
+def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
     """Saves Target and Models to 'Plot_Front_Comparison/' folder."""
     
     dataset    = dr.LazyDatasetTorch(h5_path=datapath, 
@@ -74,11 +74,12 @@ def Plot_Front_Comparison(models, datapath, sample_idx=0, slice_idx=60, save_mod
     
     inp, tar    = dataset[sample_idx]
     inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32)
-    
+
     
     
     # Prepare target to plot
-    tar_z           = tar.squeeze(0)[0] # Remove batch dim, get first channel
+    tar_z           = tar.squeeze(0)    # Remove batch dim,
+    tar_z           = tar_z[component]  # Get component channel: z=0, y=1, x=2, p=3
     tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='front') # Put zeros on solid
     
     # Prepare color range
@@ -131,7 +132,7 @@ def Plot_Front_Comparison(models, datapath, sample_idx=0, slice_idx=60, save_mod
     if not save_mode: plt.show()
 
 
-def Plot_Side_Comparison(models, datapath, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
+def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
     """Saves Target and Models to 'Plot_Side_Comparison/' folder."""
     
     dataset    = dr.LazyDatasetTorch(h5_path=datapath, 
@@ -143,7 +144,8 @@ def Plot_Side_Comparison(models, datapath, sample_idx=0, slice_idx=60, save_mode
     inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32) # Add channel for prediction
     
     # Prepare target to plot
-    tar_z           = tar.squeeze(0)[0] # Remove batch dim, get first channel
+    tar_z           = tar.squeeze(0)    # Remove batch dim,
+    tar_z           = tar_z[component]  # Get component channel: z=0, y=1, x=2, p=3
     tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='side') # Put zeros on solid
     
     # Prepare color range
@@ -392,11 +394,13 @@ z_direction_only    = True
 device              = 'cpu'
 batch_size          = 1
 save_mode           = False
-sample_idexes       = [122]
-datapath            = "../NN_Datasets/ForceDriven/Test_CylinGrain_120_120_120.h5" # .pt file
+sample_idexes       = [1]
+datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
+#datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
+
 save_tag            = "Danny"
 shape               = (120,120,120)
-
+component           = 3 # Uz=0, Uy=1, Ux=2, P=3
 models          = {}
 # 1 Directional Flow Models
 if z_direction_only:
@@ -436,10 +440,19 @@ if z_direction_only:
     danny_model.bin_input = True
     models["Danny - My Data noAug"] = danny_model
     print_n_params(danny_model, pytorch=True)
+    
+    model_aux       = DannyKo_Net_Original()
+    danny_model     = model_aux.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
+    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model.eval()
+    danny_model.bin_input = True
+    models["Danny Arq. - STA"] = danny_model
+    print_n_params(danny_model, pytorch=True)
     """
     
     # Comparing Javier and Danny Models
-    #"""
+    """
     model_aux       = DannyKo_Net_Original()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
@@ -456,8 +469,60 @@ if z_direction_only:
     javier_model.bin_input = False
     models["Javier Arq. - STA"] = javier_model
     print_n_params(javier_model, pytorch=True)
-    #"""
- 
+    """
+    
+    
+    # Do Pressure (no Walls) removed deconvolution residual
+    """
+    model_aux       = DannyKo_Net_Original()
+    danny_model     = model_aux.z_model
+    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_04-02PM_Job16923/model_LowerValidationLoss.pth"
+    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model.eval()
+    danny_model.bin_input = True
+    models["Danny Arq. - STA (Pr)"] = danny_model
+    print_n_params(danny_model, pytorch=True)
+    
+    model_aux       = DannyKo_Net_Original()
+    danny_model     = model_aux.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
+    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model.eval()
+    danny_model.bin_input = True
+    models["Danny Arq. - STA"] = danny_model
+    print_n_params(danny_model, pytorch=True)
+    
+    model_aux       = DannyKo_Net_Original()
+    danny_model     = model_aux.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
+    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model.eval()
+    danny_model.bin_input = True
+    models["Danny - Orig. Data Aug"] = danny_model
+    print_n_params(danny_model, pytorch=True)
+    """
+    
+    # Hows X components performing
+    """
+    model_aux       = DannyKo_Net_Original()
+    danny_model     = model_aux.z_model
+    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
+    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model.eval()
+    danny_model.bin_input = True
+    models["Danny - Orig. Data Aug"] = danny_model
+    print_n_params(danny_model, pytorch=True)
+    """
+    
+    # Hows P components performing
+    model_aux       = DannyKo_Net_Original()
+    danny_model     = model_aux.z_model
+    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
+    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model.eval()
+    danny_model.bin_input = True
+    models["Danny - Orig. Data Aug"] = danny_model
+    print_n_params(danny_model, pytorch=True)
     
 # 3 Directional Flow Models
 else:    
@@ -479,6 +544,6 @@ plt.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Computer Moder
 
 for sample_idx in sample_idexes:
     
-    Plot_Front_Comparison(models, datapath, sample_idx= sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag = save_tag)
-    Plot_Side_Comparison (models, datapath, sample_idx= sample_idx, slice_idx=shape[2]//2, save_mode=save_mode, save_tag = save_tag)
+    Plot_Front_Comparison(models, datapath, component, sample_idx= sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag = save_tag)
+    Plot_Side_Comparison (models, datapath, component, sample_idx= sample_idx, slice_idx=shape[2]//2, save_mode=save_mode, save_tag = save_tag)
     #Plot_Error_Comparison(models, datapath, slice_idx=60, save_mode=save_mode, save_tag = save_tag, axis='side')
