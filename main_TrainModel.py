@@ -1,9 +1,12 @@
 import torch.nn as nn
 import json
 import torch
+import os
 import numpy as np
-from torch.utils.data import DataLoader
+import argparse
+from   torch.utils.data import DataLoader
 
+from Utilities import loader_handler as lc
 from Utilities import loss_functions as lf
 from Utilities import nn_trainner as nnt
 from Utilities import model_handler as mh
@@ -11,103 +14,97 @@ from Utilities import dataset_reader as dr
 from Architectures import Models
 
 #######################################################
-#************ USER INPUTS:                 ***********#
+#************ USER INPUTS (from command line):   *****#
+#######################################################
+
+# Read parsed input
+parser = argparse.ArgumentParser(description="Neural Networks Training Inputs")
+parser.add_argument('--config', type=str, default='config.json', help="Path to .json file with training configurations. (Default: config.json)")
+parser.add_argument('--folder', type=str, default=None,          help="If passed, ignores --config and uses metadata.json inside this folder to restart training.")
+args = parser.parse_args()
+# If --folder was passed: use metadata.json from it
+if args.folder is not None:  
+    json_path = os.path.join("../NN_Results/"+args.folder, "metadata.json")
+    print(f"[*] Resuming/Loading configs from results folder: {json_path}")
+# If not, use the --config (Default: config.json) to train
+else:
+    json_path = args.config
+    print(f"[*] Loading configs from standard config file: {json_path}")
+    
+# Finnaly, read the proper .json
+with open(json_path, 'r') as file:
+    config = json.load(file)
+    
+
+#######################################################
+#************ USER INPUTS (from .json):    ***********#
 #######################################################
 
 # Model Aspects
-model_name              = "danny_z"   # The desired model name, one of: javier_z, danny_z, inception_z
-binary_input            = True
-
+model_name              = config["model_name"]
+binary_input            = config["binary_input"]
 # Data aspects
-NN_dataset_folder       = "../NN_Datasets/"
-dataset_train_name      = "PressureDriven/Train_Danny_120_120_120_Pressure.h5" 
-dataset_valid_name      = "PressureDriven/Train_Danny_120_120_120_Pressure.h5" 
-train_range             = (0,8)  # Not Augmented: (0,7); Augmented (0,216) 
-valid_range             = (8,9)  # Not Augmented: (7,9); Augmented (216,216+26)
-batch_size              = 8      # Group size of train samples that influence one update on weights
-num_workers             = 4      # How many python process to load next batch's data
-num_threads             = 18     # How many cpu parallel computations
-
+NN_dataset_folder       = config["NN_dataset_folder"]
+dataset_train_name      = config["dataset_train_name"]
+dataset_valid_name      = config["dataset_valid_name"]
+train_range             = tuple(config["train_range"]) 
+valid_range             = tuple(config["valid_range"])
+batch_size              = config["batch_size"]
+num_workers             = config["num_workers"]
+num_threads             = config["num_threads"]
 # Learning aspects
-N_epochs                = 10     # Not Augmented: 30000; Augmented 1000
-partial_epochs          = 10     # Not Augmented: 30000; Augmented 1000
-patience                = 5      # Not Augmented: 6000;  Augmented 200
-learning_rate           = 0.0006    
-loss_functions  = {
-    # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
-    "MSE":              {"obj": nn.MSELoss(),                        "Thresholded": False},
-    # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
-    "PRPE":             {"obj": lf.PRPE(),                           "Thresholded": True},
-    "PearsonCorr":      {"obj": lf.Mask_LossFunction(lf.PearsonCorr(2000)),  "Thresholded": True},
-    "MSE_inVoid":       {"obj": lf.Mask_LossFunction(nn.MSELoss()),  "Thresholded": True}, 
-}
+N_epochs                = config["N_epochs"]
+partial_epochs          = config["partial_epochs"]
+patience                = config["patience"]
+learning_rate           = config["learning_rate"]
+earlyStopping_loss      = config["earlyStopping_loss"]
+backPropagation_loss    = config["backPropagation_loss"]
+optimizer               = config["optimizer"]
+weight_init             = config["weight_init"]
+seed                    = config["seed"]
+train_comment           = config["train_comment"]
+NN_results_folder       = config["NN_results_folder"]
 
-earlyStopping_loss      = "MSE"       # Which listed loss_function is used to stop trainning
-backPropagation_loss    = "MSE"       # Which listed loss_function is used to calculate weights
-optimizer               = 'ADAM'      # One of: 'ADAM' or 'SGD' 
-weight_init             = None        # One of: 'He', 'Xavier' or None (Default)
-device                  = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-seed                    = 42
-dtype                   = torch.float32
-train_comment           = "Helpful comment" # Exemplo: "Arq javier, dada from danny Z. OBJ: Did it converge?"
-
-
-
-# Create a new one or pass from where you want to restart
-#NN_results_folder       = "/home/gabriel/Desktop/Dissertacao/NN_Results/NN_Trainning_4_March_2026_06-36PM_Joblocal/"
-NN_results_folder       = nnt.create_training_data_folder(base_dir="../NN_Results")
-
+# Handle results folder config
+if NN_results_folder is None:
+    NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
+    config["NN_results_folder"] = NN_results_folder
+    
+# Update used results folder config
+dataset_train_full_name     = NN_dataset_folder+dataset_train_name
+dataset_valid_full_name     = NN_dataset_folder+dataset_valid_name
 
 
 #######################################################
-#************ METADATA REGISTER **********************#
-#######################################################    
-NN_model_weights_folder = NN_results_folder+"NN_Model_Weights/"
-model_full_name         = NN_model_weights_folder+model_name
-dataset_train_full_name = NN_dataset_folder+dataset_train_name
-dataset_valid_full_name = NN_dataset_folder+dataset_valid_name
-print(f"Optimizing with: {backPropagation_loss} for {optimizer}")
-print()
-print("Folder created for results: ",NN_results_folder)
-print("Saving model weights in:    ",NN_model_weights_folder)
-print("Model base name:            ",model_name)
-print("Binary input:               ",binary_input)
-print("Weights initialization:     ",weight_init)
-print(f"Trainning with dataset ({train_range}):     ",dataset_train_full_name)
-print(f"Validating with dataset({valid_range}):     ",dataset_valid_full_name)
-print()
-print("Batch_size:                 ",batch_size)
-print("N_epochs:                   ",N_epochs)
-print("patience:                   ",patience)
-print("learning_rate:              ",learning_rate)
-print("optimizer:                  ",optimizer)
-print("device:                     ",device)
-print("seed:                       ",seed)
-print("earlyStopping_loss:         ",earlyStopping_loss)
-print("backPropagation_loss:       ",backPropagation_loss)
-print()
-metadata_file = nnt.save_metadata(model_name, 
-                      NN_dataset_folder,
-                      dataset_train_name,
-                      dataset_valid_name,
-                      batch_size,
-                      N_epochs,
-                      patience,
-                      learning_rate,
-                      optimizer,
-                      weight_init,
-                      binary_input,
-                      earlyStopping_loss,
-                      backPropagation_loss,
-                      loss_functions,
-                      NN_results_folder,
-                      NN_model_weights_folder,
-                      model_full_name,
-                      dataset_train_full_name,
-                      dataset_valid_full_name,
-                      train_comment)
-print(f"Metadata saved at: {metadata_file}")
+#************ HARDCODED OBJECTS:           ***********#
+#######################################################
 
+device                  = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+dtype                   = torch.float32
+
+loss_functions  = {
+    # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
+    "MSE":                     {"obj":  nn.MSELoss(),                        "Thresholded": False},
+    # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
+    "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),  "Thresholded": True}, 
+    "Mean Perm. Relative Error":{"obj": lf.PRPE(),                           "Thresholded": True},
+    "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000)),  "Thresholded": True},
+    "Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True}
+}
+
+
+#######################################################
+#************ REGISTER METADATA **********************#
+#######################################################    
+
+print("\n\nConfigurations:")
+print(json.dumps(config, indent=4))
+print("\n")
+metadata_file = nnt.save_metadata(
+    config, 
+    loss_functions, 
+)
+print(f"Metadata saved at: {metadata_file}")
 
 
 #######################################################
@@ -129,7 +126,6 @@ valid_ds = dr.LazyDatasetTorch(h5_path=dataset_valid_full_name,
                                y_dtype=torch.float32)
 
 
-
 #######################################################
 #******************** MODEL **************************#
 #######################################################
@@ -137,7 +133,7 @@ valid_ds = dr.LazyDatasetTorch(h5_path=dataset_valid_full_name,
 print("Loading Model ... ")
 
 if model_name=="javier_z":
-    model       = Models.Corrected_MS_Net()
+    model       = Models.MS_Net()
     # Restrict
     train_ds.uni_directional = 0
     valid_ds.uni_directional = 0
@@ -149,7 +145,7 @@ if model_name=="javier_z":
     
 elif model_name=="danny_z":
     #model_aux   = Models.DannyKo_Net()
-    model_aux   = Models.DannyKo_Net_Original()
+    model_aux   = Models.Extended_DannyKo()
     model       = model_aux.z_model
     # Restrict
     train_ds.uni_directional = 0
@@ -158,7 +154,7 @@ elif model_name=="danny_z":
     model.bin_input =binary_input
     
 elif model_name=="danny_y":
-    model_aux   = Models.DannyKo_Net_Original()
+    model_aux   = Models.Extended_DannyKo()
     model       = model_aux.y_model
     # Restrict
     train_ds.uni_directional = 1
@@ -167,7 +163,7 @@ elif model_name=="danny_y":
     model.bin_input =binary_input
     
 elif model_name=="danny_x":
-    model_aux   = Models.DannyKo_Net_Original()
+    model_aux   = Models.Extended_DannyKo()
     model       = model_aux.x_model
     # Restrict
     train_ds.uni_directional = 2
@@ -175,8 +171,17 @@ elif model_name=="danny_x":
     
     model.bin_input =binary_input
     
+elif model_name=="danny_p":
+    model_aux   = Models.Extended_DannyKo()
+    model       = model_aux.p_model
+    # Restrict
+    train_ds.uni_directional = 3
+    valid_ds.uni_directional = 3
+    
+    model.bin_input =binary_input
+    
 elif model_name=="danny_zyx":
-    model = Models.DannyKo_Net_Original()
+    model = Models.Extended_DannyKo()
     
     model.bin_input =binary_input
     
@@ -194,8 +199,6 @@ print('Model size: {:.3f}MB'.format(mh.get_MB_storage_size(model)))
 print('Model size: {} parameters'.format(mh.get_n_trainable_params(model)))
 
 
-
-
 #######################################################
 #************ OPTIMIZER    ***************************#
 ####################################################### 
@@ -206,18 +209,20 @@ else:   raise Exception(f"Optimizer {optimizer} is not implemented.")
     
 
 #######################################################
-#************ COMPUTATIONS ***************************#
+#************ CREATE DATALOADER         **************#
 #######################################################
 
 # Create dataloader
 train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
 valid_loader = DataLoader(valid_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-
-
-print(f"Starting Train on {device}... \n")
-
 torch.set_num_threads(num_threads)
 
+
+#######################################################
+#************ COMPUTATIONS ***************************#
+#######################################################
+
+print(f"Starting Train on {device}... \n")
 nnt.partial_train(
     model, 
     train_loader,
@@ -236,10 +241,9 @@ nnt.partial_train(
     )
 print("Ending Train ... ")
 
-
-
-### DELETE MODEL AFTER USING IT
+#######################################################
+#************ DELETE OBJECTS   ***********************#
+#######################################################
 mh.delete_model(model)
 del train_loader
 del valid_loader
-

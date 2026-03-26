@@ -661,73 +661,28 @@ def create_training_data_folder(base_dir: str = None):
         return None
     
     
+def save_metadata(config, 
+                  loss_functions):
+    NN_results_folder   = config["NN_results_folder"]
+    print(NN_results_folder)
+    metadata_file       = os.path.join(NN_results_folder, "metadata.json")
     
+    # 1. Faz uma cópia do config original lido do input
+    metadata_dict = config.copy()
     
-def save_metadata(model_name, 
-                  NN_dataset_folder,
-                  dataset_train_name,
-                  dataset_valid_name,
-                  batch_size,
-                  N_epochs,
-                  patience,
-                  learning_rate,
-                  optimizer,
-                  weight_init,
-                  binary_input,
-                  earlyStopping_loss,
-                  backPropagation_loss,
-                  loss_functions,
-                  NN_results_folder,
-                  NN_model_weights_folder,
-                  model_full_name,
-                  dataset_train_full_name,
-                  dataset_valid_full_name,
-                  train_comment
-                  ):
+    # 2. Converte as loss functions (que contêm objetos PyTorch) em texto
+    processed_losses = {
+        k: {"Thresholded": v["Thresholded"], "obj": str(v["obj"])} 
+        for k, v in loss_functions.items()
+    }
     
-    # Defina o caminho onde o arquivo será salvo
-    metadata_file = os.path.join(NN_results_folder, "metadata.txt")
+    # 3. Adiciona as informações geradas pelo script ao dicionário plano
+    metadata_dict["loss_functions"]          = processed_losses
     
-    # Monte o conteúdo do metadata
-    metadata_content = f"""
-    ================= TRAINING METADATA =================
-    
-    Model Aspects:
-    - model_name:           {model_name}
-    - model weigth init:    {weight_init}
-    - binary input:         {binary_input}
-    
-    Data Aspects:
-    - NN_dataset_folder:    {NN_dataset_folder}
-    - dataset_train_name:   {dataset_train_name}
-    - dataset_valid_name:   {dataset_valid_name}
-    - batch_size:           {batch_size}
-    
-    Learning Aspects:
-    - N_epochs:             {N_epochs}
-    - patience:             {patience}
-    - learning_rate:        {learning_rate}
-    - optimizer:            {optimizer}
-    - earlyStopping_loss:   {earlyStopping_loss}
-    - backPropagation_loss: {backPropagation_loss}
-    
-    Loss Functions:
-    {json.dumps({k: {"Thresholded": v["Thresholded"], "obj": str(v["obj"])} for k,v in loss_functions.items()}, indent=4)}
-    
-    Paths:
-    - NN_results_folder:        {NN_results_folder}
-    - NN_model_weights_folder:  {NN_model_weights_folder}
-    - model_full_name:          {model_full_name}
-    - dataset_train_full_name:  {dataset_train_full_name}
-    - dataset_valid_full_name:  {dataset_valid_full_name}
-    
-    ======================================================
-    
-    """+train_comment
-    
-    # Escreve no txt
+    # 4. Cria a pasta caso ela não exista e salva o JSON plano
+    os.makedirs(NN_results_folder, exist_ok=True)
     with open(metadata_file, "w") as f:
-        f.write(metadata_content)
+        json.dump(metadata_dict, f, indent=4)
         
     return metadata_file
 
