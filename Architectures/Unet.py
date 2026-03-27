@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
-
+from .Functional import pad_same, crop_same
 
 # Danny D Ko
 """
@@ -12,59 +12,6 @@ The original code is present in :
 Assymetric padding is hadled here manually since Pytorch dont natively.
 Original combination K=4, Stride=2, Padding='same' is problematic
 """
-
-def calculate_same_padding(input_size, kernel_size, stride, dilation=1):
-    """Calculate padding for 'SAME' padding mode."""
-    effective_kernel = dilation * (kernel_size - 1) + 1
-    output_size = (input_size + stride - 1) // stride  # ceil division
-    padding = max((output_size - 1) * stride + effective_kernel - input_size, 0)
-    return padding
-
-def pad_for_same_conv_3d(x, kernel_size, stride, dilation=1):
-    """
-    Apply 'same' padding for Conv3D (padding before convolution).
-    """
-    
-    if isinstance(kernel_size, tuple): kernel_size  = kernel_size[0]
-    if isinstance(stride, tuple)     : stride       = stride[0]
-    
-    i_h, i_w, i_d = x.size()[-3:]
-    # Calculate padding for each dimension
-    pad_h = calculate_same_padding(i_h, kernel_size, stride, dilation)
-    pad_w = calculate_same_padding(i_w, kernel_size, stride, dilation)
-    pad_d = calculate_same_padding(i_d, kernel_size, stride, dilation)
-    
-    # Apply asymmetric padding
-    # F.pad order: (depth_last, depth_first, width_last, width_first, height_last, height_first)
-    return F.pad(x, [
-        pad_d // 2, pad_d - pad_d // 2,  # depth
-        pad_w // 2, pad_w - pad_w // 2,  # width
-        pad_h // 2, pad_h - pad_h // 2   # height
-    ])
-
-def crop_for_same_deconv_3d(x, target_size):
-    """
-    Crop output of ConvTranspose3D to match target_size for 'same' padding.
-    """
-    current_h, current_w, current_d = x.size()[-3:]
-    target_h, target_w, target_d = target_size
-    
-    # Calculate cropping amounts
-    crop_h = current_h - target_h
-    crop_w = current_w - target_w
-    crop_d = current_d - target_d
-    
-    # Apply cropping (symmetric if possible, otherwise prefer more from end)
-    h_start = crop_h // 2
-    h_end = current_h - (crop_h - crop_h // 2)
-    
-    w_start = crop_w // 2
-    w_end = current_w - (crop_w - crop_w // 2)
-    
-    d_start = crop_d // 2
-    d_end = current_d - (crop_d - crop_d // 2)
-    
-    return x[..., h_start:h_end, w_start:w_end, d_start:d_end]
 
 class DannyKo_EncBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride, kernel_size, activation, momentum, dropout_rate):
@@ -86,7 +33,7 @@ class DannyKo_EncBlock(nn.Module):
         
     def forward(self, x):
         
-        x = pad_for_same_conv_3d(x, self.kernel_size, self.stride)
+        x = pad_same(x, self.kernel_size, self.stride)
         x = self.conv(x)
         x = self.norm(x)
         x = self.act(x)
@@ -122,12 +69,17 @@ class DannyKo_DecBlock(nn.Module):
         expected_w = input_size[1] * self.stride
         expected_d = input_size[2] * self.stride
             
-        x = crop_for_same_deconv_3d(x, (expected_h, expected_w, expected_d))
+        x = crop_same(x, (expected_h, expected_w, expected_d))
         x = self.norm(x)
         x = self.act(x)
         x = self.drop(x)
         return x
     
+    
+    
+# Original structure of Danny Model: 
+#   - do not include pressure
+#   - weight sub-models outputs
 class DannyKo_Net_Original(nn.Module):
     def __init__(self, bin_input=True):
         super().__init__() 
@@ -404,13 +356,13 @@ class DannyKo_Net_Original(nn.Module):
                
                 # Final layer - apply manual padding for regular Conv3D
                 if conv1.is_final_layer == True:
-                    x = pad_for_same_conv_3d(x, conv1.kernel_size, conv1.stride)
+                    x = pad_same(x, conv1.kernel_size, conv1.stride)
                 
                 x = conv1(x)
                 
                 # Final layer - apply manual padding for regular Conv3D
                 if conv1.is_final_layer == True:
-                    x = pad_for_same_conv_3d(x, conv2.kernel_size, conv2.stride)
+                    x = pad_same(x, conv2.kernel_size, conv2.stride)
                 
                 x = conv2(x)
             
@@ -706,13 +658,13 @@ class Extended_DannyKo(nn.Module):
                
                 # Final layer - apply manual padding for regular Conv3D
                 if conv1.is_final_layer == True:
-                    x = pad_for_same_conv_3d(x, conv1.kernel_size, conv1.stride)
+                    x = pad_same(x, conv1.kernel_size, conv1.stride)
                 
                 x = conv1(x)
                 
                 # Final layer - apply manual padding for regular Conv3D
                 if conv1.is_final_layer == True:
-                    x = pad_for_same_conv_3d(x, conv2.kernel_size, conv2.stride)
+                    x = pad_same(x, conv2.kernel_size, conv2.stride)
                 
                 x = conv2(x)
             
