@@ -6,12 +6,13 @@ import numpy as np
 import argparse
 from   torch.utils.data import DataLoader
 
-from Utilities import loader_handler as lc
 from Utilities import loss_functions as lf
 from Utilities import nn_trainner as nnt
 from Utilities import model_handler as mh
 from Utilities import dataset_reader as dr
-from Architectures import Models
+from Architectures import Unet
+from Architectures import MSnet
+
 
 #######################################################
 #************ USER INPUTS (from command line):   *****#
@@ -133,59 +134,91 @@ valid_ds = dr.LazyDatasetTorch(h5_path=dataset_valid_full_name,
 print("Loading Model ... ")
 
 if model_name=="javier_z":
-    model       = Models.MS_Net()
-    # Restrict
+    model_aux   = MSnet.JavierSantos_Extended()
+    model       = model_aux.z_model
+    # Restrict Dataset 
     train_ds.component = 0
     valid_ds.component = 0
     # Make loss function multiscale 
     for loss_name, items in loss_functions.items():
-        # If it is not prediction mode
         if not items["Thresholded"]: 
-            loss_functions[loss_name]["obj"] = lf.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
-    
+            loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
+            
+elif model_name=="javier_y":
+    model_aux   = MSnet.JavierSantos_Extended()
+    model       = model_aux.y_model
+    # Restrict Dataset 
+    train_ds.component = 1
+    valid_ds.component = 1
+    # Make loss function multiscale 
+    for loss_name, items in loss_functions.items():
+        if not items["Thresholded"]: 
+            loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
+            
+elif model_name=="javier_x":
+    model_aux   = MSnet.JavierSantos_Extended()
+    model       = model_aux.x_model
+    # Restrict Dataset 
+    train_ds.component = 2
+    valid_ds.component = 2
+    # Make loss function multiscale 
+    for loss_name, items in loss_functions.items():
+        if not items["Thresholded"]: 
+            loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
+            
+elif model_name=="javier_p":
+    model_aux   = MSnet.JavierSantos_Extended()
+    model       = model_aux.p_model
+    # Restrict Dataset 
+    train_ds.component = 3
+    valid_ds.component = 3
+    # Make loss function multiscale 
+    for loss_name, items in loss_functions.items():
+        if not items["Thresholded"]: 
+            loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
+            
+elif model_name=="javier_zyxp":
+    model   = MSnet.JavierSantos_Extended()
+    # Make loss function multiscale 
+    for loss_name, items in loss_functions.items():
+        if not items["Thresholded"]: 
+            loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
+            
 elif model_name=="danny_z":
-    model_aux   = Models.Extended_DannyKo()
+    model_aux   = Unet.Extended_DannyKo()
     model       = model_aux.z_model
-    # Restrict
+    # Restrict Dataset 
     train_ds.component = 0
     valid_ds.component = 0
     
-    model.bin_input =binary_input
-    
 elif model_name=="danny_y":
-    model_aux   = Models.Extended_DannyKo()
+    model_aux   = Unet.Extended_DannyKo()
     model       = model_aux.y_model
-    # Restrict
+    # Restrict Dataset 
     train_ds.component = 1
     valid_ds.component = 1
-    
-    model.bin_input =binary_input
-    
+        
 elif model_name=="danny_x":
-    model_aux   = Models.Extended_DannyKo()
+    model_aux   = Unet.Extended_DannyKo()
     model       = model_aux.x_model
-    # Restrict
+    # Restrict Dataset 
     train_ds.component = 2
     valid_ds.component = 2
-    
-    model.bin_input =binary_input
-    
+        
 elif model_name=="danny_p":
-    model_aux   = Models.Extended_DannyKo()
+    model_aux   = Unet.Extended_DannyKo()
     model       = model_aux.p_model
-    # Restrict
+    # Restrict Dataset 
     train_ds.component = 3
     valid_ds.component = 3
-    
-    model.bin_input =binary_input
-    
-elif model_name=="danny_zyx":
-    model = Models.Extended_DannyKo()
-    
-    model.bin_input =binary_input
-    
+        
+elif model_name=="danny_zyxp":
+    model = Unet.Extended_DannyKo()
+        
 else:
     raise Exception(f"Specified model {model_name} is not defined.")
+
+model.bin_input =binary_input
 
 # Weights initialization
 if   weight_init in ('Xavier','xavier','XAVIER'):  model.apply(nnt.init_weights_xavier)
