@@ -11,6 +11,9 @@ import torch.nn.functional as F
 #######################################################
 
 class BASE_MODEL(nn.Module):
+    def __init__(self, bin_input=True):
+        super().__init__()
+        self.bin_input = bin_input
         
     def predict(self, x):
         
@@ -40,6 +43,28 @@ def Calculate_PaddingSame(input_size, kernel_size, stride, dilation=1):
 #************ MODEL BLOCKS: Tensor Modification    ***#
 #######################################################
 
+class Channel_Concat(nn.Module):
+    def __init__(self):
+        super().__init__()
+        
+    def forward(self, *tensors):
+        if len(tensors) == 0:
+            raise ValueError("At least one tensor is required for concatenation.")
+        if len(tensors) == 1:
+            return tensors[0]
+        
+        # Ensure all tensors have the same spatial dimensions
+        shapes = [t.shape for t in tensors]
+        batch_size = shapes[0][0]
+        spatial_dims = shapes[0][2:]  # H, W, D
+        
+        for i, t in enumerate(tensors):
+            if t.shape[0] != batch_size or t.shape[2:] != spatial_dims:
+                raise ValueError(f"Tensor {i} has mismatched shape: {t.shape}. Expected batch: {batch_size}, spatial: {spatial_dims}")
+        
+        # Concatenate along channel dimension
+        return torch.cat(tensors, dim=1)
+    
 def pad_same(x, kernel_size, stride, dilation=1):
     """
     Apply 'same' padding for Conv3D (padding before convolution).

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
-from .Functional import pad_same, crop_same
+from .Functional import pad_same, crop_same, Channel_Concat
 
 # Danny D Ko
 """
@@ -75,6 +75,192 @@ class DannyKo_DecBlock(nn.Module):
         x = self.drop(x)
         return x
     
+
+
+
+class Base_Unet(nn.Module):
+    def __init__(self, input_channels, output_channels=1, filter_num=5, filter_size=4, 
+                 activation='selu', momentum=0.01, dropout=0.2, res_num=4, filter_num_increase=1, bin_input=True):
+        super().__init__()
+        
+        # Initialize lists of modules
+        self.encoder = nn.ModuleList()
+        self.decoder = nn.ModuleList()
+        self.skip_connection_indices = []
+        self.concat = Channel_Concat()
+        self.bin_input = bin_input
+        self.res_num = res_num
+        self.filter_size = filter_size
+        self.output_channels = output_channels
+        self.filter_num = filter_num
+        
+        if filter_num_increase < 1:
+            raise ValueError(
+                "filter_num_increase must be >= 1"
+            )
+        
+        # ENCODER (res_num RESOLUTIONS, 2 BLOCKS PER RESOLUTION):            
+        for i in range(res_num):
+            n_filters = int(filter_num * (filter_num_increase ** i))
+            
+            if i == 0:          
+                # First block in first resolution
+                firstConv = DannyKo_EncBlock(
+                    in_channels=input_channels,
+                    out_channels=n_filters,
+                    stride=1,  # Keep spatial dimensions
+                    kernel_size=filter_size,
+                    activation=activation, 
+                    momentum=momentum, 
+                    dropout_rate=dropout,
+                )
+            else:
+                # Downsampling blocks
+                firstConv = DannyKo_EncBlock(
+                    in_channels=self.encoder[i-1][-1].out_channels,
+                    out_channels=n_filters,
+                    stride=2,  # Reduce spatial dimensions by half
+                    kernel_size=filter_size,
+                    activation=activation, 
+                    momentum=momentum, 
+                    dropout_rate=dropout,
+                )
+                
+            # Second block (no downsampling)
+            secondConv = DannyKo_EncBlock(
+                in_channels=firstConv.out_channels,
+                out_channels=n_filters,
+                stride=1,  # Keep spatial dimensions
+                kernel_size=filter_size,
+                activation=activation, 
+                momentum=momentum, 
+                dropout_rate=dropout,
+            )
+            
+            self.encoder.append(nn.ModuleList([firstConv, secondConv]))
+        
+        # DECODER (in reverse order)
+        # The decoder list will be in order: [highest_res_block, ..., lowest_res_block]
+        # So index 0 is the highest resolution (closest to output)
+        
+        for i in reversed(range(res_num)):
+            # Check if this is the final layer (output layer)
+            is_final_layer = (i == 0)
+            
+            if is_final_layer:
+                # Final output layer - use regular Conv3D instead of ConvTranspose3D
+                
+                # Determine input channels for the final layer
+                if len(self.decoder) > 0:
+                    # There are previous decoder blocks, so we have a skip connection
+                    in_channels_final = self.encoder[i][-1].out_channels + self.decoder[-1][-1].out_channels
+                else:
+                    # No previous decoder blocks (res_num=1 case)
+                    in_channels_final = self.encoder[i][-1].out_channels
+                
+                # First convolution in output layer (regular Conv3D with same padding)
+                firstConv = nn.Conv3d(
+                    in_channels_final,
+                    filter_num,
+                    kernel_size=filter_size,
+                    stride=1,
+                    padding=0  # We'll handle padding manually in forward
+                )
+                
+                # Final output convolution (1x1 conv)
+                secondConv = nn.Conv3d(
+                    filter_num,
+                    output_channels,
+                    kernel_size=1,
+                    stride=1,
+                    padding=0
+                )
+                                    
+                
+            else:
+                # Regular decoder blocks
+                n_filters = filter_num * (filter_num_increase ** (i - 1))
+                
+                # Determine input channels
+                if i == res_num - 1:
+                    # First decoder block (lowest resolution, no previous decoder output)
+                    in_channels_deconv = self.encoder[i][-1].out_channels
+                else:
+                    # Middle blocks with skip connections
+                    in_channels_deconv = self.encoder[i][-1].out_channels + self.decoder[-1][-1].out_channels
+                
+                # First deconvolution block (stride=1, maintains dimensions)
+                firstConv = DannyKo_DecBlock(
+                    in_channels=in_channels_deconv,
+                    out_channels=n_filters,
+                    stride=1,  # Maintain spatial dimensions
+                    kernel_size=filter_size,
+                    activation=activation, 
+                    momentum=momentum, 
+                    dropout_rate=dropout,
+                )
+                
+                # Second block with upsampling (stride=2, doubles dimensions)
+                secondConv = DannyKo_DecBlock(
+                    in_channels=n_filters,
+                    out_channels=n_filters,
+                    stride=2,  # Double spatial dimensions
+                    kernel_size=filter_size,
+                    activation=activation, 
+                    momentum=momentum, 
+                    dropout_rate=dropout,
+                )
+                
+            firstConv.is_final_layer  = is_final_layer
+            secondConv.is_final_layer = is_final_layer
+            
+            self.decoder.append(nn.ModuleList([firstConv, secondConv]))
+    
+    def predict(self, x):
+        
+        if self.bin_input: x = (x > 0).to(torch.float32)
+        
+        with torch.no_grad():
+            out     = self.forward(x)
+
+            # Mask Output, making solid always zero
+            mask    = (x > 0).to(torch.float32) 
+            mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
+            return out * mask
+    
+    def forward(self, x):
+        if self.bin_input: x = (x > 0).to(torch.float32)
+        
+        skips = []            
+        # Encoder pass
+        for i in range(len(self.encoder)):
+            conv1, conv2 = self.encoder[i]
+            x = conv1(x)
+            x = conv2(x)
+            skips.insert(0, x)  # Store for skip connections (reverse order)
+        
+        # Decoder pass
+        for i in range(len(self.decoder)):
+            conv1, conv2 = self.decoder[i]
+            
+            # Handle skip connections for all but the first decoder block
+            if i == 0:  x = skips[i]
+            else:       x = self.concat(x, skips[i])
+            
+           
+            # Final layer - apply manual padding for regular Conv3D
+            if conv1.is_final_layer == True:
+                x = pad_same(x, conv1.kernel_size, conv1.stride)
+            
+            x = conv1(x)
+            
+            # Final layer - apply manual padding for regular Conv3D
+            if conv1.is_final_layer == True:
+                x = pad_same(x, conv2.kernel_size, conv2.stride)
+            
+            x = conv2(x)
+        
+        return x
     
     
 # Original structure of Danny Model: 
@@ -86,7 +272,7 @@ class DannyKo_Net_Original(nn.Module):
         
         self.bin_input = bin_input
         
-        self.x_model = self.UNetV1(
+        self.x_model = self.Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -98,7 +284,7 @@ class DannyKo_Net_Original(nn.Module):
             res_num=4,
             bin_input=bin_input)
      
-        self.y_model = self.UNetV1(
+        self.y_model = self.Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -110,7 +296,7 @@ class DannyKo_Net_Original(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.z_model = self.UNetV1(
+        self.z_model = self.Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -122,9 +308,9 @@ class DannyKo_Net_Original(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.concat  = self.Concat_Block()
+        self.concat = Channel_Concat()
         
-        self.main_model = self.UNetV1(
+        self.main_model = self.Base_Unet(
             input_channels=3,
             output_channels=3,
             filter_num=9,
@@ -161,213 +347,6 @@ class DannyKo_Net_Original(nn.Module):
             mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
             return out * mask
 
-         
-    class Concat_Block(nn.Module):
-        def __init__(self):
-            super().__init__()
-            
-        def forward(self, *tensors):
-            if len(tensors) == 0:
-                raise ValueError("At least one tensor is required for concatenation.")
-            if len(tensors) == 1:
-                return tensors[0]
-            
-            # Ensure all tensors have the same spatial dimensions
-            shapes = [t.shape for t in tensors]
-            batch_size = shapes[0][0]
-            spatial_dims = shapes[0][2:]  # H, W, D
-            
-            for i, t in enumerate(tensors):
-                if t.shape[0] != batch_size or t.shape[2:] != spatial_dims:
-                    raise ValueError(f"Tensor {i} has mismatched shape: {t.shape}. Expected batch: {batch_size}, spatial: {spatial_dims}")
-            
-            # Concatenate along channel dimension
-            return torch.cat(tensors, dim=1)
-    
-    class UNetV1(nn.Module):
-        def __init__(self, input_channels, output_channels=1, filter_num=5, filter_size=4, 
-                     activation='selu', momentum=0.01, dropout=0.2, res_num=4, filter_num_increase=1, bin_input=True):
-            super().__init__()
-            
-            # Initialize lists of modules
-            self.encoder = nn.ModuleList()
-            self.decoder = nn.ModuleList()
-            self.skip_connection_indices = []
-            self.concat = DannyKo_Net_Original.Concat_Block()
-            self.bin_input = bin_input
-            self.res_num = res_num
-            self.filter_size = filter_size
-            self.output_channels = output_channels
-            self.filter_num = filter_num
-            
-            if filter_num_increase < 1:
-                raise ValueError(
-                    "filter_num_increase must be >= 1"
-                )
-            
-            # ENCODER (res_num RESOLUTIONS, 2 BLOCKS PER RESOLUTION):            
-            for i in range(res_num):
-                n_filters = int(filter_num * (filter_num_increase ** i))
-                
-                if i == 0:          
-                    # First block in first resolution
-                    firstConv = DannyKo_EncBlock(
-                        in_channels=input_channels,
-                        out_channels=n_filters,
-                        stride=1,  # Keep spatial dimensions
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                else:
-                    # Downsampling blocks
-                    firstConv = DannyKo_EncBlock(
-                        in_channels=self.encoder[i-1][-1].out_channels,
-                        out_channels=n_filters,
-                        stride=2,  # Reduce spatial dimensions by half
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                    
-                # Second block (no downsampling)
-                secondConv = DannyKo_EncBlock(
-                    in_channels=firstConv.out_channels,
-                    out_channels=n_filters,
-                    stride=1,  # Keep spatial dimensions
-                    kernel_size=filter_size,
-                    activation=activation, 
-                    momentum=momentum, 
-                    dropout_rate=dropout,
-                )
-                
-                self.encoder.append(nn.ModuleList([firstConv, secondConv]))
-            
-            # DECODER (in reverse order)
-            # The decoder list will be in order: [highest_res_block, ..., lowest_res_block]
-            # So index 0 is the highest resolution (closest to output)
-            
-            for i in reversed(range(res_num)):
-                # Check if this is the final layer (output layer)
-                is_final_layer = (i == 0)
-                
-                if is_final_layer:
-                    # Final output layer - use regular Conv3D instead of ConvTranspose3D
-                    
-                    # Determine input channels for the final layer
-                    if len(self.decoder) > 0:
-                        # There are previous decoder blocks, so we have a skip connection
-                        in_channels_final = self.encoder[i][-1].out_channels + self.decoder[-1][-1].out_channels
-                    else:
-                        # No previous decoder blocks (res_num=1 case)
-                        in_channels_final = self.encoder[i][-1].out_channels
-                    
-                    # First convolution in output layer (regular Conv3D with same padding)
-                    firstConv = nn.Conv3d(
-                        in_channels_final,
-                        filter_num,
-                        kernel_size=filter_size,
-                        stride=1,
-                        padding=0  # We'll handle padding manually in forward
-                    )
-                    
-                    # Final output convolution (1x1 conv)
-                    secondConv = nn.Conv3d(
-                        filter_num,
-                        output_channels,
-                        kernel_size=1,
-                        stride=1,
-                        padding=0
-                    )
-                                        
-                    
-                else:
-                    # Regular decoder blocks
-                    n_filters = filter_num * (filter_num_increase ** (i - 1))
-                    
-                    # Determine input channels
-                    if i == res_num - 1:
-                        # First decoder block (lowest resolution, no previous decoder output)
-                        in_channels_deconv = self.encoder[i][-1].out_channels
-                    else:
-                        # Middle blocks with skip connections
-                        in_channels_deconv = self.encoder[i][-1].out_channels + self.decoder[-1][-1].out_channels
-                    
-                    # First deconvolution block (stride=1, maintains dimensions)
-                    firstConv = DannyKo_DecBlock(
-                        in_channels=in_channels_deconv,
-                        out_channels=n_filters,
-                        stride=1,  # Maintain spatial dimensions
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                    
-                    # Second block with upsampling (stride=2, doubles dimensions)
-                    secondConv = DannyKo_DecBlock(
-                        in_channels=n_filters,
-                        out_channels=n_filters,
-                        stride=2,  # Double spatial dimensions
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                    
-                firstConv.is_final_layer  = is_final_layer
-                secondConv.is_final_layer = is_final_layer
-                
-                self.decoder.append(nn.ModuleList([firstConv, secondConv]))
-        
-        def predict(self, x):
-            
-            if self.bin_input: x = (x > 0).to(torch.float32)
-            
-            with torch.no_grad():
-                out     = self.forward(x)
-
-                # Mask Output, making solid always zero
-                mask    = (x > 0).to(torch.float32) 
-                mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
-                return out * mask
-        
-        def forward(self, x):
-            if self.bin_input: x = (x > 0).to(torch.float32)
-            
-            skips = []            
-            # Encoder pass
-            for i in range(len(self.encoder)):
-                conv1, conv2 = self.encoder[i]
-                x = conv1(x)
-                x = conv2(x)
-                skips.insert(0, x)  # Store for skip connections (reverse order)
-            
-            # Decoder pass
-            for i in range(len(self.decoder)):
-                conv1, conv2 = self.decoder[i]
-                
-                # Handle skip connections for all but the first decoder block
-                if i == 0:  x = skips[i]
-                else:       x = self.concat(x, skips[i])
-                
-               
-                # Final layer - apply manual padding for regular Conv3D
-                if conv1.is_final_layer == True:
-                    x = pad_same(x, conv1.kernel_size, conv1.stride)
-                
-                x = conv1(x)
-                
-                # Final layer - apply manual padding for regular Conv3D
-                if conv1.is_final_layer == True:
-                    x = pad_same(x, conv2.kernel_size, conv2.stride)
-                
-                x = conv2(x)
-            
-            return x 
-        
         
 
 # Danny Ko's model extended to include pressure 
@@ -376,7 +355,7 @@ class Extended_DannyKo(nn.Module):
         super().__init__() 
         self.bin_input = bin_input
         
-        self.x_model = self.UNetV1(
+        self.x_model = self.Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -388,7 +367,7 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
      
-        self.y_model = self.UNetV1(
+        self.y_model = self.Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -400,7 +379,7 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.z_model = self.UNetV1(
+        self.z_model = self.Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -412,7 +391,7 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.p_model = self.UNetV1(
+        self.p_model = self.Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -424,9 +403,9 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.concat  = self.Concat_Block()
+        self.concat = Channel_Concat()
         
-        self.main_model = self.UNetV1(
+        self.main_model = self.Base_Unet(
             input_channels=4,
             output_channels=4,
             filter_num=9,
@@ -464,208 +443,4 @@ class Extended_DannyKo(nn.Module):
             mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
             return out * mask
          
-    class Concat_Block(nn.Module):
-        def __init__(self):
-            super().__init__()
-            
-        def forward(self, *tensors):
-            if len(tensors) == 0:
-                raise ValueError("At least one tensor is required for concatenation.")
-            if len(tensors) == 1:
-                return tensors[0]
-            
-            # Ensure all tensors have the same spatial dimensions
-            shapes = [t.shape for t in tensors]
-            batch_size = shapes[0][0]
-            spatial_dims = shapes[0][2:]  # H, W, D
-            
-            for i, t in enumerate(tensors):
-                if t.shape[0] != batch_size or t.shape[2:] != spatial_dims:
-                    raise ValueError(f"Tensor {i} has mismatched shape: {t.shape}. Expected batch: {batch_size}, spatial: {spatial_dims}")
-            
-            # Concatenate along channel dimension
-            return torch.cat(tensors, dim=1)
     
-    class UNetV1(nn.Module):
-        def __init__(self, input_channels, output_channels=1, filter_num=5, filter_size=4, 
-                     activation='selu', momentum=0.01, dropout=0.2, res_num=4, filter_num_increase=1, bin_input=True):
-            super().__init__()
-            
-            # Initialize lists of modules
-            self.encoder = nn.ModuleList()
-            self.decoder = nn.ModuleList()
-            self.skip_connection_indices = []
-            self.concat = DannyKo_Net_Original.Concat_Block()
-            self.bin_input = bin_input
-            self.res_num = res_num
-            self.filter_size = filter_size
-            self.output_channels = output_channels
-            self.filter_num = filter_num
-            
-            if filter_num_increase < 1:
-                raise ValueError(
-                    "filter_num_increase must be >= 1"
-                )
-            
-            # ENCODER (res_num RESOLUTIONS, 2 BLOCKS PER RESOLUTION):            
-            for i in range(res_num):
-                n_filters = int(filter_num * (filter_num_increase ** i))
-                
-                if i == 0:          
-                    # First block in first resolution
-                    firstConv = DannyKo_EncBlock(
-                        in_channels=input_channels,
-                        out_channels=n_filters,
-                        stride=1,  # Keep spatial dimensions
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                else:
-                    # Downsampling blocks
-                    firstConv = DannyKo_EncBlock(
-                        in_channels=self.encoder[i-1][-1].out_channels,
-                        out_channels=n_filters,
-                        stride=2,  # Reduce spatial dimensions by half
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                    
-                # Second block (no downsampling)
-                secondConv = DannyKo_EncBlock(
-                    in_channels=firstConv.out_channels,
-                    out_channels=n_filters,
-                    stride=1,  # Keep spatial dimensions
-                    kernel_size=filter_size,
-                    activation=activation, 
-                    momentum=momentum, 
-                    dropout_rate=dropout,
-                )
-                
-                self.encoder.append(nn.ModuleList([firstConv, secondConv]))
-            
-            # DECODER (in reverse order)
-            # The decoder list will be in order: [highest_res_block, ..., lowest_res_block]
-            # So index 0 is the highest resolution (closest to output)
-            
-            for i in reversed(range(res_num)):
-                # Check if this is the final layer (output layer)
-                is_final_layer = (i == 0)
-                
-                if is_final_layer:
-                    # Final output layer - use regular Conv3D instead of ConvTranspose3D
-                    
-                    # Determine input channels for the final layer
-                    if len(self.decoder) > 0:
-                        # There are previous decoder blocks, so we have a skip connection
-                        in_channels_final = self.encoder[i][-1].out_channels + self.decoder[-1][-1].out_channels
-                    else:
-                        # No previous decoder blocks (res_num=1 case)
-                        in_channels_final = self.encoder[i][-1].out_channels
-                    
-                    # First convolution in output layer (regular Conv3D with same padding)
-                    firstConv = nn.Conv3d(
-                        in_channels_final,
-                        filter_num,
-                        kernel_size=filter_size,
-                        stride=1,
-                        padding=0  # We'll handle padding manually in forward
-                    )
-                    
-                    # Final output convolution (1x1 conv)
-                    secondConv = nn.Conv3d(
-                        filter_num,
-                        output_channels,
-                        kernel_size=1,
-                        stride=1,
-                        padding=0
-                    )
-                                        
-                    
-                else:
-                    # Regular decoder blocks
-                    n_filters = filter_num * (filter_num_increase ** (i - 1))
-                    
-                    # Determine input channels
-                    if i == res_num - 1:
-                        # First decoder block (lowest resolution, no previous decoder output)
-                        in_channels_deconv = self.encoder[i][-1].out_channels
-                    else:
-                        # Middle blocks with skip connections
-                        in_channels_deconv = self.encoder[i][-1].out_channels + self.decoder[-1][-1].out_channels
-                    
-                    # First deconvolution block (stride=1, maintains dimensions)
-                    firstConv = DannyKo_DecBlock(
-                        in_channels=in_channels_deconv,
-                        out_channels=n_filters,
-                        stride=1,  # Maintain spatial dimensions
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                    
-                    # Second block with upsampling (stride=2, doubles dimensions)
-                    secondConv = DannyKo_DecBlock(
-                        in_channels=n_filters,
-                        out_channels=n_filters,
-                        stride=2,  # Double spatial dimensions
-                        kernel_size=filter_size,
-                        activation=activation, 
-                        momentum=momentum, 
-                        dropout_rate=dropout,
-                    )
-                    
-                firstConv.is_final_layer  = is_final_layer
-                secondConv.is_final_layer = is_final_layer
-                
-                self.decoder.append(nn.ModuleList([firstConv, secondConv]))
-        
-        def predict(self, x):
-            
-            if self.bin_input: x = (x > 0).to(torch.float32)
-            
-            with torch.no_grad():
-                out     = self.forward(x)
-
-                # Mask Output, making solid always zero
-                mask    = (x > 0).to(torch.float32) 
-                mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
-                return out * mask
-        
-        def forward(self, x):
-            if self.bin_input: x = (x > 0).to(torch.float32)
-            
-            skips = []            
-            # Encoder pass
-            for i in range(len(self.encoder)):
-                conv1, conv2 = self.encoder[i]
-                x = conv1(x)
-                x = conv2(x)
-                skips.insert(0, x)  # Store for skip connections (reverse order)
-            
-            # Decoder pass
-            for i in range(len(self.decoder)):
-                conv1, conv2 = self.decoder[i]
-                
-                # Handle skip connections for all but the first decoder block
-                if i == 0:  x = skips[i]
-                else:       x = self.concat(x, skips[i])
-                
-               
-                # Final layer - apply manual padding for regular Conv3D
-                if conv1.is_final_layer == True:
-                    x = pad_same(x, conv1.kernel_size, conv1.stride)
-                
-                x = conv1(x)
-                
-                # Final layer - apply manual padding for regular Conv3D
-                if conv1.is_final_layer == True:
-                    x = pad_same(x, conv2.kernel_size, conv2.stride)
-                
-                x = conv2(x)
-            
-            return x

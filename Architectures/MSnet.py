@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
+from .Functional import Channel_Concat
 
 
 # Corrected version of MS-NET, modifying norm order and CeLU according to the paper
@@ -354,7 +355,7 @@ class JavierSantos_Extended(nn.Module):
         
         self.p_model    = JavierSantos(nc_out = 1, num_features = 1)
         
-        self.concat     = self.Concat_Block()
+        self.concat     = Channel_Concat()
         
         self.main_model = JavierSantos(nc_out = 4, num_features = 4)
         
@@ -365,8 +366,9 @@ class JavierSantos_Extended(nn.Module):
             x_out = self.x_model(x) 
             y_out = self.y_model(x) 
             z_out = self.z_model(x)
+            p_out = self.p_model(x)
                 
-        combined = self.concat(x_out, y_out, z_out)
+        combined = self.concat(x_out, y_out, z_out, p_out)
         return self.main_model(combined)
     
     def predict(self, x):
@@ -381,24 +383,3 @@ class JavierSantos_Extended(nn.Module):
             mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
             return out * mask
          
-    class Concat_Block(nn.Module):
-        def __init__(self):
-            super().__init__()
-            
-        def forward(self, *tensors):
-            if len(tensors) == 0:
-                raise ValueError("At least one tensor is required for concatenation.")
-            if len(tensors) == 1:
-                return tensors[0]
-            
-            # Ensure all tensors have the same spatial dimensions
-            shapes = [t.shape for t in tensors]
-            batch_size = shapes[0][0]
-            spatial_dims = shapes[0][2:]  # H, W, D
-            
-            for i, t in enumerate(tensors):
-                if t.shape[0] != batch_size or t.shape[2:] != spatial_dims:
-                    raise ValueError(f"Tensor {i} has mismatched shape: {t.shape}. Expected batch: {batch_size}, spatial: {spatial_dims}")
-            
-            # Concatenate along channel dimension
-            return torch.cat(tensors, dim=1)
