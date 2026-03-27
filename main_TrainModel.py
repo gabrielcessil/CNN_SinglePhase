@@ -84,10 +84,10 @@ dtype                   = torch.float32
 
 loss_functions  = {
     # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
-    "MSE":                     {"obj":  nn.MSELoss(),                        "Thresholded": False},
+    "MSE":                     {"obj":  nn.MSELoss(),                                "Thresholded": False},
     # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
-    "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),  "Thresholded": True}, 
-    "Mean Perm. Relative Error":{"obj": lf.PRPE(),                           "Thresholded": True},
+    "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
+    "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
     "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000)),  "Thresholded": True},
     "Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True}
 }

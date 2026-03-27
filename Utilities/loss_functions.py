@@ -71,33 +71,11 @@ class Mask_LossFunction(nn.Module):
 #######################################################
 
 # MY COMPOSED FUNCTIONS
-
-
-class Log10MaskedLoss(nn.Module):
-
-    def __init__(self, base_loss: nn.Module, eps: float = 1e-9, multi: float = 1e9):
-        super().__init__()
-        self.base_loss = base_loss
-        self.eps = eps
-        self.multi =  multi
-
-    def forward(self, output: torch.Tensor, target: torch.Tensor):
-        
-        if output.shape != target.shape:
-            raise ValueError(f"Shape mismatch: {output.shape} vs {target.shape}")
-        
-        std_loss = self.base_loss(output, target)
-        log_loss = self.base_loss(torch.log10((output.abs()+ self.eps) *self.multi )*(output.sign()), 
-                              torch.log10((target.abs()+ self.eps) *self.multi )*(target.sign()))
-        
-        return std_loss + 0.001*log_loss
-                              
-
     
 # Permeability Relative Percentual Error
-class PRPE(nn.Module):
+class MeanBiasError(nn.Module):
     def __init__(self):
-        super(PRPE, self).__init__()
+        super(MeanBiasError, self).__init__()
         
     def forward(self, output, target):
         if output.shape != target.shape:
