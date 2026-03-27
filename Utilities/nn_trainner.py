@@ -291,7 +291,7 @@ def train_one_epoch(model, train_batch_loader, loss_function, optimizer, schedul
             
         
         
-    if scheduler is not None: scheduler.step() # Realiza um passo no learning rate
+    if scheduler is not None: scheduler.step() # Make one step in optimizer scheluding
 
     return  model
 

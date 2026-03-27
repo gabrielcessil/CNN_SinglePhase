@@ -363,10 +363,10 @@ class JavierSantos_Extended(nn.Module):
         if self.bin_input: x = (x > 0).to(torch.float32)
         
         with torch.no_grad():
-            x_out = self.x_model(x) 
-            y_out = self.y_model(x) 
-            z_out = self.z_model(x)
-            p_out = self.p_model(x)
+            x_out = self.x_model.predict(x) 
+            y_out = self.y_model.predict(x) 
+            z_out = self.z_model.predict(x)
+            p_out = self.p_model.predict(x)
                 
         combined = self.concat(x_out, y_out, z_out, p_out)
         return self.main_model(combined)

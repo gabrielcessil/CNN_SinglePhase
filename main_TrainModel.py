@@ -183,7 +183,27 @@ elif model_name=="javier_zyxp":
     for loss_name, items in loss_functions.items():
         if not items["Thresholded"]: 
             loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
+    
+    # Loading pre-trained sub-models
+    model_full_name = "./Trained_Models/None.pth"
+    model.z_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    model_full_name = "./Trained_Models/None.pth"
+    model.y_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    model_full_name = "./Trained_Models/None.pth"
+    model.x_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    model_full_name = "./Trained_Models/None.pth"
+    model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    # Freeze sub-models
+    model.x_model.eval()
+    model.y_model.eval()
+    model.z_model.eval()
+    model.p_model.eval()
             
+    
 elif model_name=="danny_z":
     model_aux   = Unet.Extended_DannyKo()
     model       = model_aux.z_model
@@ -213,11 +233,31 @@ elif model_name=="danny_p":
     valid_ds.component = 3
         
 elif model_name=="danny_zyxp":
+    
     model = Unet.Extended_DannyKo()
-        
+    # Loading pre-trained sub-models
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
+    model.z_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_03-14PM_Job16195/model_LowerValidationLoss.pth"
+    model.y_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
+    model.x_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    model_full_name = "./Trained_Models/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
+    model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    
+    # Freeze sub-models
+    model.x_model.eval()
+    model.y_model.eval()
+    model.z_model.eval()
+    model.p_model.eval()
+    
 else:
     raise Exception(f"Specified model {model_name} is not defined.")
 
+# Define input type
 model.bin_input =binary_input
 
 # Weights initialization
