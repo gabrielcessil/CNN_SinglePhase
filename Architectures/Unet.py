@@ -353,9 +353,7 @@ class DannyKo_Net_Original(nn.Module):
 class Extended_DannyKo(nn.Module):
     def __init__(self, bin_input=True):
         super().__init__() 
-        
-        self.debug_outputs = []
-        
+                
         self.bin_input = bin_input
         
         self.x_model = Base_Unet(
@@ -441,9 +439,7 @@ class Extended_DannyKo(nn.Module):
             y_out = self.y_model.predict(x) 
             z_out = self.z_model.predict(x)
             p_out = self.p_model.predict(x)
-            
-            self.debug_outputs.append(z_out.detach().clone().cpu())
-                
+                            
         combined = self.concat(x_out, y_out, z_out, p_out)
         return self.main_model(combined)
     

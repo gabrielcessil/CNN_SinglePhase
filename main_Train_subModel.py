@@ -176,30 +176,6 @@ elif model_name=="javier_p":
     for loss_name, items in loss_functions.items():
         if not items["Thresholded"]: 
             loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
-            
-elif model_name=="javier_zyxp":
-    model   = MSnet.JavierSantos_Extended()
-    # Make loss function multiscale 
-    for loss_name, items in loss_functions.items():
-        if not items["Thresholded"]: 
-            loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
-    
-    # Loading pre-trained sub-models
-    model_full_name = "./Trained_Models/None.pth"
-    model.z_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/None.pth"
-    model.y_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/None.pth"
-    model.x_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/None.pth"
-    model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    # Freeze sub-models    
-    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
-            
     
 elif model_name=="danny_z":
     model_aux   = Unet.Extended_DannyKo()
@@ -228,26 +204,6 @@ elif model_name=="danny_p":
     # Restrict Dataset 
     train_ds.component = 3
     valid_ds.component = 3
-        
-elif model_name=="danny_zyxp":
-    
-    model = Unet.Extended_DannyKo()
-    # Loading pre-trained sub-models
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    model.z_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_03-14PM_Job16195/model_LowerValidationLoss.pth"
-    model.y_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
-    model.x_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
-    model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    # Freeze sub-models
-    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
-            
     
 else:
     raise Exception(f"Specified model {model_name} is not defined.")
@@ -267,12 +223,8 @@ if weight_init in ('Xavier', 'He', 'Zero', 'Zeros'):
     init_func = nnt.init_weights_xavier if weight_init.lower() == 'xavier' else \
                 nnt.init_weights_he     if weight_init.lower() == 'he'     else \
                 nnt.init_weights_zeros
-                
-    # If training the main model, apply initialization only on it
-    if model_name in ["danny_zyxp", "javier_zyxp"]:
-        model.main_model.apply(init_func)
-    # Otherwise: apply to the whole model
-    else: model.apply(init_func)
+            
+    model.apply(init_func)
         
 
 
@@ -332,8 +284,8 @@ print("Ending Train ... ")
 
 # Use this for floating-point network outputs instead of torch.equal
 base_tensor = model.debug_outputs[0]
-all_equal = all(torch.allclose(base_tensor, t, atol=1e-16) for t in model.debug_outputs[1:])
-print("ALL EQUAL?", all_equal)
+#all_equal = all(torch.allclose(base_tensor, t, atol=1e-16) for t in model.debug_outputs[1:])
+#print("ALL EQUAL?", all_equal)
 
 #######################################################
 #************ DELETE OBJECTS   ***********************#
