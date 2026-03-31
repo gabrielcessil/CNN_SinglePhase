@@ -197,11 +197,8 @@ elif model_name=="javier_zyxp":
     model_full_name = "./Trained_Models/None.pth"
     model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     
-    # Freeze sub-models
-    model.x_model.eval()
-    model.y_model.eval()
-    model.z_model.eval()
-    model.p_model.eval()
+    # Freeze sub-models    
+    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
             
     
 elif model_name=="danny_z":
@@ -249,10 +246,8 @@ elif model_name=="danny_zyxp":
     model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     
     # Freeze sub-models
-    model.x_model.eval()
-    model.y_model.eval()
-    model.z_model.eval()
-    model.p_model.eval()
+    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
+            
     
 else:
     raise Exception(f"Specified model {model_name} is not defined.")
@@ -261,24 +256,46 @@ else:
 model.bin_input =binary_input
 
 # Weights initialization
-if   weight_init in ('Xavier','xavier','XAVIER'):  model.apply(nnt.init_weights_xavier)
-elif weight_init in ('He','he','HE'):              model.apply(nnt.init_weights_he)
-elif weight_init is None or weight_init in ('None', 'none', 'NONE'): pass
-elif weight_init in ('Zero', 'Zeros', 'zero', 'zeros', 'ZERO', 'ZEROS'): model.apply(nnt.init_weights_zeros)
+if   weight_init in ('Xavier','xavier','XAVIER'):                           model.apply(nnt.init_weights_xavier)
+elif weight_init in ('He','he','HE'):                                       model.apply(nnt.init_weights_he)
+elif weight_init in ('Zero', 'Zeros', 'zero', 'zeros', 'ZERO', 'ZEROS'):    model.apply(nnt.init_weights_zeros)
+elif weight_init is None or weight_init in ('None', 'none', 'NONE'):        pass
 else: raise(f"Weights initialization mode {weight_init} not implemented.")
+
+# Weights initialization
+if weight_init in ('Xavier', 'He', 'Zero', 'Zeros'):
+    init_func = nnt.init_weights_xavier if weight_init.lower() == 'xavier' else \
+                nnt.init_weights_he     if weight_init.lower() == 'he'     else \
+                nnt.init_weights_zeros
+                
+    # If training the main model, apply initialization only on it
+    if model_name in ["danny_zyxp", "javier_zyxp"]:
+        model.main_model.apply(init_func)
+    # Otherwise: apply to the whole model
+    else: model.apply(init_func)
         
-print('Model size: {:.3f}MB'.format(mh.get_MB_storage_size(model)))
-print('Model size: {} parameters'.format(mh.get_n_trainable_params(model)))
 
 
 #######################################################
 #************ OPTIMIZER    ***************************#
 ####################################################### 
-if      optimizer == 'ADAM':    optimizer = torch.optim.Adam (model.parameters(), lr=learning_rate)
-elif    optimizer == 'ADAMW':   optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-elif    optimizer == 'SGD':     optimizer = torch.optim.SGD  (model.parameters(), lr=learning_rate)
+
+trainable_params  =  [p for p in model.parameters() if p.requires_grad]
+
+if      optimizer == 'ADAM':    optimizer = torch.optim.Adam (trainable_params, lr=learning_rate)
+elif    optimizer == 'ADAMW':   optimizer = torch.optim.AdamW(trainable_params, lr=learning_rate)
+elif    optimizer == 'SGD':     optimizer = torch.optim.SGD  (trainable_params, lr=learning_rate)
 else:   raise Exception(f"Optimizer {optimizer} is not implemented.")
-    
+
+print('Model size: {:.3f}MB'     .format(mh.get_MB_storage_size(model)))
+print('Model size: {} total parameters'.format(mh.get_total_params(model)))
+print('Model size: {} trainable parameters'.format(mh.get_n_trainable_params(model)))
+print('Model size: {} frozen parameters'.format(mh.get_n_non_trainable_params(model)))
+print()
+
+
+
+
 
 #######################################################
 #************ CREATE DATALOADER         **************#
@@ -312,6 +329,11 @@ nnt.partial_train(
     dtype                = torch.float32
     )
 print("Ending Train ... ")
+
+# Use this for floating-point network outputs instead of torch.equal
+base_tensor = model.debug_outputs[0]
+all_equal = all(torch.allclose(base_tensor, t, atol=1e-16) for t in model.debug_outputs[1:])
+print("ALL EQUAL?", all_equal)
 
 #######################################################
 #************ DELETE OBJECTS   ***********************#

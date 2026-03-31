@@ -113,3 +113,35 @@ class PearsonCorr(nn.Module):
         corr = (numerator / (denominator + self.eps))
         
         return corr if not self.reverse else 1-corr
+    
+class Divergent(nn.Module):
+    def __init__(self):
+        super(Divergent, self).__init__()
+        
+    def forward(self, output, target):
+        if output.shape[0] != target.shape[0] or output.shape[2:] != target.shape[2:]:
+            raise ValueError(f"Shape mismatch: {output.shape} vs {target.shape}")
+            
+        if output.shape[1] < 3 or target.shape[1] < 3:
+            raise ValueError(f"Shape mismatch: output {output.shape} or target {target.shape} need to have at least 3 channels (z,y,x)")
+            
+        out_div =  (output[:, 0, 2:  , 1:-1, 1:-1] - output[:, 0,  :-2, 1:-1, 1:-1]) / 2.0
+        out_div += (output[:, 1, 1:-1, 2:  , 1:-1] - output[:, 1, 1:-1,  :-2, 1:-1]) / 2.0
+        out_div += (output[:, 2, 1:-1, 1:-1, 2:  ] - output[:, 2, 1:-1, 1:-1,  :-2]) / 2.0
+        
+        return (out_div).abs().mean()
+    
+    
+class MSE_Divergent(nn.Module):
+    def __init__(self, div_weight: np.uint = 1):
+        super(MSE_Divergent, self).__init__()
+        self.div    = Divergent()
+        self.mse    = nn.MSELoss()
+        self.alpha  = div_weight
+        
+    def forward(self, output, target):
+        loss =  self.mse(output[:,0], target[:,0])
+        loss += self.mse(output[:,1], target[:,1])
+        loss += self.mse(output[:,2], target[:,2])
+        loss += self.alpha * self.div(output, target)
+        return loss

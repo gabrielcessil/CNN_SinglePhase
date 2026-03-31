@@ -272,7 +272,7 @@ class DannyKo_Net_Original(nn.Module):
         
         self.bin_input = bin_input
         
-        self.x_model = self.Base_Unet(
+        self.x_model = Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -284,7 +284,7 @@ class DannyKo_Net_Original(nn.Module):
             res_num=4,
             bin_input=bin_input)
      
-        self.y_model = self.Base_Unet(
+        self.y_model = Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -296,7 +296,7 @@ class DannyKo_Net_Original(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.z_model = self.Base_Unet(
+        self.z_model = Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -310,7 +310,7 @@ class DannyKo_Net_Original(nn.Module):
         
         self.concat = Channel_Concat()
         
-        self.main_model = self.Base_Unet(
+        self.main_model = Base_Unet(
             input_channels=3,
             output_channels=3,
             filter_num=9,
@@ -353,9 +353,12 @@ class DannyKo_Net_Original(nn.Module):
 class Extended_DannyKo(nn.Module):
     def __init__(self, bin_input=True):
         super().__init__() 
+        
+        self.debug_outputs = []
+        
         self.bin_input = bin_input
         
-        self.x_model = self.Base_Unet(
+        self.x_model = Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -367,7 +370,7 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
      
-        self.y_model = self.Base_Unet(
+        self.y_model = Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -379,7 +382,7 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.z_model = self.Base_Unet(
+        self.z_model = Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -391,7 +394,7 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
         
-        self.p_model = self.Base_Unet(
+        self.p_model = Base_Unet(
             input_channels=1,
             output_channels=1,
             filter_num=10,
@@ -405,7 +408,7 @@ class Extended_DannyKo(nn.Module):
         
         self.concat = Channel_Concat()
         
-        self.main_model = self.Base_Unet(
+        self.main_model = Base_Unet(
             input_channels=4,
             output_channels=4,
             filter_num=9,
@@ -416,8 +419,19 @@ class Extended_DannyKo(nn.Module):
             dropout=0.001,
             res_num=3,
             bin_input=bin_input)
+    
+    # Modified to freeze sub-models
+    def train(self, mode=True):
+        # 1. Call the standard train method for the main_model
+        super().train(mode)
         
-        
+        # 2. Force the sub-models back to eval mode immediately
+        self.x_model.eval()
+        self.y_model.eval()
+        self.z_model.eval()
+        self.p_model.eval()
+        return self
+    
         
     def forward(self, x):
         if self.bin_input: x = (x > 0).to(torch.float32)
@@ -427,6 +441,8 @@ class Extended_DannyKo(nn.Module):
             y_out = self.y_model.predict(x) 
             z_out = self.z_model.predict(x)
             p_out = self.p_model.predict(x)
+            
+            self.debug_outputs.append(z_out.detach().clone().cpu())
                 
         combined = self.concat(x_out, y_out, z_out, p_out)
         return self.main_model(combined)

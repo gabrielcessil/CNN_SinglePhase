@@ -358,7 +358,19 @@ class JavierSantos_Extended(nn.Module):
         self.concat     = Channel_Concat()
         
         self.main_model = JavierSantos(nc_out = 4, num_features = 4)
+    
+    # Modified to freeze sub-models
+    def train(self, mode=True):
+        # 1. Call the standard train method for the main_model
+        super().train(mode)
         
+        # 2. Force the sub-models back to eval mode immediately
+        self.x_model.eval()
+        self.y_model.eval()
+        self.z_model.eval()
+        self.p_model.eval()
+        return self
+    
     def forward(self, x):
         if self.bin_input: x = (x > 0).to(torch.float32)
         
