@@ -85,13 +85,14 @@ dtype                   = torch.float32
 
 loss_functions  = {
     # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
-    "MSE":                     {"obj":  lf.MSE_Divergent(div_weight=3),              "Thresholded": False},
+    "PI-MSE":                  {"obj":  lf.MSE_Divergent(div_weight=3),              "Thresholded": False},
     # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
-    "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.Divergent()),        "Thresholded": True}, 
-    "Divergent in Void Space": {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
+    "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
+    "Divergent":               {"obj":  lf.Divergent(),                              "Thresholded": True}, 
     "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
     "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000)),  "Thresholded": True},
-    "Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True}
+    "Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True},
+    "KGE":                     {"obj":  lf.Mask_LossFunction(lf.KGE()),              "Thresholded": True}
 }
 
 
@@ -181,7 +182,7 @@ else:
     raise Exception(f"Specified model {model_name} is not defined.")
 
 # Define input type
-model.bin_input =binary_input
+model.bin_input = binary_input
 
 # Weights initialization
 if   weight_init in ('Xavier','xavier','XAVIER'):                           model.apply(nnt.init_weights_xavier)

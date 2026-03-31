@@ -145,3 +145,18 @@ class MSE_Divergent(nn.Module):
         loss += self.mse(output[:,2], target[:,2])
         loss += self.alpha * self.div(output, target)
         return loss
+    
+    
+class KGE(nn.Module):
+    def __init__(self):
+        super(KGE, self).__init__()
+        
+        self.corr = PearsonCorr(2000)
+      
+    def forward(self, output, target):
+        mean_pred = torch.mean(output)
+        mean_true = torch.mean(target)
+        bias      = 1.0 - (mean_pred / mean_true)
+        inv_corr  = 1.0 - self.corr(output, target)
+        
+        return torch.sqrt(bias**2 + inv_corr**2)
