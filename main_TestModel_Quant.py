@@ -564,13 +564,23 @@ if directional==0:
     print_n_params(danny_model, pytorch=True)
 
     
+# Uy
+#elif directional==1:
     
+# Ux
+#elif directional==2:
     
-# 3 Directional Flow Models
+# P
+#elif directional==3:
+        
+# Uz, Uy, Uy
 elif directional==4:    
     baseline_model  = Danny_KerasModel()
     models["Baseline Danny (Ke) - Danny Data"] = baseline_model
     
+# Uz, Uy, Ux, Up
+#else:  
+   
 
 #######################################################
 #************ RUN ANALYSIS:                ***********#

@@ -7,7 +7,7 @@ This repository provides a PyTorch-based training pipeline for developing deep l
 # About the models
 
 All the considered models are embbeded with nn.Module, and have the following neede structure:
-* predict(): method used during test or applications. This method disables gradient computation and mask the output according to the input's solid.
+* predict(): method used as forward() during test or applications. This method disables gradient computation and mask the output according to the input's solid.
 * bin_input: attribute used to define the type of input. If True, thresholds the signal, if False let the input as it is.
 * The models are image-to-image, not receiving out predicting any extra type of features. All inputs and features must be encoded as image channels.
 
