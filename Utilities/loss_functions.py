@@ -160,3 +160,41 @@ class KGE(nn.Module):
         inv_corr  = 1.0 - self.corr(output, target)
         
         return torch.sqrt(bias**2 + inv_corr**2)
+    
+    
+import torch
+import torch.nn as nn
+
+class MassConservation(nn.Module):
+    def _denorm(self, x): return x
+        
+    def __init__(self, fun_denorm=None):
+        super(MassConservation, self).__init__()
+        self.fun_denorm = fun_denorm if fun_denorm is not None else self._denorm
+
+    def forward(self, output, target):
+        
+        field = self._denorm(output.clone())
+        
+        # P to Density logic
+        field[:, 3] * 3.0 
+        field[:, 3] *= 3.0 
+        
+        # 1. Divergence of velocity:  (dUz/dz + dUy/dy + dUx/dx) * rho
+        mass_cons  = (field[:,0, 2:, 1:-1, 1:-1] - field[:,0, :-2, 1:-1, 1:-1]) / 2.0
+        mass_cons += (field[:,1, 1:-1, 2:, 1:-1] - field[:,1, 1:-1, :-2, 1:-1]) / 2.0
+        mass_cons += (field[:,2, 1:-1, 1:-1, 2:] - field[:,2, 1:-1, 1:-1, :-2]) / 2.0
+        mass_cons *= field[:,3, 1:-1, 1:-1, 1:-1]
+        
+        # 2. Advection of density: 
+        # Uz * dP/dz
+        mass_cons += field[:,0, 1:-1, 1:-1, 1:-1] * (field[:,3, 2:, 1:-1, 1:-1] - field[:,3, :-2, 1:-1, 1:-1]) / 2.0
+        # Uy * dP/dy
+        mass_cons += field[:,1, 1:-1, 1:-1, 1:-1] * (field[:,3, 1:-1, 2:, 1:-1] - field[:,3, 1:-1, :-2, 1:-1]) / 2.0
+        # Ux * dP/dx
+        mass_cons += field[:,2, 1:-1, 1:-1, 1:-1] * (field[:,3, 1:-1, 1:-1, 2:] - field[:,3, 1:-1, 1:-1, :-2]) / 2.0
+        
+        return mass_cons.abs().mean()
+        
+        
+        
