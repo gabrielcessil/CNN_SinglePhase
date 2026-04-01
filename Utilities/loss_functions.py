@@ -3,7 +3,7 @@ from torchmetrics.classification import Accuracy
 from torch.nn import BCELoss, functional
 import torch
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 #######################################################
 #************ LOSS FUNCTION UTILITIES ****************#
@@ -166,18 +166,17 @@ import torch
 import torch.nn as nn
 
 class MassConservation(nn.Module):
-    def _denorm(self, x): return x
+    def _denorm(self, out, inp): return out
         
     def __init__(self, fun_denorm=None):
         super(MassConservation, self).__init__()
         self.fun_denorm = fun_denorm if fun_denorm is not None else self._denorm
 
-    def forward(self, output, target):
+    def forward(self, output, inp):
         
-        field = self._denorm(output.clone())
+        field = self.fun_denorm(output.clone(), inp)
         
         # P to Density logic
-        field[:, 3] * 3.0 
         field[:, 3] *= 3.0 
         
         # 1. Divergence of velocity:  (dUz/dz + dUy/dy + dUx/dx) * rho
@@ -194,6 +193,36 @@ class MassConservation(nn.Module):
         # Ux * dP/dx
         mass_cons += field[:,2, 1:-1, 1:-1, 1:-1] * (field[:,3, 1:-1, 1:-1, 2:] - field[:,3, 1:-1, 1:-1, :-2]) / 2.0
         
+        
+        
+        #"""
+        # Plot slice
+        slice_idx   = 60
+        v_mag       = torch.sqrt(field[0,0]**2 + field[0,1]**2 + field[0,2]**2)[1:-1, 1:-1, slice_idx].cpu().numpy()
+        rho_val     = field[0, 3, 1:-1, 1:-1, slice_idx].cpu().numpy()
+        error_val   = mass_cons[0, 1:-1, 1:-1, slice_idx].cpu().numpy() # slice_idx-1 porque mass_cons é menor
+
+        fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+        
+        im0 = ax[0].imshow(v_mag, cmap='jet')
+        ax[0].set_title("Velocity Magnitude")
+        plt.colorbar(im0, ax=ax[0])
+        
+        im1 = ax[1].imshow(rho_val, cmap='viridis')
+        ax[1].set_title("Density ($\\rho$)")
+        plt.colorbar(im1, ax=ax[1])
+        
+        # Colormap divergente para o erro (seismic: azul é negativo, vermelho positivo)
+        v_limit = np.max(np.abs(error_val)) * 0.5 # Ajuste de contraste
+        im2 = ax[2].imshow(error_val, cmap='seismic', vmin=-v_limit, vmax=v_limit)
+        ax[2].set_title("Mass Cons. Error\n$\\nabla \cdot (\\rho \mathbf{u})$")
+        plt.colorbar(im2, ax=ax[2])
+        
+        plt.suptitle(f"Physical Consistency Check - Slice {slice_idx}")
+        plt.tight_layout()
+        plt.show()
+        #"""
+            
         return mass_cons.abs().mean()
         
         
