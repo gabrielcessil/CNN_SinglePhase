@@ -9,20 +9,20 @@ import torch.nn           as nn
 
 # Encapsulate Danny Ko. model
 class Danny_KerasModel(nn.Module):
-    def __init__(self, uni_directional=None):
+    def __init__(self, component=None):
         super().__init__() 
-        self.uni_directional = uni_directional
-        if uni_directional == 0:
+        self.component = component
+        if component == 0:
             path = "./Danny_Original/UnetRS_ModelvZ1-4/UnetRS_ModelvZ1-4.ckpt"
             self.model          = tf.keras.models.load_model(
                  path
             )
-        elif uni_directional == 1:
+        elif component == 1:
             path = "./Danny_Original/UnetRS_ModelvY1-1/UnetRS_ModelvY1-1.ckpt"
             self.model          = tf.keras.models.load_model(
                  path
             )
-        elif uni_directional == 2:
+        elif component == 2:
             path = "./Danny_Original/UnetRS_ModelvX1-3/UnetRS_ModelvX1-3.ckpt"
             self.model          = tf.keras.models.load_model(
                  path
@@ -53,7 +53,7 @@ class Danny_KerasModel(nn.Module):
         # Tensorflow (B,Z,Y,X,C) -> Pytorch (B,C,Z,Y,X)
         y          = y.permute(0,4,1,2,3)
         # Reorder the channels: C=Vx,Vy,Vz to C=Vz,Vy,Vx
-        if self.uni_directional is None:
+        if self.component is None:
             y          = y[:, [2, 1, 0], :, :, :]
         return y
  

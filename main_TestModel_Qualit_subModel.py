@@ -6,7 +6,9 @@ from scipy.stats          import gaussian_kde
 from matplotlib.ticker    import LogLocator, LogFormatterSciNotation
 from torch.utils.data     import DataLoader
 
-from Architectures.Models import MS_Net, DannyKo_Net_Original, MS_Net_Extended, Extended_DannyKo
+from Architectures.Unet   import Extended_DannyKo
+from Architectures.MSnet  import JavierSantos_Extended
+
 from Utilities            import dataset_reader as dr
 from Danny_Original.architecture import Danny_KerasModel
 
@@ -392,13 +394,13 @@ z_direction_only    = True
 device              = 'cpu'
 batch_size          = 1
 save_mode           = False
-sample_idexes       = [1]
+sample_idexes       = [2]
 datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
 #datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
 
 save_tag            = "Danny"
 shape               = (120,120,120)
-component           = 3 # Uz=0, Uy=1, Ux=2, P=3
+component           = 1 # Uz=0, Uy=1, Ux=2, P=3
 models          = {}
 # 1 Directional Flow Models
 if z_direction_only:
@@ -411,7 +413,7 @@ if z_direction_only:
     models["Baseline Danny (Ke) - Danny Data"] = baseline_model
     
     # Dataset Danny Simulado - Sem Augmentation - Dados Alinhados
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-11PM_Job16070/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -420,7 +422,7 @@ if z_direction_only:
     models["Danny - Orig. Data noAug"] = danny_model
     print_n_params(danny_model, pytorch=True)
     
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -429,7 +431,7 @@ if z_direction_only:
     models["Danny - Orig. Data Aug"] = danny_model
     print_n_params(danny_model, pytorch=True)
     
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -439,7 +441,7 @@ if z_direction_only:
     models["Danny - My Data noAug"] = danny_model
     print_n_params(danny_model, pytorch=True)
     
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -451,7 +453,7 @@ if z_direction_only:
     
     # Comparing Javier and Danny Models
     """
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -471,8 +473,8 @@ if z_direction_only:
     
     
     # Do Pressure (no Walls) removed deconvolution residual
-    """
-    model_aux       = DannyKo_Net_Original()
+    #"""
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_04-02PM_Job16923/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -481,16 +483,16 @@ if z_direction_only:
     models["Danny Arq. - STA (Pr)"] = danny_model
     print_n_params(danny_model, pytorch=True)
     
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
-    models["Danny Arq. - STA"] = danny_model
+    models["Danny Arq. - STA (Pr+Walls)"] = danny_model
     print_n_params(danny_model, pytorch=True)
     
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -498,11 +500,16 @@ if z_direction_only:
     danny_model.bin_input = True
     models["Danny - Orig. Data Aug"] = danny_model
     print_n_params(danny_model, pytorch=True)
-    """
+    
+
+    
+    
+    
+    #"""
     
     # Hows X components performing
     """
-    model_aux       = DannyKo_Net_Original()
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -513,7 +520,8 @@ if z_direction_only:
     """
     
     # Hows P components performing
-    model_aux       = DannyKo_Net_Original()
+    """
+    model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
@@ -521,6 +529,7 @@ if z_direction_only:
     danny_model.bin_input = True
     models["Danny - Orig. Data Aug"] = danny_model
     print_n_params(danny_model, pytorch=True)
+    """
     
 # 3 Directional Flow Models
 else:    
