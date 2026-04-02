@@ -3,7 +3,7 @@ from torchmetrics.classification import Accuracy
 from torch.nn import BCELoss, functional
 import torch
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 #######################################################
 #************ LOSS FUNCTION UTILITIES ****************#
@@ -71,33 +71,11 @@ class Mask_LossFunction(nn.Module):
 #######################################################
 
 # MY COMPOSED FUNCTIONS
-
-
-class Log10MaskedLoss(nn.Module):
-
-    def __init__(self, base_loss: nn.Module, eps: float = 1e-9, multi: float = 1e9):
-        super().__init__()
-        self.base_loss = base_loss
-        self.eps = eps
-        self.multi =  multi
-
-    def forward(self, output: torch.Tensor, target: torch.Tensor):
-        
-        if output.shape != target.shape:
-            raise ValueError(f"Shape mismatch: {output.shape} vs {target.shape}")
-        
-        std_loss = self.base_loss(output, target)
-        log_loss = self.base_loss(torch.log10((output.abs()+ self.eps) *self.multi )*(output.sign()), 
-                              torch.log10((target.abs()+ self.eps) *self.multi )*(target.sign()))
-        
-        return std_loss + 0.001*log_loss
-                              
-
     
 # Permeability Relative Percentual Error
-class PRPE(nn.Module):
+class MeanBiasError(nn.Module):
     def __init__(self):
-        super(PRPE, self).__init__()
+        super(MeanBiasError, self).__init__()
         
     def forward(self, output, target):
         if output.shape != target.shape:
@@ -136,105 +114,116 @@ class PearsonCorr(nn.Module):
         
         return corr if not self.reverse else 1-corr
     
-
-class MultiScaleLoss(nn.Module):
-    # 'normalize_mode' can be : 
-    #  - 'none' to return the raw sum, 
-    #  - 'n_scales' to divide by the num. of scales and return the mean across scales
-    #  - 'var' to divide by the variance of higher resolution's scale target
-    def __init__(self, loss_fn, n_scales=4, norm_mode='none'):
-        """
-        Args:
-            loss_fn: any PyTorch loss function (e.g., nn.MSELoss(), nn.L1Loss())
-        """
-        super(MultiScaleLoss, self).__init__()
-        self.loss_fn    = loss_fn
-        self.norm_mode  = norm_mode
-        self.scales     = n_scales
-        
-
-    def forward(self, y_pred, y):
-        """
-        Args:
-            y_pred (List[Tensor]): predictions at each scale
-            y (List[Tensor] or Tensor): ground truths at each scale
-        Returns:
-            loss: total multiscale loss
-        """
-        # If the ground truth is a tensor: make it multi-scale
-        if torch.is_tensor(y):
-            y = self.get_coarsened_list(y)
-        
-        # Validate input types
-        if not isinstance(y_pred, (list, tuple)):
-            raise TypeError(f"Expected y_pred to be list or tuple, got {type(y_pred)}")
-        if not isinstance(y, (list, tuple)):
-            raise TypeError(f"Expected y to be list or tuple, got {type(y)}")
-        if len(y_pred) != len(y):
-            raise ValueError(f"Mismatch in number of scales: {len(y_pred)} predictions vs {len(y)} targets")
-        
-        total_loss  = y_pred[-1].new_tensor(0.0)
-        y_vars      = torch.var(y[-1], dim=list(range(1, y[-1].ndim))) # Compute var over batch dimension, reducing all others        
-        y_max       = torch.amax(y[-1].abs(), dim=list(range(1, y[-1].ndim)))
-        y_avg       = torch.mean(y[-1].abs(), dim=list(range(1, y[-1].ndim)))
-        
-        # For each scale
-        for scale, (y_hats, y_trues) in enumerate(zip(y_pred, y)): # Iterate over listed scales
-            if y_hats.shape != y_trues.shape:
-                raise ValueError(f"Shape mismatch at scale {scale}: {y_hats.shape} vs {y_trues.shape}")
-            
-            # For each sample
-            for sample_idx, (y_hat, y_true) in enumerate(zip(y_hats, y_trues)):
-                # Get the scaled image loss, then include it to the total
-                
-                if self.norm_mode=='var':       total_loss += self.loss_fn(y_hat, y_true)/(len(y_pred)*y_vars[sample_idx])
-                elif self.norm_mode=='max':     total_loss += self.loss_fn(y_hat, y_true)/(len(y_pred)*y_max[sample_idx])
-                elif self.norm_mode=='avg':     total_loss += self.loss_fn(y_hat, y_true)/(len(y_pred)*y_avg[sample_idx])
-                else:                           total_loss += self.loss_fn(y_hat, y_true)/len(y_pred)
-                
-        return total_loss
-    
-    def get_coarsened_list(self, x):    
-        ds_x = []
-        ds_x.append(x)
-        for i in range( self.scales-1 ): 
-            ds_x.append( self.scale_tensor( ds_x[-1], scale_factor=1/2 ) )
-        return ds_x[::-1] # returns the reversed list (small images first)
-    
-    def scale_tensor(self, x, scale_factor=1):
-        
-        # Downscale images
-        if scale_factor<1:
-            return nn.AvgPool3d(kernel_size = int(1/scale_factor))(x)
-        
-        # Upscale images
-        elif scale_factor>1:
-            for repeat in range (0, int(np.log2(scale_factor)) ):  # number of repeatsx2
-                for ax in range(2,5): # (B,C,  H,W,D), repeat only the 3D axis, not batch and channel
-                    x=x.repeat_interleave(repeats=2, axis=ax)
-            return x
-        
-        # Do not change images
-        elif scale_factor==1:
-            return x
-        
-        else: raise ValueError(f"Scale factor not understood: {scale_factor}")
-       
-    
-class MSE(nn.Module):
+class Divergent(nn.Module):
     def __init__(self):
-        super(MSE, self).__init__()
-
-    def forward(self, output, target):
-        # Ensure the output and target tensors have the same shape.
-        if output.size() != target.size():
-            raise ValueError(f"Shape mismatch: {output.size()} vs {target.size()}")    
-        errors = (target-output)
+        super(Divergent, self).__init__()
         
-        loss = errors.abs()
-        loss += 1 - torch.exp(- (2000.0 * errors)**2.0)
-        loss += 1 - torch.exp(- (20.0 * errors)**2.0)
-        loss += 1 - torch.exp(- (2.0 * errors)**2.0)
-        loss += 1 - torch.exp(- (0.2 * errors)**2.0)
+    def forward(self, output, target):
+        if output.shape[0] != target.shape[0] or output.shape[2:] != target.shape[2:]:
+            raise ValueError(f"Shape mismatch: {output.shape} vs {target.shape}")
+            
+        if output.shape[1] < 3 or target.shape[1] < 3:
+            raise ValueError(f"Shape mismatch: output {output.shape} or target {target.shape} need to have at least 3 channels (z,y,x)")
+            
+        out_div =  (output[:, 0, 2:  , 1:-1, 1:-1] - output[:, 0,  :-2, 1:-1, 1:-1]) / 2.0
+        out_div += (output[:, 1, 1:-1, 2:  , 1:-1] - output[:, 1, 1:-1,  :-2, 1:-1]) / 2.0
+        out_div += (output[:, 2, 1:-1, 1:-1, 2:  ] - output[:, 2, 1:-1, 1:-1,  :-2]) / 2.0
+        
+        return (out_div).abs().mean()
+    
+    
+class MSE_Divergent(nn.Module):
+    def __init__(self, div_weight: np.uint = 1):
+        super(MSE_Divergent, self).__init__()
+        self.div    = Divergent()
+        self.mse    = nn.MSELoss()
+        self.alpha  = div_weight
+        
+    def forward(self, output, target):
+        loss =  self.mse(output[:,0], target[:,0])
+        loss += self.mse(output[:,1], target[:,1])
+        loss += self.mse(output[:,2], target[:,2])
+        loss += self.alpha * self.div(output, target)
+        return loss
+    
+    
+class KGE(nn.Module):
+    def __init__(self):
+        super(KGE, self).__init__()
+        
+        self.corr = PearsonCorr(2000)
+      
+    def forward(self, output, target):
+        mean_pred = torch.mean(output)
+        mean_true = torch.mean(target)
+        bias      = 1.0 - (mean_pred / mean_true)
+        inv_corr  = 1.0 - self.corr(output, target)
+        
+        return torch.sqrt(bias**2 + inv_corr**2)
+    
+    
+import torch
+import torch.nn as nn
 
-        return loss.mean()
+class MassConservation(nn.Module):
+    def _denorm(self, out, inp): return out
+        
+    def __init__(self, fun_denorm=None):
+        super(MassConservation, self).__init__()
+        self.fun_denorm = fun_denorm if fun_denorm is not None else self._denorm
+
+    def forward(self, output, inp):
+        
+        field = self.fun_denorm(output.clone(), inp)
+        
+        # P to Density logic
+        field[:, 3] *= 3.0 
+        
+        # 1. Divergence of velocity:  (dUz/dz + dUy/dy + dUx/dx) * rho
+        mass_cons  = (field[:,0, 2:, 1:-1, 1:-1] - field[:,0, :-2, 1:-1, 1:-1]) / 2.0
+        mass_cons += (field[:,1, 1:-1, 2:, 1:-1] - field[:,1, 1:-1, :-2, 1:-1]) / 2.0
+        mass_cons += (field[:,2, 1:-1, 1:-1, 2:] - field[:,2, 1:-1, 1:-1, :-2]) / 2.0
+        mass_cons *= field[:,3, 1:-1, 1:-1, 1:-1]
+        
+        # 2. Advection of density: 
+        # Uz * dP/dz
+        mass_cons += field[:,0, 1:-1, 1:-1, 1:-1] * (field[:,3, 2:, 1:-1, 1:-1] - field[:,3, :-2, 1:-1, 1:-1]) / 2.0
+        # Uy * dP/dy
+        mass_cons += field[:,1, 1:-1, 1:-1, 1:-1] * (field[:,3, 1:-1, 2:, 1:-1] - field[:,3, 1:-1, :-2, 1:-1]) / 2.0
+        # Ux * dP/dx
+        mass_cons += field[:,2, 1:-1, 1:-1, 1:-1] * (field[:,3, 1:-1, 1:-1, 2:] - field[:,3, 1:-1, 1:-1, :-2]) / 2.0
+        
+        
+        
+        #"""
+        # Plot slice
+        slice_idx   = 60
+        v_mag       = torch.sqrt(field[0,0]**2 + field[0,1]**2 + field[0,2]**2)[1:-1, 1:-1, slice_idx].cpu().numpy()
+        rho_val     = field[0, 3, 1:-1, 1:-1, slice_idx].cpu().numpy()
+        error_val   = mass_cons[0, 1:-1, 1:-1, slice_idx].cpu().numpy() # slice_idx-1 porque mass_cons é menor
+
+        fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+        
+        im0 = ax[0].imshow(v_mag, cmap='jet')
+        ax[0].set_title("Velocity Magnitude")
+        plt.colorbar(im0, ax=ax[0])
+        
+        im1 = ax[1].imshow(rho_val, cmap='viridis')
+        ax[1].set_title("Density ($\\rho$)")
+        plt.colorbar(im1, ax=ax[1])
+        
+        # Colormap divergente para o erro (seismic: azul é negativo, vermelho positivo)
+        v_limit = np.max(np.abs(error_val)) * 0.5 # Ajuste de contraste
+        im2 = ax[2].imshow(error_val, cmap='seismic', vmin=-v_limit, vmax=v_limit)
+        ax[2].set_title("Mass Cons. Error\n$\\nabla \cdot (\\rho \mathbf{u})$")
+        plt.colorbar(im2, ax=ax[2])
+        
+        plt.suptitle(f"Physical Consistency Check - Slice {slice_idx}")
+        plt.tight_layout()
+        plt.show()
+        #"""
+            
+        return mass_cons.abs().mean()
+        
+        
+        

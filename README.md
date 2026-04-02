@@ -6,11 +6,15 @@ This repository provides a PyTorch-based training pipeline for developing deep l
 ---
 # About the models
 
-
+All the considered models are embbeded with nn.Module, and have the following neede structure:
+* predict(): method used as forward() during test or applications. This method disables gradient computation and mask the output according to the input's solid.
+* bin_input: attribute used to define the type of input. If True, thresholds the signal, if False let the input as it is.
+* The models are image-to-image, not receiving out predicting any extra type of features. All inputs and features must be encoded as image channels.
 
 ---
 # Training Process
 
+The training process can be execute for main_Train_subModel.py or main_Train_mainModel.py. Sub-models stands for training processes with end-to-end adjustments. Main-models are trained with sub-models fixed while others keep being adjusted.  
 
 ## Usage and Execution
 
@@ -23,7 +27,7 @@ If no file is specified, the script defaults to `config.json` in the root direct
 
 **Example:**
 ```bash
-python main_TrainModel.py --config experiment_01.json
+python main_Train_subModel.py --config experiment_01.json
 ```
 
 ---
@@ -52,13 +56,12 @@ The `config.json` file controls all aspects of the model, dataset handling, and 
 
 ### General Structure
 
-```json
-{
 ## Configuration Parameters
 
 The following variables controls all aspects of the model, dataset handling, and training process.
 
 ```json
+{
     "model_name": "danny_z",
     "binary_input": true,
     "NN_dataset_folder": "../NN_Datasets/",
@@ -179,22 +182,22 @@ main_TrainModel.py
 
 ---
 # Validation Process
-[cite_start]The validation process assesses the model's ability to generalize to new, unseen geometries, ensuring it has learned the underlying physics of the flow rather than just memorizing training data[cite: 536]. [cite_start]The models are tested on out-of-distribution (OOD) domains limited to $120^3$ voxels, including synthetic geometries (e.g., spherical/cylindrical pores and grains) and real micro-CT rock images (e.g., Bentheimer, Berea, Castlegate, Leopard)[cite: 505, 511, 517, 523, 525].
+The validation process assesses the model's ability to generalize to new, unseen geometries, ensuring it has learned the underlying physics of the flow rather than just memorizing training data. The models are tested on out-of-distribution (OOD) domains limited to $120^3$ voxels, including synthetic geometries (e.g., spherical/cylindrical pores and grains) and real micro-CT rock images (e.g., Parker, Leopard, Kirby, Brown, Upper Gray, Sinter Gray, Bentheimer, Berea, Berea Buff, Castlegate, Bandera).
 
 ## Quantitative analysis
-[cite_start]The quantitative evaluation relies on several physical and statistical metrics computed voxel-by-voxel or spatially averaged, comparing the Neural Network surrogate predictions against the Lattice Boltzmann Method (LBM) baselines[cite: 698]:
+The quantitative evaluation relies on several physical and statistical metrics computed voxel-by-voxel or spatially averaged, comparing the Neural Network surrogate predictions against the Lattice Boltzmann Method (LBM) baselines:
 
-* [cite_start]**Permeability Error ($e_k$)**: Evaluates the relative error in the predicted macroscopic permeability by comparing the spatial average of the velocity in the main flow direction[cite: 707, 708, 711].
-* **Flow Residual ($e_f$)**: Measures global mass conservation by computing the L1 error of the flux across planes in the $x$, $y$, and $z$ directions[cite: 715, 716, 719].
-* **Residual Divergence ($e_d$)**: Acts as a metric for point-wise mass conservation by evaluating the divergence of the predicted velocity field[cite: 726, 728].
-* **Tortuosity Error ($e_t$)**: Calculates the discrepancy in the predicted tortuosity of the flow pathways, a vital property for rock characterization[cite: 732, 736].
-* **Pearson Correlation Coefficient ($\sigma$)**: Statistically evaluates the spatial coherence and linear correlation between the predicted and true velocity fields[cite: 737, 738, 741].
-* [cite_start]**Magnitude Error ($e_m$)**: Measures the local absolute error exclusively in regions where the velocity is above the sample's average, focusing on the main fluid channels[cite: 745, 747].
-* **Angular Error ($e_\theta$)**: Evaluates the directional alignment by computing the angle between the 3D velocity vectors of the prediction and the ground truth[cite: 748, 749, 752].
+* **Permeability Error ($e_k$)**: Evaluates the relative error in the predicted macroscopic permeability by comparing the spatial average of the velocity in the main flow direction.
+* **Flow Residual ($e_f$)**: Measures global mass conservation by computing the L1 error of the flux across planes in the $x$, $y$, and $z$ directions.
+* **Residual Divergence ($e_d$)**: Acts as a metric for point-wise mass conservation by evaluating the divergence of the predicted velocity field.
+* **Tortuosity Error ($e_t$)**: Calculates the discrepancy in the predicted tortuosity of the flow pathways, a vital property for rock characterization.
+* **Pearson Correlation Coefficient ($\sigma$)**: Statistically evaluates the spatial coherence and linear correlation between the predicted and true velocity fields.
+* **Magnitude Error ($e_m$)**: Measures the local absolute error exclusively in regions where the velocity is above the sample's average, focusing on the main fluid channels.
+* **Angular Error ($e_\theta$)**: Evaluates the directional alignment by computing the angle between the 3D velocity vectors of the prediction and the ground truth.
 
 ## Qualitative analysis
 The qualitative analysis involves a visual inspection of the 3D velocity fields to determine the model's physical coherence:
 
-* **Frontal Views**: Used to analyze the interaction between the fluid and the solid matrix, particularly checking boundary conditions at the walls[cite: 807].
-* [cite_start]**Superior (Top) Views**: Evaluated to observe the continuity of the flow, making it easier to identify the model's handling of preferred flow pathways, constrictions, bifurcations, and ramifications[cite: 807].
+* **Frontal Views**: Used to analyze the interaction between the fluid and the solid matrix, particularly checking boundary conditions at the walls.
+* **Superior (Top) Views**: Evaluated to observe the continuity of the flow, making it easier to identify the model's handling of preferred flow pathways, constrictions, bifurcations, and ramifications.
 

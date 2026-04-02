@@ -184,7 +184,6 @@ def partial_train(model,
                                               dtype         = dtype
                                         )
         
-        
         # Tracking performance
         train_costs_h.append(train_avg_loss)
         val_costs_h.append(valid_avg_loss)
@@ -291,7 +290,7 @@ def train_one_epoch(model, train_batch_loader, loss_function, optimizer, schedul
             
         
         
-    if scheduler is not None: scheduler.step() # Realiza um passo no learning rate
+    if scheduler is not None: scheduler.step() # Make one step in optimizer scheluding
 
     return  model
 
@@ -476,6 +475,12 @@ def init_weights_he(m):
 #****************** AUXILIARY FUNCTIONS **************#
 #######################################################
 
+def freeze_on_training(models: list):
+    for sub_model in models :
+        sub_model.eval()                               # Disable Dropout and others
+        for param in sub_model.parameters():
+            param.requires_grad = False                # Do not use on gradient
+            
 # Move tensors to device
 # If obj is a list, move each element to device
 def move_to_device(obj, device, dtype):
