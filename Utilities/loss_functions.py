@@ -97,19 +97,19 @@ class PearsonCorr(nn.Module):
             raise ValueError(f"Shape mismatch: {output.shape} vs {target.shape}")
             
         # 1. Flatten the tensors to treat all cells as a single distribution
-        x = output.flatten()
-        y = target.flatten()
+        o = output.flatten()
+        t = target.flatten()
         
-        indx = torch.randperm(x.size(0))[:self.N_samples]
-        x = x[indx]
-        y = y[indx]
+        indx = torch.randperm(o.size(0))[:self.N_samples]
+        o = o[indx]
+        t = t[indx]
         
         # 2. Centering (Subtract the mean)
-        x_mu = x - x.mean()
-        y_mu = y - y.mean()
+        o_mu = o - o.mean()
+        t_mu = t - t.mean()
         
-        numerator   = torch.sum(x_mu * y_mu)
-        denominator = torch.sqrt(torch.sum(x_mu**2)) * torch.sqrt(torch.sum(y_mu**2))
+        numerator   = torch.sum(t_mu * o_mu)
+        denominator = torch.sqrt(torch.sum(t_mu**2)) * torch.sqrt(torch.sum(o_mu**2))
         corr = (numerator / (denominator + self.eps))
         
         return corr if not self.reverse else 1-corr
@@ -162,7 +162,6 @@ class KGE(nn.Module):
         return torch.sqrt(bias**2 + inv_corr**2)
     
     
-import torch
 import torch.nn as nn
 
 class MassConservation(nn.Module):
@@ -195,7 +194,7 @@ class MassConservation(nn.Module):
         
         
         
-        #"""
+        """
         # Plot slice
         slice_idx   = 60
         v_mag       = torch.sqrt(field[0,0]**2 + field[0,1]**2 + field[0,2]**2)[1:-1, 1:-1, slice_idx].cpu().numpy()
@@ -221,9 +220,57 @@ class MassConservation(nn.Module):
         plt.suptitle(f"Physical Consistency Check - Slice {slice_idx}")
         plt.tight_layout()
         plt.show()
-        #"""
+        """
             
         return mass_cons.abs().mean()
         
         
+
+class NavierStokesLoss(nn.Module):
+    def _denorm(self, out, inp): return out
         
+    def __init__(self, fun_denorm=None, rho=1.0, mu=0.01):
+        super(NavierStokesLoss, self).__init__()
+        self.fun_denorm = fun_denorm if fun_denorm is not None else self._denorm
+        self.rho = rho
+        self.mu = mu
+
+    def forward(self, output, inp):
+
+        field = self.fun_denorm(output.clone(), inp)
+        
+        # Separação das componentes
+        uz = field[:, 0]
+        uy = field[:, 1]
+        ux = field[:, 2]
+        p  = field[:, 3]
+
+        # --- Helper: Operadores Diferenciais em Unidades de Rede ---
+        def d_dx(f): return (f[:, 1:-1, 1:-1, 2:] - f[:, 1:-1, 1:-1, :-2]) / 2.0
+        def d_dy(f): return (f[:, 1:-1, 2:, 1:-1] - f[:, 1:-1, :-2, 1:-1]) / 2.0
+        def d_dz(f): return (f[:, 2:, 1:-1, 1:-1] - f[:, :-2, 1:-1, 1:-1]) / 2.0
+        
+        def laplacian(f):
+            f_c = f[:, 1:-1, 1:-1, 1:-1]
+            d2x = f[:, 1:-1, 1:-1, 2:] - 2*f_c + f[:, 1:-1, 1:-1, :-2]
+            d2y = f[:, 1:-1, 2:, 1:-1] - 2*f_c + f[:, 1:-1, :-2, 1:-1]
+            d2z = f[:, 2:, 1:-1, 1:-1] - 2*f_c + f[:, :-2, 1:-1, 1:-1]
+            return d2x + d2y + d2z
+
+
+        loss_mom_z =  self.rho * (uz[:, 1:-1, 1:-1, 1:-1] * d_dz(uz) + uy[:, 1:-1, 1:-1, 1:-1] * d_dy(uz) + ux[:, 1:-1, 1:-1, 1:-1] * d_dx(uz))
+        loss_mom_z += d_dz(p)
+        #loss_mom_z -= self.mu * laplacian(uz)
+                     
+
+        loss_mom_y =  self.rho * (uz[:, 1:-1, 1:-1, 1:-1] * d_dz(uy) + uy[:, 1:-1, 1:-1, 1:-1] * d_dy(uy) + ux[:, 1:-1, 1:-1, 1:-1] * d_dx(uy)) 
+        loss_mom_y += d_dy(p)
+        #loss_mom_y -= self.mu * laplacian(uy)
+                     
+        loss_mom_x = self.rho * (uz[:, 1:-1, 1:-1, 1:-1] * d_dz(ux) + uy[:, 1:-1, 1:-1, 1:-1] * d_dy(ux) + ux[:, 1:-1, 1:-1, 1:-1] * d_dx(ux))
+        loss_mom_x += d_dx(p)
+        #loss_mom_x -= self.mu * laplacian(ux)
+
+        total_loss = torch.mean(loss_mom_z**2) + torch.mean(loss_mom_y**2) + torch.mean(loss_mom_x**2)
+
+        return total_loss

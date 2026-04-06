@@ -282,10 +282,6 @@ nnt.partial_train(
     )
 print("Ending Train ... ")
 
-# Use this for floating-point network outputs instead of torch.equal
-base_tensor = model.debug_outputs[0]
-#all_equal = all(torch.allclose(base_tensor, t, atol=1e-16) for t in model.debug_outputs[1:])
-#print("ALL EQUAL?", all_equal)
 
 #######################################################
 #************ DELETE OBJECTS   ***********************#
