@@ -162,7 +162,7 @@ if model_name=="javier_zyxp":
     model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     
     # Freeze sub-models    
-    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
+    nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
 
 elif model_name=="danny_zyxp":
     
@@ -181,7 +181,7 @@ elif model_name=="danny_zyxp":
     model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     
     # Freeze sub-models
-    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
+    nnt.freeze_on_training([model.y_model, model.y_model, model.x_model, model.p_model])
             
 else:
     raise Exception(f"Specified model {model_name} is not defined.")

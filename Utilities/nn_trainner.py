@@ -403,13 +403,13 @@ def init_weights_zeros(m):
                      nn.ConvTranspose1d, nn.ConvTranspose2d, nn.ConvTranspose3d)):
         nn.init.zeros_(m.weight)
         if m.bias is not None:
-            nn.init.ones_(m.bias)
+            nn.init.zeros_(m.bias)
             
     # Linear layers: zero weights and bias  
     elif isinstance(m, nn.Linear):
         nn.init.zeros_(m.weight)
         if m.bias is not None:
-            nn.init.ones_(m.bias)
+            nn.init.zeros_(m.bias)
             
     # Normalization layers: keep defaults (ones for weight, zeros for bias)
     elif isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d, nn.BatchNorm3d,
