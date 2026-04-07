@@ -332,7 +332,7 @@ class DannyKo_Net_Original(nn.Module):
             y_out = self.y_model(x) * 0.5
             z_out = self.z_model(x)
                 
-        combined = self.concat(x_out, y_out, z_out)
+        combined = self.concat(z_out, y_out, x_out)
         return self.main_model(combined)
     
     def predict(self, x):
@@ -440,7 +440,7 @@ class Extended_DannyKo(nn.Module):
             z_out = self.z_model.predict(x)
             p_out = self.p_model.predict(x)
                             
-        combined = self.concat(x_out, y_out, z_out, p_out)
+        combined = self.concat(z_out, y_out, x_out, p_out)
         return self.main_model(combined)
     
     def predict(self, x):

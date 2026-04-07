@@ -386,6 +386,8 @@ def Plot_Mean_Velocity_Scatter(models, datapath, batch_size=4, npoints=5000,
     if not save_mode:
         # Adjust layout one more time before showing
         plt.show()
+        
+        
 #######################################################
 #************ MAIN:                        ***********#
 #######################################################
@@ -395,15 +397,15 @@ device              = 'cpu'
 batch_size          = 1
 save_mode           = False
 sample_idexes       = [2]
-datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
-#datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
+#datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
+datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
 
 save_tag            = "Danny"
 shape               = (120,120,120)
-component           = 1 # Uz=0, Uy=1, Ux=2, P=3
+component           = 3 # Uz=0, Uy=1, Ux=2, P=3
 models          = {}
 # 1 Directional Flow Models
-if z_direction_only:
+if component==0:
     
     """
     # Baseline model
@@ -472,7 +474,7 @@ if z_direction_only:
     """
     
     
-    # Do Pressure (no Walls) removed deconvolution residual
+    # Do Pressure (no Walls) removed deconvolution residual ?
     #"""
     model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
@@ -500,15 +502,10 @@ if z_direction_only:
     danny_model.bin_input = True
     models["Danny - Orig. Data Aug"] = danny_model
     print_n_params(danny_model, pytorch=True)
-    
-
-    
-    
-    
     #"""
     
-    # Hows X components performing
-    """
+elif component==2:
+    
     model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
@@ -517,10 +514,10 @@ if z_direction_only:
     danny_model.bin_input = True
     models["Danny - Orig. Data Aug"] = danny_model
     print_n_params(danny_model, pytorch=True)
-    """
     
-    # Hows P components performing
-    """
+
+elif component==3:
+
     model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
     model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
@@ -529,7 +526,7 @@ if z_direction_only:
     danny_model.bin_input = True
     models["Danny - Orig. Data Aug"] = danny_model
     print_n_params(danny_model, pytorch=True)
-    """
+    
     
 # 3 Directional Flow Models
 else:    

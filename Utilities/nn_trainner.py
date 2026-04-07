@@ -11,6 +11,7 @@ import copy
 import torch.nn          as nn
 import os
 from   Utilities           import usage_metrics as um
+import sys
 
 
 def full_train(model, 
@@ -625,6 +626,23 @@ def set_global_seed(seed: int, deterministic_strict: bool = False):
     
     print(f"Global seed set to {seed}")
 
+
+def set_logger_output_folder(base_dir: str):
+    class Logger(object):
+        def __init__(self, filename="Default.log"):
+            self.terminal = sys.stdout
+            self.log = open(filename, "a", encoding='utf-8')
+
+        def write(self, message):
+            self.terminal.write(message) 
+            self.log.write(message)      
+
+        def flush(self):
+            self.terminal.flush()
+            self.log.flush()
+            
+    sys.stdout = Logger(os.path.join(base_dir, "output.txt"))
+    sys.stderr = sys.stdout
 
 def create_training_data_folder(base_dir: str = None):
     # Use current working directory if base_dir not provided

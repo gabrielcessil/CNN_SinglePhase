@@ -2,6 +2,7 @@ import torch.nn as nn
 import json
 import torch
 import os
+import sys
 import numpy as np
 import argparse
 from   torch.utils.data import DataLoader
@@ -36,6 +37,7 @@ else:
 with open(json_path, 'r') as file:
     config = json.load(file)
     
+
 
 #######################################################
 #************ USER INPUTS (from .json):    ***********#
@@ -74,6 +76,9 @@ if NN_results_folder is None:
 # Update used results folder config
 dataset_train_full_name     = NN_dataset_folder+dataset_train_name
 dataset_valid_full_name     = NN_dataset_folder+dataset_valid_name
+
+# Redirect prints to results folder
+nnt.set_logger_output_folder(NN_dataset_folder)
 
 
 #######################################################

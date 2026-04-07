@@ -75,6 +75,9 @@ if NN_results_folder is None:
 dataset_train_full_name     = NN_dataset_folder+dataset_train_name
 dataset_valid_full_name     = NN_dataset_folder+dataset_valid_name
 
+# Redirect prints to results folder
+nnt.set_logger_output_folder(NN_dataset_folder)
+
 
 #######################################################
 #************ HARDCODED OBJECTS:           ***********#
