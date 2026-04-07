@@ -194,6 +194,7 @@ if   weight_init is None or weight_init in ('none'):        pass
 elif weight_init.lower() in ('xavier'):           model.main_model.apply(nnt.init_weights_xavier)
 elif weight_init.lower() in ('he'):               model.main_model.apply(nnt.init_weights_he)
 elif weight_init.lower() in ('zero', 'zeros'):    model.main_model.apply(nnt.init_weights_zeros)
+elif weight_init.lower() in ('normal'):           model.main_model.apply(nnt.init_weights_normal)
 else: raise(f"Weights initialization mode {weight_init} not implemented.")
 
         

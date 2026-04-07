@@ -48,12 +48,17 @@ class Mask_LossFunction(nn.Module):
         
         if output.size() != target.size():
             raise ValueError(f"CustomLoss forward: Tensors have different sizes ({output.size()} vs {target.size()})")
-        mask = self.mask_law(output, target)
         
         if self.mode == 'flatten':
-            return self.lossFunction(output[mask], target[mask])
-        
+            loss = 0.0
+            C = output.shape[1]
+            for c in range(C):
+                mask_c   = self.mask_law(output[:, c], target[:, c])
+                loss    += self.lossFunction(output[:, c][mask_c], target[:, c][mask_c])
+            return loss / C
+                
         elif self.mode == 'overwrite':
+            mask = self.mask_law(output, target)
             temp_output = output.clone()
             temp_output[~mask] = target[~mask]
             output = temp_output            
