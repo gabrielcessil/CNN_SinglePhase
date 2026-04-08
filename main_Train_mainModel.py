@@ -95,9 +95,7 @@ loss_functions  = {
     "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
     "Divergent":               {"obj":  lf.Divergent(),                              "Thresholded": True}, 
     "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
-    "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000)),  "Thresholded": True},
     "Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True},
-    "KGE":                     {"obj":  lf.Mask_LossFunction(lf.KGE()),              "Thresholded": True}
 }
 
 
