@@ -228,7 +228,7 @@ print()
 # Create dataloader
 train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
 valid_loader = DataLoader(valid_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-torch.set_num_threads(num_threads)
+if num_threads is not None: torch.set_num_threads(num_threads)
 
 
 #######################################################
