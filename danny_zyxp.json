@@ -11,7 +11,7 @@
   "num_threads":            18,
   "N_epochs":               30000,
   "partial_epochs":         6000,
-  "patience":               200,
+  "patience":               6000,
   "learning_rate":          0.001,
   "earlyStopping_loss":     "PI-MSE",
   "backPropagation_loss":   "PI-MSE",

@@ -7,7 +7,7 @@ from Danny_Original.architecture import Danny_KerasModel
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 
-"""
+
 #datapath   = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
 datapath    = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
 batch_size = 1
@@ -24,8 +24,8 @@ dataset = dr.LazyDatasetTorch(
 
 loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
-fn   = lf.Divergent()
-fn_2 = lf.Divergent_2()
+fn   = lf.Divergent_2()
+fn_2 = lf.Divergent()
 fn_3 = lf.MassConservation()
 fn_4 = lf.NavierStokesLoss()
 
@@ -36,14 +36,10 @@ with torch.no_grad():
         tar = tar.to(dtype=torch.float32)
         out = baseline_model.predict(inp)
         out = torch.concatenate([out, tar[:,3:4,:,:,:]],dim=1)
-         
-        # Gradient using torch.gradient()
-        #out_grad = torch.gradient(out, dim = (2,3,4)) # Dim= (B,C, Z,Y,X)
-        #out_div = out_grad[0][:,0] + out_grad[1][:,1] + out_grad[2][:,2]
-        
+    
 
         # Gradient using torch.gradient() channel by channel
-        tar_div = torch.gradient(tar, dim=2)[0][:, 0]
+        tar_div  = torch.gradient(tar, dim=2)[0][:, 0]
         tar_div += torch.gradient(tar, dim=3)[0][:, 1]
         tar_div += torch.gradient(tar, dim=4)[0][:, 2]
         
@@ -59,46 +55,35 @@ with torch.no_grad():
         print(f"Divergent_2:                   {fn_2(out, tar).item():.16f}")
         print(f"Mass Conservation:             {fn_3(out, inp).item():.16f}")
         print(f"Navier Stokes:                 {fn_4(out, inp).item():.16f}")
- """
+ 
         
-
-# 1. Criação do array 30x30x30 (Batch=1, Channel=1, Z=30, Y=30, X=30)
+# Verifying mask scheme used to derivate
 shape = (1, 1, 30, 30, 30)
 bin_solid = torch.ones(shape)
 
-# Zera todas as faces (fronteiras do domínio)
-bin_solid[:, :, 0, :, :] = 0  # Face Z inferior
-bin_solid[:, :, -1, :, :] = 0 # Face Z superior
-bin_solid[:, :, :, 0, :] = 0  # Face Y inferior
-bin_solid[:, :, :, -1, :] = 0 # Face Y superior
-bin_solid[:, :, :, :, 0] = 0  # Face X inferior
-bin_solid[:, :, :, :, -1] = 0 # Face X superior
-
-# Zera um quadrado 5x5x5 no meio (índices 13 a 18)
+bin_solid[:, :, 0, :, :] = 0  
+bin_solid[:, :, -1, :, :] = 0 
+bin_solid[:, :, :, 0, :] = 0  
+bin_solid[:, :, :, -1, :] = 0 
+bin_solid[:, :, :, :, 0] = 0  
+bin_solid[:, :, :, :, -1] = 0 
 bin_solid[:, :, 13:18, 13:18, 13:18] = 0
 
-# 2. Aplicação das operações (Máscaras booleanas)
-# Nota: O shape original é 30. Com os slices (1:-1 e 2: / :-2), o shape final será 28.
+
 mag_z_right = bin_solid[:, 0, 2:  , 1:-1, 1:-1] > 1e-16
 mag_z_left  = bin_solid[:, 0, :-2 , 1:-1, 1:-1] > 1e-16
 mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
 
-central  = ( mag_cent & mag_z_right  &  mag_z_left)  
+central     = ( mag_cent & mag_z_right  &  mag_z_left)  
 lat_forw    = ( mag_cent & mag_z_right  & ~mag_z_left) 
 lat_back    = ( mag_cent & ~mag_z_right  &  mag_z_left)
 
-
-# 3. Preparação para o Plot
-# Vamos pegar a fatia central do eixo Y (índice 14 do tensor que agora tem tamanho 28).
-# Assim, veremos o plano Z-X.
 slice_idx = 14 
 
-# Converte de Booleano para float e passa para numpy
-central_slc  = central[0, :, slice_idx, :].float().cpu().numpy()
+central_slc     = central[0, :, slice_idx, :].float().cpu().numpy()
 lat_forw_slc    = lat_forw[0, :, slice_idx, :].float().cpu().numpy()
 lat_back_slc    = lat_back[0, :, slice_idx, :].float().cpu().numpy()
 
-# 4. Plotagem
 fig, axes = plt.subplots(1, 5, figsize=(15, 5))
 
 # Plot Left
@@ -120,12 +105,7 @@ axes[1].set_xticks(range(bin_slice_red.shape[1]))
 axes[1].set_yticks(range(bin_slice_red.shape[0])) 
 axes[1].tick_params(labelsize=6)
 
-
-# Cria um colormap onde o primeiro item é para o 0 e o segundo é para o 1
-# 0 = Reddish (#ff6666), 1 = Greenish (#66cc66)
 custom_cmap = ListedColormap(['#ff6666', '#66cc66'])
-
-# Aplicando o colormap e forçando os limites (vmin=0, vmax=1) para garantir a consistência
 im0 = axes[2].imshow(central_slc, cmap=custom_cmap, vmin=0, vmax=1, origin='lower')
 axes[2].set_title("Where to apply Central Diff")
 axes[2].set_ylabel("Z")

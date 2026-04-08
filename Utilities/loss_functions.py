@@ -136,7 +136,7 @@ class KGE(nn.Module):
         return torch.sqrt(bias**2 + inv_corr**2)
     
     
-class Divergent(nn.Module):
+class Divergent_2(nn.Module):
     def __init__(self):
         super(Divergent, self).__init__()
         
@@ -188,7 +188,7 @@ class Divergent(nn.Module):
 
 
 
-class Divergent_2(nn.Module):
+class Divergent(nn.Module):
     def __init__(self):
         super(Divergent_2, self).__init__()
         
