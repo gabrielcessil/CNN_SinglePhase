@@ -75,6 +75,9 @@ if NN_results_folder is None:
 dataset_train_full_name     = NN_dataset_folder+dataset_train_name
 dataset_valid_full_name     = NN_dataset_folder+dataset_valid_name
 
+# Redirect prints to results folder
+nnt.set_logger_output_folder(NN_results_folder)
+
 
 #######################################################
 #************ HARDCODED OBJECTS:           ***********#
@@ -211,20 +214,14 @@ else:
 # Define input type
 model.bin_input =binary_input
 
-# Weights initialization
-if   weight_init in ('Xavier','xavier','XAVIER'):                           model.apply(nnt.init_weights_xavier)
-elif weight_init in ('He','he','HE'):                                       model.apply(nnt.init_weights_he)
-elif weight_init in ('Zero', 'Zeros', 'zero', 'zeros', 'ZERO', 'ZEROS'):    model.apply(nnt.init_weights_zeros)
-elif weight_init is None or weight_init in ('None', 'none', 'NONE'):        pass
+# Weights initialization to TRAINABLE model
+if   weight_init is None or weight_init in ('none'):        pass
+elif weight_init.lower() in ('xavier'):           model.apply(nnt.init_weights_xavier)
+elif weight_init.lower() in ('he'):               model.apply(nnt.init_weights_he)
+elif weight_init.lower() in ('zero', 'zeros'):    model.apply(nnt.init_weights_zeros)
+elif weight_init.lower() in ('normal'):           model.apply(nnt.init_weights_normal)
 else: raise(f"Weights initialization mode {weight_init} not implemented.")
 
-# Weights initialization
-if weight_init in ('Xavier', 'He', 'Zero', 'Zeros'):
-    init_func = nnt.init_weights_xavier if weight_init.lower() == 'xavier' else \
-                nnt.init_weights_he     if weight_init.lower() == 'he'     else \
-                nnt.init_weights_zeros
-            
-    model.apply(init_func)
         
 
 
@@ -282,10 +279,6 @@ nnt.partial_train(
     )
 print("Ending Train ... ")
 
-# Use this for floating-point network outputs instead of torch.equal
-base_tensor = model.debug_outputs[0]
-#all_equal = all(torch.allclose(base_tensor, t, atol=1e-16) for t in model.debug_outputs[1:])
-#print("ALL EQUAL?", all_equal)
 
 #######################################################
 #************ DELETE OBJECTS   ***********************#

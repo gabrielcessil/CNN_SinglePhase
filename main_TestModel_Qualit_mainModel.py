@@ -82,7 +82,7 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
     tar_z           = tar_z[component]  # Get component channel: z=0, y=1, x=2, p=3
     tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='front') # Put zeros on solid
     
-    # Prepare color range
+    # Prepare color range: fluid's range
     vmin, vmax      = np.percentile(tar_z_masked.compressed(), [1, 99])
     
     folder = "Plot_Front_Comparison_"+save_tag
@@ -112,7 +112,7 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
         #tar = mean_normalize(inp, tar)
         #out = mean_normalize(inp, out)
         
-        out_z       = out.squeeze(0)[0]          # Remove batch dim, get first channel
+        out_z       = out.squeeze(0)[component]          # Remove batch dim, get component channel
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='front') # Put zeros on solid
         vmin, vmax      = np.percentile(o_z_masked.compressed(), [1, 99])
         if save_mode:
@@ -178,9 +178,9 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
         #tar = mean_normalize(inp, tar)
         #out = mean_normalize(inp, out)
         
-        out_z       = out.squeeze(0)[0]   
+        out_z       = out.squeeze(0)[component]   
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='side') # Put zeros on solid
-        vmin, vmax      = np.percentile(o_z_masked.compressed(), [1, 99])
+        vmin, vmax  = np.percentile(o_z_masked.compressed(), [1, 99])
         if save_mode:
             plt.figure(figsize=(6, 6))
             plt.imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
@@ -386,152 +386,39 @@ def Plot_Mean_Velocity_Scatter(models, datapath, batch_size=4, npoints=5000,
     if not save_mode:
         # Adjust layout one more time before showing
         plt.show()
-        
-        
 #######################################################
 #************ MAIN:                        ***********#
 #######################################################
 
-z_direction_only    = True
 device              = 'cpu'
 batch_size          = 1
 save_mode           = False
-sample_idexes       = [2]
+sample_idexes       = [0,1,2,5]
 #datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
 datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
 
 save_tag            = "Danny"
 shape               = (120,120,120)
-component           = 3 # Uz=0, Uy=1, Ux=2, P=3
+component           = 2 # Uz=0, Uy=1, Ux=2, P=3
 models          = {}
 # 1 Directional Flow Models
-if component==0:
     
-    """
-    # Baseline model
-    print("\nLoading Danny Ko (Baseline)...")
-    baseline_model  = Danny_KerasModel(uni_directional=0)
-    print_n_params(baseline_model.model, pytorch=False)
-    models["Baseline Danny (Ke) - Danny Data"] = baseline_model
-    
-    # Dataset Danny Simulado - Sem Augmentation - Dados Alinhados
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-11PM_Job16070/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data noAug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    #nnt.load_model_from_checkpoint(danny_model, "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_13_March_2026_02-13PM_Job16072/", 1200)
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - My Data noAug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    """
-    
-    # Comparing Javier and Danny Models
-    """
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    javier_model = MS_Net()
-    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
-    javier_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    javier_model.eval()
-    javier_model.bin_input = False
-    models["Javier Arq. - STA"] = javier_model
-    print_n_params(javier_model, pytorch=True)
-    """
-    
-    
-    # Do Pressure (no Walls) removed deconvolution residual ?
-    #"""
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_04-02PM_Job16923/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA (Pr)"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA (Pr+Walls)"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    #"""
-    
-elif component==2:
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
+"""
+# Baseline model
+print("\nLoading Danny Ko (Baseline)...")
+baseline_model  = Danny_KerasModel()
+print_n_params(baseline_model.model, pytorch=False)
+models["Baseline Danny (Ke) - Danny Data"] = baseline_model
+"""
 
-elif component==3:
-
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    
-# 3 Directional Flow Models
-else:    
-    baseline_model  = Danny_KerasModel()
-    models["Baseline Danny (Ke) - Danny Data"] = baseline_model
+# Dataset Danny Simulado - Sem Augmentation - Dados Alinhados
+danny_model       = Extended_DannyKo()
+model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_2_April_2026_05-04PM_Job17455/model_LowerValidationLoss.pth"
+danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+danny_model.eval()
+danny_model.bin_input = True
+models["Danny"] = danny_model
+print_n_params(danny_model, pytorch=True)
     
 
 # --- Execution Block ---

@@ -11,6 +11,7 @@ import copy
 import torch.nn          as nn
 import os
 from   Utilities           import usage_metrics as um
+import sys
 
 
 def full_train(model, 
@@ -402,13 +403,13 @@ def init_weights_zeros(m):
                      nn.ConvTranspose1d, nn.ConvTranspose2d, nn.ConvTranspose3d)):
         nn.init.zeros_(m.weight)
         if m.bias is not None:
-            nn.init.ones_(m.bias)
+            nn.init.zeros_(m.bias)
             
     # Linear layers: zero weights and bias  
     elif isinstance(m, nn.Linear):
         nn.init.zeros_(m.weight)
         if m.bias is not None:
-            nn.init.ones_(m.bias)
+            nn.init.zeros_(m.bias)
             
     # Normalization layers: keep defaults (ones for weight, zeros for bias)
     elif isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d, nn.BatchNorm3d,
@@ -470,7 +471,29 @@ def init_weights_he(m):
             nn.init.zeros_(m.bias)
 
 
+
+def init_weights_normal(m):
     
+    std = 0.01
+    
+    # Aplica a distribuição normal apenas nas camadas convolucionais
+    if isinstance(m, (nn.Conv1d, nn.Conv2d, nn.Conv3d, 
+                      nn.ConvTranspose1d, nn.ConvTranspose2d, nn.ConvTranspose3d)):
+        nn.init.normal_(m.weight, mean=0.0, std=std)
+        if m.bias is not None:
+            nn.init.zeros_(m.bias)
+            
+    # Mantém a inicialização padrão para as camadas de normalização (gamma=1, beta=0)
+    elif isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d, nn.BatchNorm3d,
+                        nn.LayerNorm, nn.GroupNorm, nn.InstanceNorm1d,
+                        nn.InstanceNorm2d, nn.InstanceNorm3d)):
+        if m.weight is not None:
+            nn.init.ones_(m.weight)
+        if m.bias is not None:
+            nn.init.zeros_(m.bias)
+            
+    return init_weights_normal
+
 #######################################################
 #****************** AUXILIARY FUNCTIONS **************#
 #######################################################
@@ -625,6 +648,23 @@ def set_global_seed(seed: int, deterministic_strict: bool = False):
     
     print(f"Global seed set to {seed}")
 
+
+def set_logger_output_folder(base_dir: str):
+    class Logger(object):
+        def __init__(self, filename="Default.log"):
+            self.terminal = sys.stdout
+            self.log = open(filename, "a", encoding='utf-8')
+
+        def write(self, message):
+            self.terminal.write(message) 
+            self.log.write(message)      
+
+        def flush(self):
+            self.terminal.flush()
+            self.log.flush()
+            
+    sys.stdout = Logger(os.path.join(base_dir, "output.txt"))
+    sys.stderr = sys.stdout
 
 def create_training_data_folder(base_dir: str = None):
     # Use current working directory if base_dir not provided

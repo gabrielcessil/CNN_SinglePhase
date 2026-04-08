@@ -3,6 +3,8 @@ import torch
 import tensorflow         as tf
 import matplotlib.pyplot  as plt
 import pandas             as pd
+import seaborn            as sns
+
 from torch.utils.data     import DataLoader
 
 from Architectures.Unet   import Extended_DannyKo
@@ -13,7 +15,7 @@ from Danny_Original.architecture import Danny_KerasModel
 
 
 #######################################################
-#************ UTILS:                       ***********#
+#************ UTILS:                      ***********#
 #######################################################
 
 def mean_normalize(inp, x): 
@@ -43,9 +45,9 @@ def print_n_params(model, pytorch=True):
         trainable       = sum(tf.keras.backend.count_params(w) for w in model.trainable_weights)
         non_trainable   = sum(tf.keras.backend.count_params(w) for w in model.non_trainable_weights)
 
-    print("Trainable params:     ", trainable)
+    print("Trainable params:      ", trainable)
     print("Non-trainable params: ", non_trainable)
-    print("Total params:         ", trainable + non_trainable)
+    print("Total params:          ", trainable + non_trainable)
 
 
 #######################################################
@@ -387,9 +389,6 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
         # 1. Prediction
         batch_inputs  = batch_inputs.clone().detach().to(dtype=torch.float32)
         batch_outputs = model.predict(batch_inputs)
-        
-        print("output shape: ", batch_outputs.shape)
-        print("target shape: ", batch_targets.shape)
             
         # 2. Casting and transformation
         batch_targets = batch_targets.clone().detach().to(dtype=torch.float32)
@@ -398,16 +397,13 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
         batch_targets = mean_normalize(batch_inputs, batch_targets)
         batch_outputs = mean_normalize(batch_inputs, batch_outputs)
         
-        
-        
         # 3. Masking (Solid = 0)
         mask                = batch_inputs[:, 0:1, :, :, :] <= 0 
         mask                = mask.expand_as(batch_outputs)
         batch_outputs[mask] = 0.0
 
-        # 5. Calculate & Collect Metrics
+        # 4. Calculate & Collect Metrics
         if component==4: # If component is Z,Y,X
-            # 3D Metrics
             all_metrics["p_metrics"].extend(Permeability_Comparison(batch_inputs, batch_outputs, batch_targets))
             all_metrics["m_metrics"].extend(Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
             all_metrics["a_metrics"].extend(Angular_Comparison     (batch_inputs, batch_outputs, batch_targets))
@@ -416,9 +412,7 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
             all_metrics["t_metrics"].extend(Tortuosity_Comparison  (batch_inputs, batch_outputs, batch_targets))
             all_metrics["d_metrics"].extend(Divergent_Residual     (batch_inputs, batch_outputs))
             
-            
         else: # If component is Z only
-            # 1D Metrics (Z-direction only)
             bt_z = batch_targets[:, 0:1, :, :, :]
             bo_z = batch_outputs[:, 0:1, :, :, :]
             
@@ -426,22 +420,19 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
             all_metrics["m_metrics"].extend(Magnitude_Comparison   (batch_inputs, bo_z, bt_z))
             all_metrics["c_metrics"].extend(Correlation_Comparison (batch_inputs, bo_z, bt_z))
             all_metrics["f_metrics"].extend(Flux_Comparison        (batch_inputs, bo_z, bt_z))
-            
-                
-            
 
     # --- Final Global Aggregation ---
     final_results = {}
     
-    final_results["Mean Permeability Error [%]"] = np.mean(all_metrics["p_metrics"])
-    final_results["Mean Magnitude Error [%]"]    = np.mean(all_metrics["m_metrics"])
-    final_results["Mean Correlation"]            = np.mean(all_metrics["c_metrics"])
-    final_results["Mean Flux Error"]             = np.mean(all_metrics["f_metrics"])
+    final_results["Permeability Error [%]"] = all_metrics["p_metrics"]
+    final_results["Magnitude Error [%]"]    = all_metrics["m_metrics"]
+    final_results["Correlation"]            = all_metrics["c_metrics"]
+    final_results["Flux Error"]             = all_metrics["f_metrics"]
     
     if component==4: # If component is Z,Y,X
-        final_results["Mean Angular Error [Deg]"]    = np.mean(all_metrics["a_metrics"])
-        final_results["Mean Tortuosity Error [%]"]       = np.mean(all_metrics["t_metrics"])
-        final_results["Mean Divergent Residual [%]"]     = np.mean(all_metrics["d_metrics"])
+        final_results["Angular Error [Deg]"]    = all_metrics["a_metrics"]
+        final_results["Tortuosity Error [%]"]   = all_metrics["t_metrics"]
+        final_results["Divergent Residual [%]"] = all_metrics["d_metrics"]
 
     return final_results
 
@@ -457,7 +448,7 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
 # 3 - p models
 # 4 - zyx models
 # None - zyx-p models
-component        = 2  
+component        = 0
 
 batch_size       = 8
 N_samples        = None # 'None' to consider all available samples
@@ -467,10 +458,10 @@ device           = 'cpu'
 datasets        = {
     #"Trainning": "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_PressureWalls.h5",
     
-    "Spherical Pore":   "../NN_Datasets/ForceDriven/Test_SphPore_120_120_120.h5",
-    "Spherical Grain":  "../NN_Datasets/ForceDriven/Test_SphGrain_120_120_120.h5",
-    "Cylindrical Pore": "../NN_Datasets/ForceDriven/Test_CylinPore_120_120_120.h5",
-    "Cylindrical Grain":"../NN_Datasets/ForceDriven/Test_CylinGrain_120_120_120.h5",
+    #"Spherical Pore":   "../NN_Datasets/ForceDriven/Test_SphPore_120_120_120.h5",
+    #"Spherical Grain":  "../NN_Datasets/ForceDriven/Test_SphGrain_120_120_120.h5",
+    #"Cylindrical Pore": "../NN_Datasets/ForceDriven/Test_CylinPore_120_120_120.h5",
+    #"Cylindrical Grain":"../NN_Datasets/ForceDriven/Test_CylinGrain_120_120_120.h5",
     
     "Parker":       "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5",
     "Leopard":      "../NN_Datasets/ForceDriven/Test_Oliveira_Leopard_120_120_120.h5",
@@ -481,8 +472,8 @@ datasets        = {
     "Sinter Gray":  "../NN_Datasets/ForceDriven/Test_Oliveira_BereaSinterGray_120_120_120.h5",
     "Berea Buff":   "../NN_Datasets/ForceDriven/Test_Oliveira_BereaBuff_120_120_120.h5",
     "Berea":        "../NN_Datasets/ForceDriven/Test_Oliveira_Berea_120_120_120.h5",
-    "Bentheimer":   "../NN_Datasets/ForceDriven/Test_Oliveira_Bentheimer_120_120_120.h5",
-    "Bandera":      "../NN_Datasets/ForceDriven/Test_Oliveira_Bandera_120_120_120.h5",
+    #"Bentheimer":   "../NN_Datasets/ForceDriven/Test_Oliveira_Bentheimer_120_120_120.h5",
+    #"Bandera":      "../NN_Datasets/ForceDriven/Test_Oliveira_Bandera_120_120_120.h5",
     }
 
 
@@ -490,42 +481,13 @@ datasets        = {
 models          = {}
 # 1 Directional Flow Models
 if component==0:
-    
-    """
-    # Baseline model
-    print("\nLoading Danny Ko (Baseline)...")
-    baseline_model  = Danny_KerasModel(component=0)
-    print_n_params(baseline_model.model, pytorch=False)
-    models["Baseline Danny (Ke) - Danny Data"] = baseline_model
-    
-
-    # DATASETS COMPARISON
-    
     model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-11PM_Job16070/model_LowerValidationLoss.pth"
+    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_04-02PM_Job16923/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
-    models["Danny Arq. - SO"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - SOA"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - ST"] = danny_model
+    models["Danny Arq. - STA (Pr)"] = danny_model
     print_n_params(danny_model, pytorch=True)
     
     model_aux       = Extended_DannyKo()
@@ -539,49 +501,12 @@ if component==0:
     
     model_aux       = Extended_DannyKo()
     danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_04-02PM_Job16923/model_LowerValidationLoss.pth"
+    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
     danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     danny_model.eval()
     danny_model.bin_input = True
-    models["Danny Arq. - STA (Pr)"] = danny_model
+    models["Danny - Orig. Data Aug"] = danny_model
     print_n_params(danny_model, pytorch=True)
-    """
-    
-    
-    # ARCHITECTURES COMPARISON (Uz)
-    #"""
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-
-    model_aux       = JavierSantos_Extended()
-    javier_model    = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
-    javier_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    javier_model.eval()
-    javier_model.bin_input = False
-    models["Javier Arq. - STA"] = javier_model
-    print_n_params(javier_model, pytorch=True)
-
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_16_March_2026_12-08PM_Job16226/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA (Corr)"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    #"""
-    
-    #
-    
-# Uy
-#elif component==1:
     
 # Ux
 elif component==2:
@@ -595,31 +520,20 @@ elif component==2:
     danny_model.bin_input = True
     models["Danny Arq"] = danny_model
     print_n_params(danny_model, pytorch=True)
-    
-# P
-#elif component==3:
         
 # Uz, Uy, Uy
-elif component==4:    
+elif component==4:   
     baseline_model  = Danny_KerasModel()
     models["Baseline Danny (Ke) - Danny Data"] = baseline_model
     
-# Uz, Uy, Ux, Up
-#else:  
-   
 
 #######################################################
 #************ RUN ANALYSIS:                ***********#
 #######################################################
 
-results = {}
-def stash_metrics(dataname: str, model_id, metrics: dict):
-    for metric_name, value in metrics.items():
-        results.setdefault(metric_name, {})
-        results[metric_name].setdefault(model_id, {})
-        results[metric_name][model_id][dataname] = float(value)
-        
-        
+# Lista para armazenar os dados no formato longo (long-format), ideal para pandas e seaborn
+all_records = []
+
 print("Loading baseline model")
 if component==0:
     baseline_model  = Danny_KerasModel(component=0)
@@ -638,144 +552,107 @@ for dataname, datapath in datasets.items():
                                     y_dtype=torch.float32)
     
     dataset.component = component
-    
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
     
     # Compute metrics for each model
     for model_id, model in models.items():
         print("Testing model:  ", model_id)
-        # Compute metrics
-        metrics = Test_Model_on_Dataset(dataloader, model, component=component, model_name=model_id, datasetname=dataname)
+        
+        # metrics agora é um dicionário onde cada chave tem uma LISTA de valores
+        metrics_lists = Test_Model_on_Dataset(dataloader, model, component=component, model_name=model_id, datasetname=dataname)
         print("\n-----------------------------------------------------\n")
-        # Register metrics achieved
-        stash_metrics(dataname, model_id, metrics)
+        
+        # Guardar cada valor de amostra separadamente
+        for metric_name, values in metrics_lists.items():
+            for v in values:
+                all_records.append({
+                    "Dataset": dataname,
+                    "Model": model_id,
+                    "Metric": metric_name,
+                    "Value": float(v)
+                })
     print()
-    
     del dataloader
+
+
+#######################################################
+#************ SHOW RESULTS IN PLOTS:       ***********#
+#######################################################
+
+# Criar um DataFrame único com todos os dados
+df_all = pd.DataFrame(all_records)
+
+# Pegar as listas de métricas e modelos disponíveis
+if not df_all.empty:
+    metrics_list = df_all["Metric"].unique()
+    dataset_order = sorted(df_all["Dataset"].unique())
     
-#######################################################
-#************ SAVE RESULTS IN DATAFRAME:   ***********#
-#######################################################
+    # Define estilo acadêmico limpo
+    sns.set_theme(
+        style="whitegrid",
+        context="paper",
+        font_scale=1.3,
+        rc={
+            "font.family": "serif",
+            "font.serif": ["Times New Roman", "DejaVu Serif"]
+        }
+    )
+    
+    palette = sns.color_palette("colorblind")
+    
+    # Um gráfico por métrica (comparando TODOS os modelos juntos)
+    for metric in metrics_list:
+        df_metric = df_all[df_all["Metric"] == metric]
+        
+        plt.figure(figsize=(14, 6))
+        
+        ax = sns.boxplot(
+            data=df_metric,
+            x="Dataset",
+            y="Value",
+            hue="Model",
+            order=dataset_order,
+            palette=palette,
+            width=0.7,
+            showfliers=False
+        )
+        
+        # Jitter leve (opcional, mantém distribuição visível sem poluir)
+        sns.stripplot(
+            data=df_metric,
+            x="Dataset",
+            y="Value",
+            hue="Model",
+            order=dataset_order,
+            dodge=True,
+            color="black",
+            alpha=0.2,
+            size=2
+        )
+        
+        # Corrigir legenda duplicada (boxplot + stripplot)
+        handles, labels = ax.get_legend_handles_labels()
+        n_models = len(df_metric["Model"].unique())
+        ax.legend(
+            handles[:n_models],
+            labels[:n_models],
+            title="Model",
+            frameon=False
+        )
+        
+        # Títulos e labels
+        plt.title(metric, fontsize=16, pad=15)
+        plt.ylabel(metric, fontsize=12)
+        plt.xlabel("Dataset", fontsize=12)
+        
+        plt.xticks(rotation=45, ha='right')
+        
+        # Estética limpa
+        sns.despine()
+        plt.tight_layout()
+        
+        # Mostrar (ou salvar se quiser)
+        plt.show()
 
-dfs = {}
-for metric_name, metric_cube in results.items():
-    df = pd.DataFrame.from_dict(metric_cube, orient="index")
-    df = df.reindex(columns=list(datasets.keys()))  # garante ordem das colunas
-    df = df.T
-    df['Mediana'] = df.median(axis=1)
-    df.loc['Mediana'] = df.median(axis=0)
-    dfs[metric_name] = df
-    print()
-    print(metric_name)
-    print(df)
-    print()
-
-if component==0:
-    path = "../NN_Results/Z_"
 else:
-    path = "../NN_Results/"
-
-GREEN_CELL = "green!25"
-RED_CELL   = "red!25"
-
-for metric_name, df in dfs.items():
-    latex_path  = path + f"{metric_name.replace(' ', '_')}.tex"
-    print("Saving dataframe in: ", latex_path)
-    n_models    = df.shape[1] - 1
-    col_fmt     = "P{3cm} " + " ".join(["P{2cm}"] *n_models ) + " | P{2cm}"
-    
-    # which columns to color (e.g. skip the first one = baseline)
-    columns_to_color = list(df.columns)
-
-    # ------------- choose rule based on metric_name -------------
-    # defaults: no coloring
-    mode        = "none" # "lower_better", "higher_better" or "none"
-    green_thr   = None
-    red_thr     = None
-    
-    # EXAMPLES – you will adapt these:
-    if "Mean Permeability Error [%]" in metric_name: # ok
-        mode = "lower_better"
-        green_thr = 20
-        red_thr   = 50  
-
-    elif "Mean Magnitude Error [%]" in metric_name: # ok
-        mode = "lower_better"
-        green_thr = 20  
-        red_thr   = 50 
-
-    elif "Mean Correlation" in metric_name: # ok
-        mode = "higher_better"
-        green_thr = 0.8
-        red_thr   = 0.5
-        
-    elif "Mean Flux Error" in metric_name: # ok
-        mode = "lower_better"
-        green_thr = 0.2
-        red_thr   = 0.5 
-        
-    elif "Mean Angular Error [Deg]" in metric_name:# ok
-        mode = "lower_better"
-        green_thr = 15
-        red_thr   = 75
-        
-    elif "Mean Tortuosity Error [%]" in metric_name:# ok
-        mode = "lower_better"
-        green_thr = 20
-        red_thr   = 50
-        
-    elif "Mean Divergent Residual [%]" in metric_name:
-        mode = "lower_better"
-        green_thr = 5
-        red_thr   = 20
-        
-        
-            
-
-    # ------------- formatter using the chosen rule -------------
-    def make_formatter(col_name):
-        def formatter(v):
-            if pd.isna(v):
-                return ""
-
-            color_prefix = ""
-            if col_name in columns_to_color and mode != "none":
-                if mode == "lower_better" and green_thr is not None and red_thr is not None:
-                    if v < green_thr:
-                        color_prefix = f"\\cellcolor{{{GREEN_CELL}}}"
-                    elif v > red_thr:
-                        color_prefix = f"\\cellcolor{{{RED_CELL}}}"
-                elif mode == "higher_better" and green_thr is not None and red_thr is not None:
-                    if v > green_thr:
-                        color_prefix = f"\\cellcolor{{{GREEN_CELL}}}"
-                    elif v < red_thr:
-                        color_prefix = f"\\cellcolor{{{RED_CELL}}}"
-
-            return f"{color_prefix}{v:.4f}"
-        return formatter
-
-    formatters = {col: make_formatter(col) for col in df.columns}
-
-    latex_body = df.to_latex(
-        column_format=col_fmt,
-        escape=False,
-        formatters=formatters
-    )
-    
-    latex_body = latex_body.replace("\nMediana", "\n\\hline\nMediana")
-    metric_name = metric_name.replace("%", "\\%")
-
-    wrapped_latex = (
-        "\\begin{table}[h!]\n"
-        "    \\centering\n"
-        "    \\footnotesize\n"
-        f"    \\caption{{{metric_name}}}\n"
-        
-        
-        "    \\label{tab:results}\n"
-        + latex_body +
-        "\\end{table}\n"
-    )
-
-    with open(latex_path, "w") as f:
-        f.write(wrapped_latex)
+    print("Nenhum dado foi processado para gerar os gráficos.")

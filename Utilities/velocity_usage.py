@@ -117,3 +117,86 @@ def permeability_calculation(out: torch.Tensor,
         k_lattice[b] = 1013*(u_mean * visc) / (dens * force_z)
         
     return k_lattice
+
+
+
+def d_dz(tensor, bin_solid, c=0):
+    mag_z_right = bin_solid[:, 0, 2:  , 1:-1, 1:-1] > 1e-16
+    mag_z_left  = bin_solid[:, 0, :-2 , 1:-1, 1:-1] > 1e-16
+    mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
+    
+    dz  = ( mag_cent & mag_z_right  &  mag_z_left)  * (tensor[:, c, 2:  , 1:-1, 1:-1] - tensor[:, c, :-2, 1:-1, 1:-1]) / 2.0
+    dz += ( mag_cent & mag_z_right  & ~mag_z_left)  * (tensor[:, c, 2:  , 1:-1, 1:-1] - tensor[:, c, 1:-1, 1:-1, 1:-1])
+    dz += ( mag_cent & ~mag_z_right  &  mag_z_left)  * (tensor[:, c, 1:-1, 1:-1, 1:-1] - tensor[:, c, :-2, 1:-1, 1:-1])
+    
+    return dz
+
+def d_dy(tensor, bin_solid, c=1):
+    mag_y_right = bin_solid[:, 0, 1:-1, 2:  , 1:-1] > 1e-16
+    mag_y_left  = bin_solid[:, 0, 1:-1, :-2, 1:-1]  > 1e-16
+    mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
+    
+    dy  = (mag_cent &  mag_y_right  &  mag_y_left)  * (tensor[:, c, 1:-1, 2:  , 1:-1] - tensor[:, c, 1:-1, :-2, 1:-1]) / 2.0
+    dy += (mag_cent &  mag_y_right  & ~mag_y_left)  * (tensor[:, c, 1:-1, 2:  , 1:-1] - tensor[:, c, 1:-1, 1:-1, 1:-1])
+    dy += (mag_cent & ~mag_y_right  &  mag_y_left)  * (tensor[:, c, 1:-1, 1:-1, 1:-1] - tensor[:, c, 1:-1, :-2, 1:-1])
+    
+    return dy
+    
+def d_dx(tensor, bin_solid, c=2):
+    mag_x_right = bin_solid[:, 0, 1:-1, 1:-1, 2:  ] > 1e-16 # right is free
+    mag_x_left  = bin_solid[:, 0, 1:-1, 1:-1, :-2]  > 1e-16 # left is free
+    mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
+    
+    dx  = (mag_cent &  mag_x_right  &  mag_x_left)  * (tensor[:, c, 1:-1, 1:-1, 2:  ] - tensor[:, c, 1:-1, 1:-1, :-2]) / 2.0
+    dx += (mag_cent &  mag_x_right  & ~mag_x_left)  * (tensor[:, c, 1:-1, 1:-1, 2:  ] - tensor[:, c, 1:-1, 1:-1, 1:-1])
+    dx += (mag_cent & ~mag_x_right  &  mag_x_left)  * (tensor[:, c, 1:-1, 1:-1, 1:-1] - tensor[:, c, 1:-1, 1:-1, :-2])
+      
+    return dx
+
+def d2_dz2(tensor, bin_solid, c=0):
+    mag_z_right = bin_solid[:, 0, 2:  , 1:-1, 1:-1] > 1e-16
+    mag_z_left  = bin_solid[:, 0, :-2 , 1:-1, 1:-1] > 1e-16
+    mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
+    
+    f_c = tensor[:, c, 1:-1, 1:-1, 1:-1]
+    f_r = tensor[:, c, 2:  , 1:-1, 1:-1]
+    f_l = tensor[:, c, :-2 , 1:-1, 1:-1]
+    
+    d2z  = (mag_cent &  mag_z_right &  mag_z_left) * (f_r - 2*f_c + f_l)
+    d2z += (mag_cent &  mag_z_right & ~mag_z_left) * (f_r - 2*f_c)
+    d2z += (mag_cent & ~mag_z_right &  mag_z_left) * (-2*f_c + f_l)
+    d2z += (mag_cent & ~mag_z_right & ~mag_z_left) * (-2*f_c)
+    
+    return d2z
+
+def d2_dy2(tensor, bin_solid, c=1):
+    mag_y_right = bin_solid[:, 0, 1:-1, 2:  , 1:-1] > 1e-16
+    mag_y_left  = bin_solid[:, 0, 1:-1, :-2 , 1:-1] > 1e-16
+    mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
+    
+    f_c = tensor[:, c, 1:-1, 1:-1, 1:-1]
+    f_r = tensor[:, c, 1:-1, 2:  , 1:-1]
+    f_l = tensor[:, c, 1:-1, :-2 , 1:-1]
+    
+    d2y  = (mag_cent &  mag_y_right &  mag_y_left) * (f_r - 2*f_c + f_l)
+    d2y += (mag_cent &  mag_y_right & ~mag_y_left) * (f_r - 2*f_c)
+    d2y += (mag_cent & ~mag_y_right &  mag_y_left) * (-2*f_c + f_l)
+    d2y += (mag_cent & ~mag_y_right & ~mag_y_left) * (-2*f_c)
+    
+    return d2y
+    
+def d2_dx2(tensor, bin_solid, c=2):
+    mag_x_right = bin_solid[:, 0, 1:-1, 1:-1, 2:  ] > 1e-16
+    mag_x_left  = bin_solid[:, 0, 1:-1, 1:-1, :-2 ] > 1e-16
+    mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
+    
+    f_c = tensor[:, c, 1:-1, 1:-1, 1:-1]
+    f_r = tensor[:, c, 1:-1, 1:-1, 2:  ]
+    f_l = tensor[:, c, 1:-1, 1:-1, :-2 ]
+    
+    d2x  = (mag_cent &  mag_x_right &  mag_x_left) * (f_r - 2*f_c + f_l)
+    d2x += (mag_cent &  mag_x_right & ~mag_x_left) * (f_r - 2*f_c)
+    d2x += (mag_cent & ~mag_x_right &  mag_x_left) * (-2*f_c + f_l)
+    d2x += (mag_cent & ~mag_x_right & ~mag_x_left) * (-2*f_c)
+    
+    return d2x

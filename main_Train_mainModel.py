@@ -2,6 +2,7 @@ import torch.nn as nn
 import json
 import torch
 import os
+import sys
 import numpy as np
 import argparse
 from   torch.utils.data import DataLoader
@@ -36,6 +37,7 @@ else:
 with open(json_path, 'r') as file:
     config = json.load(file)
     
+
 
 #######################################################
 #************ USER INPUTS (from .json):    ***********#
@@ -74,6 +76,9 @@ if NN_results_folder is None:
 # Update used results folder config
 dataset_train_full_name     = NN_dataset_folder+dataset_train_name
 dataset_valid_full_name     = NN_dataset_folder+dataset_valid_name
+
+# Redirect prints to results folder
+nnt.set_logger_output_folder(NN_results_folder)
 
 
 #######################################################
@@ -157,7 +162,7 @@ if model_name=="javier_zyxp":
     model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     
     # Freeze sub-models    
-    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
+    nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
 
 elif model_name=="danny_zyxp":
     
@@ -176,7 +181,7 @@ elif model_name=="danny_zyxp":
     model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
     
     # Freeze sub-models
-    nnt.freeze_on_training([model.x_model, model.y_model, model.z_model, model.p_model])
+    nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
             
 else:
     raise Exception(f"Specified model {model_name} is not defined.")
@@ -184,21 +189,13 @@ else:
 # Define input type
 model.bin_input = binary_input
 
-# Weights initialization
-if   weight_init in ('Xavier','xavier','XAVIER'):                           model.apply(nnt.init_weights_xavier)
-elif weight_init in ('He','he','HE'):                                       model.apply(nnt.init_weights_he)
-elif weight_init in ('Zero', 'Zeros', 'zero', 'zeros', 'ZERO', 'ZEROS'):    model.apply(nnt.init_weights_zeros)
-elif weight_init is None or weight_init in ('None', 'none', 'NONE'):        pass
+# Weights initialization to TRAINABLE model
+if   weight_init is None or weight_init in ('none'):        pass
+elif weight_init.lower() in ('xavier'):           model.main_model.apply(nnt.init_weights_xavier)
+elif weight_init.lower() in ('he'):               model.main_model.apply(nnt.init_weights_he)
+elif weight_init.lower() in ('zero', 'zeros'):    model.main_model.apply(nnt.init_weights_zeros)
+elif weight_init.lower() in ('normal'):           model.main_model.apply(nnt.init_weights_normal)
 else: raise(f"Weights initialization mode {weight_init} not implemented.")
-
-# Weights initialization
-if weight_init in ('Xavier', 'He', 'Zero', 'Zeros'):
-    init_func = nnt.init_weights_xavier if weight_init.lower() == 'xavier' else \
-                nnt.init_weights_he     if weight_init.lower() == 'he'     else \
-                nnt.init_weights_zeros
-                
-    # If training the main model, apply initialization only on it
-    model.main_model.apply(init_func)
 
         
 
