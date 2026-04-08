@@ -8,7 +8,7 @@
   "valid_range":            [216, 242],
   "batch_size":             8,
   "num_workers":            4,
-  "num_threads":            18,
+  "num_threads":            null,
   "N_epochs":               1000,
   "partial_epochs":         1000,
   "patience":               200,
