@@ -381,7 +381,7 @@ class JavierSantos_Extended(nn.Module):
             p_out = self.p_model.predict(x)
                 
         combined = self.concat(z_out, y_out, x_out, p_out)
-        return self.main_model(combined)
+        return combined + self.main_model(combined)
     
     def predict(self, x):
         
