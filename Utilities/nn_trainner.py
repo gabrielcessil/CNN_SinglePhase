@@ -474,7 +474,7 @@ def init_weights_he(m):
 
 def init_weights_normal(m):
     
-    std = 0.0001
+    std = 0.01
     
     # Aplica a distribuição normal apenas nas camadas convolucionais
     if isinstance(m, (nn.Conv1d, nn.Conv2d, nn.Conv3d, 

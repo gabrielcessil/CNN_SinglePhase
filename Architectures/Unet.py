@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 from .Functional import pad_same, crop_same, Channel_Concat
-
+import matplotlib.pyplot as plt
 # Danny D Ko
 """
 The original code is present in :
@@ -441,7 +441,26 @@ class Extended_DannyKo(nn.Module):
             p_out = self.p_model.predict(x)
                             
         combined = self.concat(z_out, y_out, x_out, p_out)
-        return self.main_model(combined)
+        final_out = combined + self.main_model(combined)
+        
+        # DEBUG 
+        """
+        fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+        z_slice_idx = z_out.shape[2] // 2
+        img_z_out = z_out[0, 0, z_slice_idx, :, :].detach().cpu().numpy()
+        img_final_out = final_out[0, 0, z_slice_idx, :, :].detach().cpu().numpy()
+        im0 = axes[0].imshow(img_z_out, cmap='jet')
+        axes[0].set_title(f"Sub-model Output (z_out)\nSlice Z={z_slice_idx}")
+        plt.colorbar(im0, ax=axes[0])
+        im1 = axes[1].imshow(img_final_out, cmap='jet')
+        axes[1].set_title(f"Main Model Output (Final $U_z$)\nSlice Z={z_slice_idx}")
+        plt.colorbar(im1, ax=axes[1])
+        plt.suptitle("Comparação de Debug: Antes e Depois do main_model")
+        plt.tight_layout()
+        plt.show() 
+        """
+        
+        return final_out
     
     def predict(self, x):
         
