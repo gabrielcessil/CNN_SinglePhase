@@ -6,7 +6,8 @@ from scipy.stats          import gaussian_kde
 from matplotlib.ticker    import LogLocator, LogFormatterSciNotation
 from torch.utils.data     import DataLoader
 
-from Architectures.Unet   import Extended_DannyKo
+from Architectures.Models import SubModels_Composition
+from Architectures.Unet   import Extended_DannyKo, MY_PIMODEL, DannyKo_Net_Original, MY_PIMODEL_2
 from Architectures.MSnet  import JavierSantos_Extended
 
 from Utilities            import dataset_reader as dr
@@ -108,9 +109,6 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
     for i, (name, model) in enumerate(models.items(), 1):
         with torch.no_grad():
             out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
-            
-        #tar = mean_normalize(inp, tar)
-        #out = mean_normalize(inp, out)
         
         out_z       = out.squeeze(0)[component]          # Remove batch dim, get component channel
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='front') # Put zeros on solid
@@ -174,9 +172,6 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
     for i, (name, model) in enumerate(models.items(), 1):
         with torch.no_grad():
             out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
-        
-        #tar = mean_normalize(inp, tar)
-        #out = mean_normalize(inp, out)
         
         out_z       = out.squeeze(0)[component]   
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='side') # Put zeros on solid
@@ -393,14 +388,14 @@ def Plot_Mean_Velocity_Scatter(models, datapath, batch_size=4, npoints=5000,
 device              = 'cpu'
 batch_size          = 1
 save_mode           = False
-sample_idexes       = [0,1,2,5]
-#datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
-datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
-
+sample_idexes       = [0,1,2,3,4,5,6,7,8]
+#datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Bentheimer_120_120_120.h5" 
+#datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
+datapath            = "../NN_Datasets/ForceDriven/Test_SphPore_120_120_120.h5"
 save_tag            = "Danny"
 shape               = (120,120,120)
-component           = 2 # Uz=0, Uy=1, Ux=2, P=3
-models          = {}
+component           = 0 # Uz=0, Uy=1, Ux=2, P=3
+models              = {}
 # 1 Directional Flow Models
     
 """
@@ -411,21 +406,73 @@ print_n_params(baseline_model.model, pytorch=False)
 models["Baseline Danny (Ke) - Danny Data"] = baseline_model
 """
 
-# Dataset Danny Simulado - Sem Augmentation - Dados Alinhados
-danny_model       = Extended_DannyKo()
-model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_2_April_2026_05-04PM_Job17455/model_LowerValidationLoss.pth"
+model_aux       = DannyKo_Net_Original()
+danny_model     = model_aux.z_model
+model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
 danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
 danny_model.eval()
 danny_model.bin_input = True
-models["Danny"] = danny_model
-print_n_params(danny_model, pytorch=True)
-    
+models["STA Danny"]= danny_model
+
+"""
+danny_model         = Extended_DannyKo()
+danny_z_name        = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
+danny_y_name        =  "./Trained_Models/NN_Trainning_14_March_2026_03-14PM_Job16195/model_LowerValidationLoss.pth"
+danny_x_name        = "./Trained_Models/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
+danny_p_name        = "./Trained_Models/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
+danny_sub_comp      = SubModels_Composition(danny_model, 
+                                    danny_z_name, 
+                                    danny_y_name, 
+                                    danny_x_name, 
+                                    danny_p_name, 
+                                    device='cpu', 
+                                    is_eval=True)
+danny_sub_comp.eval()
+models["Danny Sub-Models"]     = danny_sub_comp
+
+javier_model         = JavierSantos_Extended()
+javier_z_name        = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
+javier_y_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-17PM_Job17461/model_LowerValidationLoss.pth"
+javier_x_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-15PM_Job17460/model_LowerValidationLoss.pth"
+javier_p_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-18PM_Job17462/model_LowerValidationLoss.pth"
+javier_sub_comp      = SubModels_Composition(javier_model, 
+                                    javier_z_name, 
+                                    javier_y_name, 
+                                    javier_x_name, 
+                                    javier_p_name, 
+                                    device='cpu', 
+                                    is_eval=True)
+javier_sub_comp.eval()
+models["Javier Sub-Models"]     = javier_sub_comp
+"""
+
+danny_f_model       = Extended_DannyKo()
+danny_f_name        = "./Trained_Models/NN_Trainning_10_April_2026_01-25PM/model_LowerValidationLoss.pth"
+danny_f_model.load_state_dict(torch.load(danny_f_name, map_location=torch.device(device), weights_only=True))
+danny_f_model.eval()
+models["Danny Final"]= danny_f_model
+
+"""
+pinn_model          = MY_PIMODEL()
+pinn_name           = "./Trained_Models/NN_Trainning_11_April_2026_01-39PM/model_LowerValidationLoss.pth"
+pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
+pinn_model.eval()
+models["My Model"] = pinn_model
+"""
+pinn_model          = MY_PIMODEL_2()
+pinn_name           = "./Trained_Models/NN_Trainning_16_April_2026_02-26PM/model_LowerValidationLoss.pth"
+pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
+pinn_model.eval()
+models["My Model"] = pinn_model
+
+
+
 
 # --- Execution Block ---
 
 # Set the font to Times New Roman
 plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman', 'Liberation Serif', 'Bitstream Vera Serif']
+plt.rcParams['font.serif']  = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman', 'Liberation Serif', 'Bitstream Vera Serif']
 
 # 3. Run Visualization
 #Plot_Mean_Velocity_Scatter(models, datapath, npoints=5000, xlabel="Target Mean Velocity", 

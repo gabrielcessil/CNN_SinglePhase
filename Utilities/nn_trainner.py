@@ -127,6 +127,7 @@ def partial_train(model,
                results_folder       = "",
                device               = "cpu",
                patience             = None,
+               tolerance            = 2,
                dtype                = torch.float32):
     
     # Check the presence of 'predict' method
@@ -194,12 +195,12 @@ def partial_train(model,
         
 
         # Save tracking based on best performance
-        if valid_avg_loss[earlyStopping_loss] < best_valid_loss:
-            percent         = round((1-(valid_avg_loss[earlyStopping_loss] / best_valid_loss)) * 100, 2)
+        improvement_pct = (best_valid_loss - valid_avg_loss[earlyStopping_loss]) / best_valid_loss * 100
+        if improvement_pct > tolerance:
             last_update     = epoch_index
             best_valid_loss = valid_avg_loss[earlyStopping_loss]
             best_model      = copy.deepcopy(model.state_dict())
-            print(f"--> New best solution for Validation dataset achieved at {epoch_index} / {N_epochs}: {best_valid_loss} ({percent:.6f}% better)")
+            print(f"--> New best solution for Validation dataset achieved at {epoch_index} / {N_epochs}: {best_valid_loss} ({improvement_pct:.6f}% better)")
             atomic_torch_save(best_model, best_model_path)
             
         
