@@ -57,6 +57,7 @@ num_threads             = config["num_threads"]
 N_epochs                = config["N_epochs"]
 partial_epochs          = config["partial_epochs"]
 patience                = config["patience"]
+tolerance               = config["tolerance"]
 learning_rate           = config["learning_rate"]
 earlyStopping_loss      = config["earlyStopping_loss"]
 backPropagation_loss    = config["backPropagation_loss"]
@@ -275,6 +276,7 @@ nnt.partial_train(
     results_folder       = NN_results_folder,
     device               = device,
     patience             = patience,
+    tolerance            = tolerance,
     dtype                = torch.float32
     )
 print("Ending Train ... ")

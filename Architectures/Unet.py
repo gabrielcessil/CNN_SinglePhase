@@ -410,13 +410,33 @@ class Extended_DannyKo(nn.Module):
             input_channels=4,
             output_channels=4,
             filter_num=9,
-            filter_num_increase=1,
+            filter_num_increase=2, # Originally 1
             filter_size=3,
             activation='selu',
             momentum=0.01,
             dropout=0.001,
             res_num=3,
             bin_input=bin_input)
+        
+        self.main_head = nn.Sequential(
+            nn.Conv3d(in_channels=4,
+                      out_channels=4, 
+                      kernel_size=3,
+                      stride=1, 
+                      padding=1),
+
+            nn.Conv3d(in_channels=4,
+                      out_channels=4, 
+                      kernel_size=1,
+                      stride=1, 
+                      padding=0),
+
+            nn.Conv3d(in_channels=4,
+                      out_channels=4, 
+                      kernel_size=1,
+                      stride=1, 
+                      padding=0),
+        )
     
     # Modified to freeze sub-models
     def train(self, mode=True):
@@ -435,29 +455,63 @@ class Extended_DannyKo(nn.Module):
         if self.bin_input: x = (x > 0).to(torch.float32)
         
         with torch.no_grad():
-            x_out = self.x_model.predict(x) 
-            y_out = self.y_model.predict(x) 
+            x_out = self.x_model.predict(x)
+            y_out = self.y_model.predict(x)
             z_out = self.z_model.predict(x)
             p_out = self.p_model.predict(x)
                             
         combined = self.concat(z_out, y_out, x_out, p_out)
-        final_out = combined + self.main_model(combined)
+        addition = self.main_model(combined)
+
+        print(f"Comb: {combined.abs().mean():<10.16f}; Add: {addition.abs().mean():<10.16f}")
         
-        # DEBUG 
+        final_out = self.main_head(combined + addition)
         """
-        fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-        z_slice_idx = z_out.shape[2] // 2
-        img_z_out = z_out[0, 0, z_slice_idx, :, :].detach().cpu().numpy()
-        img_final_out = final_out[0, 0, z_slice_idx, :, :].detach().cpu().numpy()
-        im0 = axes[0].imshow(img_z_out, cmap='jet')
-        axes[0].set_title(f"Sub-model Output (z_out)\nSlice Z={z_slice_idx}")
-        plt.colorbar(im0, ax=axes[0])
-        im1 = axes[1].imshow(img_final_out, cmap='jet')
-        axes[1].set_title(f"Main Model Output (Final $U_z$)\nSlice Z={z_slice_idx}")
-        plt.colorbar(im1, ax=axes[1])
-        plt.suptitle("Comparação de Debug: Antes e Depois do main_model")
+        # ==========================================
+        # SEÇÃO DE PLOT / DEBUG (Agora com 4 colunas)
+        # ==========================================
+        num_channels = final_out.shape[1]
+        x_slice_idx = final_out.shape[4] // 2
+        
+        # Aumentamos para 4 colunas e ajustamos a largura total (figsize de 18 para 24)
+        fig, axes = plt.subplots(num_channels, 4, figsize=(24, 5 * num_channels), squeeze=False)
+        
+        print(f"UNET {num_channels} channels")
+        
+        for c in range(num_channels):
+            img_z_out     = combined[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            add           = addition[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            img_final_out = final_out[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            
+            # --- COLUNA 0: Sub-modelo (Combined) ---
+            im0 = axes[c, 0].imshow(img_z_out, cmap='jet')
+            axes[c, 0].set_title(f"Combined Sub-models - Ch {c}")
+            fig.colorbar(im0, ax=axes[c, 0], fraction=0.046, pad=0.04)
+            
+            # --- COLUNA 1: Adição (Main Model) com Percentis ---
+            add_min, add_max = np.percentile(add, [1, 99])
+            im1 = axes[c, 1].imshow(add, cmap='RdBu_r', vmin=add_min, vmax=add_max)
+            axes[c, 1].set_title(f"Main Model Addition - Ch {c}\nScale: [{add_min:.2e}, {add_max:.2e}]")
+            fig.colorbar(im1, ax=axes[c, 1], fraction=0.046, pad=0.04)
+            
+            # --- COLUNA 2: Saída Final ---
+            im2 = axes[c, 2].imshow(img_final_out, cmap='jet')
+            axes[c, 2].set_title(f"Final Output - Ch {c}")
+            fig.colorbar(im2, ax=axes[c, 2], fraction=0.046, pad=0.04)
+
+            # --- COLUNA 3: HISTOGRAMA DA ADIÇÃO ---
+            axes[c, 3].hist(add.flatten(), bins=50, color='gray', edgecolor='black', alpha=0.7,range=(add_min, add_max))
+            axes[c, 3].axvline(add_min, color='blue', linestyle='dashed', linewidth=1.5, label='1st %')
+            axes[c, 3].axvline(add_max, color='red', linestyle='dashed', linewidth=1.5, label='99th %')
+            axes[c, 3].set_title(f"Addition Histogram - Ch {c}")
+            axes[c, 3].set_xlabel("Residual Value")
+            axes[c, 3].set_ylabel("Frequency")
+            axes[c, 3].legend()
+            
         plt.tight_layout()
-        plt.show() 
+        plt.savefig('debug.png', dpi=300)
+        
+        plt.close(fig)
         """
         
         return final_out
@@ -475,3 +529,422 @@ class Extended_DannyKo(nn.Module):
             return out * mask
          
     
+    
+from Utilities import velocity_usage as vu
+class MY_PIMODEL(nn.Module):
+    def __init__(self, bin_input=True):
+        super().__init__() 
+                
+        self.bin_input = bin_input
+        
+        self.x_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.2,
+            res_num=4,
+            bin_input=bin_input)
+     
+        self.y_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.2,
+            res_num=4,
+            bin_input=bin_input)
+        
+        self.z_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.1,
+            res_num=4,
+            bin_input=bin_input)
+        
+        self.p_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.1,
+            res_num=4,
+            bin_input=bin_input)
+        
+        self.concat = Channel_Concat()
+
+        # main model
+        # First Derivative combination
+        self.C00 =  nn.Conv3d(in_channels=4,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+
+        self.C10 =  nn.Conv3d(in_channels=4,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+
+        self.C20 =  nn.Conv3d(in_channels=4,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+
+        self.C30 =  nn.Conv3d(in_channels=4,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+
+        self.C0  = nn.Conv3d(in_channels=16,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+        
+        # Second derivative combination
+        self.C01 =  nn.Conv3d(in_channels=7,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+
+        self.C11 =  nn.Conv3d(in_channels=7,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+
+        self.C21 =  nn.Conv3d(in_channels=7,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+
+        self.C31 =  nn.Conv3d(in_channels=7,
+                              out_channels=1, 
+                              kernel_size=1,
+                              stride=1, 
+                              padding=0)
+        
+        
+    
+    # Modified to freeze sub-models
+    def train(self, mode=True):
+        # 1. Call the standard train method for the main_model
+        super().train(mode)
+        
+        # 2. Force the sub-models back to eval mode immediately
+        self.x_model.eval()
+        self.y_model.eval()
+        self.z_model.eval()
+        self.p_model.eval()
+        return self
+    
+        
+    def forward(self, x):
+        if self.bin_input: 
+            x_bin = (x > 0).to(torch.float32)
+        else:
+            x_bin = x # Assuming x is already binary/mask-like for the derivatives
+
+        with torch.no_grad():
+            u = self.x_model.predict(x)
+            v = self.y_model.predict(x)
+            w = self.z_model.predict(x)
+            p = self.p_model.predict(x)
+                                
+        combined = self.concat(w, v, u, p)
+
+        dw = self.concat(pad_same(vu.d_dz(w, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dy(w, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dx(w, x_bin, c=0).unsqueeze(1), 3, 1))
+        
+        dv = self.concat(pad_same(vu.d_dz(v, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dy(v, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dx(v, x_bin, c=0).unsqueeze(1), 3, 1))
+        
+        du = self.concat(pad_same(vu.d_dz(u, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dy(u, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dx(u, x_bin, c=0).unsqueeze(1), 3, 1))
+        
+        dp = self.concat(pad_same(vu.d_dz(p, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dy(p, x_bin, c=0).unsqueeze(1), 3, 1), 
+                         pad_same(vu.d_dx(p, x_bin, c=0).unsqueeze(1), 3, 1))
+
+        d2w = self.concat(pad_same(vu.d2_dz2(w, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dy2(w, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dx2(w, x_bin, c=0).unsqueeze(1), 3, 1))
+        
+        d2v = self.concat(pad_same(vu.d2_dz2(v, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dy2(v, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dx2(v, x_bin, c=0).unsqueeze(1), 3, 1))
+        
+        d2u = self.concat(pad_same(vu.d2_dz2(u, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dy2(u, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dx2(u, x_bin, c=0).unsqueeze(1), 3, 1))
+        
+        d2p = self.concat(pad_same(vu.d2_dz2(p, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dy2(p, x_bin, c=0).unsqueeze(1), 3, 1), 
+                          pad_same(vu.d2_dx2(p, x_bin, c=0).unsqueeze(1), 3, 1))
+        
+        cw = self.C00(self.concat(w, dw))
+        cv = self.C10(self.concat(v, dv))
+        cu = self.C20(self.concat(u, du))
+        cp = self.C30(self.concat(p, dp))
+        
+        cwvup = self.C0(self.concat(w, v, u, p, dw, dv, du, dp)) 
+        
+        c2w = self.C01(self.concat(d2w, dw, w))
+        c2v = self.C11(self.concat(d2v, dv, v))
+        c2u = self.C21(self.concat(d2u, du, u))
+        c2p = self.C31(self.concat(d2p, dp, p))
+        
+    
+        
+        addition = self.concat(w + cw + c2w + cwvup, 
+                               v + cv + c2v + cwvup, 
+                               u + cu + c2u + cwvup, 
+                               p + cp + c2p + cwvup)
+
+        final_out = combined + addition
+        
+        #"""
+        # ==========================================
+        # SEÇÃO DE PLOT / DEBUG (Agora com 7 colunas)
+        # ==========================================
+        num_channels = final_out.shape[1]
+        x_slice_idx = final_out.shape[4] // 2
+        
+        # Concatenate intermediate terms to align structurally with 'addition' and 'combined'
+        terms_c1 = self.concat(cw, cv, cu, cp)
+        terms_c2 = self.concat(c2w, c2v, c2u, c2p)
+        terms_cwvup = self.concat(cwvup, cwvup, cwvup, cwvup)
+
+        # Aumentamos para 7 colunas e ajustamos a largura total (figsize de 24 para 42)
+        fig, axes = plt.subplots(num_channels, 7, figsize=(42, 5 * num_channels), squeeze=False)
+        
+        print(f"UNET {num_channels} channels")
+        
+        for c in range(num_channels):
+            img_z_out     = combined[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            img_t1        = terms_c1[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            img_t2        = terms_c2[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            img_t3        = terms_cwvup[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            add           = addition[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            img_final_out = final_out[0, c, :, :, x_slice_idx].detach().cpu().float().numpy()
+            
+            # --- COLUNA 0: Sub-modelo (Combined) ---
+            im0 = axes[c, 0].imshow(img_z_out, cmap='jet')
+            axes[c, 0].set_title(f"Combined Sub-models - Ch {c}")
+            fig.colorbar(im0, ax=axes[c, 0], fraction=0.046, pad=0.04)
+            
+            # --- COLUNA 1: Termo de 1ª Derivada (cw, cv, cu, cp) ---
+            t1_min, t1_max = np.percentile(img_t1, [1, 99])
+            im1 = axes[c, 1].imshow(img_t1, cmap='RdBu_r', vmin=t1_min, vmax=t1_max)
+            axes[c, 1].set_title(f"Term 1 (c_X) - Ch {c}\nScale: [{t1_min:.2e}, {t1_max:.2e}]")
+            fig.colorbar(im1, ax=axes[c, 1], fraction=0.046, pad=0.04)
+
+            # --- COLUNA 2: Termo de 2ª Derivada (c2w, c2v, c2u, c2p) ---
+            t2_min, t2_max = np.percentile(img_t2, [1, 99])
+            im2 = axes[c, 2].imshow(img_t2, cmap='RdBu_r', vmin=t2_min, vmax=t2_max)
+            axes[c, 2].set_title(f"Term 2 (c2_X) - Ch {c}\nScale: [{t2_min:.2e}, {t2_max:.2e}]")
+            fig.colorbar(im2, ax=axes[c, 2], fraction=0.046, pad=0.04)
+
+            # --- COLUNA 3: Termo Multivariável (cwvup) ---
+            t3_min, t3_max = np.percentile(img_t3, [1, 99])
+            im3 = axes[c, 3].imshow(img_t3, cmap='RdBu_r', vmin=t3_min, vmax=t3_max)
+            axes[c, 3].set_title(f"Term 3 (cwvup) - Ch {c}\nScale: [{t3_min:.2e}, {t3_max:.2e}]")
+            fig.colorbar(im3, ax=axes[c, 3], fraction=0.046, pad=0.04)
+
+            # --- COLUNA 4: Adição Total (Main Model) ---
+            add_min, add_max = np.percentile(add, [1, 99])
+            im4 = axes[c, 4].imshow(add, cmap='RdBu_r', vmin=add_min, vmax=add_max)
+            axes[c, 4].set_title(f"Main Addition (Sum) - Ch {c}\nScale: [{add_min:.2e}, {add_max:.2e}]")
+            fig.colorbar(im4, ax=axes[c, 4], fraction=0.046, pad=0.04)
+            
+            # --- COLUNA 5: Saída Final ---
+            im5 = axes[c, 5].imshow(img_final_out, cmap='jet')
+            axes[c, 5].set_title(f"Final Output - Ch {c}")
+            fig.colorbar(im5, ax=axes[c, 5], fraction=0.046, pad=0.04)
+
+            # --- COLUNA 6: HISTOGRAMA DA ADIÇÃO ---
+            axes[c, 6].hist(add.flatten(), bins=50, color='gray', edgecolor='black', alpha=0.7,range=(add_min, add_max))
+            axes[c, 6].axvline(add_min, color='blue', linestyle='dashed', linewidth=1.5, label='1st %')
+            axes[c, 6].axvline(add_max, color='red', linestyle='dashed', linewidth=1.5, label='99th %')
+            axes[c, 6].set_title(f"Addition Histogram - Ch {c}")
+            axes[c, 6].set_xlabel("Residual Value")
+            axes[c, 6].set_ylabel("Frequency")
+            axes[c, 6].legend()
+            
+        plt.tight_layout()
+        plt.savefig('debug.png', dpi=300)
+        
+        plt.close(fig)
+        #"""
+        return final_out
+    
+    def predict(self, x):
+        
+        if self.bin_input: x = (x > 0).to(torch.float32)
+        
+        with torch.no_grad():
+            out     = self.forward(x)
+
+            # Mask Output, making solid always zero
+            mask    = (x > 0).to(torch.float32) 
+            mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
+            return out * mask
+
+
+class MY_PIMODEL_2(nn.Module):
+    def __init__(self, bin_input=True):
+        super().__init__() 
+                
+        self.bin_input = bin_input
+        
+        self.x_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.2,
+            res_num=4,
+            bin_input=bin_input)
+     
+        self.y_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.2,
+            res_num=4,
+            bin_input=bin_input)
+        
+        self.z_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.1,
+            res_num=4,
+            bin_input=bin_input)
+        
+        self.p_model = Base_Unet(
+            input_channels=1,
+            output_channels=1,
+            filter_num=10,
+            filter_num_increase=2,
+            filter_size=4,
+            activation='selu',
+            momentum=0.01,
+            dropout=0.1,
+            res_num=4,
+            bin_input=bin_input)
+        
+        self.concat = Channel_Concat()
+
+        # Helper function to generate blocks cleanly
+        def make_corr_block(in_c):
+            return nn.Sequential( 
+                nn.Conv3d(in_channels=in_c, out_channels=1, kernel_size=7, stride=1, padding=3),
+                nn.Tanh(), 
+                nn.Conv3d(in_channels=1, out_channels=1, kernel_size=5, stride=1, padding=2),
+                nn.Tanh(), 
+                nn.Conv3d(in_channels=1, out_channels=1, kernel_size=3, stride=1, padding=1),
+                nn.Tanh(), 
+                nn.Conv3d(in_channels=1, out_channels=1, kernel_size=1, stride=1, padding=0)  
+            )
+
+        # Initialize blocks dynamically
+        self.C0w = make_corr_block(7)
+        self.C0v = make_corr_block(7)
+        self.C0u = make_corr_block(7)
+
+        self.C1w = make_corr_block(7)
+        self.C1v = make_corr_block(7)
+        self.C1u = make_corr_block(7)
+
+        self.C2w = make_corr_block(7)
+        self.C2v = make_corr_block(7)
+        self.C2u = make_corr_block(7)
+
+    def train(self, mode=True):
+        super().train(mode)
+        self.x_model.eval()
+        self.y_model.eval()
+        self.z_model.eval()
+        self.p_model.eval()
+        return self
+        
+    def forward(self, x):
+        if self.bin_input: 
+            x_bin = (x > 0).to(torch.float32)
+        else:
+            x_bin = x
+
+        with torch.no_grad():
+            u = self.x_model.predict(x)
+            v = self.y_model.predict(x)
+            w = self.z_model.predict(x)
+            p = self.p_model.predict(x)
+                                        
+        dw_dz = pad_same(vu.d_dz(w, x_bin, c=0).unsqueeze(1), 3, 1)
+        dv_dy = pad_same(vu.d_dy(v, x_bin, c=0).unsqueeze(1), 3, 1)
+        du_dx = pad_same(vu.d_dx(u, x_bin, c=0).unsqueeze(1), 3, 1)
+        div_sum = dw_dz + dv_dy + du_dx
+
+        # Step 0
+        input_0 = self.concat(w, v, u, dw_dz, dv_dy, du_dx, div_sum)
+        corr_w0 = self.C0w(input_0)
+        corr_v0 = self.C0v(input_0)
+        corr_u0 = self.C0u(input_0)
+
+        input_1 = self.concat(w+corr_w0, v+corr_v0, u+corr_u0, dw_dz, dv_dy, du_dx, div_sum)
+        corr_w1 = corr_w0 + self.C1w(input_1)
+        corr_v1 = corr_v0 + self.C1v(input_1)
+        corr_u1 = corr_u0 + self.C1u(input_1)
+        
+        input_2 = self.concat(w+corr_w1, v+corr_v1, u+corr_u1, dw_dz, dv_dy, du_dx, div_sum)
+        corr_w2 = corr_w1 + self.C2w(input_2)
+        corr_v2 = corr_v1 + self.C2v(input_2)
+        corr_u2 = corr_u1 + self.C2u(input_2)
+        
+        final_out = self.concat(w+corr_w2, v+corr_v2, u+corr_u2, p)
+        
+        return final_out
+    
+    def predict(self, x):
+        if self.bin_input: x = (x > 0).to(torch.float32)
+        
+        with torch.no_grad():
+            out = self.forward(x)
+            mask = (x > 0).to(torch.float32) 
+            mask = mask.expand(-1, out.shape[1], -1, -1, -1)
+            return out * mask

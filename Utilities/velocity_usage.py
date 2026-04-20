@@ -61,8 +61,8 @@ def force_calculation(
     return force_calculation_from_R(R=R, tau=tau, Re=Re, Dens=Dens)
 
 
-def tensor_denorm(out: torch.Tensor, 
-                  inp: torch.Tensor):
+def tensor_denorm(out: torch.Tensor,  # Prediction
+                  inp: torch.Tensor): # Distance transform of geometry  
     """
     out: (B, 4, Z, Y, X) -> Predições da rede
     inp: (B, 1, Z, Y, X) -> Input (EDT)
@@ -96,13 +96,14 @@ def tensor_denorm(out: torch.Tensor,
     return torch.cat(all_samples, dim=0)
 
 
-def permeability_calculation(out: torch.Tensor, 
-                            inp: torch.Tensor, 
-                            tau: float = 1.5, 
-                            Re: float = 0.1, 
-                            dens: float = 1.0) -> torch.Tensor:
+def permeability_calculation(out:   torch.Tensor,  # 
+                            inp:    torch.Tensor,  # Distance transform of geometry 
+                            tau:    float = 1.5,   
+                            Re:     float = 0.1, 
+                            dens:   float = 1.0,
+                            denorm: bool = False) -> torch.Tensor:
     
-    out_denorm  = tensor_denorm(out, inp)
+    out_denorm  = tensor_denorm(out, inp) if denorm else out
     B           = out.shape[0]
     
     k_lattice   = torch.zeros(B, device=out.device, dtype=torch.float32)
@@ -125,9 +126,9 @@ def d_dz(tensor, bin_solid, c=0):
     mag_z_left  = bin_solid[:, 0, :-2 , 1:-1, 1:-1] > 1e-16
     mag_cent    = bin_solid[:, 0, 1:-1, 1:-1, 1:-1] > 1e-16
     
-    dz  = ( mag_cent & mag_z_right  &  mag_z_left)  * (tensor[:, c, 2:  , 1:-1, 1:-1] - tensor[:, c, :-2, 1:-1, 1:-1]) / 2.0
-    dz += ( mag_cent & mag_z_right  & ~mag_z_left)  * (tensor[:, c, 2:  , 1:-1, 1:-1] - tensor[:, c, 1:-1, 1:-1, 1:-1])
-    dz += ( mag_cent & ~mag_z_right  &  mag_z_left)  * (tensor[:, c, 1:-1, 1:-1, 1:-1] - tensor[:, c, :-2, 1:-1, 1:-1])
+    dz  = ( mag_cent & mag_z_right  &  mag_z_left)  *  (tensor[:, c, 2:  , 1:-1, 1:-1] - tensor[:, c, :-2, 1:-1, 1:-1]) / 2.0
+    dz += ( mag_cent & mag_z_right  & ~mag_z_left)  *  (tensor[:, c, 2:  , 1:-1, 1:-1] - tensor[:, c, 1:-1, 1:-1, 1:-1])
+    dz += ( mag_cent & ~mag_z_right &  mag_z_left)  *  (tensor[:, c, 1:-1, 1:-1, 1:-1] - tensor[:, c, :-2, 1:-1, 1:-1])
     
     return dz
 

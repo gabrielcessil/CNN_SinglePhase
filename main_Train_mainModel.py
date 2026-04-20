@@ -59,6 +59,7 @@ num_threads             = config["num_threads"]
 N_epochs                = config["N_epochs"]
 partial_epochs          = config["partial_epochs"]
 patience                = config["patience"]
+tolerance               = config["tolerance"]
 learning_rate           = config["learning_rate"]
 earlyStopping_loss      = config["earlyStopping_loss"]
 backPropagation_loss    = config["backPropagation_loss"]
@@ -67,6 +68,7 @@ weight_init             = config["weight_init"]
 seed                    = config["seed"]
 train_comment           = config["train_comment"]
 NN_results_folder       = config["NN_results_folder"]
+device_set              = config["device"]
 
 # Handle results folder config
 if NN_results_folder is None:
@@ -82,20 +84,36 @@ nnt.set_logger_output_folder(NN_results_folder)
 
 
 #######################################################
-#************ HARDCODED OBJECTS:           ***********#
+#************ HARDWARE SETUP:              ***********#
 #######################################################
 
-device                  = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if isinstance(device_set, int):
+    torch.cuda.set_device(device_set)
+    device = torch.device(f'cuda:{device_set}')
+    print('Current device name:', torch.cuda.get_device_name(device))
+elif device_set is None:
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+else:
+    device = torch.device(device_set)
+print('Current device:     ', device)
+
 dtype                   = torch.float32
+# Set seed to random initializations
+nnt.set_global_seed(seed) 
+
+
+#######################################################
+#************ TRACKED LOSS FUNCTIONS:      ***********#
+#######################################################
 
 loss_functions  = {
     # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
     "PI-MSE":                  {"obj":  lf.MSE_Divergent(div_weight=3),              "Thresholded": False},
     # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
-    "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
-    "Divergent":               {"obj":  lf.Divergent(),                              "Thresholded": True}, 
+    #"MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
+    #"Divergent":               {"obj":  lf.Divergent(),                              "Thresholded": True}, 
     "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
-    "Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True},
+    #"Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True},
 }
 
 
@@ -117,8 +135,7 @@ print(f"Metadata saved at: {metadata_file}")
 #************ LOADING DATA          ******************#
 #######################################################
 
-# Set seed to random initializations
-nnt.set_global_seed(seed) 
+
 
 print("Loading Trainning Data ... ")
 train_ds = dr.LazyDatasetTorch(h5_path=dataset_train_full_name, 
@@ -248,6 +265,7 @@ nnt.partial_train(
     results_folder       = NN_results_folder,
     device               = device,
     patience             = patience,
+    tolerance            = tolerance,
     dtype                = torch.float32
     )
 print("Ending Train ... ")

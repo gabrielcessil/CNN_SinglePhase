@@ -50,9 +50,10 @@ class Mask_LossFunction(nn.Module):
             raise ValueError(f"CustomLoss forward: Tensors have different sizes ({output.size()} vs {target.size()})")
         
         if self.mode == 'flatten':
-            loss = 0.0
-            C = output.shape[1]
+            loss    = 0.0
+            C       = output.shape[1]
             for c in range(C):
+                print(f"Channel {c}")
                 mask_c   = self.mask_law(output[:, c], target[:, c])
                 loss    += self.lossFunction(output[:, c][mask_c], target[:, c][mask_c])
             return loss / C
@@ -87,6 +88,7 @@ class MeanBiasError(nn.Module):
             raise ValueError(f"Shape mismatch: {output.shape} vs {target.shape}")
             
         mean_error = 100*( (output.mean() - target.mean())/target.mean() ).abs()
+        #print(f"Means: Output={output.mean().item()}; Target={target.mean().item()}")
         return mean_error
     
 
@@ -138,7 +140,7 @@ class KGE(nn.Module):
     
 class Divergent_2(nn.Module):
     def __init__(self):
-        super(Divergent, self).__init__()
+        super(Divergent_2, self).__init__()
         
     def forward(self, output, target):
         if output.shape[0] != target.shape[0] or output.shape[2:] != target.shape[2:]:
@@ -156,7 +158,7 @@ class Divergent_2(nn.Module):
         out_div += mag_cent * (output[:, 1, 1:-1, 2:  , 1:-1] - output[:, 1, 1:-1,  :-2, 1:-1]) / 2.0
         out_div += mag_cent * (output[:, 2, 1:-1, 1:-1, 2:  ] - output[:, 2, 1:-1, 1:-1,  :-2]) / 2.0
         
-        #"""
+        """
         slice_idx   = 60
         
         rho_val     = target[0, 3, :, :, slice_idx].cpu().numpy()
@@ -181,7 +183,7 @@ class Divergent_2(nn.Module):
         plt.suptitle(f"Physical Consistency Check - Slice {slice_idx}")
         plt.tight_layout()
         plt.show()
-        #"""
+        """
         return out_div[mag>1e-16].abs().mean()
     
 
@@ -190,7 +192,7 @@ class Divergent_2(nn.Module):
 
 class Divergent(nn.Module):
     def __init__(self):
-        super(Divergent_2, self).__init__()
+        super(Divergent, self).__init__()
         
     def forward(self, output, target):
         if output.shape[0] != target.shape[0] or output.shape[2:] != target.shape[2:]:
