@@ -43,6 +43,10 @@ def Calculate_PaddingSame(input_size, kernel_size, stride, dilation=1):
 #************ MODEL BLOCKS: Tensor Modification    ***#
 #######################################################
 
+class ChannelWiseMult(nn.Module):
+    def forward(self, x):
+        return torch.prod(x, dim=1, keepdim=True)
+    
 class Channel_Concat(nn.Module):
     def __init__(self):
         super().__init__()

@@ -4,7 +4,7 @@
   "NN_dataset_folder":      "../NN_Datasets/",
   "dataset_train_name":     "Train_Danny_SphPore_DannyAug_SilveiraNorm.h5",
   "dataset_valid_name":     "Valid_Danny_SphPore_DannyAug_SilveiraNorm.h5",
-  "train_range":            null,
+  "train_range":            [0, 1],
   "valid_range":            [1, 2],
   "batch_size":             8,
   "num_workers":            4,
