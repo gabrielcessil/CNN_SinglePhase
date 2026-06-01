@@ -412,6 +412,36 @@ mpirun -np {n_proc} lbpm_permeability_simulator simulation.db
     print("Remember to make the script executable: chmod +x run_all_sims_sequential.sh")
     
 
+def danny_normalization_vel(vel, void_mask, tau=1.5, Re=0.1):
+    
+    visc    = (tau-0.5)/3
+    force   = force_calculation(void_mask, tau=tau, Re=Re)
+    perm_est= (2*0.65*np.max(distance_transform_edt(void_mask).astype("float32")))**2 / 5
+    
+    return vel*visc / (force*perm_est)
+
+def silveira_normalization_vel(vel, void_mask, tau=1.5, Re=0.1):
+    visc    = (tau-0.5)/3
+    k0      = 1
+    Kt      = visc * tau
+    Ke      = Kt / k0
+    force   = force_calculation(void_mask, tau=tau, Re=Re)
+    vel_norm= vel * Ke / (tau*force)
+    
+    print(f"vel_mean = {np.mean(vel)} * Ke={Ke} / (tau={tau} * force={force})")
+    print(f"vel_mean = {np.mean(vel_norm)} ")
+    return vel_norm
+    
+
+def silveira_normalization_pres(pressure, void_mask, tau=1.5, Re=0.1):
+    
+    delta_p     = pressure_calculation(void_mask, tau=tau, Re=Re)
+    p_mean      = (2+3*delta_p)/6
+    delta_p_new = 0.2
+    p_mean_new  = 0.15
+    pr_norm     = ((pressure -p_mean)/delta_p)*delta_p_new + p_mean_new  
+    return pr_norm
+            
 
 def order_ceil(value: float) -> float: 
     """ 
@@ -462,7 +492,6 @@ def force_calculation(
     R               = np.max(dist_transform)
     Visc            = (tau - 0.5) / 3.0
     Fx              = (Re * 8.0 * (Visc ** 2)) / (Dens * (R ** 3))
-    
     return Fx
 
 def write_lbpm_db(

@@ -5,19 +5,17 @@ import utils
 from pathlib import Path
 
 BASE_DIRECTORIES = [
-    #"/home/gabriel/Desktop/Dissertacao/Simulations/Train_Danny_SphPore_120_120_120/"
-    "/home/gabriel/Desktop/Dissertacao/Simulations/Test_CylinGrain_120_120_120",
-    "/home/gabriel/Desktop/Dissertacao/Simulations/Test_SphGrain_120_120_120",
-    "/home/gabriel/Desktop/Dissertacao/Simulations/Test_CylinPore_120_120_120",
-    "/home/gabriel/Desktop/Dissertacao/Simulations/Test_SphPore_120_120_120",
+    "/home/gabriel/remote/hal/dissertacao/Simulations/Train_Danny_SphPore_120_120_120/",
+    "/home/gabriel/remote/hal/dissertacao/Simulations/Test_Danny_SphPore_120_120_120/",
+    "/home/gabriel/remote/hal/dissertacao/Simulations/Valid_Danny_SphPore_120_120_120/",
     ]
 
 # --- Hardware Parameters ---
 chunk_size          = 10   # Set for 1h of simulations (5 samples, 20 min per sample)
-gres                = "gpu:a100" #"gpu:k40m"#"gpu:a100"
-partition           = "all_gpu"
-#gres                = None #"gpu:k40m"#"gpu:a100"
-#partition           = "close_cpu"
+#gres                = "gpu:a100" #"gpu:k40m"#"gpu:a100"
+#partition           = "all_gpu"
+gres                = None #"gpu:k40m"#"gpu:a100"
+partition           = "close_cpu"
 n_proc              = 4
 cpu                 = 12 
 gpu                 = 64

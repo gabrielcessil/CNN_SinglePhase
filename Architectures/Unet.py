@@ -463,9 +463,10 @@ class Extended_DannyKo(nn.Module):
         combined = self.concat(z_out, y_out, x_out, p_out)
         addition = self.main_model(combined)
 
-        print(f"Comb: {combined.abs().mean():<10.16f}; Add: {addition.abs().mean():<10.16f}")
+        #print(f"Comb: {combined.abs().mean():<10.16f}; Add: {addition.abs().mean():<10.16f}")
         
         final_out = self.main_head(combined + addition)
+        
         """
         # ==========================================
         # SEÇÃO DE PLOT / DEBUG (Agora com 4 colunas)
@@ -726,7 +727,7 @@ class MY_PIMODEL(nn.Module):
 
         final_out = combined + addition
         
-        #"""
+        """
         # ==========================================
         # SEÇÃO DE PLOT / DEBUG (Agora com 7 colunas)
         # ==========================================
@@ -798,7 +799,7 @@ class MY_PIMODEL(nn.Module):
         plt.savefig('debug.png', dpi=300)
         
         plt.close(fig)
-        #"""
+        """
         return final_out
     
     def predict(self, x):

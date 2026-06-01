@@ -12,21 +12,22 @@ remove_isolated = True
 shape           = (120, 120, 120)
 input_name      = "domain.raw"
 output_name     = "mod_domain.raw"
-"""
-paths           = [
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00000/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00001/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00002/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00003/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00004/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00005/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00006/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00007/",
-    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00008/",
-    ]
-"""
-folder_path = "../../Simulations/Test_CylinGrain_120_120_120/"
-paths = glob.glob(os.path.join(folder_path, "**", input_name), recursive=True)
+
+#paths           = [
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00000/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00001/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00002/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00003/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00004/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00005/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00006/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00007/",
+#    "../../Simulations/Train_Danny_SphPore_120_120_120/Sample_00008/",
+#]
+
+
+folder_path = "/home/gabriel/remote/hal/dissertacao/Simulations/Train_Danny_SphPore_120_120_120/Validation/"
+paths       = glob.glob(os.path.join(folder_path, "**", input_name), recursive=True)
 
 # Local Thickness interval check
 min_radius          = 5

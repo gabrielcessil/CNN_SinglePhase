@@ -10,9 +10,9 @@ import random
 import copy
 import torch.nn          as nn
 import os
-from   Utilities           import usage_metrics as um
+from   Utilities         import usage_metrics as um
 import sys
-
+from   typing            import Optional
 
 def full_train(model, 
                train_batch_loader,
@@ -120,14 +120,14 @@ def partial_train(model,
                loss_functions,
                earlyStopping_loss,
                backPropagation_loss,
-               optimizer,
-               partial_epochs       = 100,
-               N_epochs             = 1000,
+               optimizer,                
                scheduler            = None,
-               results_folder       = "",
-               device               = "cpu",
-               patience             = None,
-               tolerance            = 2,
+               partial_epochs:int   = 100,
+               N_epochs:int         = 1000,
+               results_folder:str   = "",
+               device:str           = "cpu",
+               patience:Optional[int] = None,
+               tolerance:Optional[int] = None,
                dtype                = torch.float32):
     
     # Check the presence of 'predict' method
@@ -145,7 +145,7 @@ def partial_train(model,
     last_update, start_epoch, train_costs_h, val_costs_h, best_valid_loss = resume_checkpoint(results_folder, 
                                                                                               model, optimizer, 
                                                                                               scheduler, device)
-        
+    
     average_computation = 0
     train_avg_loss      = {}  
     valid_avg_loss      = {}
@@ -196,7 +196,7 @@ def partial_train(model,
 
         # Save tracking based on best performance
         improvement_pct = (best_valid_loss - valid_avg_loss[earlyStopping_loss]) / best_valid_loss * 100
-        if improvement_pct > tolerance:
+        if tolerance is None or improvement_pct > tolerance:
             last_update     = epoch_index
             best_valid_loss = valid_avg_loss[earlyStopping_loss]
             best_model      = copy.deepcopy(model.state_dict())

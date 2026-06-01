@@ -9,6 +9,7 @@ import h5py
 from numpy.random import default_rng
 import utils
 import matplotlib.pyplot as plt
+import augmentations as aug
 # -------------------------------------------------------------------
 # 1) Helpers
 # -------------------------------------------------------------------
@@ -70,31 +71,6 @@ def read_summary_pvti(summary_path: str) -> pv.DataSet:
 
 # --- Danny Ko's Augmentation Logic ---
 
-def rotate_z_augmentation(solid, uz, uy, ux, pr, direc):
-    # Change signals 
-    if direc > 0:
-        k_val   = 1
-        base_ux = -1 * uy
-        base_uy = ux
-        
-    elif direc < 0:
-        k_val   = -1
-        base_ux = uy
-        base_uy = -1 * ux
-        
-    else:
-        return solid, uz, uy, ux, pr
-    
-    # Attributes which the signal are not influencied by rotation
-    aux_so = np.rot90(solid,    k=k_val, axes=(1, 2))
-    aux_pr = np.rot90(pr,       k=k_val, axes=(1, 2))
-    aux_uz = np.rot90(uz,       k=k_val, axes=(1, 2)) 
-    
-    # Attributes which the signal are influencied by rotation
-    aux_ux = np.rot90(base_ux,  k=k_val, axes=(1, 2))
-    aux_uy = np.rot90(base_uy,  k=k_val, axes=(1, 2))
-
-    return aux_so, aux_uz, aux_uy, aux_ux, aux_pr
 
 
 def find_directional_local_maxima(dist_transform):
@@ -138,12 +114,9 @@ def find_directional_local_maxima(dist_transform):
 # 2) Main Builder with HDF5 and Augmentation
 # -------------------------------------------------------------------
 
-#simulations_folder  = "/home/gabriel/remote/hal/dissertacao/Simulations/Train_SphPore_120_120_120/"
-#output_path         = "../NN_Datasets/Train_SphPore_120_120_120_RotAug_KlocRMAXTHUMB_T.h5"
+simulations_folder  = "/home/gabriel/remote/hal/dissertacao/Simulations/FEITO_Train_Danny_SphPore_120_120_120/Train/"
+output_path         = "../../NN_Datasets/Train_Danny_SphPore_SilveiraAug.h5"
 
-
-output_path         = "../NN_Datasets/Test_Oliveira_Parker_120_120_120_RotAug_Rmax.h5"
-simulations_folder  = "/home/gabriel/remote/hal/dissertacao/simulations/Test_Oliveira_Parker_120_120_120/Samples/"
 
 
 sample_dir_pattern  = r"^Sample_(\d+)$"
@@ -219,42 +192,15 @@ with h5py.File(output_path, "w") as f:
             
             porous_mask = (vol_orig == 1) 
 
+            
+            
             # Velocity Normalization
-            visc    = (tau-0.5)/3
-            force   = utils.force_calculation(porous_mask, tau=tau, Re=Re)
-            edt     = distance_transform_edt(porous_mask).astype("float32")
-            
-            # Qualificacao
-            R_est       = 0.5*np.max(edt)
-            perm_est    = (2*R_est)**2
-            
-            # Qualificacao - Rmaximas
-            #maxima_mask = find_directional_local_maxima(edt)
-            #maximas     = edt[maxima_mask]
-            #R_est       = np.mean(maximas)
-            #perm_est    = (2*R_est)**2
-            
-            # Kozeny-Carman
-            #por         = np.mean(porous_mask)
-            #tort        = 1 + 0.8*(1-por)
-            #perm_est    = (0.125 * R_est**2 * por / tort**2) * (10/ norm_cte) # 10 factor moves the mean vel. to 0.1, norm_cte just cancel out
-            
-            # Rule of thumb
-            #por         = np.mean(porous_mask)
-            #R_est       = np.mean(maximas)
-            #perm_est    = por* R_est**2
-            
-            vx_norm     = vx_orig*visc / (force*norm_cte*perm_est) 
-            vy_norm     = vy_orig*visc / (force*norm_cte*perm_est)
-            vz_norm     = vz_orig*visc / (force*norm_cte*perm_est)
-            
+            vx_norm = utils.silveira_normalization_vel(vx_orig, porous_mask)
+            vy_norm = utils.silveira_normalization_vel(vy_orig, porous_mask)
+            vz_norm = utils.silveira_normalization_vel(vz_orig, porous_mask)
             # Pressure Normalization
-            delta_p     = utils.pressure_calculation(porous_mask, tau=tau, Re=Re)
-            p_mean      = (2+3*delta_p)/6
-            delta_p_new = 0.2
-            p_mean_new  = 0.15
-            pr_norm     = ((pr_orig -p_mean)/delta_p)*delta_p_new + p_mean_new            
-            print("Applied force: ", force)
+            pr_norm = utils.silveira_normalization_pres(pr_orig, porous_mask)
+            
             print("Mins:  ", np.min(vx_norm[porous_mask]), np.min(vy_norm[porous_mask]), np.min(vz_norm[porous_mask]))
             print("Means: ", np.mean(vx_norm[porous_mask]), np.mean(vy_norm[porous_mask]), np.mean(vz_norm[porous_mask]))
             print("Devs:  ", np.std(vx_norm[porous_mask]), np.std(vy_norm[porous_mask]), np.std(vz_norm[porous_mask]))
@@ -265,19 +211,19 @@ with h5py.File(output_path, "w") as f:
             
             # Rotate the sample 4 times
             for rot in range(4):
-                porous_mask_rot, vz_rot, vy_rot, vx_rot, pr_norm = rotate_z_augmentation(     porous_mask,
+                porous_mask_rot, vz_rot, vy_rot, vx_rot, pr_norm = aug.rotate_z_augmentation( porous_mask,
                                                                                               vz_norm,
                                                                                               vy_norm, 
                                                                                               vx_norm, 
                                                                                               pr_norm, 
                                                                                               direc=1)
                 
-                export_to_paraview(filename="debug_{rot}.vti", 
-                                   mask    =porous_mask, 
-                                   vx      =vx_norm, 
-                                   vy      =vy_norm,
-                                   vz      =vz_norm, 
-                                   pr      =pr_norm)
+                #export_to_paraview(filename="debug_{rot}.vti", 
+                #                   mask    =porous_mask, 
+                #                   vx      =vx_norm, 
+                #                   vy      =vy_norm,
+                #                   vz      =vz_norm, 
+                #                   pr      =pr_norm)
                 
                 
                 # 4. Geometry-based calculations (EDT and Mask) on augmented volume

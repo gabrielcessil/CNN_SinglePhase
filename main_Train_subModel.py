@@ -48,8 +48,8 @@ binary_input            = config["binary_input"]
 NN_dataset_folder       = config["NN_dataset_folder"]
 dataset_train_name      = config["dataset_train_name"]
 dataset_valid_name      = config["dataset_valid_name"]
-train_range             = tuple(config["train_range"]) 
-valid_range             = tuple(config["valid_range"])
+train_range             = None if config["train_range"] is None else tuple(config["train_range"]) 
+valid_range             = None if config["train_range"] is None else tuple(config["valid_range"])
 batch_size              = config["batch_size"]
 num_workers             = config["num_workers"]
 num_threads             = config["num_threads"]
@@ -120,13 +120,14 @@ print(f"Metadata saved at: {metadata_file}")
 nnt.set_global_seed(seed) 
 
 print("Loading Trainning Data ... ")
+
 train_ds = dr.LazyDatasetTorch(h5_path=dataset_train_full_name, 
-                               list_ids=np.arange(train_range[0],train_range[1]), 
+                               list_ids= None if train_range is None else np.arange(train_range[0],train_range[1]), 
                                x_dtype=torch.float32,
                                y_dtype=torch.float32)
 
 valid_ds = dr.LazyDatasetTorch(h5_path=dataset_valid_full_name, 
-                               list_ids=np.arange(valid_range[0],valid_range[1]), 
+                               list_ids= None if valid_range is None else np.arange(valid_range[0],valid_range[1]), 
                                x_dtype=torch.float32,
                                y_dtype=torch.float32)
 
@@ -145,7 +146,7 @@ if model_name=="javier_z":
     valid_ds.component = 0
     # Make loss function multiscale 
     for loss_name, items in loss_functions.items():
-        if not items["Thresholded"]: 
+        if not items["Thresholded"]: # If the function is not thresholded, it wont use predict and the output will be a list
             loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
             
 elif model_name=="javier_y":
@@ -156,7 +157,7 @@ elif model_name=="javier_y":
     valid_ds.component = 1
     # Make loss function multiscale 
     for loss_name, items in loss_functions.items():
-        if not items["Thresholded"]: 
+        if not items["Thresholded"]: # If the function is not thresholded, it wont use predict and the output will be a list
             loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
             
 elif model_name=="javier_x":
@@ -167,7 +168,7 @@ elif model_name=="javier_x":
     valid_ds.component = 2
     # Make loss function multiscale 
     for loss_name, items in loss_functions.items():
-        if not items["Thresholded"]: 
+        if not items["Thresholded"]: # If the function is not thresholded, it wont use predict and the output will be a list
             loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
             
 elif model_name=="javier_p":
@@ -178,7 +179,7 @@ elif model_name=="javier_p":
     valid_ds.component = 3
     # Make loss function multiscale 
     for loss_name, items in loss_functions.items():
-        if not items["Thresholded"]: 
+        if not items["Thresholded"]: # If the function is not thresholded, it wont use predict and the output will be a list
             loss_functions[loss_name]["obj"] = MSnet.MultiScaleLoss(loss_functions[loss_name]["obj"], norm_mode='var')
     
 elif model_name=="danny_z":

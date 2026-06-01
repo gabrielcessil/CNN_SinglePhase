@@ -50,8 +50,8 @@ binary_input            = config["binary_input"]
 NN_dataset_folder       = config["NN_dataset_folder"]
 dataset_train_name      = config["dataset_train_name"]
 dataset_valid_name      = config["dataset_valid_name"]
-train_range             = tuple(config["train_range"]) 
-valid_range             = tuple(config["valid_range"])
+train_range             = None if config["train_range"] is None else tuple(config["train_range"]) 
+valid_range             = None if config["train_range"] is None else tuple(config["valid_range"])
 batch_size              = config["batch_size"]
 num_workers             = config["num_workers"]
 num_threads             = config["num_threads"]
@@ -139,12 +139,12 @@ print(f"Metadata saved at: {metadata_file}")
 
 print("Loading Trainning Data ... ")
 train_ds = dr.LazyDatasetTorch(h5_path=dataset_train_full_name, 
-                               list_ids=np.arange(train_range[0],train_range[1]), 
+                               list_ids= None if train_range is None else np.arange(train_range[0],train_range[1]), 
                                x_dtype=torch.float32,
                                y_dtype=torch.float32)
 
 valid_ds = dr.LazyDatasetTorch(h5_path=dataset_valid_full_name, 
-                               list_ids=np.arange(valid_range[0],valid_range[1]), 
+                               list_ids= None if valid_range is None else np.arange(valid_range[0],valid_range[1]), 
                                x_dtype=torch.float32,
                                y_dtype=torch.float32)
 
