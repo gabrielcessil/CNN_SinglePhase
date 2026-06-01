@@ -54,7 +54,6 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
         batch_targets = batch_targets.clone().detach().to(dtype=torch.float32)
         batch_outputs = batch_outputs.clone().detach().to(dtype=torch.float32)
         
-        print("Out: ", batch_outputs.mean(), "; Tar: ", batch_targets.mean())
     
         # Calculate & Collect Metrics
         if component is None or component==5: # If component is Z,Y,X, P
@@ -75,7 +74,7 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
             # 1D Metrics (Z-direction only)
             all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs, batch_targets))
             #all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["c_metrics"].extend(em.Correlation_Comparison (batch_inputs, batch_outputs, batch_targets))
+            all_metrics["c_metrics"].extend(em.Correlation_Comparison (batch_inputs, batch_outputs, batch_targets))
             
                 
     # --- Final Global Aggregation ---

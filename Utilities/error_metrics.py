@@ -62,11 +62,13 @@ def Flux_Comparison(batch_inputs, batch_outputs, batch_targets):
     return efs
 
 def Bias_Comparison(batch_inputs, batch_outputs, batch_targets):
-    
+    print("In Bias Comparasion")
     if batch_outputs.shape[1] > 1:
+        print("Using magnitude")
         v_true     = (batch_targets[:, 0:1, :, :, :]**2+batch_targets[:, 1:2, :, :, :]**2+batch_targets[:, 2:3, :, :, :]**2).sqrt()
         v_pred     = (batch_outputs[:, 0:1, :, :, :]**2+batch_outputs[:, 1:2, :, :, :]**2+batch_outputs[:, 2:3, :, :, :]**2).sqrt()
     else:
+        print("Using Single Component")
         v_true     = batch_targets[:, 0:1, :, :, :]
         v_pred     = batch_outputs[:, 0:1, :, :, :]
         
@@ -287,7 +289,7 @@ def Angular_Comparison(batch_inputs, batch_outputs, batch_targets):
     print("------------------------------------------------------------------")
     return ae_means
 
-def Correlation_Comparison(batch_inputs, batch_outputs, batch_targets, npoints=5000):
+def Correlation_Comparison(batch_inputs, batch_outputs, batch_targets):
     
     correlations = []
     

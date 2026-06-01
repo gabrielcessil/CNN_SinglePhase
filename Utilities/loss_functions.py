@@ -93,7 +93,7 @@ class MeanBiasError(nn.Module):
     
 
 class PearsonCorr(nn.Module):
-    def __init__(self, N_samples, eps=1e-16, reverse=False):
+    def __init__(self, N_samples=None, eps=1e-16, reverse=False):
         super(PearsonCorr, self).__init__()
         self.eps=eps
         self.N_samples=N_samples 
@@ -107,9 +107,10 @@ class PearsonCorr(nn.Module):
         o = output.flatten()
         t = target.flatten()
         
-        indx = torch.randperm(o.size(0))[:self.N_samples]
-        o = o[indx]
-        t = t[indx]
+        if self.N_samples is not None:         
+            indx = torch.randperm(o.size(0))[:self.N_samples]
+            o = o[indx]
+            t = t[indx]
         
         # 2. Centering (Subtract the mean)
         o_mu = o - o.mean()

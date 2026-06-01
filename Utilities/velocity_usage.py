@@ -64,7 +64,7 @@ def force_calculation(
 def tensor_denorm(out: torch.Tensor,  # Prediction
                   inp: torch.Tensor): # Distance transform of geometry  
     """
-    out: (B, 4, Z, Y, X) -> Predições da rede
+    out: (B, 4, Z, Y, X) -> RNA Model prediction or Target Simulation
     inp: (B, 1, Z, Y, X) -> Input (EDT)
     """
     all_samples = [] # Usar lista é mais rápido que concatenar tensores no loop
