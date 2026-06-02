@@ -150,7 +150,8 @@ def partial_train(model,
     train_avg_loss      = {}  
     valid_avg_loss      = {}
     best_model          = None
-    if patience is None: patience = N_epochs
+    if patience is None:  patience  = N_epochs # Wait until the end
+    if tolerance is None: tolerance = 0        # If current loss is lower than the best
 
     # Create a directory and file name for model
     weights_file_name   = results_folder+"model"
@@ -196,7 +197,7 @@ def partial_train(model,
 
         # Save tracking based on best performance
         improvement_pct = (best_valid_loss - valid_avg_loss[earlyStopping_loss]) / best_valid_loss * 100
-        if tolerance is None or improvement_pct > tolerance:
+        if improvement_pct > tolerance:
             last_update     = epoch_index
             best_valid_loss = valid_avg_loss[earlyStopping_loss]
             best_model      = copy.deepcopy(model.state_dict())

@@ -53,7 +53,6 @@ class Mask_LossFunction(nn.Module):
             loss    = 0.0
             C       = output.shape[1]
             for c in range(C):
-                print(f"Channel {c}")
                 mask_c   = self.mask_law(output[:, c], target[:, c])
                 loss    += self.lossFunction(output[:, c][mask_c], target[:, c][mask_c])
             return loss / C
