@@ -36,7 +36,6 @@ else:
 with open(json_path, 'r') as file:
     config = json.load(file)
     
-
 #######################################################
 #************ USER INPUTS (from .json):    ***********#
 #######################################################
@@ -66,6 +65,7 @@ weight_init             = config["weight_init"]
 seed                    = config["seed"]
 train_comment           = config["train_comment"]
 NN_results_folder       = config["NN_results_folder"]
+device_set              = config["device"]
 
 # Handle results folder config
 if NN_results_folder is None:
@@ -84,8 +84,21 @@ nnt.set_logger_output_folder(NN_results_folder)
 #************ HARDCODED OBJECTS:           ***********#
 #######################################################
 
-device                  = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if isinstance(device_set, int):
+    torch.cuda.set_device(device_set)
+    device = torch.device(f'cuda:{device_set}')
+    print('Current device name:', torch.cuda.get_device_name(device))
+elif device_set is None:
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+else:
+    device = torch.device(device_set)
+print('Current device:     ', device)
+
 dtype                   = torch.float32
+# Set seed to random initializations
+nnt.set_global_seed(seed) 
+
+
 
 loss_functions  = {
     # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
@@ -93,8 +106,7 @@ loss_functions  = {
     # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
     "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
     "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
-    "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000)),  "Thresholded": True},
-    "Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True}
+    "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr()),  "Thresholded": True},
 }
 
 
