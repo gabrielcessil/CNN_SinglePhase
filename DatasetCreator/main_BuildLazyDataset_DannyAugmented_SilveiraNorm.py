@@ -9,34 +9,10 @@ import h5py
 from numpy.random import default_rng
 import utils
 import matplotlib.pyplot as plt
-import augmentations as aug
 # -------------------------------------------------------------------
-# 1) Helpers
+# 1) Helpers and Augmentation Functions
 # -------------------------------------------------------------------
-def export_to_paraview(filename: str, mask: np.ndarray, vx: np.ndarray, vy: np.ndarray, vz: np.ndarray, pr: np.ndarray):
-    """
-    Exporta os campos 3D da simulação para um arquivo .vti legível pelo ParaView.
-    
-    Parâmetros:
-        filename (str): Caminho para salvar o arquivo (deve terminar em .vti).
-        mask (np.ndarray): Array 3D booleano ou int representando a geometria (poros = 1, sólido = 0).
-        vx, vy, vz (np.ndarray): Arrays 3D contendo as velocidades.
-        pr (np.ndarray): Array 3D contendo o campo de pressão.
-    """
-    
-    grid = pv.ImageData()
-    
-    grid.dimensions = np.array(mask.shape)
-    
-    velocity = np.stack((vx, vy, vz), axis=-1)
-    
-    grid.point_data["Uz"] =  vz.flatten(order="C")
-    grid.point_data["Uy"] =  vy.flatten(order="C")
-    grid.point_data["Ux"] =  vx.flatten(order="C")
-    grid.point_data["Pressure"] = pr.flatten(order="C")
-    grid.point_data["Porous_Mask"] = mask.flatten(order="C").astype(np.uint8)
-    grid.save(filename)
-    
+
 def list_sample_dirs(base_dir: str, sample_dir_pattern: str) -> List[str]:
     pattern = re.compile(sample_dir_pattern)
     samples: List[Tuple[int, str]] = []
@@ -71,67 +47,93 @@ def read_summary_pvti(summary_path: str) -> pv.DataSet:
 
 # --- Danny Ko's Augmentation Logic ---
 
-
-
-def find_directional_local_maxima(dist_transform):
-    """
-    Finds local maxima in a 3D distance transform array.
-    A voxel is considered a local maximum if it is strictly greater than 
-    both of its neighbors along at least 2 out of the 3 axes (X, Y, Z).
+def shift_augmentation(my_solid, my_vel, shift_range, vel_dir):
+    # Assuming shift_range contains [shift_z, shift_y, shift_x]
+    # For simplicity, let's say we are shifting your true X (axis=2) and true Y (axis=1)
     
-    Parameters:
-        dist_transform (numpy.ndarray): 3D array of the distance transform.
+    my_aug_solid = np.ones_like(my_solid)
+    my_aug_vel = np.ones_like(my_vel)
+    
+    # Let's extract shifts specifically for your Y (axis=1) and X (axis=2)
+    shift_y = shift_range[0] 
+    shift_x = shift_range[1] 
+
+    # --- Shift True Y (axis=1) ---
+    if shift_y < 0:
+        my_aug_solid[:, :shift_y, :]    = my_solid[:, -1*shift_y:, :]
+        my_aug_solid[:, shift_y:, :]    = np.flip(my_solid, axis=1)[:, :-1*shift_y, :]
+        my_aug_vel[:, :shift_y, :]      = my_vel[:, -1*shift_y:, :]
+        my_aug_vel[:, shift_y:, :]      = np.flip(-1*my_vel if vel_dir == 'y' else my_vel, axis=1)[:, :-1*shift_y, :]
+    elif shift_y > 0:
+        my_aug_solid[:, :shift_y, :]    = np.flip(my_solid, axis=1)[:, -1*shift_y:, :]
+        my_aug_solid[:, shift_y:, :]    = my_solid[:, :-1*shift_y, :]
+        my_aug_vel[:, :shift_y, :]      = np.flip(-1*my_vel if vel_dir == 'y' else my_vel, axis=1)[:, -1*shift_y:, :]
+        my_aug_vel[:, shift_y:, :]      = my_vel[:, :-1*shift_y, :]
+    else:
+        my_aug_solid, my_aug_vel = my_solid, my_vel
+
+    my_solid, my_vel = my_aug_solid, my_aug_vel
+    my_aug_solid, my_aug_vel = np.ones_like(my_solid), np.ones_like(my_vel)
+
+    # --- Shift True X (axis=2) ---
+    if shift_x < 0:
+        my_aug_solid[:, :, :shift_x]    = my_solid[:, :, -1*shift_x:]
+        my_aug_solid[:, :, shift_x:]    = np.flip(my_solid, axis=2)[:, :, :-1*shift_x]
+        my_aug_vel[:, :, :shift_x]      = my_vel[:, :, -1*shift_x:]
+        my_aug_vel[:, :, shift_x:]      = np.flip(-1*my_vel if vel_dir == 'x' else my_vel, axis=2)[:, :, :-1*shift_x]
+    elif shift_x > 0:
+        my_aug_solid[:, :, :shift_x]    = np.flip(my_solid, axis=2)[:, :, -1*shift_x:]
+        my_aug_solid[:, :, shift_x:]    = my_solid[:, :, :-1*shift_x]
+        my_aug_vel[:, :, :shift_x]      = np.flip(-1*my_vel if vel_dir == 'x' else my_vel, axis=2)[:, :, -1*shift_x:]
+        my_aug_vel[:, :, shift_x:]      = my_vel[:, :, :-1*shift_x]
+    else:
+        my_aug_solid, my_aug_vel = my_solid, my_vel
+
+    return my_aug_solid, my_aug_vel
+
+def flip_augmentation(my_solid, my_vel, vel_dir, axis):
+    my_aug_solid = np.flip(my_solid, axis=axis)
+    if(vel_dir[0] == 'x'):
+        if(axis == 2):
+          my_aug_vel = np.flip(-1*my_vel, axis=axis)
+        else:
+          my_aug_vel = np.flip(my_vel, axis=axis)
+    elif(vel_dir[0] == 'y'):
+        if(axis == 1):
+          my_aug_vel = np.flip(-1*my_vel, axis=axis)
+        else:
+          my_aug_vel = np.flip(my_vel, axis=axis)
+    else:
+        my_aug_vel = np.flip(my_vel, axis=axis)
         
-    Returns:
-        numpy.ndarray: A 3D boolean array where True indicates a local maximum.
-    """
-    dt = np.asarray(dist_transform)
-    
-    # Initialize boolean arrays for each direction (padded with False at the borders)
-    max_z = np.zeros_like(dt, dtype=bool)  # Axis 0
-    max_y = np.zeros_like(dt, dtype=bool)  # Axis 1
-    max_x = np.zeros_like(dt, dtype=bool)  # Axis 2
-    
-    # 1. Check Z direction (Axis 0)
-    # Center is strictly greater than the slice before it AND the slice after it
-    max_z[1:-1, :, :] = (dt[1:-1, :, :] > dt[:-2, :, :]) & (dt[1:-1, :, :] > dt[2:, :, :])
-    
-    # 2. Check Y direction (Axis 1)
-    max_y[:, 1:-1, :] = (dt[:, 1:-1, :] > dt[:, :-2, :]) & (dt[:, 1:-1, :] > dt[:, 2:, :])
-    
-    # 3. Check X direction (Axis 2)
-    max_x[:, :, 1:-1] = (dt[:, :, 1:-1] > dt[:, :, :-2]) & (dt[:, :, 1:-1] > dt[:, :, 2:])
-    
-    # Count how many axes flag the voxel as a maximum (converts True to 1, False to 0)
-    max_count = max_z.astype(np.int8) + max_y.astype(np.int8) + max_x.astype(np.int8)
-    
-    # Define global maximum: true in at least 2 directions AND must be inside the pore (dt > 0)
-    local_maxima_mask = (max_count >= 2) & (dt > 0)
-    
-    return local_maxima_mask    
-    
+    return my_aug_solid, my_aug_vel
+
 # -------------------------------------------------------------------
 # 2) Main Builder with HDF5 and Augmentation
 # -------------------------------------------------------------------
 
-simulations_folder  = "/home/gabriel/remote/hal/dissertacao/Simulations/FEITO_Train_Danny_SphPore_120_120_120/Train/"
-output_path         = "../../NN_Datasets/Train_Danny_SphPore_SilveiraAug.h5"
-
-
-
+output_path         = "../../NN_Datasets/Valid_Danny_SphPore_DAug_SNorm.h5"
+simulations_folder  = "/home/gabriel/remote/hal/dissertacao/Simulations/Valid_Danny_SphPore_120_120_120/"
 sample_dir_pattern  = r"^Sample_(\d+)$"
-raw_name            = "domain.raw"
+raw_name            = "mod_domain.raw"
 raw_shape           = (120, 120, 120)
 raw_dtype           = np.uint8
-saved_fraction      = 1.0
 
+# Augmentation Parameters
+augment             = True
+augGen_seed         = 10
+aug_iter            = 30
+shift_range         = 2
+flip_range          = 5
 # Normalization Parameters
-norm_cte            = 0.2
 tau                 = 1.5
 Re                  = 0.1
 
 base_dir            = os.path.join(os.getcwd(), simulations_folder)
 sample_dirs         = list_sample_dirs(base_dir, sample_dir_pattern)
+print(sample_dirs)
+
+rnd_num_gen         = default_rng(augGen_seed)
 
 min_values  = []
 max_values  = []
@@ -146,7 +148,7 @@ if output_dir: os.makedirs(output_dir, exist_ok=True)
 
 with h5py.File(output_path, "w") as f:
     D, H, W = raw_shape
-    max_points = int(D * H * W * saved_fraction)
+    max_points = int(D * H * W) # Adjust if you want a lower fraction
 
     # Dataset Initialization (expandable)
     vel_x_ds = f.create_dataset("vel_x", (0, max_points), maxshape=(None, max_points), dtype="float32", chunks=(1, max_points))
@@ -190,43 +192,54 @@ with h5py.File(output_path, "w") as f:
                 print("Pressure data not found.")
                 pr_orig        = np.zeros_like(vz_orig)
             
-            porous_mask = (vol_orig == 1) 
+            porous_mask_orig = (vol_orig == 1) 
 
-            
-            
             # Velocity Normalization
-            vx_norm = utils.silveira_normalization_vel(vx_orig, porous_mask)
-            vy_norm = utils.silveira_normalization_vel(vy_orig, porous_mask)
-            vz_norm = utils.silveira_normalization_vel(vz_orig, porous_mask)
+            vx_norm = utils.silveira_normalization_vel(vx_orig, porous_mask_orig)
+            vy_norm = utils.silveira_normalization_vel(vy_orig, porous_mask_orig)
+            vz_norm = utils.silveira_normalization_vel(vz_orig, porous_mask_orig)
             # Pressure Normalization
-            pr_norm = utils.silveira_normalization_pres(pr_orig, porous_mask)
-            
-            print("Mins:  ", np.min(vx_norm[porous_mask]), np.min(vy_norm[porous_mask]), np.min(vz_norm[porous_mask]))
-            print("Means: ", np.mean(vx_norm[porous_mask]), np.mean(vy_norm[porous_mask]), np.mean(vz_norm[porous_mask]))
-            print("Devs:  ", np.std(vx_norm[porous_mask]), np.std(vy_norm[porous_mask]), np.std(vz_norm[porous_mask]))
-            print("Maxs:  ", np.max(vx_norm[porous_mask]), np.max(vy_norm[porous_mask]), np.max(vz_norm[porous_mask]))
+            pr_norm = utils.silveira_normalization_pres(pr_orig, porous_mask_orig)
+                
+                
+            print("Mins:  ",np.min(vz_norm))
+            print("Means: ",np.mean(vz_norm))
+            print("Devs:  ",np.std(vz_norm))
+            print("Maxs:  ",np.max(vz_norm))
             print("-------------------------------------------------------------")            
         
-            print(f"Processing {sample_name} with augmentations...")
+        
+            # Generate random augmentation parameters
+            shift_val   = D // shift_range  # D=120 for your data
+            rnd_shifts  = rnd_num_gen.integers(low=-shift_val, high=shift_val, size=(aug_iter, 2), endpoint=True)
+            rnd_flips   = rnd_num_gen.integers(low=0, high=10, size=(aug_iter, 2))
             
-            # Rotate the sample 4 times
-            for rot in range(4):
-                porous_mask_rot, vz_rot, vy_rot, vx_rot, pr_norm = aug.rotate_z_augmentation( porous_mask,
-                                                                                              vz_norm,
-                                                                                              vy_norm, 
-                                                                                              vx_norm, 
-                                                                                              pr_norm, 
-                                                                                              direc=1)
+            print(f"Processing {sample_name} with {aug_iter} augmentations...")
+            
+            for j in range(aug_iter):
+                # Apply Shift (shift_range=[shift_x, shift_y])
+                curr_vol, curr_vx = shift_augmentation(vol_orig, vx_norm, rnd_shifts[j], 'x')
+                _, curr_vy        = shift_augmentation(vol_orig, vy_norm, rnd_shifts[j], 'y')
+                _, curr_vz        = shift_augmentation(vol_orig, vz_norm, rnd_shifts[j], 'z')
+                _, curr_pr        = shift_augmentation(vol_orig, pr_norm, rnd_shifts[j], 'none')
                 
-                #export_to_paraview(filename="debug_{rot}.vti", 
-                #                   mask    =porous_mask, 
-                #                   vx      =vx_norm, 
-                #                   vy      =vy_norm,
-                #                   vz      =vz_norm, 
-                #                   pr      =pr_norm)
+                # Apply Flip Axis 0 (X direction)
+                if rnd_flips[j, 0] >= flip_range:
+                    curr_vol, curr_vx = flip_augmentation(curr_vol, curr_vx, 'x', 2)
+                    _, curr_vy        = flip_augmentation(curr_vol, curr_vy, 'y', 2)
+                    _, curr_vz        = flip_augmentation(curr_vol, curr_vz, 'z', 2)
+                    _, curr_pr        = flip_augmentation(curr_vol, curr_pr, 'none', 2)
                 
-                
+                # Apply Flip Axis 1 (Y direction)
+                if rnd_flips[j, 1] >= flip_range:
+                    curr_vol, curr_vx = flip_augmentation(curr_vol, curr_vx, 'x', 1)
+                    _, curr_vy        = flip_augmentation(curr_vol, curr_vy, 'y', 1)
+                    _, curr_vz        = flip_augmentation(curr_vol, curr_vz, 'z', 1)
+                    _, curr_pr        = flip_augmentation(curr_vol, curr_pr, 'none', 1)
+                                                                          
+                                
                 # 4. Geometry-based calculations (EDT and Mask) on augmented volume
+                porous_mask = (curr_vol == 1)
                 if not np.any(porous_mask): continue
 
                 edt_full = distance_transform_edt(porous_mask).astype("float32")
@@ -244,10 +257,10 @@ with h5py.File(output_path, "w") as f:
                 cZ_row = np.zeros(max_points, dtype="uint8")
                 ed_row = np.zeros(max_points, dtype="float32")
 
-                vx_row[:N_points] = vx_norm[porous_mask]
-                vy_row[:N_points] = vy_norm[porous_mask]
-                vz_row[:N_points] = vz_norm[porous_mask]
-                pr_row[:N_points] = pr_norm[porous_mask]
+                vx_row[:N_points] = curr_vx[porous_mask]
+                vy_row[:N_points] = curr_vy[porous_mask]
+                vz_row[:N_points] = curr_vz[porous_mask]
+                pr_row[:N_points] = curr_pr[porous_mask]
                 cX_row[:N_points] = coords_i.astype(np.uint8)
                 cY_row[:N_points] = coords_j.astype(np.uint8)
                 cZ_row[:N_points] = coords_k.astype(np.uint8)
@@ -262,7 +275,7 @@ with h5py.File(output_path, "w") as f:
                 n_valid_ds.resize((global_idx + 1,))
                 sample_names_ds.resize((global_idx + 1,))
                 n_valid_ds[global_idx] = N_points
-                sample_names_ds[global_idx] = f"{sample_name}_rot_{rot}"
+                sample_names_ds[global_idx] = f"{sample_name}_aug_{j}"
                 
                 global_idx += 1
 
@@ -270,8 +283,6 @@ with h5py.File(output_path, "w") as f:
             print(f"[FAIL] {sample_name}: {e}")
     
    
-    f.attrs['norm_type']    = "v = v*visc/(force*norm_cte)"
-    f.attrs['norm_cte']     = norm_cte
     f.attrs['tau_used']     = tau
     f.attrs['re_used']      = Re
 

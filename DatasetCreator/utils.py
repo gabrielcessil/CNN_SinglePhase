@@ -416,7 +416,7 @@ def danny_normalization_vel(vel, void_mask, tau=1.5, Re=0.1):
     
     visc    = (tau-0.5)/3
     force   = force_calculation(void_mask, tau=tau, Re=Re)
-    perm_est= (2*0.65*np.max(distance_transform_edt(void_mask).astype("float32")))**2 / 5
+    perm_est= (0.65*np.max(distance_transform_edt(void_mask).astype("float32")))**2 / 5
     
     return vel*visc / (force*perm_est)
 
@@ -428,8 +428,6 @@ def silveira_normalization_vel(vel, void_mask, tau=1.5, Re=0.1):
     force   = force_calculation(void_mask, tau=tau, Re=Re)
     vel_norm= vel * Ke / (tau*force)
     
-    print(f"vel_mean = {np.mean(vel)} * Ke={Ke} / (tau={tau} * force={force})")
-    print(f"vel_mean = {np.mean(vel_norm)} ")
     return vel_norm
     
 

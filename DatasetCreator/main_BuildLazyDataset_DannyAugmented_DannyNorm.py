@@ -112,10 +112,11 @@ def flip_augmentation(my_solid, my_vel, vel_dir, axis):
 # 2) Main Builder with HDF5 and Augmentation
 # -------------------------------------------------------------------
 
-output_path         = "../NN_Datasets/Train_Danny_SphPore_120_120_120_DannyAug.h5"
-simulations_folder  = "/home/gabriel/remote/hal/dissertacao/Simulations/Train_Danny_SphPore_120_120_120/"
-sample_dir_pattern  = r"^domain_(\d+)$"
-raw_name            = "domain.raw"
+
+simulations_folder  = "/home/gabriel/remote/hal/dissertacao/Simulations/Valid_Danny_SphPore_120_120_120/"
+output_path         = "../../NN_Datasets/Valid_Danny_SphPore_DAug_DNorm.h5"
+sample_dir_pattern  = r"^Sample_(\d+)$"
+raw_name            = "mod_domain.raw"
 raw_shape           = (120, 120, 120)
 raw_dtype           = np.uint8
 
