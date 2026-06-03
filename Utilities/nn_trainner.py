@@ -196,7 +196,7 @@ def partial_train(model,
         
 
         # Save tracking based on best performance
-        improvement_pct = (best_valid_loss - valid_avg_loss[earlyStopping_loss]) / best_valid_loss * 100
+        improvement_pct = (1 - valid_avg_loss[earlyStopping_loss] / best_valid_loss)  * 100
         if improvement_pct > tolerance:
             last_update     = epoch_index
             best_valid_loss = valid_avg_loss[earlyStopping_loss]
