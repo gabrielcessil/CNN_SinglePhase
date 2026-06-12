@@ -3,7 +3,7 @@ import porespy as ps
 import os
 import scipy.stats as sps
 import utils
-
+import zlib
 
 def make_spheres_volume(MEAN_RADIUS, SPHERES_FILL, solid_spheres, SHAPE, seed=0):
     
@@ -29,7 +29,6 @@ def make_spheres_volume(MEAN_RADIUS, SPHERES_FILL, solid_spheres, SHAPE, seed=0)
 
 
 # --- Simulation Parameters ---
-chunk_size          = 10   # Set for 1h of simulations (5 samples, 20 min per sample)
 gres                = "gpu:a100" #"gpu:k40m"#"gpu:a100"
 partition           = "all_gpu"
 #gres            = None #"gpu:k40m"#"gpu:a100"
@@ -37,7 +36,6 @@ partition           = "all_gpu"
 n_proc              = 4
 cpu                 = 12 
 gpu                 = 64
-use_low_prio        = False
 include_allocation  = False 
 lbpm_version        = "lbpm/gpu/lbpm_fork_965bd0d"
 
@@ -45,18 +43,31 @@ lbpm_version        = "lbpm/gpu/lbpm_fork_965bd0d"
 DIM             = 120
 SHAPE           = [DIM, DIM, DIM] # Shape must be a List for the function signature you provided
 AXIS_OF_FLOW    = 0 
-N_SAMPLES       = 1 # 10 for training, 2 for testing, 1 for validation (192/128/64)
 
 include_walls   = True
 remove_isolated = False
 
-output_root = "../../Simulations/Valid_SphPore_120_120_120"
-seed        = 1
 
+dataset_type    = 'train' # 'train', 'valid', 'test'
+
+
+    
 ##########################
 # CREATE SPHERICAL PORES #
 ##########################
 
+if dataset_type =='test':
+    output_root = "../../Simulations/Test_SphPore_120_120_120"
+    N_SAMPLES       = 2
+
+if dataset_type =='valid':
+    output_root = "../../Simulations/Valid_SphPore_120_120_120"
+    N_SAMPLES       = 1 
+    
+if dataset_type =='train':
+    output_root = "../../Simulations/Train_SphPore_120_120_120"
+    N_SAMPLES       = 10 
+    
 config_pairs = [
     
     (0.5, 8),
@@ -84,17 +95,19 @@ config_pairs = [
 os.makedirs(output_root, exist_ok=True)
 volumes             = []
 solid_spheres       = False
-
+folder_paths = []
 total_created = 0
 for SPHERES_FILL, MEAN_RADIUS in config_pairs: 
     config_created = 0
     for n in range(N_SAMPLES*50):
         if config_created >= N_SAMPLES: break
         print(f"Attempt to create sample {total_created}")
-        print(f"-->Filling {SPHERES_FILL*100}% with Sphere, Mean Radius {MEAN_RADIUS} ({n})")
+        
         # Create volumes
-        seed_n = int(n*10000+MEAN_RADIUS*1000+SPHERES_FILL*100)+seed
-        vol  = make_spheres_volume(MEAN_RADIUS, SPHERES_FILL, solid_spheres, SHAPE, seed=seed_n).astype(np.uint8)
+        sample_id   = f"{dataset_type}_fill{SPHERES_FILL}_r{MEAN_RADIUS}_idx{config_created}_{n}"
+        seed_n      = zlib.crc32(sample_id.encode("utf-8"))
+        print(f"-->Filling {SPHERES_FILL*100}% with Sphere, Mean Radius {MEAN_RADIUS} ({n}). Seed: ", seed_n)
+        vol         = make_spheres_volume(MEAN_RADIUS, SPHERES_FILL, solid_spheres, SHAPE, seed=seed_n).astype(np.uint8)
         
         # Transform sample for simulation:
         if include_walls: vol = utils.add_enclusure_walls(vol)
@@ -115,24 +128,45 @@ for SPHERES_FILL, MEAN_RADIUS in config_pairs:
         else:        
             print(f"-->Sample {total_created} got included.")
             folder_base = f"Sample_{total_created:05d}"
-            utils.create_simulation_pressure_condition(filt_vol,  output_root, folder_base,  n_proc=n_proc, include_walls=include_walls)
+            folder_path = utils.create_simulation_pressure_condition(   filt_vol, 
+                                                                        output_root, 
+                                                                        folder_base,  
+                                                                        n_proc=n_proc, 
+                                                                        include_walls=include_walls)
+            folder_paths.append(folder_path)
+            
             total_created +=1
             config_created+=1
         print("-" * 30)
 
         
 
+# Create .sh based on number of files
+utils.generate_slurm_run_scripts_chunks(
+    folder_paths    = folder_paths,
+    n_proc          = n_proc,      
+    gres            = gres,       
+    output_root     = output_root,   
+    samples_per_job = 10, 
+    cpu             = cpu,         
+    gpu             = gpu,
+    partition       = partition,                        
+    dispatcher_name = f"Run_LBM_{0}_{total_created}.sh",
+    lbpm_version    = lbpm_version,
+    include_allocation  = include_allocation       
+)
 
-utils.generate_slurm_run_scripts_chunks(sample_indices  = list(range(0, total_created + 1)),
-                                        n_proc          = n_proc,
-                                        gres            = gres,
-                                        output_root     = output_root,
-                                        samples_per_job = chunk_size,
-                                        cpu             = cpu, 
-                                        gpu             = gpu,
-                                        partition       = partition,                        
-                                        dispatcher_name = f"Run_{0}_{total_created}.sh",
-                                        lbpm_version    = lbpm_version,
-                                        use_low_prio        = use_low_prio,
-                                        include_allocation  = include_allocation        
-                                        )
+utils.generate_slurm_run_scripts_chunks_GRADLBM(
+    folder_paths        = folder_paths,
+    n_proc              = 1,
+    output_root         = output_root,
+    samples_per_job     = 20,
+    partition           = "close_cpu",
+    nodelist            = "node[008-020]",
+    cpu_per_sim         = 1, 
+    mem_gb_per_sim      = 6,
+    dispatcher_name     = f"Run_GRAD_{0}_{total_created}.sh",
+    lbm_folder          = "/home/gabriel.silveira/GRAD_LBM/",
+    ini_name            = "grad.ini",
+    chain_launchers     = False,
+)   

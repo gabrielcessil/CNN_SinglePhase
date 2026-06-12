@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from typing import List, Optional
 import glob
+from typing import List, Optional
 
 
 def write_domain_raw(path: str, x_sample: np.ndarray, filename: str = "domain.raw") -> str:
@@ -32,40 +33,43 @@ def find_raw_in_folder(base_dir, filename):
     return raw_files
     
 def generate_slurm_run_scripts_chunks(
-    sample_indices: List[int],
-    n_proc: int,
-    output_root: str,
-    samples_per_job: int,
-    cpu: int, 
-    gpu: int,
-    gres: Optional[str] = None,                        
-    partition: str = "all_gpu",                        
-    dispatcher_name: str = "submit_all_sims_chain.sh",
-    lbpm_version: str = "lbpm/gpu/",
-    use_low_prio: bool = False,
+    folder_paths:       List[int],
+    n_proc:             int,
+    output_root:        str,
+    samples_per_job:    int,
+    cpu:                int, 
+    gpu:                int,
+    gres:               Optional[str] = None,                        
+    partition:          str = "all_gpu",                        
+    dispatcher_name:    str = "submit_all_sims_chain.sh",
+    lbpm_version:       str = "lbpm/gpu/",
+    use_low_prio:       bool = False,
     include_allocation: bool = False
 ):
     """
     Gera scripts SLURM em chunks e um dispatcher centralizado.
     As variáveis GRES e PARTITION são definidas no dispatcher para fácil alteração.
     """
-    sample_indices = sorted(sample_indices)
+    # Ensure all paths are strings and resolved to absolute paths for safe cd commands
+    folder_paths = sorted([str(Path(p).resolve()) for p in folder_paths])
+    
     scripts_dir = Path(output_root).resolve()
     scripts_dir.mkdir(parents=True, exist_ok=True)
 
     chunks = [
-        sample_indices[i : i + samples_per_job]
-        for i in range(0, len(sample_indices), samples_per_job)
+        folder_paths[i : i + samples_per_job]
+        for i in range(0, len(folder_paths), samples_per_job)
     ]
+
 
     chunk_script_names = []
 
     for chunk_id, chunk_samples in enumerate(chunks):
-        start_idx = chunk_samples[0]
-        end_idx   = chunk_samples[-1]
-        range_id = f"{start_idx:05d}_{end_idx:05d}"
+        range_id = f"chunk_{chunk_id:03d}"
+        first_folder    = os.path.basename(chunk_samples[0])
+        last_folder     = os.path.basename(chunk_samples[-1])
         
-        chunk_script_name = f"run_sims_{range_id}.sh"
+        chunk_script_name = f"run_lbpm_{range_id}.sh"
         chunk_script_path = scripts_dir / chunk_script_name
         chunk_script_names.append(chunk_script_name)
 
@@ -88,12 +92,12 @@ def generate_slurm_run_scripts_chunks(
 # ---------------- Environment Setup ----------------
 module load $LBPM_VERSION
 
-echo "=== Chunk {chunk_id:03d} | Samples {start_idx:05d} to {end_idx:05d} ==="
+echo "=== Chunk {chunk_id:03d} | Processing {first_folder} to {last_folder} ({len(chunk_samples)} samples) ==="
 """
         # Execução das simulações
         first = True
         for sample_i in chunk_samples:
-            folder_base = f"Sample_{sample_i:05d}"
+            folder_base = f"Sample_{sample_i}"
             cd_cmd = f"cd {folder_base}" if first else f"cd ../{folder_base}"
             
             # Adicionado --oversubscribe no mpirun para evitar erro de slots
@@ -153,9 +157,165 @@ fi
     
     
     
+
+import os
+from pathlib import Path
+from typing import List, Optional
+
+def generate_slurm_run_scripts_chunks_GRADLBM(
+    folder_paths:       List[str],
+    n_proc:             int,
+    output_root:        str,
+    samples_per_job:    int,
+    cpu_per_sim:        int = 1, 
+    mem_gb_per_sim:     int = 6,
+    gres:               Optional[str] = None,                        
+    partition:          str = "close_cpu",
+    nodelist:           str = "node[008-020]",
+    dispatcher_name:    str = "submit_all_sims.sh",
+    lbm_folder:         str = "../",
+    ini_name:           str = "grad.ini",
+    chain_launchers:    bool = False
+):
+    """
+    Gera:
+    1. 'run_grad.sh' individual e standalone dentro de cada pasta de amostra.
+    2. Sub-launchers leves que "descobrem" um nó, disparam os run_grad.sh 
+       via sbatch para aquele nó específico, e encerram imediatamente.
+    3. Um Dispatcher principal para disparar os Sub-launchers.
+    """
+    folder_paths = sorted([str(Path(p).resolve()) for p in folder_paths])
     
+    scripts_dir = Path(output_root).resolve()
+    scripts_dir.mkdir(parents=True, exist_ok=True)
+
+    # ==========================================
+    # 1. GENERATE PER-SAMPLE SCRIPTS (run_grad.sh)
+    # ==========================================
+    for folder_path in folder_paths:
+        folder_name = os.path.basename(folder_path)
+        sample_script_path = Path(folder_path) / "run_grad.sh"
+        
+        sample_content = f"""#!/bin/bash
+
+# ---------------- SLURM Job Settings ----------------
+#SBATCH --job-name=Perm_{folder_name}
+#SBATCH --partition={partition}
+#SBATCH --nodelist={nodelist}
+#SBATCH --nodes=1
+
+#SBATCH --ntasks={n_proc}
+#SBATCH --cpus-per-task={cpu_per_sim}
+#SBATCH --mem={mem_gb_per_sim}G
+
+#SBATCH -t 7-00:00:00
+#SBATCH -o perm_%j.out
+#SBATCH -e perm_%j.err
+
+grad_path="{lbm_folder}grad-lbm"
+
+module load conda/24.11.1
+conda activate env_grad_lbm
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+
+echo "--- Launching simulation for {folder_name} ---"
+
+$grad_path -i {ini_name}
+
+echo "--> Simulation for {folder_name} finished."
+"""
+        sample_script_path.write_text(sample_content, encoding="utf-8")
+        os.chmod(sample_script_path, 0o755)
+
+    # ==========================================
+    # 2. GENERATE THE SUB-LAUNCHERS (CHUNKS)
+    # ==========================================
+    chunks = [
+        folder_paths[i : i + samples_per_job]
+        for i in range(0, len(folder_paths), samples_per_job)
+    ]
+
+    launcher_names = []
+
+    for chunk_id, chunk_samples in enumerate(chunks):
+        range_id = f"chunk_{chunk_id:03d}"
+        launcher_name = f"run_gradlbm_{range_id}.sh"
+        launcher_path = scripts_dir / launcher_name
+        launcher_names.append(launcher_name)
+
+        # The Sub-Launcher is now just a lightweight submitter script.
+        # It only needs 1 CPU and 1GB of RAM to run a quick bash loop.
+        launcher_content = f"""#!/bin/bash
+
+# ---------------- SLURM Master Allocation ----------------
+#SBATCH --job-name=Launch_{range_id}
+#SBATCH --partition={partition}
+#SBATCH --nodelist={nodelist}
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH -t 7-00:00:00
+#SBATCH --exclusive
+
+echo "=========================================================="
+echo "Sub-Launcher {range_id} active."
+echo "Scouted Node: $SLURMD_NODENAME"
+echo "Submitting sample scripts to this exact node via sbatch..."
+echo "=========================================================="
+
+"""
+        for folder_path in chunk_samples:
+            folder_name = os.path.basename(folder_path)
+            rel_path = os.path.relpath(folder_path, scripts_dir)
+            
+            # The Sub-Launcher submits the job to the queue targeting the scouted node, 
+            # then moves on to the next one without waiting.
+            # The command line --nodelist overrides the one inside the run_grad.sh file.
+            command_block = f"""
+(
+    cd "{rel_path}" || exit 1
+    echo "Submitting {folder_name} to queue on $SLURMD_NODENAME..."
+    sbatch --nodelist=$SLURMD_NODENAME ./run_grad.sh
+)
+"""
+            launcher_content += command_block
+
+        launcher_content += '\necho "--> All sbatch commands issued. Sub-Launcher exiting."\n'
+        launcher_path.write_text(launcher_content, encoding="utf-8")
+
+    # ==========================================
+    # 3. GENERATE THE MAIN LAUNCHER (DISPATCHER)
+    # ==========================================
+    dispatcher_path = scripts_dir / dispatcher_name
+    gres_val = f"--gres={gres}:{n_proc}" if gres else ""
+
+    dispatcher_content = f"""#!/bin/bash
+
+echo "========================================================="
+echo " MAIN LAUNCHER: Submitting all Sub-Launchers to SLURM"
+echo "========================================================="
+
+"""
+    prev_var = ""
     
-    
+    for idx, name in enumerate(launcher_names):
+        var_name = f"j{idx+1}"
+        
+        dep = f"--dependency=afterok:${prev_var} " if (chain_launchers and idx > 0) else ""
+        
+        sbatch_line = f'{var_name}=$(sbatch --parsable {gres_val} {dep}{name})'
+        
+        dispatcher_content += f'{sbatch_line}\n'
+        dispatcher_content += f'echo "Submitted Sub-Launcher {name} (Job ID: ${var_name})"\n'
+        prev_var = var_name
+
+    dispatcher_content += f'\necho "--> All Sub-Launchers submitted to the queue."\n'
+    dispatcher_path.write_text(dispatcher_content, encoding="utf-8")
+
+    print(f"[SUCCESS] {len(folder_paths)} standalone 'run_grad.sh' files created inside sample folders.")
+    print(f"[SUCCESS] {len(chunks)} sub-launchers created in: {scripts_dir}")
+    print(f"Comando para rodar: chmod +x {dispatcher_name} && ./{dispatcher_name}")
     
 def plot_lt_distribution(vol, r1, r2, real_percentage):
     
@@ -589,6 +749,81 @@ Analysis {{
     return text
 
 
+def write_gradlbm_ini(
+    path: str,
+    *,
+    dp:                 float = 0.001,
+    ini_name:           str = "grad.ini",
+    number_of_steps:    int = 30000,
+    filetype:           str = "raw",
+    filename:           str = "domain.raw",
+    size_x:             int = 120,
+    size_y:             int = 120,
+    size_z:             int = 120,
+    axis:               int = 2, # Axis: 0 = 'x', 2 = 'z'
+    binary:             bool = True,
+    xml:                bool = True,
+    compress:           bool = True,
+    density:            bool = True,
+    velocity:           bool = True,
+    write_zero_step:    bool = True,
+    write_final_step:   bool = True,
+    analysis_interval:  int = 1000,
+    number_of_files:    int = 0,
+    tau:                float = 1.5,
+    tolerance:          float = 0.01,
+    mDa:                bool = True
+) -> str:
+    """Generates the data.ini configuration file for the GRAD-RESEARCH LBM Algorithm."""
+    
+    def b(v): return "true" if v else "false"
+    def ffmt(x): return f"{x:g}"  # Formats floats cleanly (e.g., 0.8 instead of 0.800000)
+
+    # Exact spacing and formatting applied below
+    text = f"""[General]
+number_of_steps = {number_of_steps}
+
+[Geometry]
+filetype    = {filetype}
+filename    = {filename}
+size_x      = {size_x}
+size_y      = {size_y}
+size_z      = {size_z}
+
+[Output]
+binary              = {b(binary)}
+xml                 = {b(xml)}
+compress            = {b(compress)}
+density             = {b(density)}
+velocity            = {b(velocity)}
+write_zero_step     = {b(write_zero_step)}
+write_final_step    = {b(write_final_step)}
+analysis_interval   = {analysis_interval}
+number_of_files     = {number_of_files}
+
+[MRT]
+tau     = {ffmt(tau)}
+
+[BGK]
+tau     = {ffmt(tau)}
+
+[Permeability]
+tolerance   = {ffmt(tolerance)}
+axis        = {axis}
+dp          = {ffmt(dp)}
+mDa         = {b(mDa)}"""
+
+    p = Path(path)
+    # If `path` is a directory or lacks a suffix, write inside it
+    if p.suffix == "" or p.is_dir():
+        p.mkdir(parents=True, exist_ok=True)
+        p = p / ini_name
+    else:
+        p.parent.mkdir(parents=True, exist_ok=True)
+
+    p.write_text(text, encoding="utf-8")
+    return text
+
 def create_simulation_pressure_condition(x_sample, output_root, folder_base, n_proc=4, include_walls=False):
 
     x_sample = x_sample.copy() 
@@ -628,20 +863,37 @@ def create_simulation_pressure_condition(x_sample, output_root, folder_base, n_p
         # --- Save 3D domain as .raw ---
         write_lbpm_db(path=folder_rbc, 
                       tau       = tau,
+                      tolerance = 0.0001,
                       bc        = 3,
                       din       = 1.0+dP*3,
                       dout      = 1.0,
                       nproc     = (1, 1, n_proc),
                       n         = (x_sample.shape[2], x_sample.shape[1], int(x_sample.shape[0]/n_proc)),
                       N         = (x_sample.shape[2], x_sample.shape[1], x_sample.shape[0]),
-                      analysis_interval         =5000, # Excel
+                      analysis_interval         =1000, # Excel
                       visualization_interval    =timestep_max, # Silo
                       timestep_max              =timestep_max,
                       subphase_analysis_interval=timestep_max,
                       restart_interval          =timestep_max)
         
+        write_gradlbm_ini(
+            path              = folder_rbc, 
+            number_of_steps   = timestep_max,
+            size_x            = x_sample.shape[2],
+            size_y            = x_sample.shape[1],
+            size_z            = x_sample.shape[0],
+            analysis_interval = 1000,
+            tau               = tau,
+            tolerance         = 0.01, # Percentual tolerance
+            axis              = 2,  
+            dp                = -dP,
+            mDa               = True
+        )
+        
         raw_path = os.path.join(folder_rbc, "domain.raw")
         x_sample.astype(np.uint8).tofile(raw_path)
+        
+        return folder_rbc
         
         
 def create_simulation_force_condition(x_sample, output_root, folder_base, reflect=True, outlet_layers=0, bc=0, n_proc=4, include_walls=False):
@@ -705,6 +957,7 @@ def create_simulation_force_condition(x_sample, output_root, folder_base, reflec
                       subphase_analysis_interval    = timestep_max,
                       restart_interval              = timestep_max)
         
+
         raw_path = os.path.join(folder_rbc, "domain.raw")
         x_sample.astype(np.uint8).tofile(raw_path)
         

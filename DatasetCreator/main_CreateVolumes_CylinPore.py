@@ -2,6 +2,7 @@ import numpy as np
 import porespy as ps
 import os
 import utils
+import zlib
 
 def make_tubes_volume(MEAN_RADIUS, tubes_fill, solid_tubes, SHAPE, seed=0):
     
@@ -44,20 +45,32 @@ lbpm_version        = "lbpm/gpu/lbpm_fork_965bd0d"
 DIM             = 120
 SHAPE           = [DIM, DIM, DIM] # Shape must be a List for the function signature you provided
 AXIS_OF_FLOW    = 0 
-N_SAMPLES       = 10 # 3 for training, 2 for testing, 1 for validation (192/128/64)
 include_walls   = True
 remove_isolated = False
-seed =  10 # 10 for training, 2 for testing, 1 for validation 
+
+dataset_type    = 'train' # 'train', 'valid', 'test'
+
 
 ##########################
 # CREATE SPHERICAL PORES #
 ##########################
 
-output_root = "../../Simulations/Train_CylinPore_120_120_120/"
+if dataset_type =='test':
+    output_root = "../../Simulations/Test_CylinPore_120_120_120"
+    N_SAMPLES       = 2
+
+if dataset_type =='valid':
+    output_root = "../../Simulations/Valid_CylinPore_120_120_120"
+    N_SAMPLES       = 1 
+    
+if dataset_type =='train':
+    output_root = "../../Simulations/Train_CylinPore_120_120_120"
+    N_SAMPLES       = 10 
+    
 os.makedirs(output_root, exist_ok=True)
 
 volumes         = []
-
+folder_paths    = []
 
 # CYLIN GRAIN
 config_pairs = [
@@ -90,10 +103,11 @@ for SPHERES_FILL, MEAN_RADIUS in config_pairs:
     for n in range(N_SAMPLES*50):
         if config_created >= N_SAMPLES: break
         print(f"Attempt to create sample {total_created}")
-        print(f"-->Filling {SPHERES_FILL*100}% with Cylinders, Mean Radius {MEAN_RADIUS} ({n})")
         # Create volumes
-        seed_v = int(n*10000+MEAN_RADIUS*1000+SPHERES_FILL*100) + seed
-        vol  = make_tubes_volume(MEAN_RADIUS, SPHERES_FILL, solid_spheres, SHAPE, seed=seed_v).astype(np.uint8)
+        sample_id   = f"{dataset_type}_fill{SPHERES_FILL}_r{MEAN_RADIUS}_idx{config_created}_{n}"
+        seed_n      = zlib.crc32(sample_id.encode("utf-8"))
+        print(f"-->Filling {SPHERES_FILL*100}% with Cylinders, Mean Radius {MEAN_RADIUS} ({n}). Seed: ", seed_n)
+        vol         = make_tubes_volume(MEAN_RADIUS, SPHERES_FILL, solid_spheres, SHAPE, seed=seed_n).astype(np.uint8)
         
         # Transform sample for simulation:
         if include_walls: vol = utils.add_enclusure_walls(vol)
@@ -117,24 +131,45 @@ for SPHERES_FILL, MEAN_RADIUS in config_pairs:
             print(f"-->Sample {total_created} got included.")
             
             folder_base = f"Sample_{total_created:05d}"
-            utils.create_simulation_pressure_condition(vol, output_root, folder_base, n_proc=n_proc, include_walls=include_walls)
+            folder_path = utils.create_simulation_pressure_condition(vol, 
+                                                                     output_root, 
+                                                                     folder_base, 
+                                                                     n_proc=n_proc, 
+                                                                     include_walls=include_walls)
+            folder_paths.append(folder_path)
             total_created +=1
             config_created+=1
         print("-" * 30)
 
         
 
-utils.generate_slurm_run_scripts_chunks(sample_indices      = list(range(0, total_created + 1)),
-                                        n_proc              = n_proc,
-                                        gres                = gres,
-                                        output_root         = output_root,
-                                        samples_per_job     = chunk_size,
-                                        cpu                 = cpu, 
-                                        gpu                 = gpu,
-                                        partition           = partition,                        
-                                        dispatcher_name     = f"Run_{0}_{total_created}.sh",
-                                        lbpm_version        = lbpm_version,
-                                        use_low_prio        = use_low_prio,
-                                        include_allocation  = include_allocation       
-                                        )
+# Create .sh based on number of files
+utils.generate_slurm_run_scripts_chunks(
+    folder_paths    = folder_paths,
+    n_proc          = n_proc,      
+    gres            = gres,       
+    output_root     = output_root,   
+    samples_per_job = 10, 
+    cpu             = cpu,         
+    gpu             = gpu,
+    partition       = partition,                        
+    dispatcher_name = f"Run_LBM_{0}_{total_created}.sh",
+    lbpm_version    = lbpm_version,
+    include_allocation  = include_allocation       
+)
+
+utils.generate_slurm_run_scripts_chunks_GRADLBM(
+    folder_paths        = folder_paths,
+    n_proc              = 1,
+    output_root         = output_root,
+    samples_per_job     = 20,
+    partition           = "close_cpu",
+    nodelist            = "node[008-020]",
+    cpu_per_sim         = 1, 
+    mem_gb_per_sim      = 6,
+    dispatcher_name     = f"Run_GRAD_{0}_{total_created}.sh",
+    lbm_folder          = "/home/gabriel.silveira/GRAD_LBM/",
+    ini_name            = "grad.ini",
+    chain_launchers     = False,
+)   
                                   

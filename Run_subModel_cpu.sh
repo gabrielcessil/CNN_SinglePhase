@@ -25,4 +25,4 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH # Makes the paths from
 # ---------------- Job Execution --------------------
 
 # Run the simulation using MPI with 4 processes
-python -u main_TrainModel.py
+python -u main_Train_subModel.py --config javier_p.json
