@@ -1,9 +1,13 @@
 import torch
 import numpy as np
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, ConcatDataset
 import torch.nn as nn
 from Utilities import loader_handler as lc
 import warnings
+        
+from torch.utils.data import Dataset
+import h5py
+
 
 #######################################################
 #**** CUSTOMIZATION TO DEAL WITH MS-Net **************#
@@ -98,9 +102,7 @@ class MultiScaleDataset(Dataset):
         return dataloader
 
         
-        
-from torch.utils.data import Dataset
-import h5py
+
 
 class LazyDatasetTorch(Dataset):
     """
@@ -364,6 +366,46 @@ class LazyDatasetTorch(Dataset):
                 del vel_z_3d, vel_y_3d, vel_x_3d, press_3d
 
         return X,Y
-        
 
+
+class MultiLazyDatasetTorch(Dataset):
+   
+    def __init__(self, h5_paths, x_dtype=torch.float32, y_dtype=torch.float32):
+
+        self.h5_paths = h5_paths
+        self.datasets = []
+        
+        # Instantiate LazyDatasetTorch for each file
+        for i, path in enumerate(self.h5_paths):
+            dataset = LazyDatasetTorch(
+                h5_path=path,
+                list_ids=None, # Use all available samples
+                x_dtype=x_dtype,
+                y_dtype=y_dtype
+            )
+            self.datasets.append(dataset)
+            
+        # Handles the combined indexing
+        self.combined_dataset = ConcatDataset(self.datasets)
+
+    def __len__(self):
+        return len(self.combined_dataset)
+
+    def __getitem__(self, idx):
+        return self.combined_dataset[idx]
+
+    # ---------------------------------------------------------
+    # Property Setter to handle 'component' variable updates 
+    # ---------------------------------------------------------
+    # What happens when someone wants to get the value of 'component': gets whats set in the first dataset
+    @property
+    def component(self):
+        return self.datasets[0].component if self.datasets else None
+
+    # What happens when someone wants to set the value of 'component'
+    @component.setter
+    def component(self, value):
+        # When you set multi_dataset.component = X, it updates all child datasets
+        for ds in self.datasets:
+            ds.component = value
     

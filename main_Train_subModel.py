@@ -67,21 +67,22 @@ train_comment           = config["train_comment"]
 NN_results_folder       = config["NN_results_folder"]
 device_set              = config["device"]
 
-# Handle results folder config
+# Set seed to random initializations
+nnt.set_global_seed(seed) 
+
+#######################################################
+#************ HANDLE RESULTS FOLDER:       ***********#
+#######################################################
+
+# If no configuration folder was passed: create a new folder for results
 if NN_results_folder is None:
     NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
     config["NN_results_folder"] = NN_results_folder
-    
-# Update used results folder config
-dataset_train_full_name     = NN_dataset_folder+dataset_train_name
-dataset_valid_full_name     = NN_dataset_folder+dataset_valid_name
-
 # Redirect prints to results folder
 nnt.set_logger_output_folder(NN_results_folder)
 
-
 #######################################################
-#************ HARDCODED OBJECTS:           ***********#
+#************ HANDLE RESULTS FOLDER:       ***********#
 #######################################################
 
 if isinstance(device_set, int):
@@ -95,10 +96,11 @@ else:
 print('Current device:     ', device)
 
 dtype                   = torch.float32
-# Set seed to random initializations
-nnt.set_global_seed(seed) 
 
 
+#######################################################
+#************ LOSS FUNCTIONS OBJECTS:      ***********#
+#######################################################
 
 loss_functions  = {
     # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
@@ -106,7 +108,7 @@ loss_functions  = {
     # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
     "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
     "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
-    "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr()),  "Thresholded": True},
+    "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr()),      "Thresholded": True},
 }
 
 
@@ -128,21 +130,41 @@ print(f"Metadata saved at: {metadata_file}")
 #************ LOADING DATA          ******************#
 #######################################################
 
-# Set seed to random initializations
-nnt.set_global_seed(seed) 
+print("Loading Training Data ... ")
+# Prepares dataset names for MultiLazy class (that receives a list of '.h5' files)
+if isinstance(dataset_train_name, list):
+    dataset_train_full_name = [os.path.join(NN_dataset_folder, item) for item in dataset_train_name]
+    train_ds                = dr.MultiLazyDatasetTorch(h5_paths = dataset_train_full_name,
+                                                       x_dtype = torch.float32,
+                                                       y_dtype = torch.float32)
+    if train_range is not None: raise Exception("Setting the index interval is not possible if a list of datasets is provided.")
 
-print("Loading Trainning Data ... ")
+else:
+    dataset_train_full_name = [os.path.join(NN_dataset_folder, dataset_train_name)]
+    t_list_ids              = None if train_range is None else np.arange(train_range[0],train_range[1])
+    train_ds                = dr.LazyDatasetTorch(h5_path  = dataset_train_full_name, 
+                                                  list_ids = t_list_ids, 
+                                                  x_dtype  = torch.float32,
+                                                  y_dtype  = torch.float32)
+print(f"  - {len(train_ds)} samples considered.")
 
-train_ds = dr.LazyDatasetTorch(h5_path=dataset_train_full_name, 
-                               list_ids= None if train_range is None else np.arange(train_range[0],train_range[1]), 
-                               x_dtype=torch.float32,
-                               y_dtype=torch.float32)
 
-valid_ds = dr.LazyDatasetTorch(h5_path=dataset_valid_full_name, 
-                               list_ids= None if valid_range is None else np.arange(valid_range[0],valid_range[1]), 
-                               x_dtype=torch.float32,
-                               y_dtype=torch.float32)
-
+print("Loading Validation Data ... ")
+if isinstance(dataset_valid_name, list):
+    dataset_valid_full_name = [os.path.join(NN_dataset_folder, item) for item in dataset_valid_name]
+    valid_ds                = dr.MultiLazyDatasetTorch(h5_paths = dataset_valid_full_name,
+                                                       x_dtype = torch.float32,
+                                                       y_dtype = torch.float32)
+    if valid_range is not None: raise Exception("Setting the index interval is not possible if a list of datasets is provided.")
+        
+else:
+    dataset_valid_full_name = [os.path.join(NN_dataset_folder, dataset_valid_name)]
+    v_list_ids              = None if valid_range is None else np.arange(valid_range[0],valid_range[1]), 
+    valid_ds                = dr.LazyDatasetTorch(h5_path = dataset_valid_full_name, 
+                                                  list_ids= v_list_ids,
+                                                  x_dtype = torch.float32,
+                                                  y_dtype = torch.float32)
+print(f"  - {len(valid_ds)} samples considered.")
 
 #######################################################
 #******************** MODEL **************************#
@@ -228,6 +250,11 @@ else:
 # Define input type
 model.bin_input =binary_input
 
+
+#######################################################
+#************ INITIATE WEIGHTS   *********************#
+####################################################### 
+
 # Weights initialization to TRAINABLE model
 if   weight_init is None or weight_init in ('none'):        pass
 elif weight_init.lower() in ('xavier'):           model.apply(nnt.init_weights_xavier)
@@ -235,9 +262,6 @@ elif weight_init.lower() in ('he'):               model.apply(nnt.init_weights_h
 elif weight_init.lower() in ('zero', 'zeros'):    model.apply(nnt.init_weights_zeros)
 elif weight_init.lower() in ('normal'):           model.apply(nnt.init_weights_normal)
 else: raise(f"Weights initialization mode {weight_init} not implemented.")
-
-        
-
 
 #######################################################
 #************ OPTIMIZER    ***************************#
@@ -255,9 +279,6 @@ print('Model size: {} total parameters'.format(mh.get_total_params(model)))
 print('Model size: {} trainable parameters'.format(mh.get_n_trainable_params(model)))
 print('Model size: {} frozen parameters'.format(mh.get_n_non_trainable_params(model)))
 print()
-
-
-
 
 
 #######################################################
