@@ -104,99 +104,66 @@ def get_N_crops(volume: np.ndarray, crop_size: int, N: int) -> list[np.ndarray]:
 # === CONFIGURATION ===
 
 # Original rock parameters
-
-# Berea Buff
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaBuff_120_120_120/" 
-#rock_name = "BB_2d25um_binary.raw"
-
-# Berea Upper Gray
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaUpperGray_120_120_120/" # OUT OF SCOPE 
-#rock_name = "BUG_2d25um_binary.raw"
-
-# Berea Sinter Gray
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaSinterGray_120_120_120/"
-#rock_name = "BSG_2d25um_binary.raw"
-
-# Berea
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Berea_120_120_120/"
-#rock_name = "Berea_2d25um_binary.raw"
-
-# Castle Gate
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_CastleGate_120_120_120/"
-#rock_name = "CastleGate_2d25um_binary.raw"
-
-# Kirby
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Kirby_120_120_120/" # OUT OF SCOPE 
-#rock_name = "Kirby_2d25um_binary.raw"
+repositories = [
 
 # Bentheimer
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Bentheimer_120_120_120/"
-#rock_name = "Bentheimer_2d25um_binary.raw"
+("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Bentheimer_120_120_120/",
+"Bentheimer_2d25um_binary.raw",
+70),
 
-# Leopard
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Leopard_120_120_120/"
-#rock_name = "Leopard_2d25um_binary.raw"
-
-# Parker
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Parker_120_120_120/" # OUT OF SCOPE
-#rock_name = "Parker_2d25um_binary.raw"
-
-# Bandera Brown (Not able to create: geometry out of scope for this resolution)
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Brown_120_120_120/"
-#rock_name = "BanderaBrown_2d25um_binary.raw"
-
-# Bandera Gray (Not able to create: geometry out of scope for this resolution)
-#base_dir  = "/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Bandera_120_120_120/"
-#rock_name = "BanderaGray_2d25um_binary.raw"
-
-
-# Original rock parameters
-repositories = [
 # Berea Buff
 #("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaBuff_120_120_120/",
-#"BB_2d25um_binary.raw"),
-
-# Berea Upper Gray 
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaUpperGray_120_120_120/",  
-#"BUG_2d25um_binary.raw"),
-
-# Berea Sinter Gray
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaSinterGray_120_120_120/",
-#"BSG_2d25um_binary.raw"),
-
-# Berea
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Berea_120_120_120/",
-#"Berea_2d25um_binary.raw"),
+#"BB_2d25um_binary.raw",
+#70),
 
 # Castle Gate
 #("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_CastleGate_120_120_120/",
-#"CastleGate_2d25um_binary.raw"),
-
-# Kirby (Not able to create: geometry out of scope for this resolution)
-("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Kirby_120_120_120/",
-"Kirby_2d25um_binary.raw"),
-
-# Bentheimer
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Bentheimer_120_120_120/",
-#"Bentheimer_2d25um_binary.raw"),
+#"CastleGate_2d25um_binary.raw",
+#65),
 
 # Leopard
 #("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Leopard_120_120_120/",
-#"Leopard_2d25um_binary.raw"),
+#"Leopard_2d25um_binary.raw",
+#65),
 
-# Parker (Not able to create: geometry out of scope for this resolution)
-("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Parker_120_120_120/" ,
-"Parker_2d25um_binary.raw"),
+# Berea Upper Gray 
+#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaUpperGray_120_120_120/",  
+#"BUG_2d25um_binary.raw",
+#55),
 
-# Bandera Brown (Not able to create: geometry out of scope for this resolution)
-("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Brown_120_120_120/",
-"BanderaBrown_2d25um_binary.raw"),
+# Berea Sinter Gray 
+#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaSinterGray_120_120_120/",
+#"BSG_2d25um_binary.raw",
+#55),
 
-# Bandera Gray (Not able to create: geometry out of scope for this resolution)
-("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Bandera_120_120_120/",
-"BanderaGray_2d25um_binary.raw"),
+# Berea (Not able to create: geometry out of scope for this resolution)
+#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Berea_120_120_120/",
+#"Berea_2d25um_binary.raw",
+#55),
+
+
+
+# Kirby (Not able to create: geometry out of scope for this resolution: even 50% not match)
+#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Kirby_120_120_120/",
+#"Kirby_2d25um_binary.raw",
+#50),
+# Parker (Not able to create: geometry out of scope for this resolution: even 50% not match)
+#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Parker_120_120_120/" ,
+#"Parker_2d25um_binary.raw",
+#50),
+# Bandera Brown (Not able to create: geometry out of scope for this resolution: even 50% not match)
+#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Brown_120_120_120/",
+#"BanderaBrown_2d25um_binary.raw",
+#50),
+# Bandera Gray (Not able to create: geometry out of scope for this resolution: even 50% not match)
+#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Bandera_120_120_120/",
+#"BanderaGray_2d25um_binary.raw",
+#50),
 ]
-for base_dir, rock_name in repositories:
+
+
+
+for base_dir, rock_name, target_percentage  in repositories:
         
     original_shape  = (1000,1000,1000)
     solid_value     = 1
@@ -206,11 +173,10 @@ for base_dir, rock_name in repositories:
     suffle              = True
     include_walls       =  True
     remove_isolated     = False
-    create_n            = 30  # Set for 1 day (24h) of simulations= 120 samples (24x5) or 8h=40 samples
-    chunk_size          = 5   # Set for 1h of simulations (5 samples, 20 min per sample)
+    create_n            = None  
+    chunk_size          = 5   
     crop_shape          = (120,120,120)
     include_allocation  = False 
-    
     
     # === PROCESSING ===
     os.makedirs(output_root, exist_ok=True)
@@ -232,7 +198,9 @@ for base_dir, rock_name in repositories:
     created_indices = []
     folder_paths    = []
     for i, sample_i in enumerate(indices):
-        if created >= create_n: break
+        print("----------------------")
+        print(f"Sample {created}, trial ({i}/{len(indices)})")
+        if create_n is not None and created >= create_n: break
         folder_base = f"Sample_{sample_i:05d}"
         x_sample    = crops[sample_i]  
         
@@ -245,7 +213,7 @@ for base_dir, rock_name in repositories:
         # Check if the sample can percolate:
         if not utils.is_percolating(x_sample, axis=0):
             print(f"Sample {sample_i} do not percolate and got removed.")
-        elif not utils.check_local_thickness(x_sample, min_radius=5, max_radius=17, target_percentage=60):
+        elif not utils.check_local_thickness(x_sample, min_radius=5, max_radius=17, target_percentage=target_percentage):
             print(f"Sample {sample_i} has geometry out of scope and got removed.")
         else:        
             folder_path = utils.create_simulation_pressure_condition(x_sample, 
