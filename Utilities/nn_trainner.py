@@ -652,15 +652,18 @@ def set_global_seed(seed: int, deterministic_strict: bool = False):
 
 
 def set_logger_output_folder(base_dir: str):
-    class Logger(object):
+    
+    class Logger:
         def __init__(self, filename="Default.log"):
             self.terminal = sys.stdout
-            self.log = open(filename, "a", encoding='utf-8')
-
+            self.log = open(filename, "a", buffering=1, encoding="utf-8")  
+    
         def write(self, message):
-            self.terminal.write(message) 
-            self.log.write(message)      
-
+            self.terminal.write(message)
+            self.log.write(message)
+            self.log.flush()          
+            self.terminal.flush()
+    
         def flush(self):
             self.terminal.flush()
             self.log.flush()

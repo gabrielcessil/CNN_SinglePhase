@@ -27,13 +27,13 @@ def rotate_z_augmentation(solid, uz, uy, ux, pr, direc):
     # Change signals 
     if direc > 0:
         k_val   = 1
-        base_ux = -1 * uy
-        base_uy = ux
+        base_ux = uy
+        base_uy = - ux
         
     elif direc < 0:
         k_val   = -1
-        base_ux = uy
-        base_uy = -1 * ux
+        base_ux = - uy
+        base_uy = ux
         
     else:
         return solid, uz, uy, ux, pr

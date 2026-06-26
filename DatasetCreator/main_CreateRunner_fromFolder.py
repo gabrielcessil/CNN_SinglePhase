@@ -9,7 +9,7 @@ import zlib
 BASE_DIRECTORIES = [
     #"/home/gabriel/remote/hal/dissertacao/Simulations/Train_Danny_SphPore_120_120_120/",
     #"/home/gabriel/remote/hal/dissertacao/Simulations/Test_Danny_SphPore_120_120_120/",
-    "/home/gabriel/remote/hal/dissertacao/Simulations/TEST_Valid_Danny_SphPore_120_120_120/",
+    "/home/gabriel/Desktop/Dissertacao/GradSimulations/Train_Danny_SphPore_120_120_120/",
     ]
 
 # --- Hardware Parameters ---
