@@ -394,4 +394,249 @@ class JavierSantos_Extended(nn.Module):
             mask    = (x > 0).to(torch.float32) 
             mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
             return out * mask
-         
+
+
+
+import torch
+import torch.nn as nn
+import numpy as np
+import torch.nn.functional as F
+from .Functional import Channel_Concat
+
+# ==============================================================================
+# JAVIER SANTOS DYNAMIC MODEL
+# ==============================================================================
+class JavierSantos_Dynamic(nn.Module):
+    
+    def __init__(
+                 self, 
+                 nc_out        =  1, 
+                 num_scales    =  4,  
+                 num_features  =  1, 
+                 num_filters   =  2, 
+                 f_mult        =  4, 
+                 bin_input     = False,
+                 ):
+        
+        super(JavierSantos_Dynamic, self).__init__()
+        
+        self.scales    = num_scales
+        self.feats     = num_features
+        self.n_out     = nc_out
+        self.bin_input = bin_input
+
+        self.models    = nn.ModuleList( 
+                                JavierSantos_Dynamic.get_SubModels( 
+                                    nc_out,
+                                    num_scales,
+                                    num_features,
+                                    num_filters,
+                                    f_mult,
+                                    ) 
+                                )
+
+    @staticmethod
+    def get_SubModels(nc_out, scales, features, filters, f_mult):
+        models   = []         
+        nc_in    = features   
+        
+        num_filters = [ filters*f_mult**scale for scale in range(scales) ][::-1]
+        print("Number of Filters (Dynamic SubModels): ", num_filters)
+        for it in range( scales ): 
+            if it==1: nc_in+=nc_out  # Add upscaled prediction channels to subsequent models  
+                                   
+            models.append( 
+                JavierSantos_Dynamic.Scale_SubModel( 
+                    nc_out   = nc_out,
+                    nc_in    = nc_in,
+                    ncf      = num_filters[it])
+            )
+                
+        return models  
+    
+    def get_Masks(self, x, scales):
+        masks    = [None]*(scales)
+        pooled   = [None]*(scales)
+        
+        pooled[0] = (x>0).float() 
+        masks[0]  = pooled[0].squeeze(0)
+        
+        for scale in range(1,scales):
+            pooled[scale] = nn.AvgPool3d(kernel_size = 2)(pooled[scale-1])
+            denom = pooled[scale].clone()   
+            denom[denom==0] = 1e8  
+            for ax in range(2,5):   
+                denom=denom.repeat_interleave( repeats=2, axis=ax ) 
+            masks[ scale ] = torch.div( pooled[scale-1], denom ).squeeze(0) 
+        return masks[::-1] 
+    
+    def predict(self, x):
+        if self.bin_input: x = (x > 0).to(torch.float32)
+        with torch.no_grad():
+            out     = self.forward(x)[-1] 
+            mask    = (x > 0).to(torch.float32) 
+            mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
+            return out * mask
+        
+    def forward(self, x):
+        x_list  = self.get_coarsened_list(x)
+        masks   = self.get_Masks( (x_list[-1]>0).float(), self.scales)
+        
+        assert x_list[0].shape[1] == self.feats, \
+        f'The number of features provided {x_list[0].shape[1]} does not match with the input size {self.feats}'
+            
+        y = [ self.models[0]( x_list[0] ) ]
+        
+        for scale,[ model,x_scale ] in enumerate(zip( self.models[1:],x_list[1:] )):
+
+            y_up = self.scale_tensor( y[scale], scale_factor=2 )*masks[scale]
+            # Standard input combination (Domain + Upscaled Prediction)
+            # The dynamic gating now happens entirely inside the model!
+            y.append( model( torch.cat((x_scale,y_up),dim=1) ) + y_up )
+            
+        return y
+    
+    def get_coarsened_list(self, x):    
+        if self.bin_input: x = (x > 0).to(torch.float32)
+        ds_x = []
+        ds_x.append(x)
+        for i in range( self.scales-1 ): 
+            ds_x.append( self.scale_tensor( ds_x[-1], scale_factor=1/2 ) )
+        return ds_x[::-1] 
+    
+    def scale_tensor(self, x, scale_factor=1):
+        if scale_factor<1:
+            return nn.AvgPool3d(kernel_size = int(1/scale_factor))(x)
+        elif scale_factor>1:
+            for repeat in range (0, int(np.log2(scale_factor)) ):  
+                for ax in range(2,5): 
+                    x=x.repeat_interleave(repeats=2, axis=ax)
+            return x
+        elif scale_factor==1:
+            return x
+        else: raise ValueError(f"Scale factor not understood: {scale_factor}")
+        
+    class ConvBlock3D( nn.Sequential ):
+        def __init__(self, in_channel, out_channel, ker_size, padd, stride, norm, activation):
+            super().__init__()
+            self.add_module( 'conv',
+                             nn.Conv3d( in_channel, 
+                                        out_channel,
+                                        kernel_size=ker_size,
+                                        stride=stride,
+                                        padding=padd ) ),
+            if norm == True:
+                self.add_module( 'i_norm', nn.InstanceNorm3d( out_channel ) )
+            if activation== True:
+                self.add_module( 'CeLU', nn.CELU( inplace=False , alpha=2) )
+
+    # ==========================================================================
+    # MODIFIED INTERNAL SUB-MODEL
+    # ==========================================================================
+    class Scale_SubModel(nn.Module):
+        def __init__(self, nc_in, ncf, nc_out):
+            super().__init__()
+            
+            ker_size   = 3   
+            padd_size  = 1   
+            ncf_min    = ncf 
+            num_layers = 5   
+            stride     = 1
+            
+            self.reflec_pad = num_layers            
+            self.reflector  = nn.ReflectionPad3d((0, 0, 0, 0, self.reflec_pad, self.reflec_pad))
+
+            # --- PATH 1: FEATURE EXTRACTOR ---
+            self.head = JavierSantos_Dynamic.ConvBlock3D( 
+                in_channel  = nc_in,
+                out_channel = ncf,
+                ker_size    = ker_size,
+                padd        = padd_size,
+                stride      = stride,
+                norm        = True,
+                activation  = True )
+            
+            self.body = nn.Sequential()
+            for i in range( num_layers-1 ):
+                new_ncf = int( ncf/2**(i+1) )
+                if i==num_layers-2:
+                    convblock = JavierSantos_Dynamic.ConvBlock3D( 
+                        in_channel  = max(2*new_ncf,ncf_min),
+                        out_channel = max(new_ncf,ncf_min),
+                        ker_size    = ker_size,
+                        padd        = padd_size,
+                        stride      = stride,
+                        norm        = True,
+                        activation  = False
+                    )
+                else:
+                    convblock = JavierSantos_Dynamic.ConvBlock3D( 
+                        in_channel  = max(2*new_ncf,ncf_min),
+                        out_channel = max(new_ncf,ncf_min),
+                        ker_size    = ker_size,
+                        padd        = padd_size,
+                        stride      = stride,
+                        norm        = True,
+                        activation  = True
+                    )
+                self.body.add_module( f'block{i+1}', convblock )
+            
+            # --- PATH 2: DYNAMIC FILTER GENERATOR ---
+            self.pool = nn.AdaptiveAvgPool3d(7)
+            # The base filter creates 'ncf' output masks from 'nc_in' input channels
+            self.filter_base = nn.Parameter(torch.randn(max(new_ncf, ncf_min), nc_in, 7, 7, 7) * 0.05)
+                
+            # --- FINAL: TAIL CONVOLUTION ---
+            self.tail = nn.Sequential(
+                JavierSantos_Dynamic.ConvBlock3D( 
+                    in_channel  = max(new_ncf,ncf_min),
+                    out_channel = nc_out,
+                    ker_size    = 1,
+                    padd        = 0,
+                    stride      = stride,
+                    norm        = False,
+                    activation  = False
+                ))
+            
+        def crop_3d(self, x):
+            if self.reflec_pad == 0:
+                return x
+            return x[:, :, self.reflec_pad:-self.reflec_pad, :, :] 
+
+        def forward(self, x):
+            # ---------------------------------------------------------
+            # PATH 1: Standard Feature Generation
+            # ---------------------------------------------------------
+            features = self.head(x)
+            features = self.body(features) 
+            
+            # ---------------------------------------------------------
+            # PATH 2: Dynamic Global Mask Generation
+            # ---------------------------------------------------------
+            B, C_in, D, H, W = x.shape
+            C_out = features.shape[1] # Number of channels coming out of the body
+            
+            # Pool the original image down to 7x7x7
+            pooled = self.pool(x)  
+            
+            # Create sample-specific filters by multiplying element-wise
+            dynamic_filters = pooled.unsqueeze(1) * self.filter_base.unsqueeze(0)
+            
+            # Reshape for Grouped Convolution (Batch acts as Groups)
+            x_reshaped = x.view(1, B * C_in, D, H, W)
+            weights_reshaped = dynamic_filters.view(B * C_out, C_in, 7, 7, 7)
+            
+            # Apply dynamic filters to the original image x
+            masks = F.conv3d(x_reshaped, weights_reshaped, padding=3, groups=B)
+            masks = masks.view(B, C_out, D, H, W)
+            masks = torch.sigmoid(masks) # Gate it between 0 and 1
+            
+            # ---------------------------------------------------------
+            # MERGE & TAIL
+            # ---------------------------------------------------------
+            # Element-wise multiply the masks into the deep features
+            gated_features = features * masks
+            
+            # Pass through the final 1x1 conv tail
+            out = self.tail(gated_features)
+            return out
