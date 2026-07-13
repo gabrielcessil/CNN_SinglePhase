@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import porespy as ps
 from torch.utils.data import DataLoader
+from matplotlib.ticker import ScalarFormatter
 
 # Import local utilities
 from Utilities import dataset_reader as dr
@@ -12,7 +13,7 @@ from Utilities import velocity_usage as vu
 
 def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_csv_path: str = None, save_plot_path: str = None):
     """
-    Extracts Porosity, Permeability, Q1/Mean/Max Local Thickness per sample,
+    Extracts Porosity, Permeability, Min/Mean/Max Local Thickness per sample,
     generates a tabular summary, and plots jittered boxplots for each property.
     """
     
@@ -42,6 +43,7 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
                     porosity = np.mean(mask_np)
                     
                     # Calculate Permeability
+                    # Matching the implementation from main__VerifyPermEstimation.py
                     denorm_tar = vu.tensor_denorm(batch_tar[b:b+1], batch_inp[b:b+1])
                     perm = vu.permeability_calculation(denorm_tar, 
                                                        batch_inp[b:b+1], 
@@ -55,63 +57,33 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
                     valid_thick = thick[mask_np]
                     
                     if valid_thick.size > 0:
-                        q1_thick   = np.percentile(valid_thick, 25)
+                        min_thick  = valid_thick.min()
                         mean_thick = valid_thick.mean()
                         max_thick  = valid_thick.max()
                     else:
-                        q1_thick = mean_thick = max_thick = np.nan
+                        min_thick = mean_thick = max_thick = np.nan
                         
                     # Append sample data
                     records.append({
                         "Dataset": dataset_name,
                         "Porosity": porosity,
                         "Permeability": perm,
-                        "Q1 Local Thickness": q1_thick,
+                        "Min Local Thickness": min_thick,
                         "Mean Local Thickness": mean_thick,
                         "Max Local Thickness": max_thick
                     })
 
     # Create the complete per-sample table
-    df_samples = pd.DataFrame(records)    
-    df_samples_export = df_samples.copy()
-    df_samples_export.columns = [
-        c.replace(" ", "_") for c in df_samples_export.columns
-    ]
-    df_samples_export["Dataset"] = (
-        df_samples_export["Dataset"]
-        .str.replace(" ", "_", regex=False)
-    )
+    df_samples = pd.DataFrame(records)
+    
     if save_csv_path:
-        df_samples_export.to_csv(save_csv_path, index=False)
+        df_samples.to_csv(save_csv_path, index=False)
         print(f"\nPer-sample table saved to {save_csv_path}")
 
-
-
+    # Print Summary Table
     print("\n--- Summary Table (Mean per Dataset) ---")
-    df_summary = df_samples.groupby("Dataset", as_index=False).mean()
-    df_summary_export = df_summary.copy()
-    df_summary_export.columns = [
-        c.replace(" ", "_") for c in df_summary_export.columns
-    ]
-    df_summary_export["Dataset"] = (
-        df_summary_export["Dataset"]
-        .str.replace(" ", "_", regex=False)
-    )
-    
-    # Prints
-    try:
-        # Prints a nice grid (e.g., | Dataset | Porosity | ...)
-        print(df_summary.to_markdown(index=False, tablefmt="grid"))
-    except ImportError:
-        # Fallback if 'tabulate' library isn't installed: Left-justify with generous spacing
-        print(df_summary.to_string(index=False, justify='left', col_space=18))
-    
-    # Automatically save the summary table to its own CSV to avoid copy-paste formatting issues
-    if save_csv_path:
-        summary_csv = save_csv_path.replace(".csv", "_Summary.csv")
-        df_summary.to_csv(summary_csv, index=False)
-        print(f"\nSummary table saved to {summary_csv} (Open this file in Excel!)")
-        
+    df_summary = df_samples.groupby("Dataset").mean()
+    print(df_summary.to_string())
     print("-" * 40)
 
     # ==========================================
@@ -124,7 +96,7 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
         'font.serif': ['Times New Roman', 'DejaVu Serif', 'Bitstream Vera Serif'],
         'axes.labelsize': 16,
         'axes.titlesize': 18,
-        'xtick.labelsize': 11,
+        'xtick.labelsize': 14,
         'ytick.labelsize': 14,
         'legend.fontsize': 14,
         'figure.titlesize': 20,
@@ -136,17 +108,13 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
     variables = [
         "Porosity", 
         "Permeability", 
-        "Q1 Local Thickness", 
+        "Min Local Thickness", 
         "Mean Local Thickness", 
         "Max Local Thickness"
     ]
     
     datasets_labels = df_samples["Dataset"].unique()
-    
-    # NEW: Format labels to jump lines by replacing spaces with newline characters
-    formatted_labels = [str(label).replace(" ", "\n") for label in datasets_labels]
-    
-    colors = plt.cm.tab10.colors  
+    colors = plt.cm.tab10.colors  # Dynamic palette for variable dataset counts
     
     # Setup 5 rows, 1 column
     fig, axes = plt.subplots(len(variables), 1, figsize=(12, 5 * len(variables)), constrained_layout=True)
@@ -157,8 +125,8 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
         # Group data per dataset for the boxplot list format
         data_list = [df_samples[df_samples["Dataset"] == ds][var].dropna().values for ds in datasets_labels]
         
-        # Create base boxplot using the newly formatted multi-line labels
-        bplot = ax.boxplot(data_list, tick_labels=formatted_labels, patch_artist=True, 
+        # Create base boxplot
+        bplot = ax.boxplot(data_list, tick_labels=datasets_labels, patch_artist=True, 
                            showfliers=False, widths=0.5, zorder=2)
         
         # Style boxes
@@ -176,6 +144,7 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
         
         # Add Jittered Scatter Dots
         for j, data in enumerate(data_list):
+            # Calculate random X scatter offset
             x = np.random.uniform(j + 1 - 0.15, j + 1 + 0.15, size=len(data))
             ax.scatter(x, data, alpha=0.6, facecolors='none', edgecolors='black', 
                        s=30, linewidths=1.0, zorder=3)
@@ -183,9 +152,12 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
         ax.set_ylabel(var)
         ax.set_axisbelow(True) 
         
-        # Apply Logarithmic scale for Permeability
+        # Apply Scientific formatting for Permeability
         if var == "Permeability":
-            ax.set_yscale('log')
+            formatter = ScalarFormatter(useMathText=True)
+            formatter.set_scientific(True)
+            formatter.set_powerlimits((-3, 3))
+            ax.yaxis.set_major_formatter(formatter)
 
     # Save or Show
     if save_plot_path:
@@ -195,19 +167,12 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
     else:
         plt.show()
 
+
     
 datasets = {
-    "Spherical Pores":   "../NN_Datasets_Grad/Train_Silveira_SphPore_SAug_DNorm.h5",
-    "Spherical Grains":  "../NN_Datasets_Grad/Train_Silveira_SphGrain_SAug_DNorm.h5",
-    "Cylindrical Pores": "../NN_Datasets_Grad/Train_Silveira_CylinPore_SAug_DNorm.h5",
-    "Cylindrical Grains":"../NN_Datasets_Grad/Train_Silveira_CylinGrain_SAug_DNorm.h5",
-    "Leopard":           "../NN_Datasets_Grad/Train_Oliveira_Leopard_SAug_DNorm.h5",
-    "Castle Gate":       "../NN_Datasets_Grad/Train_Oliveira_CastleGate_SAug_DNorm.h5",
-    "Berea Upper Gray":  "../NN_Datasets_Grad/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
-    "Berea Sinter Gray": "../NN_Datasets_Grad/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
-    "Berea Buff":        "../NN_Datasets_Grad/Train_Oliveira_BereaBuff_SAug_DNorm.h5",
-    "Berea":             "../NN_Datasets_Grad/Train_Oliveira_Berea_SAug_DNorm.h5",
-    "Bentheimer":        "../NN_Datasets_Grad/Train_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "Spherical Pores":  "../NN_Datasets_Grad/Train_SphPore_SAug_DNorm.h5",
+    "Spherical Grains": "../NN_Datasets_Grad/Train_SphGrain_SAug_DNorm.h5",
+    "Bentheimer":       "../NN_Datasets_Grad/Train_Oliveira_Bentheimer_SAug_DNorm.h5",
 }
 
 analyze_and_plot_properties(
