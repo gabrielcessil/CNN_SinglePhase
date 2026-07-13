@@ -80,7 +80,7 @@ class MultiScaleDataset(Dataset):
             if transform_input is not None:
                 new_input_i_scales = []
                 for input_i_scale in input_i_scales:
-                    new_input_i_scales.append( transform_target(input_i_scale) )
+                    new_input_i_scales.append( transform_input(input_i_scale) )
                 scaled_input_tensors.append(new_input_i_scales)
             else:
                 scaled_input_tensors.append(input_i_scales)
@@ -117,7 +117,7 @@ class LazyDatasetTorch(Dataset):
         self.list_ids       = list_ids
         self.x_dtype        = x_dtype
         self.y_dtype        = y_dtype
-        self.component= None
+        self.component= 4
         self._validate_file()
         
     def _validate_file(self):
@@ -375,17 +375,15 @@ class MultiLazyDatasetTorch(Dataset):
         self.h5_paths = h5_paths
         self.datasets = []
         
-        # Instantiate LazyDatasetTorch for each file
         for i, path in enumerate(self.h5_paths):
             dataset = LazyDatasetTorch(
                 h5_path=path,
-                list_ids=None, # Use all available samples
+                list_ids=None,
                 x_dtype=x_dtype,
                 y_dtype=y_dtype
             )
             self.datasets.append(dataset)
             
-        # Handles the combined indexing
         self.combined_dataset = ConcatDataset(self.datasets)
 
     def __len__(self):
@@ -394,18 +392,13 @@ class MultiLazyDatasetTorch(Dataset):
     def __getitem__(self, idx):
         return self.combined_dataset[idx]
 
-    # ---------------------------------------------------------
-    # Property Setter to handle 'component' variable updates 
-    # ---------------------------------------------------------
-    # What happens when someone wants to get the value of 'component': gets whats set in the first dataset
     @property
     def component(self):
         return self.datasets[0].component if self.datasets else None
 
-    # What happens when someone wants to set the value of 'component'
     @component.setter
     def component(self, value):
-        # When you set multi_dataset.component = X, it updates all child datasets
+        
         for ds in self.datasets:
             ds.component = value
     

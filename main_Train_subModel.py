@@ -142,8 +142,8 @@ if isinstance(dataset_train_name, list):
 else:
     dataset_train_full_name = [os.path.join(NN_dataset_folder, dataset_train_name)]
     t_list_ids              = None if train_range is None else np.arange(train_range[0],train_range[1])
-    train_ds                = dr.LazyDatasetTorch(h5_path  = dataset_train_full_name, 
-                                                  list_ids = t_list_ids, 
+    train_ds                = dr.LazyDatasetTorch(h5_path  = dataset_train_full_name,
+                                                  list_ids = t_list_ids,
                                                   x_dtype  = torch.float32,
                                                   y_dtype  = torch.float32)
 print(f"  - {len(train_ds)} samples considered.")

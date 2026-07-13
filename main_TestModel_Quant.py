@@ -5,14 +5,14 @@ import matplotlib.pyplot  as plt
 import pandas             as pd
 from torch.utils.data     import DataLoader
 
-from Architectures.Unet   import Extended_DannyKo, MY_PIMODEL
+from Architectures.Unet   import Extended_DannyKo
 from Architectures.MSnet  import JavierSantos_Extended
 from Architectures.Models import SubModels_Composition
 from Danny_Original.architecture import Danny_KerasModel
 
 from Utilities            import dataset_reader as dr
 from Utilities            import error_metrics as em 
-
+from Utilities            import model_handler as mh
 
 
 #######################################################
@@ -108,30 +108,27 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
 component        = 0
 
 batch_size       = 9
-N_samples        = None # 'None' to consider all available samples
+N_samples        = 9 # 'None' to consider all available samples
 device           = 'cpu'
 
 # DEFINE DATASETS
 datasets        = {
-    "Training PW": "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_PressureWalls.h5",
-    "Training": "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5",
     
-    #"Spherical Pore":   "../NN_Datasets/ForceDriven/Test_SphPore_120_120_120.h5",
-    #"Spherical Grain":  "../NN_Datasets/ForceDriven/Test_SphGrain_120_120_120.h5",
-    #"Cylindrical Pore": "../NN_Datasets/ForceDriven/Test_CylinPore_120_120_120.h5",
-    "Cylindrical Grain":"../NN_Datasets/ForceDriven/Test_CylinGrain_120_120_120.h5",
+    #"Training": "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5",
+    #"Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
     
-    #"Parker":       "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5",
-    #"Leopard":      "../NN_Datasets/ForceDriven/Test_Oliveira_Leopard_120_120_120.h5",
-    #"Kirby":        "../NN_Datasets/ForceDriven/Test_Oliveira_Kirby_120_120_120.h5",
-    #"Castle Gate":  "../NN_Datasets/ForceDriven/Test_Oliveira_CastleGate_120_120_120.h5",
-    #"Brown":        "../NN_Datasets/ForceDriven/Test_Oliveira_Brown_120_120_120.h5",
-    #"Upper Gray":   "../NN_Datasets/ForceDriven/Test_Oliveira_BereaUpperGray_120_120_120.h5",
-    #"Sinter Gray":  "../NN_Datasets/ForceDriven/Test_Oliveira_BereaSinterGray_120_120_120.h5",
-    #"Berea Buff":   "../NN_Datasets/ForceDriven/Test_Oliveira_BereaBuff_120_120_120.h5",
-    #"Berea":        "../NN_Datasets/ForceDriven/Test_Oliveira_Berea_120_120_120.h5",
-    #"Bentheimer":   "../NN_Datasets/ForceDriven/Test_Oliveira_Bentheimer_120_120_120.h5",
-    #"Bandera":      "../NN_Datasets/ForceDriven/Test_Oliveira_Bandera_120_120_120.h5",
+    "Spherical Pores":      "../NN_Datasets_Grad/Test_Silveira_SphPore_SAug_DNorm.h5",
+    "Spherical Grains":     "../NN_Datasets_Grad/Test_Silveira_SphGrain_SAug_DNorm.h5",
+    "Cylindrical Pores":    "../NN_Datasets_Grad/Test_Silveira_CylinPore_SAug_DNorm.h5",
+    "Cylindrical Grains":   "../NN_Datasets_Grad/Test_Silveira_CylinGrain_SAug_DNorm.h5",
+    
+    "Castle Gate":          "../NN_Datasets_Grad/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    "Berea Upper Gray":     "../NN_Datasets_Grad/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "Berea Sinter Gray":    "../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "Berea Buff":           "../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "Berea":                "../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
+    "Bentheimer":           "../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    
     }
 
 
@@ -139,110 +136,20 @@ datasets        = {
 models          = {}
 
     
-"""
-# Baseline model
-print("\nLoading Danny Ko (Baseline)...")
-baseline_model  = Danny_KerasModel(component=0)
-models["Baseline Danny (Ke) - Danny Data"] = baseline_model
-"""
-
-"""
-# DATASETS COMPARISON
-
-model_aux       = Extended_DannyKo()
-danny_model     = model_aux.z_model
-model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-11PM_Job16070/model_LowerValidationLoss.pth"
-danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model.eval()
-danny_model.bin_input = True
-models["Danny Arq. - SO"] = danny_model
-
-model_aux       = Extended_DannyKo()
-danny_model     = model_aux.z_model
-model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
-danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model.eval()
-danny_model.bin_input = True
-models["Danny Arq. - SOA"] = danny_model
-
-model_aux       = Extended_DannyKo()
-danny_model     = model_aux.z_model
-model_full_name = "./Trained_Models/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
-danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model.eval()
-danny_model.bin_input = True
-models["Danny Arq. - ST (Pr+Walls)"] = danny_model
-
-model_aux       = Extended_DannyKo()
-danny_model     = model_aux.z_model
-model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model.eval()
-danny_model.bin_input = True
-models["Danny Arq. - STA (Pr+Walls)"] = danny_model
-#"""
-
-
-"""
-model_aux       = Extended_DannyKo()
-danny_model     = model_aux.z_model
-#model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_04-02PM_Job16923/model_LowerValidationLoss.pth"
-model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
-danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model.eval()
-danny_model.bin_input = True
-models["Danny Arq. - STA (Pr)"] = danny_model
-#"""
-
-
-
-# Final models
-#"""    
+ 
 danny_model         = Extended_DannyKo()
-danny_z_name        = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-danny_y_name        = "./Trained_Models/NN_Trainning_14_March_2026_03-14PM_Job16195/model_LowerValidationLoss.pth"
-danny_x_name        = "./Trained_Models/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
-danny_p_name        = "./Trained_Models/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
-danny_sub_comp      = SubModels_Composition(danny_model, 
-                                    danny_z_name, 
-                                    danny_y_name, 
-                                    danny_x_name, 
-                                    danny_p_name, 
-                                    device=device)
-danny_sub_comp.eval()
-models["Danny Sub-Models"]     = danny_sub_comp
-
-"""
-javier_model         = JavierSantos_Extended()
-javier_z_name        = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
-javier_y_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-17PM_Job17461/model_LowerValidationLoss.pth"
-javier_x_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-15PM_Job17460/model_LowerValidationLoss.pth"
-javier_p_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-18PM_Job17462/model_LowerValidationLoss.pth"
-javier_sub_comp      = SubModels_Composition(javier_model, 
-                                    javier_z_name, 
-                                    javier_y_name, 
-                                    javier_x_name, 
-                                    javier_p_name, 
-                                    device=device)
-javier_sub_comp.eval()
-models["Javier Sub-Models"]     = javier_sub_comp   
-"""
+danny_model_z       = danny_model.z_model
+model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-12PM_Job26188/model_LowerValidationLoss.pth"
+danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+danny_model.bin_input = True
+danny_model_z.eval()
+models["Ko et. al (Etapa 0)"]     = danny_model_z
 
 
-"""
-danny_f_model       = Extended_DannyKo()
-danny_f_name        = "./Trained_Models/NN_Trainning_10_April_2026_01-25PM/model_LowerValidationLoss.pth"
-danny_f_model.load_state_dict(torch.load(danny_f_name, map_location=torch.device(device), weights_only=True))
-danny_f_model.eval()
-models["Danny Final"]= danny_f_model
+print(" Model's trainable parameters")
+for model_name, model in models.items():
+    print(" Model {model_name}: {mh.get_n_trainable_params(model)}")
 
-
-pinn_model          = MY_PIMODEL()
-pinn_name           = "./Trained_Models/NN_Trainning_11_April_2026_01-39PM/model_LowerValidationLoss.pth"
-pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
-pinn_model.eval()
-models["My Model"] = pinn_model
-"""
 #######################################################
 #************ RUN ANALYSIS:                ***********#
 #######################################################
