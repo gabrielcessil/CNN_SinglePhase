@@ -1,3 +1,3 @@
 /home/gabriel.silveira/.local/lib/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
   backends.update(_get_backends("networkx.backends"))
-slurmstepd-node024: error: *** JOB 26315 ON node024 CANCELLED AT 2026-07-15T12:42:17 ***
+slurmstepd-node024: error: *** JOB 26374 ON node024 CANCELLED AT 2026-07-15T12:55:00 ***

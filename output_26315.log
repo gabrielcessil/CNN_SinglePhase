@@ -678,3 +678,13 @@ MSE                   27.623831  | 60.655221
 MSE in Void Space     0.133416   | 0.068537  
 Bias Error            87.998745  | 77.008694 
 Pearson Correlation   0.211714   | 0.175449  
+
+Executing epoch 540 / 1000 (54.0%)
+--> Average epoch processing time (seconds):  119.776311
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+MSE                   26.678932  | 45.293898 
+MSE in Void Space     0.145465   | 0.079083  
+Bias Error            101.638005 | 102.568625
+Pearson Correlation   0.003077   | 0.002790  
