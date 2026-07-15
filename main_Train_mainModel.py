@@ -70,10 +70,20 @@ train_comment           = config["train_comment"]
 NN_results_folder       = config["NN_results_folder"]
 device_set              = config["device"]
 
-# Handle results folder config
-if NN_results_folder is None:
-    NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
+#######################################################
+#************ HANDLE RESULTS FOLDER:       ***********#
+#######################################################
+
+# If no configuration folder was passed: create a new folder for results
+if args.folder is not None:  
+    NN_results_folder       = args.folder
     config["NN_results_folder"] = NN_results_folder
+else:
+    NN_results_folder       = config["NN_results_folder"]
+    
+    if NN_results_folder is None:
+        NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
+        config["NN_results_folder"] = NN_results_folder
     
 # Update used results folder config
 dataset_train_full_name     = NN_dataset_folder+dataset_train_name
