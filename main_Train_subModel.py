@@ -64,7 +64,6 @@ optimizer               = config["optimizer"]
 weight_init             = config["weight_init"]
 seed                    = config["seed"]
 train_comment           = config["train_comment"]
-NN_results_folder       = config["NN_results_folder"]
 device_set              = config["device"]
 
 # Set seed to random initializations
@@ -75,9 +74,16 @@ nnt.set_global_seed(seed)
 #######################################################
 
 # If no configuration folder was passed: create a new folder for results
-if NN_results_folder is None:
-    NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
+if args.folder is not None:  
+    NN_results_folder       = args.folder
     config["NN_results_folder"] = NN_results_folder
+else:
+    NN_results_folder       = config["NN_results_folder"]
+    
+    if NN_results_folder is None:
+        NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
+        config["NN_results_folder"] = NN_results_folder
+        
 # Redirect prints to results folder
 nnt.set_logger_output_folder(NN_results_folder)
 

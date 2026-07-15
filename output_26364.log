@@ -1,0 +1,100 @@
+[*] Resuming/Loading configs from results folder: ../NN_Results/../NN_Results/NN_Trainning_14_July_2026_10-40AM_Job26297_copy/metadata.json
+Global seed set to 42
+Current device:      cuda
+
+
+Configurations:
+{
+    "model_name": "javier_z",
+    "binary_input": false,
+    "NN_dataset_folder": "../NN_Datasets_Grad/",
+    "dataset_train_name": [
+        "Train_Silveira_SphPore_SAug_DNorm.h5",
+        "Train_Silveira_SphGrain_SAug_DNorm.h5"
+    ],
+    "dataset_valid_name": [
+        "Valid_Silveira_SphPore_SAug_DNorm.h5",
+        "Valid_Silveira_SphGrain_SAug_DNorm.h5"
+    ],
+    "train_range": null,
+    "valid_range": null,
+    "batch_size": 8,
+    "num_workers": 4,
+    "num_threads": null,
+    "device": "cuda",
+    "N_epochs": 2000,
+    "partial_epochs": 2000,
+    "patience": 300,
+    "tolerance": null,
+    "learning_rate": 0.0006,
+    "earlyStopping_loss": "MSE",
+    "backPropagation_loss": "MSE",
+    "optimizer": "ADAM",
+    "weight_init": null,
+    "seed": 42,
+    "train_comment": "Teste de multiplos datasets.",
+    "NN_results_folder": "/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_14_July_2026_10-40AM_Job26297/",
+    "loss_functions": {
+        "MSE": {
+            "Thresholded": false,
+            "obj": "MSELoss()"
+        },
+        "MSE in Void Space": {
+            "Thresholded": true,
+            "obj": "Mask_LossFunction(\n  (lossFunction): MSELoss()\n)"
+        },
+        "Bias Error": {
+            "Thresholded": true,
+            "obj": "Mask_LossFunction(\n  (lossFunction): MeanBiasError()\n)"
+        },
+        "Pearson Correlation": {
+            "Thresholded": true,
+            "obj": "Mask_LossFunction(\n  (lossFunction): PearsonCorr()\n)"
+        }
+    }
+}
+
+
+/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_14_July_2026_10-40AM_Job26297/
+Metadata saved at: /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_14_July_2026_10-40AM_Job26297/metadata.json
+Loading Training Data ... 
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 640 samples from ../NN_Datasets_Grad/Train_Silveira_SphPore_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 640 samples from ../NN_Datasets_Grad/Train_Silveira_SphGrain_SAug_DNorm.h5.
+  self._validate_file()
+  - 1280 samples considered.
+Loading Validation Data ... 
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 64 samples from ../NN_Datasets_Grad/Valid_Silveira_SphPore_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 64 samples from ../NN_Datasets_Grad/Valid_Silveira_SphGrain_SAug_DNorm.h5.
+  self._validate_file()
+  - 128 samples considered.
+Loading Model ... 
+Number of Filters:  [128, 32, 8, 2]
+Number of Filters:  [128, 32, 8, 2]
+Number of Filters:  [128, 32, 8, 2]
+Number of Filters:  [128, 32, 8, 2]
+Number of Filters:  [128, 32, 8, 2]
+Model size: 7.226MB
+Model size: 1894156 total parameters
+Model size: 1894156 trainable parameters
+Model size: 0 frozen parameters
+
+Starting Train on cuda... 
+
+Loading Checkpoint from /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_14_July_2026_10-40AM_Job26297/train_checkpoint_698...
+Resuming from Epoch 699
+
+
+Trainning session has started.
+
+
+Executing epoch 700 / 2000 (35.0%)
+--> Average epoch processing time (seconds):  0.256513
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+MSE                   1216.089235 | 156.401979
+MSE in Void Space     0.264071   | 0.243753  
+Bias Error            42.378975  | 40.219647 
+Pearson Correlation   0.162314   | 0.157214  

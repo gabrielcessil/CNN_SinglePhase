@@ -3,12 +3,11 @@ import torch
 import tensorflow         as tf
 import matplotlib.pyplot  as plt
 import pandas             as pd
-from torch.utils.data     import DataLoader
+from torch.utils.data     import DataLoader, Subset
 
 from Architectures.Unet   import Extended_DannyKo
 from Architectures.MSnet  import JavierSantos_Extended
 from Architectures.Models import SubModels_Composition
-from Danny_Original.architecture import Danny_KerasModel
 
 from Utilities            import dataset_reader as dr
 from Utilities            import error_metrics as em 
@@ -60,12 +59,12 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
             
             # 3D Metrics
             all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["a_metrics"].extend(em.Angular_Comparison     (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["c_metrics"].extend(em.Correlation_Comparison (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["f_metrics"].extend(em.Flux_Comparison        (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["t_metrics"].extend(em.Tortuosity_Comparison  (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["d_metrics"].extend(em.Divergent_Residual     (batch_inputs, batch_outputs))
+            all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
+            all_metrics["a_metrics"].extend(em.Angular_Comparison     (batch_inputs, batch_outputs, batch_targets))
+            all_metrics["c_metrics"].extend(em.Correlation_Comparison (batch_inputs, batch_outputs, batch_targets))
+            all_metrics["f_metrics"].extend(em.Flux_Comparison        (batch_inputs, batch_outputs, batch_targets))
+            all_metrics["t_metrics"].extend(em.Tortuosity_Comparison  (batch_inputs, batch_outputs, batch_targets))
+            all_metrics["d_metrics"].extend(em.Divergent_Residual     (batch_inputs, batch_outputs))
             
         # If analyzing a sub-model, restrict the tensors to 1 channel
         else: 
@@ -73,7 +72,7 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
             batch_targets = batch_targets[:, component:component+1, :,:,:]
             # 1D Metrics (Z-direction only)
             all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs, batch_targets))
-            #all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
+            all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
             all_metrics["c_metrics"].extend(em.Correlation_Comparison (batch_inputs, batch_outputs, batch_targets))
             
                 
@@ -108,26 +107,27 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
 component        = 0
 
 batch_size       = 9
-N_samples        = 9 # 'None' to consider all available samples
+N_samples        = None # 'None' to consider all available samples
 device           = 'cpu'
 
 # DEFINE DATASETS
 datasets        = {
     
-    #"Training": "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5",
-    #"Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
+    "Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
     
     "Spherical Pores":      "../NN_Datasets_Grad/Test_Silveira_SphPore_SAug_DNorm.h5",
     "Spherical Grains":     "../NN_Datasets_Grad/Test_Silveira_SphGrain_SAug_DNorm.h5",
     "Cylindrical Pores":    "../NN_Datasets_Grad/Test_Silveira_CylinPore_SAug_DNorm.h5",
     "Cylindrical Grains":   "../NN_Datasets_Grad/Test_Silveira_CylinGrain_SAug_DNorm.h5",
-    
+     
+    "Bentheimer":           "../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "Berea Buff":           "../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "Leopard":              "../NN_Datasets_Grad/Test_Oliveira_Leopard_SAug_DNorm.h5",
     "Castle Gate":          "../NN_Datasets_Grad/Test_Oliveira_CastleGate_SAug_DNorm.h5",
     "Berea Upper Gray":     "../NN_Datasets_Grad/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
     "Berea Sinter Gray":    "../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
-    "Berea Buff":           "../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
     "Berea":                "../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
-    "Bentheimer":           "../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    
     
     }
 
@@ -140,11 +140,28 @@ models          = {}
 danny_model         = Extended_DannyKo()
 danny_model_z       = danny_model.z_model
 model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-12PM_Job26188/model_LowerValidationLoss.pth"
-danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model.bin_input = True
+danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+danny_model_z.bin_input = True
 danny_model_z.eval()
 models["Ko et. al (Etapa 0)"]     = danny_model_z
 
+
+danny_model         = Extended_DannyKo()
+danny_model_z       = danny_model.z_model
+model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-31PM_Job26190/model_LowerValidationLoss.pth"
+danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+danny_model_z.bin_input = True
+danny_model_z.eval()
+models["Ko et. al (Etapa 1)"]     = danny_model_z
+
+
+danny_model         = Extended_DannyKo()
+danny_model_z       = danny_model.z_model
+model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-28PM_Job26189/model_LowerValidationLoss.pth"
+danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+danny_model_z.bin_input = True
+danny_model_z.eval()
+models["Ko et. al (Etapa 2)"]     = danny_model_z
 
 print(" Model's trainable parameters")
 for model_name, model in models.items():
@@ -176,7 +193,11 @@ for dataname, datapath in datasets.items():
                                     list_ids=None, 
                                     x_dtype=torch.float32,
                                     y_dtype=torch.float32)
-        
+    
+    if N_samples is not None:
+        N = min(N_samples, len(dataset))
+        dataset = Subset(dataset, range(N))
+    
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
     
     # Compute metrics for each model
