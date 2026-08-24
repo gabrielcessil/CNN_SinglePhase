@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
-from .Functional import Channel_Concat
+from .Functional import Channel_Concat, Ux2Uy
 
 
 # Corrected version of MS-NET, modifying norm order and CeLU according to the paper
@@ -349,7 +349,7 @@ class JavierSantos_Extended(nn.Module):
         
         self.x_model    = JavierSantos(nc_out = 1, num_features = 1)
         
-        self.y_model    = JavierSantos(nc_out = 1, num_features = 1)
+        self.y_model    = Ux2Uy(self.x_model)
         
         self.z_model    = JavierSantos(nc_out = 1, num_features = 1)
         

@@ -8,30 +8,13 @@ from torch.utils.data     import DataLoader
 
 from Architectures.Unet   import Extended_DannyKo
 from Architectures.MSnet  import JavierSantos_Extended
-
+from Architectures.Models import SubModels_Composition
 from Utilities            import dataset_reader as dr
-from Danny_Original.architecture import Danny_KerasModel
 
   
 #######################################################
 #************ UTILS:                       ***********#
 #######################################################
-
-def mean_normalize(inp, x): 
-    B, C, Z, Y, X = x.shape
-    mag     = torch.linalg.vector_norm(x, dim=1)  
-    mask    = (inp > 0)  
-    mask    = mask[:, 0] 
-
-    means = []
-    for b in range(B):
-        vals    = mag[b][mask[b]]
-        m       = vals.mean()
-        means.append(m.unsqueeze(0))
-
-    means = torch.stack(means, dim=0).view(B, 1, 1, 1, 1)
-
-    return x / (means + 1e-12)
 
 def print_n_params(model, pytorch=True):
     if pytorch:
@@ -85,7 +68,7 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
     # Prepare color range
     vmin, vmax      = np.percentile(tar_z_masked.compressed(), [1, 99])
     
-    folder = "Plot_Front_Comparison_"+save_tag
+    folder = "Plot_Front_Comparison"
     if save_mode and not os.path.exists(folder): os.makedirs(folder)
 
     if save_mode:
@@ -94,7 +77,7 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
         plt.imshow(tar_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
         plt.axis('off')
         plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-        plt.savefig(f"{folder}/{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"{folder}/{save_tag}_{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
         plt.close()
     else:
         num_plots = len(models) + 1
@@ -109,9 +92,6 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
         with torch.no_grad():
             out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
             
-        #tar = mean_normalize(inp, tar)
-        #out = mean_normalize(inp, out)
-        
         out_z       = out.squeeze(0)[0]          # Remove batch dim, get first channel
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='front') # Put zeros on solid
         vmin, vmax      = np.percentile(o_z_masked.compressed(), [1, 99])
@@ -120,7 +100,7 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
             plt.imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
             plt.axis('off')
             plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-            plt.savefig(f"{folder}/{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
         else:
             vmin, vmax      = np.percentile(o_z_masked.compressed(), [1, 99])
@@ -151,7 +131,7 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
     # Prepare color range
     vmin, vmax      = np.percentile(tar_z_masked.compressed(), [1, 99])
     
-    folder = "Plot_Side_Comparison_"+save_tag
+    folder = "Plot_Side_Comparison"
     if save_mode and not os.path.exists(folder): os.makedirs(folder)
 
     if save_mode:
@@ -160,7 +140,7 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
         plt.imshow(tar_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
         plt.axis('off')
         plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-        plt.savefig(f"{folder}/{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"{folder}/{save_tag}_{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
         plt.close()
     else:
         num_plots = len(models) + 1
@@ -175,9 +155,6 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
         with torch.no_grad():
             out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
         
-        #tar = mean_normalize(inp, tar)
-        #out = mean_normalize(inp, out)
-        
         out_z       = out.squeeze(0)[0]   
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='side') # Put zeros on solid
         vmin, vmax      = np.percentile(o_z_masked.compressed(), [1, 99])
@@ -186,7 +163,7 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
             plt.imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
             plt.axis('off')
             plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-            plt.savefig(f"{folder}/{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
         else:
             im = axes[i].imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
@@ -212,7 +189,7 @@ def Plot_Error_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='fr
     tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='front') # Put zeros on solid
     
     
-    folder = f"Plot_Error_Comparison_{axis}_"+save_tag
+    folder = f"Plot_Error_Comparison_{axis}"
     if save_mode and not os.path.exists(folder): os.makedirs(folder)
 
     if not save_mode:
@@ -232,7 +209,7 @@ def Plot_Error_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='fr
             plt.title(f"{name} Error ({axis})")
             plt.axis('off')
             plt.colorbar(fraction=0.046, pad=0.04)
-            plt.savefig(f"{folder}/{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
         else:
             im = axes[i].imshow(error_map, cmap='Reds')
@@ -242,152 +219,6 @@ def Plot_Error_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='fr
     if not save_mode: plt.show()
     
 
-def Plot_Mean_Velocity_Scatter(models, datapath, batch_size=4, npoints=5000, 
-                               xlabel="Target Mean Velocity", ylabel="Predicted Mean Velocity", 
-                               title="Mean Velocity Scale Accuracy", 
-                               save_tag="default", save_mode=False, log=True):
-    """
-    Computes mean velocities per sample in batches.
-    Matches the dataset loading and normalization logic of the other plotting functions.
-    """
-    # --- 1. Load Data (Updated to LazyDatasetTorch) ---
-    dataset = dr.LazyDatasetTorch(h5_path=datapath, 
-                                  list_ids=None, 
-                                  x_dtype=torch.float32,
-                                  y_dtype=torch.float32)
-    
-    # Dataloader automatically adds the Batch dimension (B, C, Z, Y, X)
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
-    
-    folder = "Plot_Mean_Velocity_" + save_tag
-    if save_mode and not os.path.exists(folder): 
-        os.makedirs(folder)
-
-    # --- 2. Better composite figure sizing ---
-    if not save_mode:
-        n_models = len(models)
-        # Adjust figure size based on number of models
-        fig_width = min(21, 7 * n_models)  # Cap maximum width
-        fig_height = 6  # Slightly reduced from 7 to give more breathing room
-        fig, axes = plt.subplots(1, n_models, figsize=(fig_width, fig_height), constrained_layout=True)
-        if n_models == 1: 
-            axes = [axes]
-        # Add more spacing for titles
-        fig.suptitle("", fontsize=16)  # Empty suptitle to trigger layout adjustment
-
-    # --- 3. Iterate through Models ---
-    for i, (name, model) in enumerate(models.items()):
-        all_gt_means = []
-        all_pred_means = []
-        
-        # --- 4. Process in Batches ---
-        with torch.no_grad():
-            for batch_inp, batch_tar in loader:
-                # Ensure float32 (safety measure)
-                batch_inp = batch_inp.to(dtype=torch.float32)
-                batch_tar = batch_tar.to(dtype=torch.float32)
-
-                # Normalize using the consistent util function
-                output      = model.predict(batch_inp) if hasattr(model, 'predict') else model(batch_inp)
-                
-                dims        = tuple(range(1, batch_tar.ndim))
-                all_gt_means.append(batch_tar.abs().mean(dim=dims).cpu().numpy())
-                all_pred_means.append(output.abs().mean(dim=dims).cpu().numpy())
-
-        x_data = np.concatenate(all_gt_means)
-        y_data = np.concatenate(all_pred_means)
-    
-        # --- 5. Sampling and Density Logic ---
-        np.random.seed(42)
-        total_points        = len(x_data)
-        indices             = np.random.choice(total_points, size=min(npoints, total_points), replace=False)
-        x_sample, y_sample  = x_data[indices], y_data[indices]
-        
-        valid               = (x_sample > 0) & (y_sample > 0)
-        x_sample, y_sample  = x_sample[valid], y_sample[valid]
-    
-        data_points         = np.vstack([np.log10(x_sample), np.log10(y_sample)]) if log else np.vstack([x_sample, y_sample])
-        
-        # Handle case where too few points remain after filtering
-        if data_points.shape[1] < 2:
-            print(f"Warning: Not enough valid points for {name}. Skipping density plot.")
-            continue
-            
-        kde = gaussian_kde(data_points)
-        density = kde(data_points)
-        sort_idx = density.argsort()
-
-        # --- 6. Frame Setup ---
-        if save_mode:
-            plt.figure(figsize=(8, 8))
-            ax = plt.gca()
-        else:
-            ax = axes[i]
-
-        # --- 7. Plotting Assets ---
-        sc = ax.scatter(x_sample[sort_idx], y_sample[sort_idx], 
-                        c=density[sort_idx], cmap='plasma', s=35, alpha=0.6)
-        
-        # Consistent Square Limits
-        combined = np.concatenate([x_sample, y_sample])
-        lo_lin, hi_lin = combined.min() * 0.8, combined.max() * 1.2
-        line_vals = np.logspace(np.log10(lo_lin), np.log10(hi_lin), 100) if log else np.linspace(lo_lin, hi_lin, 100)
-        
-        ax.plot(line_vals, line_vals, color='gray', linestyle='--', linewidth=2, label='y=x', zorder=3)
-        ax.set_xlim(lo_lin, hi_lin)
-        ax.set_ylim(lo_lin, hi_lin)
-
-        if log:
-            ax.set_xscale('log')
-            ax.set_yscale('log')
-            ax.xaxis.set_major_formatter(LogFormatterSciNotation(base=10))
-            ax.yaxis.set_major_formatter(LogFormatterSciNotation(base=10))
-            ax.xaxis.set_major_locator(LogLocator(base=10))
-            ax.yaxis.set_major_locator(LogLocator(base=10))
-
-        # Correlation and Labels - Make text smaller for composite view
-        corr = np.corrcoef(x_data, y_data)[0, 1]
-        fontsize_text = 12 if not save_mode else 16  # Smaller for composite
-        ax.text(0.05, 0.95, f'$R = {corr:.4f}$', transform=ax.transAxes, 
-                fontsize=fontsize_text, verticalalignment='top', 
-                bbox=dict(facecolor='white', alpha=0.8, pad=3))
-
-        # Adjust label sizes for composite view
-        label_fontsize = 12 if not save_mode else 16
-        title_fontsize = 11 if not save_mode else 15
-        
-        ax.set_xlabel(xlabel, fontsize=label_fontsize)
-        ax.set_ylabel(ylabel, fontsize=label_fontsize)
-        
-        # Handle title more carefully for composite view
-        if save_mode:
-            ax.set_title(f"{name}\n{title}", fontsize=title_fontsize, fontweight='bold')
-        else:
-            # Shorter title for composite view to prevent overlapping
-            ax.set_title(name, fontsize=title_fontsize, fontweight='bold')
-        
-        ax.set_aspect('equal')
-        ax.grid(True, which="major", linestyle="-", alpha=0.3)
-        
-        # --- 8. Colorbar handling ---
-        if save_mode:
-            plt.colorbar(sc, ax=ax, fraction=0.046, pad=0.04).set_label('Density', fontsize=12)
-        else:
-            # For composite view, make colorbar smaller and position it better
-            cbar = plt.colorbar(sc, ax=ax, fraction=0.08, pad=0.04, shrink=0.8)
-            cbar.set_label('Density', fontsize=10)
-            cbar.ax.tick_params(labelsize=8)
-
-        if save_mode:
-            plt.savefig(f"{folder}/{name.replace(' ', '_')}_scatter.png", 
-                       dpi=300, bbox_inches='tight', pad_inches=0.1)
-            plt.close()
-
-    if not save_mode:
-        # Adjust layout one more time before showing
-        plt.show()
-        
-        
 #######################################################
 #************ MAIN:                        ***********#
 #######################################################
@@ -395,143 +226,133 @@ def Plot_Mean_Velocity_Scatter(models, datapath, batch_size=4, npoints=5000,
 z_direction_only    = True
 device              = 'cpu'
 batch_size          = 1
-save_mode           = False
-sample_idexes       = [2]
-#datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5" 
-datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
+save_mode           = True
+sample_idexes       = [11,12,13,14,15,16,17,18,19,20]#[1,2,3,4,5,6,7,8,9,10]
+datasets        = {
+    
+    #"Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
+    
+    "Spherical Pores":      "../NN_Datasets_Grad/Test_Silveira_SphPore_SAug_DNorm.h5",
+    "Spherical Grains":     "../NN_Datasets_Grad/Test_Silveira_SphGrain_SAug_DNorm.h5",
+    "Cylindrical Pores":    "../NN_Datasets_Grad/Test_Silveira_CylinPore_SAug_DNorm.h5",
+    "Cylindrical Grains":   "../NN_Datasets_Grad/Test_Silveira_CylinGrain_SAug_DNorm.h5",
+     
+    "Bentheimer":           "../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "Berea Buff":           "../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "Leopard":              "../NN_Datasets_Grad/Test_Oliveira_Leopard_SAug_DNorm.h5",
+    "Castle Gate":          "../NN_Datasets_Grad/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    "Berea Upper Gray":     "../NN_Datasets_Grad/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "Berea Sinter Gray":    "../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "Berea":                "../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
+    
+    }
 
-save_tag            = "Danny"
 shape               = (120,120,120)
-component           = 3 # Uz=0, Uy=1, Ux=2, P=3
+component           = 0 # Uz=0, Uy=1, Ux=2, P=3
 models          = {}
-# 1 Directional Flow Models
+# DEFINE DATASETS
+datasets        = {
+    
+    #"Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
+    
+    "Spherical Pores":      "../NN_Datasets_Grad/Test_Silveira_SphPore_SAug_DNorm.h5",
+    "Spherical Grains":     "../NN_Datasets_Grad/Test_Silveira_SphGrain_SAug_DNorm.h5",
+    "Cylindrical Pores":    "../NN_Datasets_Grad/Test_Silveira_CylinPore_SAug_DNorm.h5",
+    "Cylindrical Grains":   "../NN_Datasets_Grad/Test_Silveira_CylinGrain_SAug_DNorm.h5",
+     
+    "Bentheimer":           "../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "Berea Buff":           "../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "Leopard":              "../NN_Datasets_Grad/Test_Oliveira_Leopard_SAug_DNorm.h5",
+    "Castle Gate":          "../NN_Datasets_Grad/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    "Berea Upper Gray":     "../NN_Datasets_Grad/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "Berea Sinter Gray":    "../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "Berea":                "../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
+    
+    }
+
+
+# DEFINE MODELS
+models          = {}
+
+# Z-Component models
 if component==0:
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-12PM_Job26188/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 0)"]     = danny_model_z
     
-    """
-    # Baseline model
-    print("\nLoading Danny Ko (Baseline)...")
-    baseline_model  = Danny_KerasModel(uni_directional=0)
-    print_n_params(baseline_model.model, pytorch=False)
-    models["Baseline Danny (Ke) - Danny Data"] = baseline_model
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-31PM_Job26190/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 1)"]     = danny_model_z
     
-    # Dataset Danny Simulado - Sem Augmentation - Dados Alinhados
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-11PM_Job16070/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data noAug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-28PM_Job26189/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 2)"]     = danny_model_z
     
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_15_March_2026_03-30PM_Job16205/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    #nnt.load_model_from_checkpoint(danny_model, "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_13_March_2026_02-13PM_Job16072/", 1200)
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - My Data noAug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    """
-    
-    # Comparing Javier and Danny Models
-    """
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    javier_model = MS_Net()
-    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
-    javier_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    javier_model.eval()
-    javier_model.bin_input = False
-    models["Javier Arq. - STA"] = javier_model
-    print_n_params(javier_model, pytorch=True)
-    """
-    
-    
-    # Do Pressure (no Walls) removed deconvolution residual ?
-    #"""
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_04-02PM_Job16923/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA (Pr)"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny Arq. - STA (Pr+Walls)"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-13PM_Job16071/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    #"""
-    
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 3)"]     = danny_model_z
+
+# X-Component models
 elif component==2:
-    
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
-    
+    danny_model         = Extended_DannyKo()
+    danny_model_x       = danny_model.x_model
+    model_full_name = "./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth"
+    danny_model_x.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_x.bin_input = True
+    danny_model_x.eval()
+    models["Ko et. al (Etapa 3)"]     = danny_model_x
 
+# P-Component models
 elif component==3:
+    danny_model         = Extended_DannyKo()
+    danny_model_p       = danny_model.p_model 
+    model_full_name = "./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth" # substituir apos treinar tudo
+    danny_model_p.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_p.bin_input = True
+    danny_model_p.eval()
+    models["Ko et. al (Etapa 3)"]     = danny_model_p
 
-    model_aux       = Extended_DannyKo()
-    danny_model     = model_aux.z_model
-    model_full_name = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
-    danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    danny_model.eval()
-    danny_model.bin_input = True
-    models["Danny - Orig. Data Aug"] = danny_model
-    print_n_params(danny_model, pytorch=True)
     
     
-# 3 Directional Flow Models
-else:    
-    baseline_model  = Danny_KerasModel()
-    models["Baseline Danny (Ke) - Danny Data"] = baseline_model
+elif component==5:
+    # Base model
+    danny_model         = Extended_DannyKo()
+    
+    # Z- component
+    model_full_z_name = "./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth"
+    # X- component
+    model_full_x_name = "./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth"
+    # P- component
+    model_full_p_name = "./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth"
+
+    # Concatenation model (no main model)
+    concat_model      = SubModels_Composition(main_model=danny_model, 
+                                              z_name=model_full_z_name,
+                                              x_name=model_full_x_name, 
+                                              p_name=model_full_p_name, 
+                                              device=device, 
+                                              is_eval=True)
+    
+    models["Ko et. al (Etapas 3)"]     = concat_model
+    
+else: raise Exception(f"Specified component {component} not implemented. Please verify.")
+
     
 
 # --- Execution Block ---
@@ -540,14 +361,9 @@ else:
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman', 'Liberation Serif', 'Bitstream Vera Serif']
 
-# 3. Run Visualization
-#Plot_Mean_Velocity_Scatter(models, datapath, npoints=5000, xlabel="Target Mean Velocity", 
-#                                   ylabel="Predicted Mean Velocity", title="Mean Velocity Scale Accuracy", 
-#                                   save_tag="default", save_mode=False, log=False)
 
-
-for sample_idx in sample_idexes:
-    
-    Plot_Front_Comparison(models, datapath, component, sample_idx= sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag = save_tag)
-    Plot_Side_Comparison (models, datapath, component, sample_idx= sample_idx, slice_idx=shape[2]//2, save_mode=save_mode, save_tag = save_tag)
-    #Plot_Error_Comparison(models, datapath, slice_idx=60, save_mode=save_mode, save_tag = save_tag, axis='side')
+for dataname, datapath in datasets.items():
+    for sample_idx in sample_idexes:
+        #Plot_Front_Comparison(models, datapath, component, sample_idx= sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag = save_tag)
+        Plot_Side_Comparison (models, datapath, component, sample_idx= sample_idx, slice_idx=shape[2]//2, save_mode=save_mode, save_tag=dataname)
+        #Plot_Error_Comparison(models, datapath, slice_idx=60, save_mode=save_mode, save_tag = save_tag, axis='side')

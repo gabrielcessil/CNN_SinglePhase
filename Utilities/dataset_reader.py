@@ -112,12 +112,12 @@ class LazyDatasetTorch(Dataset):
       Y: (1 or 4, Z, Y, X) 
     """
 
-    def __init__(self, h5_path, list_ids=None, x_dtype=torch.float32, y_dtype=torch.float32):
+    def __init__(self, h5_path, list_ids=None, x_dtype=torch.float32, y_dtype=torch.float32, component=None):
         self.h5_path        = h5_path
         self.list_ids       = list_ids
         self.x_dtype        = x_dtype
         self.y_dtype        = y_dtype
-        self.component= 4
+        self.component      = component
         self._validate_file()
         
     def _validate_file(self):

@@ -804,6 +804,7 @@ def Plot_LossHistory(train_cost_h, val_cost_h, normalize=False, output_path='los
         ax1.set_ylabel('Loss')
         ax1.set_title(f'Cost History\n({loss_name})')
         ax1.set_ylim(bottom= min(0.0, np.min(train_loss_h), np.min(valid_loss_h)))
+        ax1.set_yscale('log')
 
         # Plot 2: Recent history
         ax2 = axes[idx, 1]

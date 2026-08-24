@@ -22,7 +22,7 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
         
     # Set the font to Times New Roman
     plt.rcParams['font.family'] = 'serif'
-    plt.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman', 'Liberation Serif', 'Bitstream Vera Serif']
+    plt.rcParams['font.serif']  = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman', 'Liberation Serif', 'Bitstream Vera Serif']
     
     # Initialize lists to store metrics for EVERY sample in the dataset
     all_metrics = {
@@ -41,23 +41,21 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
         current_bs = batch_inputs.shape[0]
         print(f"Processing Batch {batch_idx+1} (Size: {current_bs})...")
 
-        # 1. Prediction
+        
         batch_inputs  = batch_inputs.clone().detach().to(dtype=torch.float32)
         batch_outputs = model.predict(batch_inputs)
-        print("Out: ", batch_outputs.mean(), "; Tar: ", batch_targets.mean())
-        
-        print("output shape: ", batch_outputs.shape)
-        print("target shape: ", batch_targets.shape)
             
-        # 2. Casting and transformation
+        
         batch_targets = batch_targets.clone().detach().to(dtype=torch.float32)
         batch_outputs = batch_outputs.clone().detach().to(dtype=torch.float32)
         
-    
+        print("input shape: ", batch_inputs.shape)
+        print("output shape: ", batch_outputs.shape)
+        print("target shape: ", batch_targets.shape)
+        
         # Calculate & Collect Metrics
         if component is None or component==5: # If component is Z,Y,X, P
             
-            # 3D Metrics
             all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs, batch_targets))
             all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
             all_metrics["a_metrics"].extend(em.Angular_Comparison     (batch_inputs, batch_outputs, batch_targets))
@@ -66,15 +64,23 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
             all_metrics["t_metrics"].extend(em.Tortuosity_Comparison  (batch_inputs, batch_outputs, batch_targets))
             all_metrics["d_metrics"].extend(em.Divergent_Residual     (batch_inputs, batch_outputs))
             
-        # If analyzing a sub-model, restrict the tensors to 1 channel
-        else: 
-            batch_outputs = batch_outputs[:, component:component+1, :,:,:]
-            batch_targets = batch_targets[:, component:component+1, :,:,:]
-            # 1D Metrics (Z-direction only)
-            all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs, batch_targets))
-            all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
-            all_metrics["c_metrics"].extend(em.Correlation_Comparison (batch_inputs, batch_outputs, batch_targets))
+            # Add Navier Stokes (combining pressure and velocity)
             
+        # If analyzing a sub-model, restrict the tensors to 1 channel (dataset already provides just one component)
+        elif component==0 or component==1 or component==2 or component==3: 
+            
+            if component==1 or component==2:
+                batch_outputs_aux = batch_outputs.abs()
+                batch_targets_aux = batch_targets.abs()
+                all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs_aux, batch_targets_aux))
+                all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs_aux, batch_targets_aux))
+            else:
+                all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs, batch_targets))
+                all_metrics["m_metrics"].extend(em.Magnitude_Comparison   (batch_inputs, batch_outputs, batch_targets))
+                
+            all_metrics["c_metrics"].extend(em.Correlation_Comparison (batch_inputs, batch_outputs, batch_targets))
+
+        else: print("Comparison of component {component} not implemented.")
                 
     # --- Final Global Aggregation ---
     final_results = {}
@@ -97,23 +103,23 @@ def Test_Model_on_Dataset(dataloader, model, component, model_name, datasetname)
 #######################################################
 #************ MAIN SETUP:                  ***********#
 #######################################################
+
 # Choose component
 # 0 - z models
-# 1 - y models
 # 2 - x models
 # 3 - p models
 # 4 - zyx models
-# None - zyx-p models
-component        = 0
+# 5 / None - zyx-p models
+component        = 5
 
-batch_size       = 9
+batch_size       = 50
 N_samples        = None # 'None' to consider all available samples
 device           = 'cpu'
 
 # DEFINE DATASETS
 datasets        = {
     
-    "Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
+    #"Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
     
     "Spherical Pores":      "../NN_Datasets_Grad/Test_Silveira_SphPore_SAug_DNorm.h5",
     "Spherical Grains":     "../NN_Datasets_Grad/Test_Silveira_SphGrain_SAug_DNorm.h5",
@@ -128,40 +134,90 @@ datasets        = {
     "Berea Sinter Gray":    "../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
     "Berea":                "../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
     
-    
     }
 
 
 # DEFINE MODELS
 models          = {}
 
+# Z-Component models
+if component==0:
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-12PM_Job26188/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 0)"]     = danny_model_z
     
- 
-danny_model         = Extended_DannyKo()
-danny_model_z       = danny_model.z_model
-model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-12PM_Job26188/model_LowerValidationLoss.pth"
-danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model_z.bin_input = True
-danny_model_z.eval()
-models["Ko et. al (Etapa 0)"]     = danny_model_z
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-31PM_Job26190/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 1)"]     = danny_model_z
+    
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-28PM_Job26189/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 2)"]     = danny_model_z
+    
+    danny_model         = Extended_DannyKo()
+    danny_model_z       = danny_model.z_model
+    model_full_name = "./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth"
+    danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_z.bin_input = True
+    danny_model_z.eval()
+    models["Ko et. al (Etapa 3)"]     = danny_model_z
 
+# X-Component models
+elif component==2:
+    danny_model         = Extended_DannyKo()
+    danny_model_x       = danny_model.x_model
+    model_full_name = "./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth"
+    danny_model_x.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_x.bin_input = True
+    danny_model_x.eval()
+    models["Ko et. al (Etapa 3)"]     = danny_model_x
 
-danny_model         = Extended_DannyKo()
-danny_model_z       = danny_model.z_model
-model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-31PM_Job26190/model_LowerValidationLoss.pth"
-danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model_z.bin_input = True
-danny_model_z.eval()
-models["Ko et. al (Etapa 1)"]     = danny_model_z
+# P-Component models
+elif component==3:
+    danny_model         = Extended_DannyKo()
+    danny_model_p       = danny_model.p_model 
+    model_full_name = "./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth" # substituir apos treinar tudo
+    danny_model_p.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    danny_model_p.bin_input = True
+    danny_model_p.eval()
+    models["Ko et. al (Etapa 3)"]     = danny_model_p
 
+    
+    
+elif component==5:
+    # Base model
+    danny_model         = Extended_DannyKo()
+    
+    # Z- component
+    model_full_z_name = "./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth"
+    # X- component
+    model_full_x_name = "./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth"
+    # P- component
+    model_full_p_name = "./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth"
 
-danny_model         = Extended_DannyKo()
-danny_model_z       = danny_model.z_model
-model_full_name = "./Trained_Models/NN_Trainning_6_July_2026_01-28PM_Job26189/model_LowerValidationLoss.pth"
-danny_model_z.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model_z.bin_input = True
-danny_model_z.eval()
-models["Ko et. al (Etapa 2)"]     = danny_model_z
+    # Concatenation model (no main model)
+    concat_model      = SubModels_Composition(main_model=danny_model, 
+                                              z_name=model_full_z_name,
+                                              x_name=model_full_x_name, 
+                                              p_name=model_full_p_name, 
+                                              device=device, 
+                                              is_eval=True)
+    
+    models["Ko et. al (Etapas 3)"]     = concat_model
+    
+else: raise Exception(f"Specified component {component} not implemented. Please verify.")
 
 print(" Model's trainable parameters")
 for model_name, model in models.items():
@@ -192,7 +248,8 @@ for dataname, datapath in datasets.items():
     dataset    = dr.LazyDatasetTorch(h5_path=datapath, 
                                     list_ids=None, 
                                     x_dtype=torch.float32,
-                                    y_dtype=torch.float32)
+                                    y_dtype=torch.float32,
+                                    component=component)
     
     if N_samples is not None:
         N = min(N_samples, len(dataset))
@@ -287,8 +344,8 @@ for metric_name, df in dfs.items():
         
     elif "Mean Divergent Residual [%]" in metric_name:
         mode = "lower_better"
-        green_thr = 5
-        red_thr   = 20
+        green_thr = 20
+        red_thr   = 50
         
         
             

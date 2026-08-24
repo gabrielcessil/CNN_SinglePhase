@@ -1,0 +1,16 @@
+2026-07-20 15:45:26.074424: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-07-20 15:45:26.216811: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-07-20 15:45:27.254818: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /home/gabriel.silveira/.conda/envs/env_cuda/lib:
+2026-07-20 15:45:27.255101: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /home/gabriel.silveira/.conda/envs/env_cuda/lib:
+2026-07-20 15:45:27.255112: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 60 samples from ../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5.
+  self._validate_file()
+Traceback (most recent call last):
+  File "/home/gabriel.silveira/dissertacao/CNN_SinglePhase/main_TestModel_Quant.py", line 235, in <module>
+    metrics = Test_Model_on_Dataset(dataloader, model, component=component, model_name=model_id, datasetname=dataname)
+  File "/home/gabriel.silveira/dissertacao/CNN_SinglePhase/main_TestModel_Quant.py", line 74, in Test_Model_on_Dataset
+    all_metrics["b_metrics"].extend(em.Bias_Comparison        (batch_inputs, batch_outputs, batch_targets))
+  File "/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/error_metrics.py", line 84, in Bias_Comparison
+    vz_pred_i   = v_pred[s_i:s_i+1][s_i_mask].mean()
+IndexError: The shape of the mask [1, 1, 120, 120, 120] at index 1 does not match the shape of the indexed tensor [1, 0, 120, 120, 120] at index 1

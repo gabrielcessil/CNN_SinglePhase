@@ -1,0 +1,11 @@
+domain
+   type: VolumeMesh
+   meshClass: DomainMesh
+   format: silo
+   domain: domain_00000; 00000.silo; 18446744073709551615
+   variables: SignDist|cell|1; Velocity_x|cell|1; Velocity_y|cell|1; Velocity_z|cell|1; Pressure|cell|1; 
+   variable(domain_00000,Pressure): Pressure; 00000.silo; 18446744073709551615
+   variable(domain_00000,SignDist): SignDist; 00000.silo; 18446744073709551615
+   variable(domain_00000,Velocity_x): Velocity_x; 00000.silo; 18446744073709551615
+   variable(domain_00000,Velocity_y): Velocity_y; 00000.silo; 18446744073709551615
+   variable(domain_00000,Velocity_z): Velocity_z; 00000.silo; 18446744073709551615

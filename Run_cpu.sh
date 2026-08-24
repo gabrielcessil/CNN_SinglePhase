@@ -2,14 +2,14 @@
 
 # ---------------- SLURM Job Settings ----------------
 
-#SBATCH --job-name=RNA_train                # Job name for identification
+#SBATCH --job-name=RNA_test                # Job name for identification
 #SBATCH --partition=close_cpu                 # Partition (queue) to submit to: 'k40m', 'a100' or 'a30'
 #SBATCH --nodes=1                           # Number of nodes
+#SBATCH --nodelist=node[003-020]
 
 #SBATCH -t 4-0:00                           # Max wall time: 4 days
 #SBATCH --output=output_%j.log
 #SBATCH --error=error_%j.log
-
 
 
 # ---------------- Environment Setup ----------------

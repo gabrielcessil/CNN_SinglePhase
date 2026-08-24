@@ -79,14 +79,13 @@ def tensor_denorm(out: torch.Tensor,  # Prediction
         # --- Velocity de-normalization ---
         force   = force_calculation_from_R(r_max, tau=tau, Re=Re, Dens=dens)
         visc    = (tau-0.5)/3
-        perm_est= (2*0.65*r_max)**2
-        Kn      = 0.2
-        V       = out[b, :3] * force * Kn * perm_est / visc
+        perm_est= (0.65*r_max)**2 /5
+        V       = out[b, :3] * force * perm_est / visc
         
         # --- Pressure de-normalization ---
         dP      = pressure_calculation_from_R(r_max, L=out.shape[2], tau=tau, Re=Re, Dens=dens)
-        P_med   = (2.0 + 3.0 * dP) / 6.0
-        P_med_n = 0.15
+        P_med   = (2.0 - 3.0 * dP) / 6.0
+        P_med_n = 1.0
         dP_n    = 0.2
         P       = P_med + (out[b, 3:4] - P_med_n) * dP / dP_n
     

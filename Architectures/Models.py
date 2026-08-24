@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from .Functional import pad_same, crop_same, Channel_Concat
+from .Functional import pad_same, crop_same, Channel_Concat, Ux2Uy
 import copy
 
 """
@@ -9,7 +9,7 @@ This class implements a composite architecture that generates a final output
 by aggregating predictions from a suite of specialized, pre-trained sub-models.
 """
 class SubModels_Composition(nn.Module):
-    def __init__(self, main_model, z_name, y_name, x_name, p_name, device, is_eval=False):
+    def __init__(self, main_model, z_name, x_name, p_name, device, is_eval=False):
         super().__init__() 
         
         # Check attributes
@@ -19,17 +19,18 @@ class SubModels_Composition(nn.Module):
         
         # Deepcopy to avoid mutating the original main_model's weights
         self.z_model = copy.deepcopy(main_model.z_model)
-        self.y_model = copy.deepcopy(main_model.y_model)
         self.x_model = copy.deepcopy(main_model.x_model)
+        self.y_model = Ux2Uy(self.x_model)
         self.p_model = copy.deepcopy(main_model.p_model)
         
         # Load pre-trained sub-models safely into the copies
         self.z_model.load_state_dict(torch.load(z_name, map_location=torch.device(device), weights_only=True))
-        self.y_model.load_state_dict(torch.load(y_name, map_location=torch.device(device), weights_only=True))
         self.x_model.load_state_dict(torch.load(x_name, map_location=torch.device(device), weights_only=True))
         self.p_model.load_state_dict(torch.load(p_name, map_location=torch.device(device), weights_only=True))
         
         self.concat = Channel_Concat()
+        
+        if is_eval: self.eval()
         
         
     def forward(self, x):

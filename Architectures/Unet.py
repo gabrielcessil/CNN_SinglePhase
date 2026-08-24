@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
-from .Functional import pad_same, crop_same, Channel_Concat
+from .Functional import pad_same, crop_same, Channel_Concat, Ux2Uy
 import matplotlib.pyplot as plt
 # Danny D Ko
 """
@@ -368,17 +368,8 @@ class Extended_DannyKo(nn.Module):
             res_num=4,
             bin_input=bin_input)
      
-        self.y_model = Base_Unet(
-            input_channels=1,
-            output_channels=1,
-            filter_num=10,
-            filter_num_increase=2,
-            filter_size=4,
-            activation='selu',
-            momentum=0.01,
-            dropout=0.2,
-            res_num=4,
-            bin_input=bin_input)
+        # Uses predictions of x to predict y using symmetry
+        self.y_model = Ux2Uy(self.x_model)
         
         self.z_model = Base_Unet(
             input_channels=1,

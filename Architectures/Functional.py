@@ -43,6 +43,29 @@ def Calculate_PaddingSame(input_size, kernel_size, stride, dilation=1):
 #************ MODEL BLOCKS: Tensor Modification    ***#
 #######################################################
 
+# Uses a model that predicts Ux to predict Uy based on rotation
+class Ux2Uy(nn.Module):
+    def __init__(self, model_ux):
+        super().__init__()
+        self.model = model_ux
+        
+    def forward(self, x):
+        x  = torch.rot90(x, k= 1, dims=(3, 4))
+        y  = self.model(x)
+        y  = torch.rot90(y, k=-1, dims=(3, 4))
+        return y
+    
+    def predict(self, x): 
+        with torch.no_grad():
+            x  = torch.rot90(x, k= 1, dims=(3, 4))
+            out  = self.model.predict(x)
+            out  = torch.rot90(out, k=-1, dims=(3, 4))
+            
+            mask    = (x > 0).to(torch.float32) 
+            mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
+        
+            return out * mask
+    
 class ChannelWiseMult(nn.Module):
     def forward(self, x):
         return torch.prod(x, dim=1, keepdim=True)

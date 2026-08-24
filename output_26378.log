@@ -118,3 +118,26 @@ MSE                   117.985107 | 17.141120
 MSE in Void Space     0.129902   | 0.109548  
 Bias Error            55.370622  | 53.258474 
 Pearson Correlation   0.244233   | 0.260113  
+
+Executing epoch 760 / 2000 (38.0%)
+--> Average epoch processing time (seconds):  9.114612
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+MSE                   20.773928  | 10.012759 
+MSE in Void Space     0.165065   | 0.145463  
+Bias Error            94.926475  | 94.804807 
+Pearson Correlation   0.183025   | 0.177622  
+
+Executing epoch 780 / 2000 (39.0%)
+--> Average epoch processing time (seconds):  11.098269
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+MSE                   14.775588  | 9.456599  
+MSE in Void Space     0.161953   | 0.142612  
+Bias Error            90.076969  | 90.144256 
+Pearson Correlation   0.163539   | 0.167254  
+Patience of 300 achieved (last update in epoch 497). Resuming training...
+Ending Train ... 
+Modelo PyTorch e memória associada liberados.
