@@ -50,6 +50,15 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
                                                        dens=1.0,
                                                        denorm=False).item()
                     
+                    # Calculate Tortuosity
+                    uz = denorm_tar[0, 0].cpu().numpy()[mask_np]
+                    uy = denorm_tar[0, 1].cpu().numpy()[mask_np]
+                    ux = denorm_tar[0, 2].cpu().numpy()[mask_np]
+                    mean_uz = np.mean(uz)                 
+                    mag = np.sqrt(uz**2 + uy**2 + ux**2)
+                    tortuosity = np.mean(mag) / mean_uz
+
+                        
                     # Calculate Local Thickness
                     thick = ps.filters.local_thickness(mask_np)
                     valid_thick = thick[mask_np]
@@ -65,6 +74,7 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
                     records.append({
                         "Dataset": dataset_name,
                         "Porosity": porosity,
+                        "Tortuosity": tortuosity,
                         "Permeability": perm,
                         "Q1 Local Thickness": q1_thick,
                         "Mean Local Thickness": mean_thick,
@@ -135,6 +145,7 @@ def analyze_and_plot_properties(datasets_dict: dict, batch_size: int = 4, save_c
 
     variables = [
         "Porosity", 
+        "Tortuosity",
         "Permeability", 
         "Q1 Local Thickness", 
         "Mean Local Thickness", 

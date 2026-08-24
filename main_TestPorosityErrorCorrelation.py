@@ -78,30 +78,30 @@ N_samples  = None
 device     = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Path defined as requested
-model_folder = "/home/gabriel/remote/hal/dissertacao/NN_Results/NN_Trainning_13_March_2026_02-16PM_Job16074/"
+model_folder = "./Trained_Models/NN_Trainning_6_July_2026_01-28PM_Job26189/"
 model_name   = "model_LowerValidationLoss.pth"
 model_path   = os.path.join(model_folder, model_name)
 
 # Ensure you have multiple datasets active here to see the combined plot
-datasets = {
-    "Training Data":     "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5",
-    #"Cylindrical Grain": "../NN_Datasets/ForceDriven/Test_CylinGrain_120_120_120.h5",
-    #"Cylindrical Pore": "../NN_Datasets/ForceDriven/Test_CylinPore_120_120_120.h5",
-    #"Spherical Grain": "../NN_Datasets/ForceDriven/Test_SphGrain_120_120_120.h5",
-    #"Spherical Pore": "../NN_Datasets/ForceDriven/Test_SphPore_120_120_120.h5",
-    "Parker":       "../NN_Datasets/ForceDriven/Test_Oliveira_Parker_120_120_120.h5",
-    "Leopard":      "../NN_Datasets/ForceDriven/Test_Oliveira_Leopard_120_120_120.h5",
-    "Kirby":        "../NN_Datasets/ForceDriven/Test_Oliveira_Kirby_120_120_120.h5",
-    "Castle Gate":  "../NN_Datasets/ForceDriven/Test_Oliveira_CastleGate_120_120_120.h5",
-    "Brown":        "../NN_Datasets/ForceDriven/Test_Oliveira_Brown_120_120_120.h5",
-    "Upper Gray":   "../NN_Datasets/ForceDriven/Test_Oliveira_BereaUpperGray_120_120_120.h5",
-    "Sinter Gray":  "../NN_Datasets/ForceDriven/Test_Oliveira_BereaSinterGray_120_120_120.h5",
-    "Berea Buff":   "../NN_Datasets/ForceDriven/Test_Oliveira_BereaBuff_120_120_120.h5",
-    #"Berea":        "../NN_Datasets/ForceDriven/Test_Oliveira_Berea_120_120_120.h5",
-    "Bentheimer":   "../NN_Datasets/ForceDriven/Test_Oliveira_Bentheimer_120_120_120.h5",
-    #"Bandera":      "../NN_Datasets/ForceDriven/Test_Oliveira_Bandera_120_120_120.h5",
+datasets        = {
     
-}
+    "Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
+    
+    "Spherical Pores":      "../NN_Datasets_Grad/Test_Silveira_SphPore_SAug_DNorm.h5",
+    "Spherical Grains":     "../NN_Datasets_Grad/Test_Silveira_SphGrain_SAug_DNorm.h5",
+    "Cylindrical Pores":    "../NN_Datasets_Grad/Test_Silveira_CylinPore_SAug_DNorm.h5",
+    "Cylindrical Grains":   "../NN_Datasets_Grad/Test_Silveira_CylinGrain_SAug_DNorm.h5",
+     
+    "Bentheimer":           "../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "Berea Buff":           "../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "Leopard":              "../NN_Datasets_Grad/Test_Oliveira_Leopard_SAug_DNorm.h5",
+    "Castle Gate":          "../NN_Datasets_Grad/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    "Berea Upper Gray":     "../NN_Datasets_Grad/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "Berea Sinter Gray":    "../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "Berea":                "../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
+    
+    
+    }
 
 # Load Model
 print("\nLoading Model...")
