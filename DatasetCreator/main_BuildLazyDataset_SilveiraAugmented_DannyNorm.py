@@ -123,7 +123,7 @@ def find_directional_local_maxima(dist_transform):
 
 #infos = {
 #    "../../GradSimulations/Tube_Example/": # Where the simulations mainfolder is located
-#    "../../NN_Datasets_Grad/TubeExample_SAug_DNorm.h5",          # Where you want to save the dataset
+#    "../../NN_Datasets_Grad_2/TubeExample_SAug_DNorm.h5",          # Where you want to save the dataset
 #    }
 #sample_dir_pattern  = r"^Sample_(\d+)$"
 #raw_name            = "domain.raw"
@@ -132,147 +132,148 @@ def find_directional_local_maxima(dist_transform):
 
 #infos = {
 #    "../../GradSimulations/Bentheimer_Example/": # Where the simulations mainfolder is located
-#    "../../NN_Datasets_Grad/BentheimerExample_SAug_DNorm.h5",          # Where you want to save the dataset
+#    "../../NN_Datasets_Grad_2/BentheimerExample_SAug_DNorm.h5",          # Where you want to save the dataset
 #    }
 #sample_dir_pattern  = r"^Sample_(\d+)$"
 #raw_name            = "domain.raw"
 #raw_shape           = (120, 120, 120)    
 
 
-infos = {
-    
-    "../../GradSimulations/DONE_Train_Danny_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Danny_SphPore_SAug_DNorm.h5",
-    
-    "../../GradSimulations/DONE_Test_Danny_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Danny_SphPore_SAug_DNorm.h5",
-    
-    "../../GradSimulations/DONE_Valid_Danny_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Danny_SphPore_SAug_DNorm.h5",
-    
-    
-    }
-saved_fraction      = 1.0
+#infos = {
+#    
+#    "../../GradSimulations/DONE_Train_Danny_SphPore_120_120_120/":
+#    "../../NN_Datasets_Grad_2/Train_Danny_SphPore_SAug_DNorm.h5",
+#    
+#    "../../GradSimulations/DONE_Test_Danny_SphPore_120_120_120/":
+#    "../../NN_Datasets_Grad_2/Test_Danny_SphPore_SAug_DNorm.h5",
+#    
+#    "../../GradSimulations/DONE_Valid_Danny_SphPore_120_120_120/":
+#    "../../NN_Datasets_Grad_2/Valid_Danny_SphPore_SAug_DNorm.h5",
+#        
+#    }
+#saved_fraction      = 1.0
 
 """
 infos = {
     
     "../../GradSimulations/DONE_Train_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad/Train_SphPore_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_SphPore_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Test_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad/Test_SphPore_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_SphPore_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_SphPore_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_SphPore_SAug_DNorm.h5",
     
         
     "../../GradSimulations/DONE_Train_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad/Train_CylinPore_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_CylinPore_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Test_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad/Test_CylinPore_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_CylinPore_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_CylinPore_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_CylinPore_SAug_DNorm.h5",
     
 
     "../../GradSimulations/DONE_Train_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Train_SphGrain_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_SphGrain_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Test_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Test_SphGrain_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_SphGrain_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_SphGrain_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_SphGrain_SAug_DNorm.h5",
 
 
     "../../GradSimulations/DONE_Train_CylinGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Train_CylinGrain_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_CylinGrain_SAug_DNorm.h5",
   
     "../../GradSimulations/DONE_Test_CylinGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Test_CylinGrain_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_CylinGrain_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_CylinGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_CylinGrain_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_CylinGrain_SAug_DNorm.h5",
     
     }
 saved_fraction      = 0.9
 """
-"""
+
+
+#"""
 infos = {
     "../../GradSimulations/DONE_Test_Oliveira_Leopard_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Oliveira_Leopard_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_Oliveira_Leopard_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_Oliveira_Leopard_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Oliveira_Leopard_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_Oliveira_Leopard_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_Oliveira_Leopard_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Oliveira_Leopard_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_Oliveira_Leopard_SAug_DNorm.h5",
     
     
     "../../GradSimulations/DONE_Test_Oliveira_CastleGate_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_Oliveira_CastleGate_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_Oliveira_CastleGate_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Oliveira_CastleGate_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_Oliveira_CastleGate_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_Oliveira_CastleGate_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Oliveira_CastleGate_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_Oliveira_CastleGate_SAug_DNorm.h5",
     
     
     "../../GradSimulations/DONE_Test_Oliveira_BereaUpperGray_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_Oliveira_BereaUpperGray_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_Oliveira_BereaUpperGray_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
     
     
     "../../GradSimulations/DONE_Test_Oliveira_BereaSinterGray_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_Oliveira_BereaSinterGray_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_Oliveira_BereaSinterGray_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5",
     
     
     "../../GradSimulations/DONE_Test_Oliveira_BereaBuff_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_Oliveira_BereaBuff_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_Oliveira_BereaBuff_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_Oliveira_BereaBuff_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_Oliveira_BereaBuff_SAug_DNorm.h5",
     
     
     "../../GradSimulations/DONE_Test_Oliveira_Berea_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_Oliveira_Berea_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_Oliveira_Berea_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Oliveira_Berea_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_Oliveira_Berea_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_Oliveira_Berea_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Oliveira_Berea_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_Oliveira_Berea_SAug_DNorm.h5",
     
     
     "../../GradSimulations/DONE_Test_Oliveira_Bentheimer_120_120_120/":
-    "../../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_Oliveira_Bentheimer_120_120_120/":
-    "../../NN_Datasets_Grad/Train_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Train_Oliveira_Bentheimer_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Valid_Oliveira_Bentheimer_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "../../NN_Datasets_Grad_2/Valid_Oliveira_Bentheimer_SAug_DNorm.h5",
     
     }
 saved_fraction      = 0.45
-""" 
+#""" 
     
 sample_dir_pattern  = r"^Sample_(\d+)$"
 raw_name            = "domain.raw"
@@ -393,15 +394,6 @@ for simulations_folder, output_path in infos.items():
                                                                                                   vx_norm, 
                                                                                                   pr_norm, 
                                                                                                   direc=1)
-                    # Visualizer
-                    """
-                    export_to_paraview(filename=f"debug_{rot}.vti", 
-                                       mask    =porous_mask, 
-                                       vx      =vx_norm, 
-                                       vy      =vy_norm,
-                                       vz      =vz_norm, 
-                                       pr      =pr_norm)
-                    """
                     
                     # Geometry-based calculations (EDT and Mask) on augmented volume
                     if not np.any(porous_mask): continue
