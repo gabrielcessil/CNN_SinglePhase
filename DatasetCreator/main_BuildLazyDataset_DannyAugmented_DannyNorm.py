@@ -30,19 +30,27 @@ def read_raw_volume(raw_path: str, shape: Tuple[int, int, int], dtype: np.dtype,
     flat = np.fromfile(raw_path, dtype=dtype)
     return flat.reshape(shape, order=order)
 
-def get_latest_vis_summary_path(sample_dir: str) -> str:
-    vis_pattern = re.compile(r"^vis(\d+)$")
-    vis_candidates: List[Tuple[int, str]] = []
+def read_latest_vti_path(sample_dir: str) -> pv.DataSet:
+    """
+    Scans the sample directory for files matching 'output_XXXXXXX.vti'
+    and returns the path of the file with the highest integer index.
+    """
+    vti_pattern = re.compile(r"^output_(\d+)\.vti$")
+    candidates: List[Tuple[int, str]] = []
+    
     for name in os.listdir(sample_dir):
-        full_path = os.path.join(sample_dir, name)
-        if os.path.isdir(full_path):
-            m = vis_pattern.match(name)
-            if m: vis_candidates.append((int(m.group(1)), full_path))
-    if not vis_candidates: raise RuntimeError(f"No 'visY' in: {sample_dir}")
-    vis_candidates.sort(key=lambda t: t[0])
-    return os.path.join(vis_candidates[-1][1], "summary.pvti")
-
-def read_summary_pvti(summary_path: str) -> pv.DataSet:
+        if os.path.isfile(os.path.join(sample_dir, name)):
+            m = vti_pattern.match(name)
+            if m:
+                candidates.append((int(m.group(1)), name))
+                
+    if not candidates: 
+        raise RuntimeError(f"No 'output_XXXXXXX.vti' files found in: {sample_dir}")
+        
+    # Sort by the extracted integer and grab the largest one
+    candidates.sort(key=lambda t: t[0])
+    summary_path = os.path.join(sample_dir, candidates[-1][1])
+     
     return pv.read(summary_path)
 
 # --- Danny Ko's Augmentation Logic ---
@@ -113,8 +121,8 @@ def flip_augmentation(my_solid, my_vel, vel_dir, axis):
 # -------------------------------------------------------------------
 
 
-simulations_folder  = "/home/gabriel/remote/hal/dissertacao/Simulations/Valid_Danny_SphPore_120_120_120/"
-output_path         = "../../NN_Datasets/Valid_Danny_SphPore_DAug_DNorm.h5"
+simulations_folder  = "/home/gabriel/Desktop/Dissertacao/GradSimulations/DONE_Valid_Danny_SphPore_120_120_120/"
+output_path         = "../../NN_Datasets_Grad/Valid_Danny_SphPore_DAug_DNorm.h5"
 sample_dir_pattern  = r"^Sample_(\d+)$"
 raw_name            = "mod_domain.raw"
 raw_shape           = (120, 120, 120)
@@ -177,21 +185,24 @@ with h5py.File(output_path, "w") as f:
             f.attrs["max_points"]  = max_points
             
             # 1. Load Original Data
-            vol_orig        = read_raw_volume(raw_path, raw_shape, raw_dtype)
-            summary_path    = get_latest_vis_summary_path(sample_dir)
-            mesh            = read_summary_pvti(summary_path)
+            vol_orig = read_raw_volume(raw_path, raw_shape, raw_dtype)
+            mesh     = read_latest_vti_path(sample_dir)
             
-            vx_orig = mesh["Velocity_x"].reshape(raw_shape, order="C")
-            vy_orig = mesh["Velocity_y"].reshape(raw_shape, order="C")
-            vz_orig = mesh["Velocity_z"].reshape(raw_shape, order="C")
-            if "Pressure" in mesh.array_names:
-                print("Mesh contains pressure data.")
-                pr_orig = mesh["Pressure"].reshape(raw_shape, order="C")
+            # Extract GRADLBM Vectors
+            velocity_data = mesh["Velocity"] # Shape: (N, 3)
+            vx_orig = velocity_data[:, 0].reshape(raw_shape, order="C")
+            vy_orig = velocity_data[:, 1].reshape(raw_shape, order="C")
+            vz_orig = velocity_data[:, 2].reshape(raw_shape, order="C")
+            
+            # Extract GRADLBM Pressure (Density / 3)
+            if "Density" in mesh.array_names:
+                pr_orig = mesh["Density"].reshape(raw_shape, order="C") / 3
             else:
-                print("Pressure data not found.")
-                pr_orig        = np.zeros_like(vz_orig)
+                print(f"Density data not found in {sample_name}.")
+                pr_orig = np.zeros_like(vz_orig)
             
-            porous_mask_orig = (vol_orig == 1) 
+            porous_mask_orig = (vol_orig == 1)
+        
 
             # Velocity Normalization
             vx_norm = utils.danny_normalization_vel(vx_orig, porous_mask_orig)

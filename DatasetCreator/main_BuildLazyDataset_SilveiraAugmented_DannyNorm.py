@@ -129,35 +129,33 @@ def find_directional_local_maxima(dist_transform):
 #raw_name            = "domain.raw"
 #raw_shape           = (256, 256, 256)   
 
-"""
-infos = {
-    "../../GradSimulations/Bentheimer_Example/": # Where the simulations mainfolder is located
-    "../../NN_Datasets_Grad/BentheimerExample_SAug_DNorm.h5",          # Where you want to save the dataset
-    }
-sample_dir_pattern  = r"^Sample_(\d+)$"
-raw_name            = "domain.raw"
-raw_shape           = (120, 120, 120)    
-"""
+
+#infos = {
+#    "../../GradSimulations/Bentheimer_Example/": # Where the simulations mainfolder is located
+#    "../../NN_Datasets_Grad/BentheimerExample_SAug_DNorm.h5",          # Where you want to save the dataset
+#    }
+#sample_dir_pattern  = r"^Sample_(\d+)$"
+#raw_name            = "domain.raw"
+#raw_shape           = (120, 120, 120)    
+
 
 infos = {
-    "../../GradSimulations/PRESSURE_DEBUG/": # Where the simulations mainfolder is located
-    "../../NN_Datasets_Grad/PRESSURE_DEBUG.h5",          # Where you want to save the dataset
+    
+    "../../GradSimulations/DONE_Train_Danny_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad/Train_Danny_SphPore_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Test_Danny_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad/Test_Danny_SphPore_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Valid_Danny_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad/Valid_Danny_SphPore_SAug_DNorm.h5",
+    
+    
     }
-sample_dir_pattern  = r"^Sample_(\d+)$"
-raw_name            = "domain.raw"
-raw_shape           = (120, 120, 120)    
+saved_fraction      = 1.0
 
 """
 infos = {
-    
-    "../../GradSimulations/DONE_Train_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Train_SphGrain_SAug_DNorm.h5",
-    
-    "../../GradSimulations/DONE_Test_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Test_SphGrain_SAug_DNorm.h5",
-    
-    "../../GradSimulations/DONE_Valid_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_SphGrain_SAug_DNorm.h5",
     
     "../../GradSimulations/DONE_Train_SphPore_120_120_120/":
     "../../NN_Datasets_Grad/Train_SphPore_SAug_DNorm.h5",
@@ -167,6 +165,27 @@ infos = {
     
     "../../GradSimulations/DONE_Valid_SphPore_120_120_120/":
     "../../NN_Datasets_Grad/Valid_SphPore_SAug_DNorm.h5",
+    
+        
+    "../../GradSimulations/DONE_Train_CylinPore_120_120_120/":
+    "../../NN_Datasets_Grad/Train_CylinPore_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Test_CylinPore_120_120_120/":
+    "../../NN_Datasets_Grad/Test_CylinPore_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Valid_CylinPore_120_120_120/":
+    "../../NN_Datasets_Grad/Valid_CylinPore_SAug_DNorm.h5",
+    
+
+    "../../GradSimulations/DONE_Train_SphGrain_120_120_120/":
+    "../../NN_Datasets_Grad/Train_SphGrain_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Test_SphGrain_120_120_120/":
+    "../../NN_Datasets_Grad/Test_SphGrain_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Valid_SphGrain_120_120_120/":
+    "../../NN_Datasets_Grad/Valid_SphGrain_SAug_DNorm.h5",
+
 
     "../../GradSimulations/DONE_Train_CylinGrain_120_120_120/":
     "../../NN_Datasets_Grad/Train_CylinGrain_SAug_DNorm.h5",
@@ -177,18 +196,11 @@ infos = {
     "../../GradSimulations/DONE_Valid_CylinGrain_120_120_120/":
     "../../NN_Datasets_Grad/Valid_CylinGrain_SAug_DNorm.h5",
     
-    
-    "../../GradSimulations/DONE_Train_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad/Train_CylinPore_SAug_DNorm.h5",
-    
-    "../../GradSimulations/DONE_Test_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad/Test_CylinPore_SAug_DNorm.h5",
-    
-    "../../GradSimulations/DONE_Valid_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_CylinPore_SAug_DNorm.h5",
-    
-    
-    
+    }
+saved_fraction      = 0.9
+"""
+"""
+infos = {
     "../../GradSimulations/DONE_Test_Oliveira_Leopard_120_120_120/":
     "../../NN_Datasets_Grad/Test_Oliveira_Leopard_SAug_DNorm.h5",
     
@@ -259,21 +271,16 @@ infos = {
     "../../NN_Datasets_Grad/Valid_Oliveira_Bentheimer_SAug_DNorm.h5",
     
     }
-    
+saved_fraction      = 0.45
+""" 
     
 sample_dir_pattern  = r"^Sample_(\d+)$"
 raw_name            = "domain.raw"
-raw_shape           = (131, 131, 131)
-"""
+raw_shape           = (120, 120, 120)
+
 
 raw_dtype           = np.uint8
-saved_fraction      = 1.0
 source              = "gradlbm" # One of "gradlbm", "lbpm"
-
-# Normalization Parameters
-norm_cte            = 0.2
-tau                 = 1.5
-Re                  = 0.1
 
 
 for simulations_folder, output_path in infos.items():
@@ -294,6 +301,14 @@ for simulations_folder, output_path in infos.items():
     if output_dir: os.makedirs(output_dir, exist_ok=True)
     
     with h5py.File(output_path, "w") as f:
+        
+                
+        # Auxiliary information
+        f.attrs['norm']    = "v = v*visc/(force*k_eq)"
+        f.attrs['k_eq']    = "R_max ^2 / 5"
+        f.attrs['tau']     = 1.5
+        f.attrs['re']      = 0.1
+        
         D, H, W = raw_shape
         max_points = int(D * H * W * saved_fraction)
     
@@ -349,8 +364,7 @@ for simulations_folder, output_path in infos.items():
                     
                     if "Density" in mesh.array_names:
                         print(f"Mesh {sample_name} contains density data.")
-                        de_orig = mesh["Density"].reshape(raw_shape, order="C")
-                        pr_orig = de_orig/3
+                        pr_orig = mesh["Density"].reshape(raw_shape, order="C")/3
                     else:
                         print(f"Density data not found in {sample_name}.")
                         pr_orig = np.zeros_like(vz_orig)
@@ -360,8 +374,6 @@ for simulations_folder, output_path in infos.items():
                 vx_norm = utils.danny_normalization_vel(vx_orig, porous_mask)
                 vy_norm = utils.danny_normalization_vel(vy_orig, porous_mask)
                 vz_norm = utils.danny_normalization_vel(vz_orig, porous_mask)
-                
-                
                 # Pressure Normalization
                 pr_norm = utils.silveira_normalization_pres(pr_orig, porous_mask)
                 
@@ -431,12 +443,7 @@ for simulations_folder, output_path in infos.items():
                     global_idx += 1
             except Exception as e:
                 print(f"[FAIL] {sample_name}: {e}")
-        
-       
-        f.attrs['norm_type']    = "v = v*visc/(force*norm_cte)"
-        f.attrs['norm_cte']     = norm_cte
-        f.attrs['tau_used']     = tau
-        f.attrs['re_used']      = Re
+
     
         print(f"Finished. Total augmented samples written: {global_idx}")
         

@@ -207,19 +207,19 @@ with h5py.File(output_path, "w") as f:
             
             # Rotate the sample 4 times
             for rot in range(4):
-                porous_mask_rot, vz_rot, vy_rot, vx_rot, pr_norm = aug.rotate_z_augmentation( porous_mask,
+                porous_mask, vz_norm, vy_norm, vx_norm, pr_norm = aug.rotate_z_augmentation( porous_mask,
                                                                                               vz_norm,
                                                                                               vy_norm, 
                                                                                               vx_norm, 
                                                                                               pr_norm, 
                                                                                               direc=1)
                 
-                #export_to_paraview(filename="debug_{rot}.vti", 
-                #                   mask    =porous_mask, 
-                #                   vx      =vx_norm, 
-                #                   vy      =vy_norm,
-                #                   vz      =vz_norm, 
-                #                   pr      =pr_norm)
+                export_to_paraview(filename=f"debug_{rot}.vti", 
+                                   mask    =porous_mask, 
+                                   vx      =vx_norm, 
+                                   vy      =vy_norm,
+                                   vz      =vz_norm, 
+                                   pr      =pr_norm)
                 
                 
                 # 4. Geometry-based calculations (EDT and Mask) on augmented volume
@@ -261,7 +261,7 @@ with h5py.File(output_path, "w") as f:
                 sample_names_ds[global_idx] = f"{sample_name}_rot_{rot}"
                 
                 global_idx += 1
-
+            break
         except Exception as e:
             print(f"[FAIL] {sample_name}: {e}")
     

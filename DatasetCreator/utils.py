@@ -1,91 +1,666 @@
-import re
-import subprocess
-from pathlib import Path
-import numpy as np
-import pyvista as pv
-from typing import List, Tuple
+import os
+import numpy         as np
+import math
+from   pathlib       import Path
+from   typing        import Tuple,  List
+from   scipy.ndimage import distance_transform_edt
+from   typing        import Union
+from   numpy.typing  import NDArray
+import cc3d
 import matplotlib.pyplot as plt
-import shutil
-
-plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman']
-
-# ==============================================================================
-# LBM HELPER FUNCTIONS
-# ==============================================================================
-
-def find_all_vis_silo_files(base_path: str) -> List[str]:
-    p = Path(base_path)
-    if not p.exists():
-        raise FileNotFoundError(f"Base path does not exist: {base_path}")
-
-    vis_pattern = re.compile(r'^vis(\d+)$')
-    vis_folders = []
-    
-    for folder in p.iterdir():
-        if folder.is_dir():
-            match = vis_pattern.match(folder.name)
-            if match:
-                vis_folders.append((int(match.group(1)), folder))
-
-    if not vis_folders:
-        print(f"Warning: No 'vis<number>' folders found in {base_path}")
-        return []
-
-    vis_folders.sort(key=lambda x: x[0])
-    
-    pvti_files_found = []
-    converter_path = "/home/gabriel/Desktop/LBPM_Install/converter_silo_vti/silo2vti"
-
-    for num, folder in vis_folders:
-        silo_file = folder / "summary.silo"
-        pvti_file = folder / "summary.pvti"
-
-        if silo_file.exists():            
-            try:
-                subprocess.run(
-                    [converter_path, "summary.silo", "summary.pvti"],
-                    cwd=str(folder), check=True, capture_output=True, text=True
-                )
-            except subprocess.CalledProcessError as e:
-                print(f"Warning: Conversion failed for vis{num}: {e.stderr}")
-                continue 
-            
-            if pvti_file.exists():
-                pvti_files_found.append(str(pvti_file))
-        else:
-            print(f"Warning: No summary.silo found in {folder.name}, skipping.")
-
-    return pvti_files_found
+import porespy as ps
+import os
+from pathlib import Path
+from typing import List, Optional
+import glob
+from typing import List, Optional
 
 
-def cleanup_vis_folders(base_path: str):
-    p = Path(base_path)
-    if not p.exists():
-        return
-        
-    print(f"Cleaning up old results in {base_path}...")
-    vis_pattern = re.compile(r'^vis(\d+)$')
-    for folder in p.iterdir():
-        if folder.is_dir() and vis_pattern.match(folder.name):
-            shutil.rmtree(folder)
-            
-def write_start_raw(filename: str, ux: np.ndarray, uy: np.ndarray, uz: np.ndarray, pr: np.ndarray):
-    Nz, Ny, Nx = ux.shape
-    N = Nz * Ny * Nx
-    print(f"   -> Writing DENSE start file: {Nx}x{Ny}x{Nz} ({N} voxels)")
-    dense_grid = np.stack((ux, uy, uz, pr), axis=-1) 
-    buffer = dense_grid.astype(np.float64) 
-    with open(filename+".raw", "wb") as f:
-        buffer.tofile(f)
-
-def write_domain_raw(path: str, domain_array: np.ndarray, filename: str = "domain.raw") -> str:
+def write_domain_raw(path: str, x_sample: np.ndarray, filename: str = "domain.raw") -> str:
+    """
+    x_sample: 3D (Nz, Ny, Nx), 0 = solid, 1 = fluid (uint8)
+    """
     p = Path(path) if path else Path(".")
     p.mkdir(parents=True, exist_ok=True)
     out_path = p / filename
-    np.asarray(domain_array, dtype=np.uint8).tofile(out_path)
+    np.asarray(x_sample, dtype=np.uint8).tofile(out_path)
     print(f"   -> domain.raw written to: {out_path}")
     return str(out_path)
+
+def find_raw_in_folder(base_dir, filename):
+    raw_files = glob.glob(os.path.join(base_dir, "**", filename), recursive=True)
+    print(f"Found {len(raw_files)} {filename} files in {base_dir}") 
+    return raw_files
+    
+def generate_slurm_run_scripts_chunks(
+    folder_paths:       List[int],
+    n_proc:             int,
+    output_root:        str,
+    samples_per_job:    int,
+    cpu:                int, 
+    gpu:                int,
+    gres:               Optional[str] = None,                        
+    partition:          str = "all_gpu",                        
+    dispatcher_name:    str = "submit_all_sims_chain.sh",
+    lbpm_version:       str = "lbpm/gpu/",
+    use_low_prio:       bool = False,
+    include_allocation: bool = False
+):
+    """
+    Gera scripts SLURM em chunks e um dispatcher centralizado.
+    As variáveis GRES e PARTITION são definidas no dispatcher para fácil alteração.
+    """
+    # Ensure all paths are strings and resolved to absolute paths for safe cd commands
+    folder_paths = sorted([str(Path(p).resolve()) for p in folder_paths])
+    
+    scripts_dir = Path(output_root).resolve()
+    scripts_dir.mkdir(parents=True, exist_ok=True)
+
+    chunks = [
+        folder_paths[i : i + samples_per_job]
+        for i in range(0, len(folder_paths), samples_per_job)
+    ]
+
+
+    chunk_script_names = []
+
+    for chunk_id, chunk_samples in enumerate(chunks):
+        range_id = f"chunk_{chunk_id:03d}"
+        first_folder    = os.path.basename(chunk_samples[0])
+        last_folder     = os.path.basename(chunk_samples[-1])
+        
+        chunk_script_name = f"run_lbpm_{range_id}.sh"
+        chunk_script_path = scripts_dir / chunk_script_name
+        chunk_script_names.append(chunk_script_name)
+
+        allocation_settings = ""
+        if include_allocation:
+            allocation_settings = f"#SBATCH --mem-per-gpu={gpu}G\n#SBATCH --cpus-per-gpu={cpu}"
+
+        # Header do Chunk (Sem Partition/Gres fixos)
+        chunk_content = f"""#!/bin/bash
+
+# ---------------- SLURM Job Settings ----------------
+#SBATCH --oversubscribe
+#SBATCH --job-name=Perm_{range_id}
+{allocation_settings}
+#SBATCH -t 7-0:00
+#SBATCH -o perm_{range_id}_%j.out
+#SBATCH -e perm_{range_id}_%j.err
+#SBATCH --ntasks={n_proc}
+
+# ---------------- Environment Setup ----------------
+module load $LBPM_VERSION
+
+echo "=== Chunk {chunk_id:03d} | Processing {first_folder} to {last_folder} ({len(chunk_samples)} samples) ==="
+"""
+        # Execução das simulações
+        first = True
+        for sample_i in chunk_samples:
+            folder_base = f"Sample_{sample_i}"
+            cd_cmd = f"cd {folder_base}" if first else f"cd ../{folder_base}"
+            
+            # Adicionado --oversubscribe no mpirun para evitar erro de slots
+            command_block = f"""
+echo "--- Launching simulation for {folder_base} ---"
+{cd_cmd}
+echo "Current Simulation: " ${{PWD##*/}}
+mpirun --oversubscribe -np {n_proc} lbpm_permeability_simulator simulation.db
+"""
+            chunk_content += command_block
+            first = False
+
+        chunk_content += '\necho "--> All simulations in this chunk finished."\n'
+        chunk_script_path.write_text(chunk_content, encoding="utf-8")
+
+    # ----- Gerar Dispatcher (run.sh) -----
+    dispatcher_path = scripts_dir / dispatcher_name
+    gres_val = f"{gres}:{n_proc}" if gres else ""
+
+    dispatcher_content = f"""#!/bin/bash
+
+#SBATCH --partition="{partition}"
+# =========================================================
+# GLOBAL RUN SETTINGS
+# Altere aqui para atualizar todos os jobs da corrente
+# =========================================================
+export LBPM_VERSION="{lbpm_version}"
+PARTITION="{partition}"
+GRES_STR="{gres_val}"
+
+# Configuração dinâmica de GRES
+GRES_FLAG=""
+if [ ! -z "$GRES_STR" ]; then
+    GRES_FLAG="--gres=$GRES_STR"
+fi
+
+"""
+    qos_flag = "--qos=low_prio " if use_low_prio else ""
+    prev_var = ""
+    
+    for idx, name in enumerate(chunk_script_names):
+        var_name = f"j{idx+1}"
+        dep = f"--dependency=afterok:${prev_var} " if idx > 0 else ""
+        
+        # Injeção das variáveis centrais no comando sbatch
+        sbatch_line = f'{var_name}=$(sbatch --parsable --partition=$PARTITION $GRES_FLAG {qos_flag}{dep}{name})'
+        
+        dispatcher_content += f'{sbatch_line}\n'
+        dispatcher_content += f'echo "Submitted {name} to $PARTITION (Job: ${var_name})"\n\n'
+        prev_var = var_name
+
+    dispatcher_content += 'echo "--> All chained jobs submitted."\n'
+    dispatcher_path.write_text(dispatcher_content, encoding="utf-8")
+
+    print(f"[SUCCESS] {len(chunks)} scripts criados em: {scripts_dir}")
+    print(f"Comando para rodar: chmod +x {dispatcher_name} && ./{dispatcher_name}")
+    
+    
+    
+
+import os
+from pathlib import Path
+from typing import List, Optional
+
+def generate_slurm_run_scripts_chunks_GRADLBM(
+    folder_paths:       List[str],
+    n_proc:             int,
+    output_root:        str,
+    samples_per_job:    int,
+    cpu_per_sim:        int = 1, 
+    mem_gb_per_sim:     int = 6,
+    gres:               Optional[str] = None,                        
+    partition:          str = "close_cpu",
+    nodelist:           str = "node[008-020]",
+    dispatcher_name:    str = "submit_all_sims.sh",
+    lbm_folder:         str = "../",
+    ini_name:           str = "grad.ini",
+    chain_launchers:    bool = False
+):
+    """
+    Gera:
+    1. 'run_grad.sh' individual e standalone dentro de cada pasta de amostra.
+    2. Sub-launchers leves que "descobrem" um nó, disparam os run_grad.sh 
+       via sbatch para aquele nó específico, e encerram imediatamente.
+    3. Um Dispatcher principal para disparar os Sub-launchers.
+    """
+    folder_paths = sorted([str(Path(p).resolve()) for p in folder_paths])
+    
+    scripts_dir = Path(output_root).resolve()
+    scripts_dir.mkdir(parents=True, exist_ok=True)
+
+    # ==========================================
+    # 1. GENERATE PER-SAMPLE SCRIPTS (run_grad.sh)
+    # ==========================================
+    for folder_path in folder_paths:
+        folder_name = os.path.basename(folder_path)
+        sample_script_path = Path(folder_path) / "run_grad.sh"
+        
+        sample_content = f"""#!/bin/bash
+
+# ---------------- SLURM Job Settings ----------------
+#SBATCH --job-name=Perm_{folder_name}
+#SBATCH --partition={partition}
+#SBATCH --nodelist={nodelist}
+#SBATCH --nodes=1
+
+#SBATCH --ntasks={n_proc}
+#SBATCH --cpus-per-task={cpu_per_sim}
+#SBATCH --mem={mem_gb_per_sim}G
+
+#SBATCH -t 7-00:00:00
+#SBATCH -o perm_%j.out
+#SBATCH -e perm_%j.err
+
+grad_path="{lbm_folder}grad-lbm"
+
+module load conda/24.11.1
+conda activate env_grad_lbm
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+
+echo "--- Launching simulation for {folder_name} ---"
+
+$grad_path -i {ini_name}
+
+echo "--> Simulation for {folder_name} finished."
+"""
+        sample_script_path.write_text(sample_content, encoding="utf-8")
+        os.chmod(sample_script_path, 0o755)
+
+    # ==========================================
+    # 2. GENERATE THE SUB-LAUNCHERS (CHUNKS)
+    # ==========================================
+    chunks = [
+        folder_paths[i : i + samples_per_job]
+        for i in range(0, len(folder_paths), samples_per_job)
+    ]
+
+    launcher_names = []
+
+    for chunk_id, chunk_samples in enumerate(chunks):
+        range_id = f"chunk_{chunk_id:03d}"
+        launcher_name = f"run_gradlbm_{range_id}.sh"
+        launcher_path = scripts_dir / launcher_name
+        launcher_names.append(launcher_name)
+
+        # The Sub-Launcher is now just a lightweight submitter script.
+        # It only needs 1 CPU and 1GB of RAM to run a quick bash loop.
+        launcher_content = f"""#!/bin/bash
+
+# ---------------- SLURM Master Allocation ----------------
+#SBATCH --job-name=Launch_{range_id}
+#SBATCH --partition={partition}
+#SBATCH --nodelist={nodelist}
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH -t 7-00:00:00
+#SBATCH --exclusive
+
+echo "=========================================================="
+echo "Sub-Launcher {range_id} active."
+echo "Scouted Node: $SLURMD_NODENAME"
+echo "Submitting sample scripts to this exact node via sbatch..."
+echo "=========================================================="
+
+"""
+        for folder_path in chunk_samples:
+            folder_name = os.path.basename(folder_path)
+            rel_path = os.path.relpath(folder_path, scripts_dir)
+            
+            # The Sub-Launcher submits the job to the queue targeting the scouted node, 
+            # then moves on to the next one without waiting.
+            # The command line --nodelist overrides the one inside the run_grad.sh file.
+            command_block = f"""
+(
+    cd "{rel_path}" || exit 1
+    echo "Submitting {folder_name} to queue on $SLURMD_NODENAME..."
+    sbatch --nodelist=$SLURMD_NODENAME ./run_grad.sh
+)
+"""
+            launcher_content += command_block
+
+        launcher_content += '\necho "--> All sbatch commands issued. Sub-Launcher exiting."\n'
+        launcher_path.write_text(launcher_content, encoding="utf-8")
+
+    # ==========================================
+    # 3. GENERATE THE MAIN LAUNCHER (DISPATCHER)
+    # ==========================================
+    dispatcher_path = scripts_dir / dispatcher_name
+    gres_val = f"--gres={gres}:{n_proc}" if gres else ""
+
+    dispatcher_content = f"""#!/bin/bash
+
+echo "========================================================="
+echo " MAIN LAUNCHER: Submitting all Sub-Launchers to SLURM"
+echo "========================================================="
+
+"""
+    prev_var = ""
+    
+    for idx, name in enumerate(launcher_names):
+        var_name = f"j{idx+1}"
+        
+        dep = f"--dependency=afterok:${prev_var} " if (chain_launchers and idx > 0) else ""
+        
+        sbatch_line = f'{var_name}=$(sbatch --parsable {gres_val} {dep}{name})'
+        
+        dispatcher_content += f'{sbatch_line}\n'
+        dispatcher_content += f'echo "Submitted Sub-Launcher {name} (Job ID: ${var_name})"\n'
+        prev_var = var_name
+
+    dispatcher_content += f'\necho "--> All Sub-Launchers submitted to the queue."\n'
+    dispatcher_path.write_text(dispatcher_content, encoding="utf-8")
+
+    print(f"[SUCCESS] {len(folder_paths)} standalone 'run_grad.sh' files created inside sample folders.")
+    print(f"[SUCCESS] {len(chunks)} sub-launchers created in: {scripts_dir}")
+    print(f"Comando para rodar: chmod +x {dispatcher_name} && ./{dispatcher_name}")
+    
+def plot_lt_distribution(vol, r1, r2, real_percentage):
+    
+    lt = ps.filters.local_thickness(vol)
+    fluid_pixels = lt[lt > 0]
+
+    # Criando subplots
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    # --- Subplot 1: imagem ---
+    ax0 = axes[0]
+    im = ax0.imshow(lt[0, :, :], cmap='viridis')
+    ax0.set_title('Local Thickness Slice')
+    ax0.axis('off')
+    fig.colorbar(im, ax=ax0, fraction=0.046, pad=0.04)
+
+    # --- Subplot 2: histograma ---
+    ax1 = axes[1]
+
+    # bins baseados nos valores únicos
+    unique_vals = np.unique(fluid_pixels)
+
+    if len(unique_vals) <= 10:
+        bins = np.arange(np.min(unique_vals), np.max(unique_vals) + 2) - 0.5
+    else:
+        bins = np.linspace(np.min(fluid_pixels), np.max(fluid_pixels), 11)
+
+    counts, bin_edges, patches = ax1.hist(
+        fluid_pixels,
+        bins=bins,
+        edgecolor='black',
+        alpha=0.7
+    )
+
+    # centros dos bins
+    bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+
+    # ticks em todos os centros
+    ax1.set_xticks(bin_centers)
+
+    # limitar eixo x
+    ax1.set_xlim(0, 20)
+
+    # calcular cobertura (via histograma)
+    mask = (bin_centers >= r1) & (bin_centers <= r2)
+    covered_pixels = np.sum(counts[mask])
+    total_pixels = np.sum(counts)
+    covered_percentage = 100 * covered_pixels / total_pixels if total_pixels > 0 else 0
+
+    # colorir bins
+    for patch, center in zip(patches, bin_centers):
+        if r1 <= center <= r2:
+            patch.set_facecolor('navy')
+        else:
+            patch.set_facecolor('skyblue')
+
+    # linhas verticais
+    ax1.axvline(r1, color='green', linestyle='--', label=f'R1: {r1}')
+    ax1.axvline(r2, color='green', linestyle='--', label=f'R2: {r2}')
+
+    ax1.set_title(
+        f'Maximum Inscribed Sphere Distribution\n'
+        f'{covered_percentage:.2f}% of the voxels inscribed in radii between R1 and R2'
+    )
+
+    ax1.set_xlabel('Equivalent Radius [pixels]')
+    ax1.set_ylabel('Absolute Frequency [pixel count]')
+
+    ax1.legend()
+    ax1.grid(axis='y', linestyle='--', alpha=0.3)
+
+    plt.tight_layout()
+    plt.show()
+
+def add_enclusure_walls(vol):
+    vol[:, :, 0]   = 0
+    vol[:, :, -1]  = 0
+    vol[:, 0, :]   = 0
+    vol[:, -1, :]  = 0
+    
+    return vol
+
+def remove_isolated_pores(vol):
+    print("-->Removing isolated voxels...")
+    inlets              = np.zeros_like(vol, dtype=bool)
+    inlets[0, :, :]     = 1  
+    outlets             = np.zeros_like(vol, dtype=bool)    
+    outlets[-1, :, :]   = 1 
+    filt_vol            = ps.filters.trim_nonpercolating_paths(vol, inlets=inlets, outlets=outlets)
+    return filt_vol
+
+def check_local_thickness(im, min_radius, max_radius, target_percentage=70.0): 
+    print("Calculating local thickness...")
+    
+    inlets  = np.zeros_like(im, dtype=bool)
+    inlets[0, :, :] = 1  
+    outlets = np.zeros_like(im, dtype=bool)    
+    outlets[-1, :, :] = 1 
+    im_transp = ps.filters.trim_nonpercolating_paths(im, inlets=inlets, outlets=outlets)
+    
+    # Maximum inscribed sphere
+    lt                  = ps.filters.local_thickness(im_transp)
+    # Where fluid cells are located
+    fluid_pixels        = lt[lt > 0]    
+    # Where the desired local thickness is met
+    in_range_mask       = (fluid_pixels >= min_radius) & (fluid_pixels <= max_radius)
+    # Total occurences of matched cells
+    real_percentage = (np.sum(in_range_mask) / len(fluid_pixels)) * 100.0
+    # Verify if the global criteria is met
+    is_target_met = real_percentage >= target_percentage
+    
+    print(f"Mean: {np.mean(fluid_pixels)}, Std: {np.std(fluid_pixels)}")
+    print(f"Percentage: {real_percentage:.2f}% in range [{min_radius}, {max_radius}]")
+    print(f"Target Met: {'YES' if is_target_met else 'NO'}")
+    
+    return is_target_met
+"""
+
+def is_well_resolved(data: NDArray, min_pore_mean, max_pore_mean):
+    snow                = ps.filters.snow_partitioning(data)
+    network             = ps.networks.regions_to_network(regions=snow.regions)
+    pore_diameters      = network['pore.inscribed_diameter']
+    throat_diameters    = network['throat.inscribed_diameter']
+    print("Mean Pore: ", np.mean(pore_diameters)/2, "; Mean Throat: ", np.mean(throat_diameters)/2)
+    return np.mean(pore_diameters)/2 >= min_pore_mean and np.mean(pore_diameters)/2 <= max_pore_mean
+"""
+def is_percolating(
+    data: NDArray,
+    axis: int,
+) -> Tuple[NDArray, List[int], List[int]]:
+    
+    data = (data > 0).astype(np.uint8)
+    
+    # Data array must be binary and have 1 as pore
+    connectivity = 6  # only 4,8 (2D) and 26, 18, and 6 (3D) are allowed
+    labeled_components, num_labels = cc3d.connected_components(
+        data, connectivity=connectivity, return_N=True)
+    if axis == 0:
+        labels_inlet = np.unique(labeled_components[0, :, :])
+        labels_outlet = np.unique(labeled_components[-1, :, :])
+    elif axis == 1:
+        labels_inlet = np.unique(labeled_components[:, 0, :])
+        labels_outlet = np.unique(labeled_components[:, -1, :])
+    elif axis == 2:
+        labels_inlet = np.unique(labeled_components[:, :, 0])
+        labels_outlet = np.unique(labeled_components[:, :, -1])
+    else:
+        raise ValueError()
+
+    labels_inlet = set(labels_inlet)
+    labels_outlet = set(labels_outlet)
+    connected_labels = labels_inlet.intersection(labels_outlet)
+    # at least the rock phase (0) will always appear on both inlet and outlet
+    
+    
+    if 0 in connected_labels:    connected_labels.remove(0)
+    
+    connected_labels = list(connected_labels)
+
+    # get all labels which were pore
+    all_labels = set(range(num_labels + 1))
+    all_labels.remove(0)
+
+    # get all labels which were pore and are disconnected
+    disconnected_labels = all_labels.difference(connected_labels)
+    disconnected_labels = list(disconnected_labels)
+
+    return len(connected_labels) > 0
+
+def next_multiple_after(x, multiple_of):
+    return int(((x // multiple_of) + 1) * multiple_of)
+
+
+
+def generate_slurm_run_script(sample_indices: List[int], n_proc: int, gres: str, output_root: str, script_name: str = "run_all_sims_sequential.sh", lbpm_module: str = "lbpm/gpu/"):
+    """
+    Generates a SLURM/Bash script with explicit sequential commands (no loops) 
+    for every sample index provided in sample_indices. This style replicates 
+    the structure of your original Run_0_2.sh script.
+    
+    Args:
+        sample_indices (List[int]): List of the actual 0-based sample indices (e.g., [0, 1, 2, ...]).
+        n_proc (int): Number of MPI tasks/cores to request per simulation (e.g., 4).
+        output_root (str): The base directory containing all Sample_ folders.
+        script_name (str): The name of the output script file.
+    """
+    
+    # --- 1. SLURM Header and Environment Setup ---
+    script_content = f"""#!/bin/bash
+
+# ---------------- SLURM Job Settings ----------------
+# NOTE: This script runs all simulations SEQUENTIALLY. It is best for small 
+# numbers of samples or if your job queue favors long, single-task jobs.
+
+#SBATCH --oversubscribe
+#SBATCH --job-name=Perm_FullRun_Sequential       # Job name for identification
+#SBATCH --partition=all_gpu                      # Partition (queue) to submit to: 'k40m', 'a100' or 'a30'
+#SBATCH --gres={gres}:{n_proc}                      # Request {n_proc} GPUs (or resources)
+
+#SBATCH -t 7-0:00                              # Max wall time: 7 days (increased for safety)
+#SBATCH -o run_outputs_%j.out                  # File to write standard output (%%j = job ID)
+#SBATCH -e run_error_%j.err                    # File to write standard error (%%j = job ID)
+
+# ---------------- Environment Setup ----------------
+
+# Load the appropriate module (as suggested by your example script)
+module load lbpm/gpu/poro_dev_78ba76
+
+# Change into the root directory where all sample folders reside
+
+
+# ---------------- Job Execution (Sequential) --------------------
+
+
+cd DeePore_Samples
+
+"""
+    
+    # --- 2. Append sequential command block for each sample ---
+    for sample_i in sample_indices:
+        # Format the folder name with zero-padding (e.g., Sample_00000)
+        folder_base = f"Sample_{sample_i:05d}"
+        
+        
+        if sample_i == sample_indices[0]:
+            
+            command_block = f"""
+echo "--- Launching simulation for {folder_base} ---"
+cd {folder_base}
+echo \"Current Simulation: \"${{PWD##*/}}
+mpirun -np {n_proc} lbpm_permeability_simulator simulation.db
+# Move back two directories to the root SAMPLE_ROOT directory
+"""
+        else:
+            command_block = f"""
+echo "--- Launching simulation for {folder_base} ---"
+cd ../{folder_base}
+echo \"Current Simulation: \"${{PWD##*/}}
+mpirun -np {n_proc} lbpm_permeability_simulator simulation.db
+
+# Move back two directories to the root SAMPLE_ROOT directory
+"""
+        
+        script_content += command_block
+    
+    script_content += "\n\necho \"--> All sample simulations launched successfully.\""
+
+    # --- 3. Write the script ---
+    # Writes the file one directory up from the execution location, assuming this Python script 
+    # runs inside the root of your project directory.
+    script_path = os.path.join(Path(os.getcwd()).parent, script_name)
+    Path(script_path).write_text(script_content, encoding="utf-8")
+    print(f"\n[SUCCESS] Generated sequential run script: {script_path}")
+    print("Remember to make the script executable: chmod +x run_all_sims_sequential.sh")
+    
+
+def danny_normalization_vel(vel, void_mask, tau=1.5, Re=0.1):
+    visc    = (tau-0.5)/3
+    force   = force_calculation(void_mask, tau=tau, Re=Re)
+    perm_est= (0.65*np.max(distance_transform_edt(void_mask).astype("float32")))**2 / 5
+    return vel*visc / (force*perm_est)
+
+def danny_denormalization_vel(vel, void_mask, tau=1.5, Re=0.1):
+    visc    = (tau-0.5)/3
+    force   = force_calculation(void_mask, tau=tau, Re=Re)
+    perm_est= (0.65*np.max(distance_transform_edt(void_mask).astype("float32")))**2 / 5
+    vel_denorm = vel * force * perm_est  / visc 
+    return vel_denorm
+
+def silveira_normalization_vel(vel, void_mask, tau=1.5, Re=0.1):
+    visc    = (tau-0.5)/3
+    k0      = 1
+    Kt      = visc * tau
+    Ke      = Kt / k0
+    force   = force_calculation(void_mask, tau=tau, Re=Re)
+    vel_norm= vel * Ke / (tau*force)
+    
+    return vel_norm
+    
+def silveira_normalization_pres(pressure, void_mask, tau=1.5, Re=0.1):
+    
+    delta_p     = pressure_calculation(void_mask, tau=tau, Re=Re)
+    p_mean      = (2-3*delta_p)/6
+    delta_p_new = 0.2
+    p_mean_new  = 1.0
+    pr_norm     = ((pressure -p_mean)/delta_p)*delta_p_new + p_mean_new  
+    return pr_norm
+            
+def silveira_denormalization_pres(pressure, void_mask, tau=1.5, Re=0.1):
+    
+    delta_p     = pressure_calculation(void_mask, tau=tau, Re=Re)
+    p_mean      = (2-3*delta_p)/6
+    delta_p_new = 0.2
+    p_mean_new  = 1.0
+    pr_denorm   = (pressure-p_mean_new)/delta_p_new + p_mean
+    return pr_denorm
+
+    
+def order_ceil(value: float) -> float: 
+
+    if value <= 0: return 0.0
+    log_value = np.log10(value) 
+    exponent = math.ceil(log_value) 
+    return 10 ** exponent
+
+def timestep_calculation(    
+        matriz_binaria: np.ndarray,
+        tau: Union[float, int],
+        Re: float = 0.01,
+        Dens: float = 1.0,
+        safety_factor: float = 10.0)  -> int:
+    
+    L = np.max(matriz_binaria.shape)
+    T = int(safety_factor*3*L**2*Dens / (Re*(tau-0.5)))    
+    return order_ceil(T)
+    
+def pressure_calculation(
+    matriz_binaria: np.ndarray,
+    tau:        Union[float, int],
+    Re:         float = 0.1,
+    Dens:       float = 1.0,
+    )->float:
+    
+    L               = matriz_binaria.shape[0]
+    dist_transform  = distance_transform_edt(matriz_binaria)
+    if dist_transform.size == 0 or np.max(dist_transform) == 0: return 0.0
+    R               = np.max(dist_transform)
+    Visc            = (tau - 0.5) / 3.0
+    dP              = (Re * 8.0 * (Visc ** 2) * L) / (Dens * (R ** 3))
+
+    return dP
+
+def force_calculation(
+    matriz_binaria: np.ndarray,
+    tau:            Union[float, int],
+    Re:             float = 0.1,
+    Dens:           float = 1.0,
+) -> float:
+    
+    dist_transform  = distance_transform_edt(matriz_binaria)
+    if dist_transform.size == 0 or np.max(dist_transform) == 0: return 0.0
+    R               = np.max(dist_transform)
+    Visc            = (tau - 0.5) / 3.0
+    Fx              = (Re * 8.0 * (Visc ** 2)) / (Dens * (R ** 3))
+    return Fx
 
 def write_lbpm_db(
     path: str,
@@ -103,9 +678,9 @@ def write_lbpm_db(
     # Domain
     domain_filename:str = "domain.raw",
     read_type:      str = "8bit",
-    nproc:          Tuple[int, int, int] = (1, 1, 1),
-    n:              Tuple[int, int, int] = (256, 256, 256),
-    N:              Tuple[int, int, int] = (256, 256, 256),
+    nproc:          Tuple[int, int, int] = (1, 1, 4),
+    n:              Tuple[int, int, int] = (256, 256, 128),
+    N:              Tuple[int, int, int] = (256, 256, 512),
     offset:         Tuple[int, int, int] = (0, 0, 0),
     voxel_length:   float = 1.0,
     read_values:    Tuple[int, int] = (0, 1),
@@ -173,6 +748,7 @@ Analysis {{
 }}
 """
     p = Path(path)
+    # If `path` is a directory or lacks a suffix, write inside it
     if p.suffix == "" or p.is_dir():
         p.mkdir(parents=True, exist_ok=True)
         p = p / db_name
@@ -182,270 +758,224 @@ Analysis {{
     p.write_text(text, encoding="utf-8")
     return text
 
-def write_and_submit_slurm(output_path: str, sim_mode: int, job_name: str):
-    """Writes the SLURM batch script and submits it."""
-    slurm_script = f"""#!/bin/bash
-#SBATCH --job-name={job_name}
-#SBATCH --output=slurm_%j.out
-#SBATCH --error=slurm_%j.err
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --time=02:00:00
-#SBATCH --partition=gpu
 
-cd {output_path}
-/home/gabriel/Desktop/LBPM_Install/mpi/bin/mpirun -np 1 /home/gabriel/Desktop/LBPM_Install/LBPM_dir/tests/lbpm_single_phase start.db --init {sim_mode}
-"""
-    script_path = Path(output_path) / "submit.sh"
-    script_path.write_text(slurm_script)
+def write_gradlbm_ini(
+    path: str,
+    *,
+    dp:                 float = 0.001,
+    ini_name:           str = "grad.ini",
+    number_of_steps:    int = 30000,
+    filetype:           str = "raw",
+    filename:           str = "domain.raw",
+    size_x:             int = 120,
+    size_y:             int = 120,
+    size_z:             int = 120,
+    axis:               int = 2, # Axis: 0 = 'x', 2 = 'z'
+    binary:             bool = True,
+    xml:                bool = True,
+    compress:           bool = True,
+    density:            bool = True,
+    velocity:           bool = True,
+    write_zero_step:    bool = True,
+    write_final_step:   bool = True,
+    analysis_interval:  int = 1000,
+    number_of_files:    int = 0,
+    tau:                float = 1.5,
+    tolerance:          float = 0.01,
+    mDa:                bool = True
+) -> str:
+    """Generates the data.ini configuration file for the GRAD-RESEARCH LBM Algorithm."""
     
-    try:
-        subprocess.run(["sbatch", "submit.sh"], cwd=output_path, check=True)
-        print(f"   -> Job submitted: {job_name}")
-    except subprocess.CalledProcessError as e:
-        print(f"   -> Failed to submit job for {job_name}: {e}")
-    except FileNotFoundError:
-        print("   -> 'sbatch' command not found. Are you on the cluster login node?")
+    def b(v): return "true" if v else "false"
+    def ffmt(x): return f"{x:g}"  # Formats floats cleanly (e.g., 0.8 instead of 0.800000)
 
+    # Exact spacing and formatting applied below
+    text = f"""[General]
+number_of_steps = {number_of_steps}
 
-def post_process_experiment(N, domain, ux_a, uy_a, uz_a, pr_a, analyzed_position, output_path):
-    filenames = find_all_vis_silo_files(output_path)
-    
-    ux_r_t = []
-    pr_r_t = []
-    kin_t = []
-    err_L2_t = []
-    
-    fluid_mask = domain == 1
-    n_fluid = np.sum(fluid_mask)
+[Geometry]
+filetype    = {filetype}
+filename    = {filename}
+size_x      = {size_x}
+size_y      = {size_y}
+size_z      = {size_z}
 
-    for filename in filenames:
-        mesh = pv.read(filename)
-        uz_n = mesh['Velocity_z'].reshape((N, N, N))
-        uy_n = mesh['Velocity_y'].reshape((N, N, N)) 
-        ux_n = mesh['Velocity_x'].reshape((N, N, N))
-        pr_n = mesh['Pressure'].reshape((N, N, N))
-        
-        # Pointwise history
-        ux_r_t.append(ux_n[analyzed_position])
-        pr_r_t.append(pr_n[analyzed_position])
-        
-        # Total Kinetic energy over fluid domain
-        kinetic_sum = np.sum(ux_n[fluid_mask]**2 + uy_n[fluid_mask]**2 + uz_n[fluid_mask]**2)
-        kin_t.append(kinetic_sum / n_fluid)
-        
-        # L2 Error against analytical solution (fluid nodes only)
-        err_ux = ux_n[fluid_mask] - ux_a[fluid_mask]
-        err_uy = uy_n[fluid_mask] - uy_a[fluid_mask]
-        err_uz = uz_n[fluid_mask] - uz_a[fluid_mask]
-        l2_err = np.sqrt(np.mean(err_ux**2 + err_uy**2 + err_uz**2))
-        err_L2_t.append(l2_err)
-        
-    return np.array(ux_r_t), np.array(pr_r_t), np.array(kin_t), np.array(err_L2_t)
-    
-# ==============================================================================
-# WORKFLOW CONTROLS & CONFIGURATIONS
-# ==============================================================================
+[Output]
+binary              = {b(binary)}
+xml                 = {b(xml)}
+compress            = {b(compress)}
+density             = {b(density)}
+velocity            = {b(velocity)}
+write_zero_step     = {b(write_zero_step)}
+write_final_step    = {b(write_final_step)}
+analysis_interval   = {analysis_interval}
+number_of_files     = {number_of_files}
 
-# ---------------------------------------------------------
-# Set SUBMIT_JOBS to True to write inputs and call sbatch.
-# Set POST_PROCESS to True ONLY after jobs have finished.
-# ---------------------------------------------------------
-SUBMIT_JOBS  = True
-POST_PROCESS = False
+[MRT]
+tau     = {ffmt(tau)}
 
-N_values     = [16, 32, 64] # Test sizes
-U0           = 0.01      
-P0           = 1.0/3.0   
-tau          = 0.65      
-save_interval = 2
-n_timesteps  = 100
+[BGK]
+tau     = {ffmt(tau)}
 
-# ==============================================================================
-# MAIN WORKFLOW LOOP
-# ==============================================================================
+[Permeability]
+tolerance   = {ffmt(tolerance)}
+axis        = {axis}
+dp          = {ffmt(dp)}
+mDa         = {b(mDa)}"""
 
-# Data storage for post-processing
-results = {}
-
-for N in N_values:
-    print(f"\n{'='*50}")
-    print(f"PROCESSING RESOLUTION: N = {N}")
-    print(f"{'='*50}")
-
-    base_dir     = f"./Stokes_Sphere_Simulations/N_{N}"
-    path_cte_eq  = f"{base_dir}/cte_eq"
-    path_ini_eq  = f"{base_dir}/ini_eq"
-    path_cte_neq = f"{base_dir}/cte_neq"
-    path_ini_neq = f"{base_dir}/ini_neq"
-
-    # Scale the sphere proportional to N (Radius = N/8)
-    R = N * (8.0 / 64.0)
-    cx, cy, cz = N//2, N//2, N//2
-    analyzed_position = (cz, cy, cx + int(R) + 3) # Z, Y, X
-
-    # --------------------------------------------------------------------------
-    # 1. ANALYTICAL SOLUTIONS & DOMAIN
-    # --------------------------------------------------------------------------
-    z = np.arange(N)
-    y = np.arange(N)
-    x = np.arange(N)
-    ZZ, YY, XX = np.meshgrid(z, y, x, indexing='ij')
-
-    xc, yc, zc = XX - cx, YY - cy, ZZ - cz
-    r  = np.sqrt(xc**2 + yc**2 + zc**2)
-    r_safe = np.where(r == 0, 1e-10, r)
-
-    domain = np.ones((N, N, N), dtype=np.uint8)
-    domain[r <= R] = 0 
-
-    term4 = (3 * R) / (4 * r_safe**3) - (3 * R**3) / (4 * r_safe**5)
-    ux_a = U0 * (1 - (3 * R) / (4 * r_safe) - (R**3) / (4 * r_safe**3) - (xc**2) * term4)
-    uy_a = -U0 * xc * yc * term4
-    uz_a = -U0 * xc * zc * term4
-    nu = (tau - 0.5) / 3.0
-    pr_a = P0 - (3 * nu * R * U0 * xc) / (2 * r_safe**3)
-
-    # Apply solid boundaries
-    ux_a[domain == 0], uy_a[domain == 0], uz_a[domain == 0] = 0.0, 0.0, 0.0
-    pr_a[domain == 0] = P0
-    
-    ux_a_pt = ux_a[analyzed_position]
-    pr_a_pt = pr_a[analyzed_position]
-
-    # Initial uniform fields
-    pr_cte = np.ones_like(ux_a) * P0
-    ux_cte = np.ones_like(ux_a) * U0
-    uy_cte, uz_cte = np.zeros_like(ux_a), np.zeros_like(ux_a)
-
-    # --------------------------------------------------------------------------
-    # 2. JOB SUBMISSION PHASE
-    # --------------------------------------------------------------------------
-    if SUBMIT_JOBS:
-        cleanup_vis_folders(path_cte_eq)
-        cleanup_vis_folders(path_ini_eq)
-        cleanup_vis_folders(path_cte_neq)
-        cleanup_vis_folders(path_ini_neq)
-
-        cases = [
-            ("Eq_CTE",  path_cte_eq,  uz_cte, uy_cte, ux_cte, pr_cte, 1),
-            ("Neq_CTE", path_cte_neq, uz_cte, uy_cte, ux_cte, pr_cte, 2),
-            ("Eq_INI",  path_ini_eq,  uz_a,   uy_a,   ux_a,   pr_a,   1),
-            ("Neq_INI", path_ini_neq, uz_a,   uy_a,   ux_a,   pr_a,   2),
-        ]
-
-        for case_name, out_path, uz_ini, uy_ini, ux_ini, pr_ini, sim_mode in cases:
-            Path(out_path).mkdir(parents=True, exist_ok=True)
-            write_domain_raw(out_path, domain)
-            write_start_raw(str(Path(out_path) / "Start.00000"), ux_ini, uy_ini, uz_ini, pr_ini)
-            
-            # Write configuration database
-            write_lbpm_db(
-                path=out_path,
-                db_name="start.db",
-                tau=tau,
-                bc=0,
-                timestep_max=n_timesteps,
-                nproc=(1, 1, 1),
-                n=(N, N, N),
-                N=(N, N, N),
-                visualization_interval=save_interval,
-                analysis_interval=save_interval
-            )
-            
-            # Write and submit Slurm script
-            job_name = f"LBM_N{N}_{case_name}"
-            write_and_submit_slurm(out_path, sim_mode, job_name)
-
-    # --------------------------------------------------------------------------
-    # 3. POST-PROCESSING PHASE
-    # --------------------------------------------------------------------------
-    if POST_PROCESS:
-        kin_a_tot = np.sum(ux_a[domain==1]**2 + uy_a[domain==1]**2 + uz_a[domain==1]**2) / np.sum(domain==1)
-        
-        paths = {
-            'Eq_CTE': path_cte_eq,
-            'Neq_CTE': path_cte_neq,
-            'Eq_INI': path_ini_eq,
-            'Neq_INI': path_ini_neq
-        }
-        
-        results[N] = {'kin_a_tot': kin_a_tot, 'ux_a_pt': ux_a_pt, 'pr_a_pt': pr_a_pt}
-        
-        for case_name, out_path in paths.items():
-            print(f"Processing {case_name}...")
-            ux_t, pr_t, kin_t, err_L2_t = post_process_experiment(
-                N, domain, ux_a, uy_a, uz_a, pr_a, analyzed_position, out_path)
-            
-            # Normalize kinetic energy
-            if len(kin_t) > 0:
-                kin_t = kin_t / kin_a_tot
-                
-            results[N][case_name] = {
-                'ux_t': ux_t, 'pr_t': pr_t, 'kin_t': kin_t, 'err_t': err_L2_t
-            }
-
-# ==============================================================================
-# PLOTS (ONLY RUNS IF POST_PROCESS IS TRUE)
-# ==============================================================================
-if POST_PROCESS and N_values:
-    # Example plotting just for the LAST N processed (or you can loop through them)
-    N_plot = N_values[-1]
-    res = results[N_plot]
-    
-    if len(res['Eq_CTE']['kin_t']) > 0:
-        timesteps = np.arange(len(res['Eq_CTE']['kin_t'])) * save_interval
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 12), dpi=300)
-
-        # ax1: Velocity X at point
-        ax1.axhline(res['ux_a_pt'], color='blue', linestyle=':', label=r'Analytical solution')
-        ax1.plot(timesteps, res['Eq_CTE']['ux_t'], '--', color='black', label=r'F.eq. / Uniform Flow')
-        ax1.plot(timesteps, res['Eq_INI']['ux_t'], '-', color='black', label=r'F.eq. / Analytical Init')
-        ax1.plot(timesteps, res['Neq_CTE']['ux_t'],'--', color='#16A085', label=r'F.eq.+ F.neq. / Uniform Flow')
-        ax1.plot(timesteps, res['Neq_INI']['ux_t'],'-', color='#16A085', label=r'F.eq.+ F.neq. / Analytical Init')
-        ax1.set_ylabel(f'Velocity X at point') 
-
-        # ax2: Normalized Kinetic Energy
-        ax2.axhline(1.0, color='blue', linestyle=':', label=r'Analytical solution')
-        ax2.plot(timesteps, res['Eq_CTE']['kin_t'], '--', color='black')
-        ax2.plot(timesteps, res['Eq_INI']['kin_t'], '-', color='black')
-        ax2.plot(timesteps, res['Neq_CTE']['kin_t'],'--', color='#16A085')
-        ax2.plot(timesteps, res['Neq_INI']['kin_t'],'-', color='#16A085')
-        ax2.set_ylabel(r'Normalized Kinetic Energy $K(t) / K_{analytical}$') 
-
-        # ax3: L2 Error
-        ax3.plot(timesteps, res['Eq_CTE']['err_t'], '--', color='black')
-        ax3.plot(timesteps, res['Eq_INI']['err_t'], '-', color='black')
-        ax3.plot(timesteps, res['Neq_CTE']['err_t'],'--', color='#16A085')
-        ax3.plot(timesteps, res['Neq_INI']['err_t'],'-', color='#16A085')
-        ax3.set_ylabel(r'RMSE $L_2$ Velocity Error')
-        ax3.set_yscale('log')
-
-        # ax4: Pressure at point
-        ax4.axhline(res['pr_a_pt'], color='blue', linestyle=':', label=r'Analytical solution')
-        ax4.plot(timesteps, res['Eq_CTE']['pr_t'],  '--', color='black')
-        ax4.plot(timesteps, res['Eq_INI']['pr_t'],  '-', color='black')
-        ax4.plot(timesteps, res['Neq_CTE']['pr_t'], '--', color='#16A085')
-        ax4.plot(timesteps, res['Neq_INI']['pr_t'], '-', color='#16A085')
-        ax4.set_ylabel(f'Pressure at point') 
-
-        FONT_LABEL  = 14
-        FONT_TICKS  = 12
-        FONT_LEGEND = 12
-
-        for ax in [ax1, ax2, ax3, ax4]:
-            ax.set_box_aspect(1)
-            if ax == ax1:
-                ax.legend(frameon=True, fontsize=FONT_LEGEND, loc='best')
-            
-            ax.xaxis.label.set_size(FONT_LABEL)
-            ax.yaxis.label.set_size(FONT_LABEL)
-            ax.tick_params(axis='both', which='major', labelsize=FONT_TICKS)
-            ax.grid(True, alpha=0.3)
-            ax.set_xlabel('Time')
-
-        plt.subplots_adjust(wspace=0.3, hspace=0.3) 
-        plt.savefig(f'StokesSphereBenchmark_N{N_plot}.pdf', bbox_inches='tight')
-        plt.show()
+    p = Path(path)
+    # If `path` is a directory or lacks a suffix, write inside it
+    if p.suffix == "" or p.is_dir():
+        p.mkdir(parents=True, exist_ok=True)
+        p = p / ini_name
     else:
-        print("No post-processing data found. Check if the jobs have finished successfully.")
+        p.parent.mkdir(parents=True, exist_ok=True)
+
+    p.write_text(text, encoding="utf-8")
+    return text
+
+def create_simulation_pressure_condition(x_sample, output_root, folder_base, n_proc=4, include_walls=False):
+
+    x_sample = x_sample.copy() 
+    
+    # Transform x_sample for simulation:
+    if include_walls:
+        x_sample[:, :, 0]   = 0
+        x_sample[:, :, -1]  = 0
+        x_sample[:, 0, :]   = 0
+        x_sample[:, -1, :]  = 0
+    
+    # Sanity Checks:
+    if not is_percolating(x_sample, axis=0): print("Sample failed to percolate and got removed.")
+    else:
+        
+        folder_rbc  = os.path.join(output_root, folder_base)
+        os.makedirs(folder_rbc, exist_ok=True)
+        
+        Re   = 0.1
+        tau  = 1.5
+        Dens = 1.0
+        dP = pressure_calculation(           
+                x_sample,
+                tau     = tau,
+                Re      = Re,
+                Dens    = Dens
+            )
+        
+        timestep_max = timestep_calculation(    
+                matriz_binaria  =x_sample,
+                tau             =tau,
+                Re              =Re,
+                Dens            =Dens,
+                safety_factor   =10.0
+                )
+        
+        # --- Save 3D domain as .raw ---
+        write_lbpm_db(path=folder_rbc, 
+                      tau       = tau,
+                      tolerance = 0.0001,
+                      bc        = 3,
+                      din       = 1.0+dP*3,
+                      dout      = 1.0,
+                      nproc     = (1, 1, n_proc),
+                      n         = (x_sample.shape[2], x_sample.shape[1], int(x_sample.shape[0]/n_proc)),
+                      N         = (x_sample.shape[2], x_sample.shape[1], x_sample.shape[0]),
+                      analysis_interval         =1000, # Excel
+                      visualization_interval    =timestep_max, # Silo
+                      timestep_max              =timestep_max,
+                      subphase_analysis_interval=timestep_max,
+                      restart_interval          =timestep_max)
+        
+        write_gradlbm_ini(
+            path              = folder_rbc, 
+            number_of_steps   = timestep_max,
+            size_x            = x_sample.shape[2],
+            size_y            = x_sample.shape[1],
+            size_z            = x_sample.shape[0],
+            analysis_interval = 1000,
+            tau               = tau,
+            tolerance         = 0.01, # Percentual tolerance
+            axis              = 2,  
+            dp                = -dP,
+            mDa               = True
+        )
+        
+        raw_path = os.path.join(folder_rbc, "domain.raw")
+        x_sample.astype(np.uint8).tofile(raw_path)
+        
+        return folder_rbc
+        
+        
+def create_simulation_force_condition(x_sample, output_root, folder_base, reflect=True, outlet_layers=0, bc=0, n_proc=4, include_walls=False):
+    
+    x_sample = x_sample.copy() 
+    
+    if x_sample.shape[0]%n_proc!=0: raise Exception(f"Domain length must be divisible by n_proc={n_proc}")
+    
+    # Transform x_sample for simulation:
+    if include_walls:
+        x_sample[:, :, 0]   = 0
+        x_sample[:, :, -1]  = 0
+        x_sample[:, 0, :]   = 0
+        x_sample[:, -1, :]  = 0
+    
+    
+    # Sanity Checks:
+    if not is_percolating(x_sample, axis=0): print("Sample failed to percolate and got removed.")
+    else:
+
+        
+        folder_rbc  = os.path.join(output_root, folder_base)
+        os.makedirs(folder_rbc, exist_ok=True)
+        
+        # Make periodic in z directipn
+        if reflect:
+            flipped             = np.flip(x_sample, axis=0)
+            x_sample            = np.concatenate([x_sample, flipped], axis=0)
+        
+        # Calculate a force that ensures the desired conditions of Reynolds, Viscosity and Density
+        Re   = 0.1
+        tau  = 1.5
+        Dens = 1.0
+        force_z = force_calculation(
+            x_sample,
+            tau     = tau,
+            Re      = Re,
+            Dens    = Dens
+        )
+        
+        timestep_max = timestep_calculation(    
+                matriz_binaria  = x_sample,
+                tau             = tau,
+                Re              = Re,
+                Dens            = Dens,
+                safety_factor   = 10.0
+        )
+        
+        # --- Save 3D domain as .raw ---
+        write_lbpm_db(path  =folder_rbc, 
+                      tau   =tau,
+                      bc    =bc,
+                      fz    =force_z,   
+                      nproc = (1, 1, n_proc),
+                      n     = (x_sample.shape[2], x_sample.shape[1], int(x_sample.shape[0]/n_proc)),
+                      N     = (x_sample.shape[2], x_sample.shape[1], x_sample.shape[0]),
+                      outlet_layers                 = (0,0,outlet_layers),
+                      timestep_max                  = timestep_max,
+                      analysis_interval             = 5000, # Excel
+                      visualization_interval        = timestep_max, # Silo
+                      subphase_analysis_interval    = timestep_max,
+                      restart_interval              = timestep_max)
+        
+
+        raw_path = os.path.join(folder_rbc, "domain.raw")
+        x_sample.astype(np.uint8).tofile(raw_path)
+        
+            
+        # Include guiding image in each folder
+        plt.figure()
+        plt.imshow(x_sample[0], cmap='binary', interpolation='none')
+        plt.axis('off')
+        plt.tight_layout(pad=0) 
+        plt.savefig(folder_rbc+"/domain.svg", bbox_inches='tight')
+        plt.close()
