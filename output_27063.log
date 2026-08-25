@@ -1,0 +1,119 @@
+[*] Loading configs from standard config file: exp/Etapa_3_DM_SA_DN_danny_x.json
+Global seed set to 42
+Current device:      cuda
+
+
+Configurations:
+{
+    "model_name": "danny_x",
+    "binary_input": true,
+    "NN_dataset_folder": "../NN_Datasets_Grad/",
+    "dataset_train_name": [
+        "Train_Silveira_SphPore_SAug_DNorm.h5",
+        "Train_Silveira_SphGrain_SAug_DNorm.h5",
+        "Train_Oliveira_Leopard_SAug_DNorm.h5",
+        "Train_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Train_Oliveira_Berea_SAug_DNorm.h5",
+        "Train_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "dataset_valid_name": [
+        "Valid_Silveira_SphPore_SAug_DNorm.h5",
+        "Valid_Silveira_SphGrain_SAug_DNorm.h5",
+        "Valid_Oliveira_Leopard_SAug_DNorm.h5",
+        "Valid_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Valid_Oliveira_Berea_SAug_DNorm.h5",
+        "Valid_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "train_range": null,
+    "valid_range": null,
+    "batch_size": 8,
+    "num_workers": 4,
+    "num_threads": null,
+    "device": "cuda",
+    "N_epochs": 1000,
+    "partial_epochs": 1000,
+    "patience": 200,
+    "tolerance": null,
+    "learning_rate": 0.0008,
+    "earlyStopping_loss": "MSE",
+    "backPropagation_loss": "MSE",
+    "optimizer": "ADAM",
+    "weight_init": null,
+    "seed": 42,
+    "train_comment": "Teste de multiplos datasets.",
+    "NN_results_folder": "/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_25_August_2026_11-53AM_Job27063/"
+}
+
+
+/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_25_August_2026_11-53AM_Job27063/
+Metadata saved at: /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_25_August_2026_11-53AM_Job27063/metadata.json
+Loading Training Data ... 
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 640 samples from ../NN_Datasets_Grad/Train_Silveira_SphPore_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 640 samples from ../NN_Datasets_Grad/Train_Silveira_SphGrain_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 200 samples from ../NN_Datasets_Grad/Train_Oliveira_Leopard_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 204 samples from ../NN_Datasets_Grad/Train_Oliveira_CastleGate_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 164 samples from ../NN_Datasets_Grad/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 140 samples from ../NN_Datasets_Grad/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 152 samples from ../NN_Datasets_Grad/Train_Oliveira_BereaBuff_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 160 samples from ../NN_Datasets_Grad/Train_Oliveira_Berea_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 308 samples from ../NN_Datasets_Grad/Train_Oliveira_Bentheimer_SAug_DNorm.h5.
+  self._validate_file()
+  - 2608 samples considered.
+Loading Validation Data ... 
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 64 samples from ../NN_Datasets_Grad/Valid_Silveira_SphPore_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 64 samples from ../NN_Datasets_Grad/Valid_Silveira_SphGrain_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 24 samples from ../NN_Datasets_Grad/Valid_Oliveira_Leopard_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 24 samples from ../NN_Datasets_Grad/Valid_Oliveira_CastleGate_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 20 samples from ../NN_Datasets_Grad/Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 20 samples from ../NN_Datasets_Grad/Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 16 samples from ../NN_Datasets_Grad/Valid_Oliveira_BereaBuff_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 20 samples from ../NN_Datasets_Grad/Valid_Oliveira_Berea_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 36 samples from ../NN_Datasets_Grad/Valid_Oliveira_Bentheimer_SAug_DNorm.h5.
+  self._validate_file()
+  - 288 samples considered.
+Loading Model ... 
+Model size: 4.943MB
+Model size: 1294781 total parameters
+Model size: 1294781 trainable parameters
+Model size: 0 frozen parameters
+
+Starting Train on cuda... 
+
+No previous checkpoints found in /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_25_August_2026_11-53AM_Job27063/
+
+
+Trainning session has started.
+
+--> New best solution for Validation dataset achieved at 0 / 1000: 0.005687379255606275 (100.000000% better)
+
+Executing epoch 0 / 1000 (0.0%)
+--> Average epoch processing time (seconds):  884.698186
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+MSE                   0.006738   | 0.005687  
+MSE in Void Space     0.017680   | 0.015567  
+Bias Error            482.013887 | 928.612576
+Pearson Correlation   0.001449   | 0.005120  

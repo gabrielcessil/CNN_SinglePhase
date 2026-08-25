@@ -138,62 +138,64 @@ def find_directional_local_maxima(dist_transform):
 #raw_name            = "domain.raw"
 #raw_shape           = (120, 120, 120)    
 
+"""
+infos = {
+    
+    "../../GradSimulations/DONE_Train_Danny_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Train_Danny_SphPore_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Test_Danny_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Test_Danny_SphPore_SAug_DNorm.h5",
+    
+    "../../GradSimulations/DONE_Valid_Danny_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Valid_Danny_SphPore_SAug_DNorm.h5",
+        
+    }
+saved_fraction      = 1.0
+"""
 
-#infos = {
-#    
-#    "../../GradSimulations/DONE_Train_Danny_SphPore_120_120_120/":
-#    "../../NN_Datasets_Grad_2/Train_Danny_SphPore_SAug_DNorm.h5",
-#    
-#    "../../GradSimulations/DONE_Test_Danny_SphPore_120_120_120/":
-#    "../../NN_Datasets_Grad_2/Test_Danny_SphPore_SAug_DNorm.h5",
-#    
-#    "../../GradSimulations/DONE_Valid_Danny_SphPore_120_120_120/":
-#    "../../NN_Datasets_Grad_2/Valid_Danny_SphPore_SAug_DNorm.h5",
-#        
-#    }
-#saved_fraction      = 1.0
 
 """
 infos = {
     
-    "../../GradSimulations/DONE_Train_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad_2/Train_SphPore_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Train_Silveira_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Train_Silveira_SphPore_SAug_DNorm.h5",
     
-    "../../GradSimulations/DONE_Test_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad_2/Test_SphPore_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Test_Silveira_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Test_Silveira_SphPore_SAug_DNorm.h5",
     
-    "../../GradSimulations/DONE_Valid_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad_2/Valid_SphPore_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Valid_Silveira_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Valid_Silveira_SphPore_SAug_DNorm.h5",
     
         
-    "../../GradSimulations/DONE_Train_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad_2/Train_CylinPore_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Train_Silveira_CylinPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Train_Silveira_CylinPore_SAug_DNorm.h5",
     
-    "../../GradSimulations/DONE_Test_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad_2/Test_CylinPore_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Test_Silveira_CylinPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Test_Silveira_CylinPore_SAug_DNorm.h5",
     
-    "../../GradSimulations/DONE_Valid_CylinPore_120_120_120/":
-    "../../NN_Datasets_Grad_2/Valid_CylinPore_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Valid_Silveira_CylinPore_120_120_120/":
+    "../../NN_Datasets_Grad_2/Valid_Silveira_CylinPore_SAug_DNorm.h5",
     
 
-    "../../GradSimulations/DONE_Train_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad_2/Train_SphGrain_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Train_Silveira_SphGrain_120_120_120/":
+    "../../NN_Datasets_Grad_2/Train_Silveira_SphGrain_SAug_DNorm.h5",
     
-    "../../GradSimulations/DONE_Test_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad_2/Test_SphGrain_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Test_Silveira_SphGrain_120_120_120/":
+    "../../NN_Datasets_Grad_2/Test_Silveira_SphGrain_SAug_DNorm.h5",
     
-    "../../GradSimulations/DONE_Valid_SphGrain_120_120_120/":
-    "../../NN_Datasets_Grad_2/Valid_SphGrain_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Valid_Silveira_SphGrain_120_120_120/":
+    "../../NN_Datasets_Grad_2/Valid_Silveira_SphGrain_SAug_DNorm.h5",
 
 
-    "../../GradSimulations/DONE_Train_CylinGrain_120_120_120/":
-    "../../NN_Datasets_Grad_2/Train_CylinGrain_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Train_Silveira_CylinGrain_120_120_120/":
+    "../../NN_Datasets_Grad_2/Train_Silveira_CylinGrain_SAug_DNorm.h5",
   
-    "../../GradSimulations/DONE_Test_CylinGrain_120_120_120/":
-    "../../NN_Datasets_Grad_2/Test_CylinGrain_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Test_Silveira_CylinGrain_120_120_120/":
+    "../../NN_Datasets_Grad_2/Test_Silveira_CylinGrain_SAug_DNorm.h5",
     
-    "../../GradSimulations/DONE_Valid_CylinGrain_120_120_120/":
-    "../../NN_Datasets_Grad_2/Valid_CylinGrain_SAug_DNorm.h5",
+    "../../GradSimulations/DONE_Valid_Silveira_CylinGrain_120_120_120/":
+    "../../NN_Datasets_Grad_2/Valid_Silveira_CylinGrain_SAug_DNorm.h5",
     
     }
 saved_fraction      = 0.9
@@ -273,7 +275,7 @@ infos = {
     
     }
 saved_fraction      = 0.45
-#""" 
+#"""
     
 sample_dir_pattern  = r"^Sample_(\d+)$"
 raw_name            = "domain.raw"
@@ -285,8 +287,8 @@ source              = "gradlbm" # One of "gradlbm", "lbpm"
 
 
 for simulations_folder, output_path in infos.items():
-         
     
+    print("\n\n\n\n\nCREATING: ", output_path)
     base_dir            = os.path.join(os.getcwd(), simulations_folder)
     sample_dirs         = list_sample_dirs(base_dir, sample_dir_pattern)
     
@@ -358,6 +360,11 @@ for simulations_folder, output_path in infos.items():
                         
                 elif source == "gradlbm":
                     mesh    = read_latest_vti_path(sample_dir)
+                    
+                    print(f"\n--- Arrays found in {sample_name}: ---")
+                    print("Point Data:", mesh.point_data.keys())
+                    print("Cell Data:", mesh.cell_data.keys())
+                    print("--------------------------------------\n")
                     velocity_data = mesh["Velocity"] # Shape: (N, 3)
                     vx_orig = velocity_data[:, 0].reshape(raw_shape, order="C")
                     vy_orig = velocity_data[:, 1].reshape(raw_shape, order="C")
@@ -378,10 +385,21 @@ for simulations_folder, output_path in infos.items():
                 # Pressure Normalization
                 pr_norm = utils.silveira_normalization_pres(pr_orig, porous_mask)
                 
-                print("Mins:  ", np.min(vx_norm[porous_mask]), np.min(vy_norm[porous_mask]), np.min(vz_norm[porous_mask]))
-                print("Means: ", np.mean(vx_norm[porous_mask]), np.mean(vy_norm[porous_mask]), np.mean(vz_norm[porous_mask]))
-                print("Devs:  ", np.std(vx_norm[porous_mask]), np.std(vy_norm[porous_mask]), np.std(vz_norm[porous_mask]))
-                print("Maxs:  ", np.max(vx_norm[porous_mask]), np.max(vy_norm[porous_mask]), np.max(vz_norm[porous_mask]))
+                # Print perfectly aligned statistics
+                print(f"\n{'Field':<7} | {'Min':>15} | {'Mean':>15} | {'Max':>15} | {'Std Dev':>15}")
+                print("-" * 77)
+                
+                for name, field in [("vx", vx_norm), ("vy", vy_norm), ("vz", vz_norm), ("press", pr_norm)]:
+                    data = field[porous_mask]
+                    print(
+                        f"{name:<7} | "
+                        f"{np.min(data):>15.6e} | "
+                        f"{np.mean(data):>15.6e} | "
+                        f"{np.max(data):>15.6e} | "
+                        f"{np.std(data):>15.6e}"
+                    )
+                print("-" * 77)
+                
                 print("-------------------------------------------------------------")            
             
                 print(f"Processing {sample_name} with augmentations...")
@@ -394,9 +412,6 @@ for simulations_folder, output_path in infos.items():
                                                                                                   vx_norm, 
                                                                                                   pr_norm, 
                                                                                                   direc=1)
-                    
-                    # Geometry-based calculations (EDT and Mask) on augmented volume
-                    if not np.any(porous_mask): continue
     
                     edt_full = distance_transform_edt(porous_mask).astype("float32")
                     coords_k, coords_j, coords_i  = np.where(porous_mask)
@@ -433,6 +448,7 @@ for simulations_folder, output_path in infos.items():
                     sample_names_ds[global_idx] = f"{sample_name}_rot_{rot}"
                     
                     global_idx += 1
+
             except Exception as e:
                 print(f"[FAIL] {sample_name}: {e}")
 

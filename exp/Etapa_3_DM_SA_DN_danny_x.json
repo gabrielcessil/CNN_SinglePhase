@@ -34,7 +34,7 @@
   "partial_epochs":         1000,
   "patience":               200,
   "tolerance":              null,
-  "learning_rate":          0.0006,
+  "learning_rate":          0.0008,
   "earlyStopping_loss":     "MSE",
   "backPropagation_loss":   "MSE",
   "optimizer":              "ADAM",

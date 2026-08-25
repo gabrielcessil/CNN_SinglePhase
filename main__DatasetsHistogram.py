@@ -266,24 +266,24 @@ def Compare_Histograms(
 #######################################################
 #************ INPUTS                      *************#
 #######################################################
-dataset_folder = "../NN_Datasets/"
+dataset_folder = "../NN_Datasets_Grad/"
 
 datasets        = {
     
-    "Ko et. al":            "../NN_Datasets_Grad/Train_Danny_SphPore_SAug_DNorm.h5",
+   # "Ko et. al":            "Train_Danny_SphPore_SAug_DNorm.h5",
     
-    "Spherical Pores":      "../NN_Datasets_Grad/Train_Silveira_SphPore_SAug_DNorm.h5",
-    "Spherical Grains":     "../NN_Datasets_Grad/Train_Silveira_SphGrain_SAug_DNorm.h5",
-    ##"Cylindrical Pores":    "../NN_Datasets_Grad/Train_Silveira_CylinPore_SAug_DNorm.h5",
-    ##"Cylindrical Grains":   "../NN_Datasets_Grad/Train_Silveira_CylinGrain_SAug_DNorm.h5",
+    "Spherical Pores":      "Valid_Silveira_SphPore_SAug_DNorm.h5",
+    "Spherical Grains":     "Valid_Silveira_SphGrain_SAug_DNorm.h5",
+    ##"Cylindrical Pores":    "Train_Silveira_CylinPore_SAug_DNorm.h5",
+    ##"Cylindrical Grains":   "Train_Silveira_CylinGrain_SAug_DNorm.h5",
      
-    "Bentheimer":           "../NN_Datasets_Grad/Train_Oliveira_Bentheimer_SAug_DNorm.h5",
-    ##"Berea Buff":           "../NN_Datasets_Grad/Train_Oliveira_BereaBuff_SAug_DNorm.h5",
-    ##"Leopard":              "../NN_Datasets_Grad/Train_Oliveira_Leopard_SAug_DNorm.h5",
-    ##"Castle Gate":          "../NN_Datasets_Grad/Train_Oliveira_CastleGate_SAug_DNorm.h5",
-    "Berea Upper Gray":     "../NN_Datasets_Grad/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
-    ##"Berea Sinter Gray":    "../NN_Datasets_Grad/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
-    ##"Berea":                "../NN_Datasets_Grad/Train_Oliveira_Berea_SAug_DNorm.h5",
+    "Bentheimer":           "Valid_Oliveira_Bentheimer_SAug_DNorm.h5",
+    ##"Berea Buff":           "Train_Oliveira_BereaBuff_SAug_DNorm.h5",
+    ##"Leopard":              "Train_Oliveira_Leopard_SAug_DNorm.h5",
+    ##"Castle Gate":          "Train_Oliveira_CastleGate_SAug_DNorm.h5",
+    "Berea Upper Gray":     "Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    ##"Berea Sinter Gray":    "Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    ##"Berea":                "Train_Oliveira_Berea_SAug_DNorm.h5",
     
     
     }
