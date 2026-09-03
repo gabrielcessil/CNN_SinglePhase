@@ -1,7 +1,7 @@
 {
   "model_name":             "danny_x",
   "binary_input":           true,
-  "NN_dataset_folder":      "../NN_Datasets_Grad/",
+  "NN_dataset_folder":      "../NN_Datasets_Grad_Dist_20_10_70/",
   "dataset_train_name":     ["Train_Silveira_SphPore_SAug_DNorm.h5",
                               "Train_Silveira_SphGrain_SAug_DNorm.h5",
 
@@ -34,7 +34,7 @@
   "partial_epochs":         1000,
   "patience":               200,
   "tolerance":              null,
-  "learning_rate":          0.0008,
+  "learning_rate":          0.0006,
   "earlyStopping_loss":     "MSE",
   "backPropagation_loss":   "MSE",
   "optimizer":              "ADAM",

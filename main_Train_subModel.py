@@ -13,7 +13,7 @@ from Utilities import dataset_reader as dr
 from Architectures import Unet
 from Architectures import MSnet
 
-
+    
 #######################################################
 #************ USER INPUTS (from command line):   *****#
 #######################################################
@@ -76,12 +76,15 @@ nnt.set_global_seed(seed)
 # If no configuration folder was passed: create a new folder for results
 if args.folder is not None:  
     NN_results_folder       = args.folder
+    # Ignore and update .json (the metadata.json saved in the folder will have the correct path)
     config["NN_results_folder"] = NN_results_folder
 else:
+    # If a folder was specified in .json:
     NN_results_folder       = config["NN_results_folder"]
-    
+    # If the specified value was None: create a new folder for the data
     if NN_results_folder is None:
         NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
+        # Ignore and update .json (the metadata.json saved in the folder will have the new path)
         config["NN_results_folder"] = NN_results_folder
         
 # Redirect prints to results folder

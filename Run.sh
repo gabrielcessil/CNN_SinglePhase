@@ -11,8 +11,8 @@
 #SBATCH --error=error_%j.log
 
 
-#SBATCH --mem-per-gpu=64G                  # RAM 64GB per a100.
-#SBATCH --cpus-per-gpu=12                  # 12 Cores per a100
+#SBATCH --mem-per-gpu=60G                  # RAM 64GB per a100.
+#SBATCH --cpus-per-gpu=10                  # 12 Cores per a100
 
 # ---------------- Environment Setup ----------------
 
@@ -23,5 +23,7 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 # ---------------- Job Execution --------------------
 
 # Run the simulation using MPI with 4 processes
-python -u main_Train_subModel.py --config exp/Etapa_3_DM_SA_DN_danny_p.json
-#python -u main_Train_subModel.py --folder ../NN_Results/NN_Trainning_21_July_2026_05-22PM_Job26505/
+python -u main_Train_subModel.py --config exp/Etapa_3_DM_SA_DN_danny_x.json
+
+# Continue a optimization previously stopped
+#python -u main_Train_subModel.py --folder ../NN_Results/NN_Trainning_25_August_2026_03-40PM_Job27066/

@@ -24,28 +24,27 @@ def flip_y_augmentation(solid, uz, uy, ux, pr):
     return aux_so, aux_uz, aux_uy, aux_ux, aux_pr
 
 def rotate_z_augmentation(solid, uz, uy, ux, pr, direc):
-    # Change signals 
+    # Change signals :  Anti-clock wise
     if direc > 0:
         k_val   = 1
         base_ux = -1 * uy
         base_uy = ux
-        
+    # Change signals:  Clock-wise
     elif direc < 0:
         k_val   = -1
         base_ux = uy
         base_uy = -1 * ux
-        
     else:
         return solid, uz, uy, ux, pr
     
-    # Attributes which the signal are not influencied by rotation
-    aux_so = np.rot90(solid,    k=k_val, axes=(1, 2))
-    aux_pr = np.rot90(pr,       k=k_val, axes=(1, 2))
-    aux_uz = np.rot90(uz,       k=k_val, axes=(1, 2)) 
+    # Attributes which the signal are not influencied by rotation (Anti-clock wise convention)
+    aux_so = np.rot90(solid,    k=k_val, axes=(2, 1)) # Rotates axis 2 (Y) towards axis 1 (X)
+    aux_pr = np.rot90(pr,       k=k_val, axes=(2, 1)) # Rotates axis 2 (Y) towards axis 1 (X)
+    aux_uz = np.rot90(uz,       k=k_val, axes=(2, 1)) # Rotates axis 2 (Y) towards axis 1 (X)
     
     # Attributes which the signal are influencied by rotation
-    aux_ux = np.rot90(base_ux,  k=k_val, axes=(1, 2))
-    aux_uy = np.rot90(base_uy,  k=k_val, axes=(1, 2))
+    aux_ux = np.rot90(base_ux,  k=k_val, axes=(2, 1)) # Rotates axis 2 (Y) towards axis 1 (X)
+    aux_uy = np.rot90(base_uy,  k=k_val, axes=(2, 1)) # Rotates axis 2 (Y) towards axis 1 (X)
 
     return aux_so, aux_uz, aux_uy, aux_ux, aux_pr
 
