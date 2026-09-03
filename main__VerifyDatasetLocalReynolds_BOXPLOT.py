@@ -12,52 +12,10 @@ from scipy.ndimage import distance_transform_edt
 from Utilities import dataset_reader as dr
 from Utilities import velocity_usage as vu
 
-def find_local_maxima(dist_transform):
-    
-    dt = np.asarray(dist_transform)
-    
-    # Initialize boolean arrays for each direction (padded with False at the borders)
-    max_z = np.zeros_like(dt, dtype=bool)  # Axis 0
-    max_y = np.zeros_like(dt, dtype=bool)  # Axis 1
-    max_x = np.zeros_like(dt, dtype=bool)  # Axis 2
-    
-    # 1. Check Z direction (Axis 0)
-    # Center is strictly greater than the slice before it AND the slice after it
-    max_z[1:-1, :, :] = ((dt[1:-1, :, :] > dt[:-2, :, :]) & (dt[1:-1, :, :] > dt[2:, :, :]))
-    
-    # 2. Check Y direction (Axis 1)
-    max_y[:, 1:-1, :] = (dt[:, 1:-1, :] > dt[:, :-2, :]) & (dt[:, 1:-1, :] > dt[:, 2:, :])
-    
-    # 3. Check X direction (Axis 2)
-    max_x[:, :, 1:-1] = (dt[:, :, 1:-1] > dt[:, :, :-2]) & (dt[:, :, 1:-1] > dt[:, :, 2:])
-    
-    # Count how many axes flag the voxel as a maximum (converts True to 1, False to 0)
-    max_count = (max_z & max_y).astype(np.int8) + (max_y & max_x).astype(np.int8) + (max_z & max_x).astype(np.int8)
-    
-    # Define global maximum: true in at least 2 directions AND must be inside the pore (dt > 0)
-    local_maxima_mask = (max_count >= 2) & (dt > 0)
-    
-    return local_maxima_mask    
-
-"""
-def calculate_local_reynols_maximas(porous_mask, vel_mag, mu, dens):
-    edt     = distance_transform_edt(porous_mask).astype("float32")
-    maximas = find_local_maxima(edt)
-    
-    thick   = ps.filters.local_thickness(porous_mask)
-    
-    reynolds = thick*vel_mag*dens/mu
-    valid_reynolds = reynolds[maximas]
-    
-    return valid_reynolds, maximas
-"""
 
 def calculate_local_reynols(porous_mask, vel_mag, mu, dens):
-    
     thick   = ps.filters.local_thickness(porous_mask)
-    
     reynolds = thick*vel_mag*dens/mu
-
     return reynolds[porous_mask], porous_mask
     
 # -------------------------------------------------------------------

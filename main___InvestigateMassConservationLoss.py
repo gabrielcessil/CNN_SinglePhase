@@ -7,6 +7,11 @@ from Utilities import velocity_usage as vu
 from Danny_Original.architecture import Danny_KerasModel
 
 
+"""
+This code verify if the created loss is able to measure mass conservation.
+This loss function was developed to be used for physics-informed studies
+"""
+
 datapath   = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5" 
 batch_size = 5
 
