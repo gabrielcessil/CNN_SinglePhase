@@ -50,19 +50,26 @@ class Ux2Uy(nn.Module):
         self.model = model_ux
         
     def forward(self, x):
-        x  = torch.rot90(x, k= 1, dims=(3, 4))
-        y  = self.model(x)
-        y  = torch.rot90(y, k=-1, dims=(3, 4))
+        # Good practice: don't overwrite the input argument 'x'
+        x_rot = torch.rot90(x, k= 1, dims=(3, 4))
+        y_rot = self.model(x_rot)
+        y     = torch.rot90(y_rot, k=-1, dims=(3, 4))
         return y
     
     def predict(self, x): 
         with torch.no_grad():
-            x  = torch.rot90(x, k= 1, dims=(3, 4))
-            out  = self.model.predict(x)
-            out  = torch.rot90(out, k=-1, dims=(3, 4))
+            # Use a new variable for the rotated input
+            x_rot = torch.rot90(x, k= 1, dims=(3, 4))
             
-            mask    = (x > 0).to(torch.float32) 
-            mask    = mask.expand(-1, out.shape[1], -1, -1, -1)
+            # Predict in rotated space
+            out_rot = self.model.predict(x_rot)
+            
+            # Rotate output back to original space
+            out = torch.rot90(out_rot, k=-1, dims=(3, 4))
+            
+            # Create mask using un-rotated 'x'
+            mask = (x > 0).to(torch.float32) 
+            mask = mask.expand(-1, out.shape[1], -1, -1, -1)
         
             return out * mask
     

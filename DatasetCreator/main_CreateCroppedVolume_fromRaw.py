@@ -103,43 +103,51 @@ def get_N_crops(volume: np.ndarray, crop_size: int, N: int) -> list[np.ndarray]:
 
 # === CONFIGURATION ===
 
-# Original rock parameters
-repositories = [
-
+# Images of rocks used in train/validation/test with crops 120³
+# Link:    https://digitalporousmedia.org/published-datasets/drp.project.published.DRP-317
+# Authors: 	Rodrigo Neumann (IBM Research)
+#           MARIANE ANDREETA (IBM Research)
+#           Everton Lucas-Oliveira (IBM Research)
+# 
+"""
+original_shape  = (1000,1000,1000)
+solid_value     = 1
+crop_shape      = (120,120,120)
+repositories    = [
 # Bentheimer
 ("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Bentheimer_120_120_120/",
 "Bentheimer_2d25um_binary.raw",
 70),
 
 # Berea Buff
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaBuff_120_120_120/",
-#"BB_2d25um_binary.raw",
-#70),
+("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaBuff_120_120_120/",
+"BB_2d25um_binary.raw",
+70),
 
 # Castle Gate
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_CastleGate_120_120_120/",
-#"CastleGate_2d25um_binary.raw",
-#65),
+("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_CastleGate_120_120_120/",
+"CastleGate_2d25um_binary.raw",
+65),
 
 # Leopard
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Leopard_120_120_120/",
-#"Leopard_2d25um_binary.raw",
-#65),
+("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Leopard_120_120_120/",
+"Leopard_2d25um_binary.raw",
+65),
 
 # Berea Upper Gray 
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaUpperGray_120_120_120/",  
-#"BUG_2d25um_binary.raw",
-#55),
+("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaUpperGray_120_120_120/",  
+"BUG_2d25um_binary.raw",
+55),
 
 # Berea Sinter Gray 
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaSinterGray_120_120_120/",
-#"BSG_2d25um_binary.raw",
-#55),
+("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_BereaSinterGray_120_120_120/",
+"BSG_2d25um_binary.raw",
+55),
 
-# Berea (Not able to create: geometry out of scope for this resolution)
-#("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Berea_120_120_120/",
-#"Berea_2d25um_binary.raw",
-#55),
+# Berea
+("/home/gabriel/Desktop/Dissertacao/Simulations/Test_Oliveira_Berea_120_120_120/",
+"Berea_2d25um_binary.raw",
+55),
 
 
 
@@ -160,22 +168,35 @@ repositories = [
 #"BanderaGray_2d25um_binary.raw",
 #50),
 ]
+"""
 
+# Image used as ODD test for bigger geometries than those trained with
+# Link: https://digitalporousmedia.org/published-datasets/drp.project.published.DRP-247
+# Author: 	Amir Hossein Kohanpur (University of Illinois at Urbana-Champaign)
+#           Albert Valocchi (University of Illinois at Urbana-Champaign)
+#           Dustin Crandall (University of Illinois at Urbana-Champaign)
+original_shape  = (1200,1200,1200)
+solid_value     = 1
+crop_shape      = (256,256,256)
+repositories = [
+("../../LBPMSimulations_BiggerCrops/DRP-247/",
+"mtsimon-bi-1200_DRP-247.raw",
+55),
+]
 
 
 for base_dir, rock_name, target_percentage  in repositories:
         
-    original_shape  = (1000,1000,1000)
-    solid_value     = 1
+
     
     # Crops parameters
-    output_root         = base_dir+"Samples/"
+    output_root         = base_dir+f"Samples_{crop_shape[0]}_{crop_shape[1]}_{crop_shape[2]}/"
     suffle              = True
-    include_walls       =  True
+    include_walls       = True
     remove_isolated     = False
     create_n            = None  
     chunk_size          = 5   
-    crop_shape          = (120,120,120)
+    
     include_allocation  = False 
     
     # === PROCESSING ===
