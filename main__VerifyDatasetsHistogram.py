@@ -1,16 +1,17 @@
 import torch
-import numpy as np
+import numpy              as np
+import matplotlib.pyplot  as plt
+import os
+from   matplotlib         import patheffects
+import os
+import matplotlib.pyplot  as plt
+from   matplotlib.ticker  import PercentFormatter
+from   scipy.ndimage      import distance_transform_edt
+
 from Utilities import dataset_reader as dr
 from Utilities import velocity_usage as vu
 
-import matplotlib.pyplot as plt
-import os
-from matplotlib import patheffects # Add this import at the top of your script
-import os
-import matplotlib.pyplot as plt
-from matplotlib.ticker import PercentFormatter
 
-from   scipy.ndimage import distance_transform_edt
 
 
 def Plot_Velocity_Front_Comparison(datasets, sample_idx=0, slice_idx=60, component=0, save_mode=False, save_tag=""):

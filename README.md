@@ -298,12 +298,12 @@ for path, shape in data.items():
         print()
 ```
 
-The Start file can be visualized in Paraview by selecting type double (float64) and 4 components. As in the rest of the work, the components are sequenced as (Uz, Uy, Ux, Pr).
+The Start file can be visualized in Paraview by selecting type double (LittleEndian) and 4 components.The components are sequenced as (Ux, Uy, Uz, Pr).
 
 
 ### Creating streamlines
 
-This code helps to create streamlines directly from code using Paraview for a given created .vti:
+This code helps to create streamlines directly from code using Paraview for a given created .vti. Run it with pvpython after installing paraview.
 
 ```python
 import os

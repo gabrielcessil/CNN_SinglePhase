@@ -1,0 +1,10 @@
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 128 samples from ../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphPore_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 128 samples from ../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 276 samples from ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Leopard_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 284 samples from ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_CastleGate_SAug_DNorm.h5.
+  self._validate_file()
+/home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 224 samples from ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+  self._validate_file()

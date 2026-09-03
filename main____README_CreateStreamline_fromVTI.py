@@ -132,20 +132,20 @@ BASE_DIR = "./Example_Bentheimer/"
 FILE     = "output_data.vti"
 
 # 2. Recursively find all generated output_data.vti files
-target_files = []
+output_files = []
 for root, dirs, files in os.walk(BASE_DIR):
     for file in files:
         if file == FILE:
-            target_files.append(os.path.join(root, file))
+            output_files.append(os.path.join(root, file))
             
-if not target_files:
-    print("No output_data.vti files found. Did you run the prediction script first?")
+if not output_files:
+    print("No output_data.vti files found. Run the prediction script.")
     exit()
     
-print(f"Found {len(target_files)} VTI files. Beginning batch render...")
+print(f"Found {len(output_files)} VTI files. Beginning batch render...")
 
 # 3. Render and save each file in its native directory
-for vti_path in target_files:
+for vti_path in output_files:
     dir_name = os.path.dirname(vti_path)
     folder_name = os.path.basename(dir_name)
     
@@ -158,4 +158,4 @@ for vti_path in target_files:
         show_colorbar=True
     )
     
-print("\nBatch rendering complete!")
+print("\nBatch rendering complete")

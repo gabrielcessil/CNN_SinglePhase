@@ -21,16 +21,18 @@ def save_vti(filename, geometry, ux, uy, uz):
     
     # Map geometry: Solid (-1.0) and Pore (1.0). ParaView thresholds < 0.0 as solid.
     density_array = np.where(geometry, 1.0, -1.0)
-    grid.point_data["Density"] = density_array.flatten(order="F")
+    grid.point_data["Density"] = density_array.flatten(order="C")
     
     # Stack velocity vectors
     grid.point_data["Velocity"] = np.column_stack((
-        ux.flatten(order="F"), 
-        uy.flatten(order="F"), 
-        uz.flatten(order="F")
+        ux.flatten(order="C"), 
+        uy.flatten(order="C"), 
+        uz.flatten(order="C")
     ))
     
     grid.save(filename)
+
+
 
 paths = [
     "./Example_Bentheimer/",    
@@ -43,11 +45,11 @@ device      = "cpu"
 danny_model = Extended_DannyKo()
 
 # Z- component
-model_full_z_name = "./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth"
+model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
 # X- component
-model_full_x_name = "./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth"
+model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
 # P- component
-model_full_p_name = "./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth"
+model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
 
 # Concatenation model
 concat_model = SubModels_Composition(main_model=danny_model, 
