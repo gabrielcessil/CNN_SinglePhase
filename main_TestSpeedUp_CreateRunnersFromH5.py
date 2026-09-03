@@ -19,12 +19,12 @@ from Utilities import dataset_reader as dr
 # ============================================================================== 
 # Input Datasets 
 dataset_paths = [ 
-    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5" 
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5" 
 ] 
-n_samples = 1 
+n_samples = 100 
 shuffle   = False 
 # Base Output Directory 
-RESULTS_DIR = "./TestSpeedUp_Simulations_1e1/" 
+RESULTS_DIR = "../TestSpeedUp_Simulations_1e2/" 
 os.makedirs(RESULTS_DIR, exist_ok=True) 
 
 raw_file = "domain.raw" 
@@ -49,7 +49,7 @@ LBPM_EXEC       = "lbpm_permeability_simulator"
 
 analysis_interval       = 200 
 visualization_interval  = 1000000000 
-tolerance               = 1e-1 
+tolerance               = 1e-2
 
 # ============================================================================== 
 # MODEL INITIALIZATION (Done once for all datasets) 

@@ -35,9 +35,7 @@ import pyvista as pv
 
 # Adjust these imports according to your folder structure
 from Architectures.Unet   import Extended_DannyKo
-from Architectures.MSnet  import JavierSantos_Extended
 from Architectures.Models import SubModels_Composition
-from Utilities import start_handler as sh
 from Utilities import velocity_usage as vu
 
 def save_vti(filename, geometry, ux, uy, uz):
@@ -50,16 +48,18 @@ def save_vti(filename, geometry, ux, uy, uz):
 
     # Map geometry: Solid (-1.0) and Pore (1.0). ParaView thresholds < 0.0 as solid.
     density_array = np.where(geometry, 1.0, -1.0)
-    grid.point_data["Density"] = density_array.flatten(order="F")
+    grid.point_data["Density"] = density_array.flatten(order="C")
 
     # Stack velocity vectors
     grid.point_data["Velocity"] = np.column_stack((
-        ux.flatten(order="F"),
-        uy.flatten(order="F"),
-        uz.flatten(order="F")
+        ux.flatten(order="C"),
+        uy.flatten(order="C"),
+        uz.flatten(order="C")
     ))
 
     grid.save(filename)
+
+
 
 paths = [
     "./Example_Bentheimer/",
@@ -72,11 +72,11 @@ device      = "cpu"
 danny_model = Extended_DannyKo()
 
 # Z- component
-model_full_z_name = "./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth"
+model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
 # X- component
-model_full_x_name = "./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth"
+model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
 # P- component
-model_full_p_name = "./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth"
+model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
 
 # Concatenation model
 concat_model = SubModels_Composition(main_model=danny_model,
@@ -121,13 +121,13 @@ for path in paths:
 
         solid_vel_mag = np.sqrt(ux[~geometry]**2 + uy[~geometry]**2 + uz[~geometry]**2)
         if np.any(solid_vel_mag > 1e-6):
-            print(f"   [!] WARNING: Predicted velocity inside solid! Forcing to 0.0.")
+            print("   [!] WARNING: Predicted velocity inside solid! Forcing to 0.0.")
             ux[~geometry] = 0.0
             uy[~geometry] = 0.0
             uz[~geometry] = 0.0
 
         if np.max(np.abs(uz)) == 0.0 and np.max(np.abs(uy)) == 0.0 and np.max(np.abs(ux)) == 0.0:
-            print(f"   [!] WARNING: Predicted a completely ZERO velocity field.")
+            print("   [!] WARNING: Predicted a completely ZERO velocity field.")
 
         max_v = np.max(np.sqrt(ux**2 + uy**2 + uz**2))
         if max_v > 0.7:
@@ -163,10 +163,8 @@ This code also verifies LBM stability (checking the Mach limit) and computes the
 import numpy as np
 from scipy.ndimage import distance_transform_edt as edt
 import torch
-import matplotlib.pyplot as plt
 
 from Architectures.Unet   import Extended_DannyKo
-from Architectures.MSnet  import JavierSantos_Extended
 from Architectures.Models import SubModels_Composition
 
 from Utilities import start_handler as sh
@@ -174,12 +172,10 @@ from Utilities import velocity_usage as vu
 
 
 
-data = {
-      "./Example_BodyCenteredCubic/" : (32,32,32),
-      "./Example_SphPore/"           : (120,120,120),
-      "./Example_Bentheimer/"        : (120,120,120)
-        }
-
+paths = [
+      "./Example_Bentheimer/"
+]
+shape = (120,120,120)
 raw_file    = "domain.raw"
 device      = "cpu"
 
@@ -190,112 +186,111 @@ device      = "cpu"
 # ==============================================================================
 danny_model         = Extended_DannyKo()
 # Z- component
-model_full_z_name = "./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth"
+model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
 # X- component
-model_full_x_name = "./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth"
+model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
 # P- component
-model_full_p_name = "./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth"
+model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
 
 # Concatenation model (no main model)
-concat_model      = SubModels_Composition(main_model=danny_model,
+model             = SubModels_Composition(main_model=danny_model,
                                           z_name=model_full_z_name,
                                           x_name=model_full_x_name,
                                           p_name=model_full_p_name,
                                           device=device,
                                           is_eval=True)
 
-models = {"Composed Model ": concat_model}
 
 # ==============================================================================
 # MAIN
 # ==============================================================================
 
-for path, shape in data.items():
-
-    for model_name, model in models.items():
 
 
-        geometry     = (np.fromfile(path+raw_file, dtype=np.uint8).reshape(shape)>0)
-        geometry_edt = edt(geometry).astype("float32")
+for path in paths:
+
+    geometry     = (np.fromfile(path+raw_file, dtype=np.uint8).reshape(shape)>0)
+    geometry_edt = edt(geometry).astype("float32")
 
 
 
-        # Convert numpy array (Z,Y,X) to tensor (B=1,C=1, Z,Y,X)
-        geometry_edt = torch.from_numpy(geometry_edt).unsqueeze(0).unsqueeze(0)
+    # Convert numpy array (Z,Y,X) to tensor (B=1,C=1, Z,Y,X)
+    geometry_edt = torch.from_numpy(geometry_edt).unsqueeze(0).unsqueeze(0)
 
-        # Make prediction
-        print(f"Creating prediction for {path}{raw_file} with {model_name}")
-        pred    = model.predict(geometry_edt)
-        uz      = pred[0,0].numpy()
-        uy      = pred[0,1].numpy()
-        ux      = pred[0,2].numpy()
-        pr      = pred[0,3].numpy()
+    # Make prediction
+    print(f"Creating prediction for {path}{raw_file}:")
+    pred    = model.predict(geometry_edt)
+    uz      = pred[0,0].numpy()
+    uy      = pred[0,1].numpy()
+    ux      = pred[0,2].numpy()
+    pr      = pred[0,3].numpy()
 
-        # Denormalize predictions
-        pred    = vu.tensor_denorm(out=pred, inp=geometry_edt)
+    # Denormalize predictions
+    pred    = vu.tensor_denorm(out=pred, inp=geometry_edt)
 
-        # Prepare data for start file
-        uz      = pred[0,0].numpy()
-        uy      = pred[0,1].numpy()
-        ux      = pred[0,2].numpy()
-        pr      = pred[0,3].numpy()
+    # Prepare data for start file
+    uz      = pred[0,0].numpy()
+    uy      = pred[0,1].numpy()
+    ux      = pred[0,2].numpy()
+    pr      = pred[0,3].numpy()
 
-        # Sanity Checks
-        #  - Shape Matching
-        if not (uz.shape==shape and uy.shape==shape and ux.shape==shape and pr.shape==shape):
-            raise Exception("Prediction dont match specified .raw shape.")
-        #  - NaN and Inf presence check
-        if np.isnan(pred.numpy()).any() or np.isinf(pred.numpy()).any():
-            raise ValueError(f"Model {model_name} predicted NaN or Inf values!")
-        #  - Solid Matching (No-Slip Condition)
-        solid_vel_mag =  np.sqrt(ux[~geometry]**2 + uy[~geometry]**2 + uz[~geometry]**2)
+    # Sanity Checks
+    #  - Shape Matching
+    if not (uz.shape==shape and uy.shape==shape and ux.shape==shape and pr.shape==shape):
+        raise Exception("Prediction dont match specified .raw shape.")
+    #  - NaN and Inf presence check
+    if np.isnan(pred.numpy()).any() or np.isinf(pred.numpy()).any():
+        raise ValueError("Model predicted NaN or Inf values!")
+    #  - Solid Matching (No-Slip Condition)
+    solid_vel_mag =  np.sqrt(ux[~geometry]**2 + uy[~geometry]**2 + uz[~geometry]**2)
 
-        #  - LBM Stability Check (Max Velocity)
-        max_v   = np.max(np.sqrt(ux**2 + uy**2 + uz**2))
-        if max_v > 0.7:
-            raise ValueError(f"   {model_name} predicted a max velocity of {max_v:.4f}. LBPM may be unstable due to Mach limit.")
+    #  - LBM Stability Check (Max Velocity)
+    max_v   = np.max(np.sqrt(ux**2 + uy**2 + uz**2))
+    if max_v > 0.7:
+        raise ValueError(f"   Model predicted a max velocity of {max_v:.4f}. LBPM may be unstable due to Mach limit.")
 
-        # Write start file
-        print(f"   -> Creating Start.00000 file")
-        sh.write_start_raw(
-            filename = path+model_name+"/Start.00000",
-            ux=ux, uy=uy, uz=uz, pr=pr
-        )
+    # Write start file
+    print("   -> Creating Start.00000 file")
+    sh.write_start_raw(
+        filename = path+"Start.00000",
+        ux=ux, uy=uy, uz=uz, pr=pr
+    )
 
-        # Write the .db
-        print(f"   -> Creating .db file")
-        tau         = 1.5
-        Re          = 0.1
-        Dens        = 1.0
-        p_drop      = vu.pressure_calculation(geometry, tau=tau, Re=Re, Dens=Dens)
-        sh.write_lbpm_db(
-            db_name = path+model_name+"/start_pressure.db",
-            path    = "",
-            tau     = tau,
-            bc      = 3,
-            din     = 1.0,
-            dout    = 1.0-3*p_drop,
-            nproc   = (1, 1, 1),
-            n       = shape,
-            N       = shape,
-            analysis_interval = 1000,
-            tolerance         = 1e-6,
-            out_format        = "silo",
-            Start             = True
-        )
+    # Write the .db
+    print("   -> Creating .db file")
+    tau         = 1.5
+    Re          = 0.1
+    Dens        = 1.0
+    p_drop      = vu.pressure_calculation(geometry, tau=tau, Re=Re, Dens=Dens)
+    sh.write_lbpm_db(
+        db_name = path+"start_pressure.db",
+        path    = "",
+        tau     = tau,
+        bc      = 3,
+        din     = 1.0,
+        dout    = 1.0-3*p_drop,
+        nproc   = (1, 1, 1),
+        n       = shape,
+        N       = shape,
+        analysis_interval = 1000,
+        tolerance         = 1e-6,
+        out_format        = "silo",
+        Start             = True
+    )
 
-        # Rewrite .raw
-        geometry.astype(np.uint8).tofile(path+model_name+"/"+raw_file)
+    # Rewrite .raw
+    geometry.astype(np.uint8).tofile(path+raw_file)
 
-        # Use prediction and show primary statistics
-        pred_perm = vu.permeability_calculation(pred, geometry_edt, denorm=False)
-        perm_val = float(pred_perm)
-        print(f"   -> Perm | {perm_val:.6e}")
-        print(f"   -> Uz   | max: {uz.max():>13.6e} | mean: {uz.mean():>13.6e} | min: {uz.min():>13.6e}")
-        print(f"   -> Uy   | max: {uy.max():>13.6e} | mean: {uy.mean():>13.6e} | min: {uy.min():>13.6e}")
-        print(f"   -> Ux   | max: {ux.max():>13.6e} | mean: {ux.mean():>13.6e} | min: {ux.min():>13.6e}")
-        print(f"   -> Pr   | max: {pr.max():>13.6e} | mean: {pr.mean():>13.6e} | min: {pr.min():>13.6e}")
-        print()
+    # Use prediction and show primary statistics
+    pred_perm = vu.permeability_calculation(pred, geometry_edt, denorm=False)
+    perm_val = float(pred_perm)
+    print(f"   -> Perm | {perm_val:.6e}")
+    print(f"   -> Uz   | max: {uz.max():>13.6e} | mean: {uz.mean():>13.6e} | min: {uz.min():>13.6e}")
+    print(f"   -> Uy   | max: {uy.max():>13.6e} | mean: {uy.mean():>13.6e} | min: {uy.min():>13.6e}")
+    print(f"   -> Ux   | max: {ux.max():>13.6e} | mean: {ux.mean():>13.6e} | min: {ux.min():>13.6e}")
+    print(f"   -> Pr   | max: {pr.max():>13.6e} | mean: {pr.mean():>13.6e} | min: {pr.min():>13.6e}")
+    print()
+
 ```
 
 The Start file can be visualized in Paraview by selecting type double (LittleEndian) and 4 components.The components are sequenced as (Ux, Uy, Uz, Pr).
@@ -303,11 +298,13 @@ The Start file can be visualized in Paraview by selecting type double (LittleEnd
 
 ### Creating streamlines
 
-This code helps to create streamlines directly from code using Paraview for a given created .vti. Run it with pvpython after installing paraview.
+This code helps to create streamlines directly from code using Paraview for a given created .vti. Run it with 'pvpython --force-offscreen-rendering script.py' after installing paraview.
 
 ```python
 import os
 import glob
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 from paraview.simple import *
 
 def _config_camera(view):
@@ -351,7 +348,25 @@ def _build_custom_wireframe():
         tubes.append(t)
     return tubes
 
-def plot_streamlines(vti_filepath, output_image_path, solid_color=[0.5, 0.5, 0.5], show_colorbar=True):
+def create_combined_subplot(img1, img2, img3, output_path):
+    """Stitches 3 images side-by-side using matplotlib"""
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+
+    titles = ["Solid + Streamlines", "Volume + Streamlines", "Solid Only"]
+    image_paths = [img1, img2, img3]
+
+    for ax, img_path, title in zip(axes, image_paths, titles):
+        img = mpimg.imread(img_path)
+        ax.imshow(img)
+        ax.set_title(title, fontsize=18, fontname='serif', pad=10)
+        ax.axis('off')
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close(fig)
+    print(f" -> Saved Combined Subplot: {output_path}")
+
+def plot_and_save_views(vti_filepath, dir_name, folder_name, solid_color=[0.5, 0.5, 0.5], show_colorbar=True):
     ResetSession()
 
     reader = XMLImageDataReader(FileName=[vti_filepath])
@@ -370,38 +385,43 @@ def plot_streamlines(vti_filepath, output_image_path, solid_color=[0.5, 0.5, 0.5
     if hasattr(view, "EnableOSPRayDenoiser"):
         view.EnableOSPRayDenoiser = 1
 
+    # ==========================================
+    # PIPELINE 1: SOLID CLIPS
+    # ==========================================
     thresh = Threshold(Input=reader)
     thresh.Scalars = ['POINTS', 'Density']
     thresh.ThresholdMethod = 'Between'
     thresh.LowerThreshold = -1e10
     thresh.UpperThreshold = 0.0
 
-    clip1 = Clip(Input=thresh)
-    clip1.ClipType = 'Plane'
-    clip1.ClipType.Normal, clip1.ClipType.Origin = [-1.0, 0.0, 0.0], [59.5, 59.5, 59.5]
+    clip1 = Clip(Input=thresh); clip1.ClipType = 'Plane'; clip1.ClipType.Normal, clip1.ClipType.Origin = [-1.0, 0.0, 0.0], [59.5, 59.5, 59.5]
+    clip2 = Clip(Input=thresh); clip2.ClipType = 'Plane'; clip2.ClipType.Normal, clip2.ClipType.Origin = [0.0, 1.0, 0.0], [59.5, 59.5, 59.5]
+    clip3 = Clip(Input=thresh); clip3.ClipType = 'Plane'; clip3.ClipType.Normal, clip3.ClipType.Origin = [0.0, 0.0, 1.0], [59.5, 59.5, 59.5]
 
-    clip2 = Clip(Input=thresh)
-    clip2.ClipType = 'Plane'
-    clip2.ClipType.Normal, clip2.ClipType.Origin = [0.0, 1.0, 0.0], [59.5, 59.5, 59.5]
-
-    clip3 = Clip(Input=thresh)
-    clip3.ClipType = 'Plane'
-    clip3.ClipType.Normal, clip3.ClipType.Origin = [0.0, 0.0, 1.0], [59.5, 59.5, 59.5]
-
+    disp_clips = []
     for clip in [clip1, clip2, clip3]:
         disp = Show(clip, view)
         disp.ColorArrayName = ['POINTS', '']
         disp.DiffuseColor = solid_color
         disp.AmbientColor = solid_color
         disp.Opacity = 1.0
+        disp_clips.append(disp)
 
+    # ==========================================
+    # PIPELINE 2: WIREFRAME
+    # ==========================================
     wireframe_tubes = _build_custom_wireframe()
+    disp_frames = []
     for t in wireframe_tubes:
         disp_frame = Show(t, view)
         disp_frame.ColorArrayName = ['POINTS', '']
         disp_frame.DiffuseColor = [0.0, 0.0, 0.0]
         disp_frame.AmbientColor = [0.0, 0.0, 0.0]
+        disp_frames.append(disp_frame)
 
+    # ==========================================
+    # PIPELINE 3: STREAMLINES
+    # ==========================================
     stream = StreamTracer(Input=reader, SeedType='Point Cloud')
     stream.Vectors = ['POINTS', 'Velocity']
     stream.MaximumStreamlineLength = 1000.0
@@ -429,40 +449,87 @@ def plot_streamlines(vti_filepath, output_image_path, solid_color=[0.5, 0.5, 0.5
     else:
         disp_stream.SetScalarBarVisibility(view, False)
 
+    # ==========================================
+    # PIPELINE 4: VOLUME RENDERING
+    # ==========================================
+    disp_vol = Show(reader, view)
+    disp_vol.Representation = 'Volume'
+    ColorBy(disp_vol, ('POINTS', 'Velocity', 'Magnitude'))
+
+    # Setup opacity to go from Transparent (Velocity=0) to Opaque (Max Velocity)
+    vel_info = reader.PointData.GetArray('Velocity')
+    max_vel = vel_info.GetRange(-1)[1] if vel_info else 1.0 # -1 gets the magnitude range
+
+    velocityPWF = GetOpacityTransferFunction('Velocity')
+    # Points format: [Value, Opacity, Midpoint, Sharpness]
+    velocityPWF.Points = [0.0, 0.0, 0.5, 0.0,
+                          max_vel, 1.0, 0.5, 0.0]
+
     _config_camera(view)
 
+    # ==========================================
+    # RENDER & SAVE EXPORTS
+    # ==========================================
+    # Define paths
+    img1_path = os.path.join(dir_name, f"{folder_name}_1_Solid_Stream.png")
+    img2_path = os.path.join(dir_name, f"{folder_name}_2_Volume_Stream.png")
+    img3_path = os.path.join(dir_name, f"{folder_name}_3_Solid_Only.png")
+    img_combined = os.path.join(dir_name, f"{folder_name}_Combined.png")
+
+    # Image 1: Solid + Streamtrace
+    for d in disp_clips: d.Visibility = 1
+    disp_stream.Visibility = 1
+    disp_vol.Visibility = 0
     Render()
-    SaveScreenshot(output_image_path, view, ImageResolution=[1200, 1200], TransparentBackground=0)
+    SaveScreenshot(img1_path, view, ImageResolution=[1200, 1200], TransparentBackground=0)
+
+    # Image 2: Volume + Streamtrace
+    for d in disp_clips: d.Visibility = 0
+    disp_stream.Visibility = 1
+    disp_vol.Visibility = 1
+    Render()
+    SaveScreenshot(img2_path, view, ImageResolution=[1200, 1200], TransparentBackground=0)
+
+    # Image 3: Solid Only
+    for d in disp_clips: d.Visibility = 1
+    disp_stream.Visibility = 0
+    disp_vol.Visibility = 0
+    disp_stream.SetScalarBarVisibility(view, False) # Hide colorbar for solid only
+    Render()
+    SaveScreenshot(img3_path, view, ImageResolution=[1200, 1200], TransparentBackground=0)
+
+    # Combine into Subplot
+    create_combined_subplot(img1_path, img2_path, img3_path, img_combined)
 
 
-# 1. Define where to search for the VTI files
+# ==========================================
+# MAIN EXECUTION
+# ==========================================
 BASE_DIR = "./Example_Bentheimer/"
 FILE     = "output_data.vti"
 
-# 2. Recursively find all generated output_data.vti files
-target_files = []
+# Recursively find all generated output_data.vti files
+output_files = []
 for root, dirs, files in os.walk(BASE_DIR):
     for file in files:
         if file == FILE:
-            target_files.append(os.path.join(root, file))
+            output_files.append(os.path.join(root, file))
 
-if not target_files:
-    print("No output_data.vti files found. Did you run the prediction script first?")
+if not output_files:
+    print("No output_data.vti files found. Run the prediction script.")
     exit()
 
-print(f"Found {len(target_files)} VTI files. Beginning batch render...")
+print(f"Found {len(output_files)} VTI files. Beginning batch render...")
 
-# 3. Render and save each file in its native directory
-for vti_path in target_files:
+for vti_path in output_files:
     dir_name = os.path.dirname(vti_path)
     folder_name = os.path.basename(dir_name)
 
-    out_image = os.path.join(dir_name, f"streamlines_{folder_name}.png")
-    print(f" -> Rendering: {out_image}")
-
-    plot_streamlines(
+    print(f" -> Processing folder: {folder_name}")
+    plot_and_save_views(
         vti_filepath=vti_path,
-        output_image_path=out_image,
+        dir_name=dir_name,
+        folder_name=folder_name,
         show_colorbar=True
     )
 

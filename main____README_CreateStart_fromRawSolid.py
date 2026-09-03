@@ -1,10 +1,8 @@
 import numpy as np
 from scipy.ndimage import distance_transform_edt as edt
 import torch
-import matplotlib.pyplot as plt
 
 from Architectures.Unet   import Extended_DannyKo
-from Architectures.MSnet  import JavierSantos_Extended
 from Architectures.Models import SubModels_Composition
 
 from Utilities import start_handler as sh
@@ -80,7 +78,7 @@ for path in paths:
         raise Exception("Prediction dont match specified .raw shape.")
     #  - NaN and Inf presence check
     if np.isnan(pred.numpy()).any() or np.isinf(pred.numpy()).any():
-        raise ValueError(f"Model predicted NaN or Inf values!")
+        raise ValueError("Model predicted NaN or Inf values!")
     #  - Solid Matching (No-Slip Condition)
     solid_vel_mag =  np.sqrt(ux[~geometry]**2 + uy[~geometry]**2 + uz[~geometry]**2)
     
@@ -90,14 +88,14 @@ for path in paths:
         raise ValueError(f"   Model predicted a max velocity of {max_v:.4f}. LBPM may be unstable due to Mach limit.")
         
     # Write start file 
-    print(f"   -> Creating Start.00000 file")
+    print("   -> Creating Start.00000 file")
     sh.write_start_raw(
         filename = path+"Start.00000",
         ux=ux, uy=uy, uz=uz, pr=pr
     )
     
     # Write the .db
-    print(f"   -> Creating .db file")
+    print("   -> Creating .db file")
     tau         = 1.5
     Re          = 0.1
     Dens        = 1.0

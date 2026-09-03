@@ -20,4 +20,4 @@ conda activate env_cuda
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH # Makes the paths from conda environment visible
 # ---------------- Job Execution --------------------
 
-python main__VerifyDatasetProperties_CSV.py
+python main_TestSpeedUp_CreateRunnersFromH5.py

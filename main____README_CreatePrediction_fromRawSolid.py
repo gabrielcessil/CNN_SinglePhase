@@ -6,9 +6,7 @@ import pyvista as pv
 
 # Adjust these imports according to your folder structure
 from Architectures.Unet   import Extended_DannyKo
-from Architectures.MSnet  import JavierSantos_Extended
 from Architectures.Models import SubModels_Composition
-from Utilities import start_handler as sh
 from Utilities import velocity_usage as vu
 
 def save_vti(filename, geometry, ux, uy, uz):
@@ -94,13 +92,13 @@ for path in paths:
             
         solid_vel_mag = np.sqrt(ux[~geometry]**2 + uy[~geometry]**2 + uz[~geometry]**2)
         if np.any(solid_vel_mag > 1e-6):
-            print(f"   [!] WARNING: Predicted velocity inside solid! Forcing to 0.0.")
+            print("   [!] WARNING: Predicted velocity inside solid! Forcing to 0.0.")
             ux[~geometry] = 0.0
             uy[~geometry] = 0.0
             uz[~geometry] = 0.0
             
         if np.max(np.abs(uz)) == 0.0 and np.max(np.abs(uy)) == 0.0 and np.max(np.abs(ux)) == 0.0:
-            print(f"   [!] WARNING: Predicted a completely ZERO velocity field.")
+            print("   [!] WARNING: Predicted a completely ZERO velocity field.")
             
         max_v = np.max(np.sqrt(ux**2 + uy**2 + uz**2))
         if max_v > 0.7:

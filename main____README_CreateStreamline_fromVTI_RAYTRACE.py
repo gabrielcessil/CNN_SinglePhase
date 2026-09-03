@@ -1,10 +1,30 @@
 import os
 import glob
+import subprocess
+import shutil
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from paraview.simple import *
 import numpy as np
 from vtk.numpy_interface import dataset_adapter as dsa
+
+# ==============================================================================
+# ADDED: CUDA CHECK FOR OPTIX[cite: 2]
+# ==============================================================================
+def cuda_available():
+    if shutil.which("nvidia-smi") is None:
+        return False
+    try:
+        subprocess.check_output(
+            ["nvidia-smi", "-L"],
+            stderr=subprocess.DEVNULL,
+            text=True,
+            timeout=5,
+        )
+        return True
+    except Exception:
+        return False
+
 def _config_camera(view):
     view.CameraPosition = [-145.62500334229827, 258.12891252294224, 337.27420872575703]
     view.CameraFocalPoint = [54.23265623503145, 49.59503372400067, 63.19529352193284]
@@ -76,10 +96,28 @@ def plot_and_save_views(vti_filepath, dir_name, folder_name, solid_color=[0.5, 0
     view.Background = [1.0, 1.0, 1.0] 
     view.UseColorPaletteForBackground = 0
     view.OrientationAxesVisibility = 0
+    
+    # ==============================================================================
+    # ADDED: ADVANCED RAY TRACING SETTINGS[cite: 2]
+    # ==============================================================================
     view.EnableRayTracing = 1
-    view.Shadows = 0                
-    view.SamplesPerPixel = 40       
-    view.AmbientSamples = 2
+    view.SamplesPerPixel = 40
+    view.AmbientSamples = 5
+    
+    backend = "OSPRay pathtracer"
+    try:
+        available = list(view.GetProperty("BackEnd").GetAvailable())
+        if "OptiX pathtracer" in available and cuda_available():
+            backend = "OptiX pathtracer"
+    except Exception:
+        pass
+    
+    view.BackEnd = backend
+    print(f" -> Using ray-tracing backend: {backend}")
+    
+    view.Shadows = 1
+    if hasattr(view, "UseToneMapping"):
+        view.UseToneMapping = 0
     if hasattr(view, "EnableOSPRayDenoiser"):
         view.EnableOSPRayDenoiser = 1
 
@@ -103,6 +141,10 @@ def plot_and_save_views(vti_filepath, dir_name, folder_name, solid_color=[0.5, 0
         disp.DiffuseColor = solid_color
         disp.AmbientColor = solid_color
         disp.Opacity = 1.0
+        
+        # Ray-Tracing properties for the solid surface[cite: 2]
+        disp.Specular = 0.5
+        disp.SpecularPower = 10
         disp_clips.append(disp)
 
     # ==========================================
@@ -162,6 +204,11 @@ def plot_and_save_views(vti_filepath, dir_name, folder_name, solid_color=[0.5, 0
     # Points format: [Value, Opacity, Midpoint, Sharpness]
     velocityPWF.Points = [0.0, 0.0, 0.5, 0.0,   
                           max_vel, 1.0, 0.5, 0.0]
+
+    # Ray-Tracing material properties for the fluid volume[cite: 2]
+    disp_vol.Specular = 0.5
+    disp_vol.SpecularPower = 100
+    disp_vol.OSPRayMaterial = 'Water'
 
     _config_camera(view)
 
