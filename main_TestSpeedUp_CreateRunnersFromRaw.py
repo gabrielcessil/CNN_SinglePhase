@@ -49,16 +49,21 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 # ==============================================================================
 # MODEL INITIALIZATION (Done once for all datasets)
 # ==============================================================================
-danny_model = Extended_DannyKo()
-
-model = SubModels_Composition(
-    main_model=danny_model, 
-    z_name="./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth",
-    x_name="./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth", 
-    p_name="./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth", 
-    device=device, 
-    is_eval=True
-)
+danny_model = Extended_DannyKo() 
+# Z- component
+model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+# X- component
+model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+# P- component
+model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
+model = SubModels_Composition( 
+    main_model=danny_model,  
+    z_name=model_full_z_name, 
+    x_name=model_full_x_name,  
+    p_name=model_full_p_name,  
+    device=device,  
+    is_eval=True 
+) 
 
 # ==============================================================================
 # MAIN RUNNER SCRIPT INITIALIZATION (Created ONCE in the main folder)

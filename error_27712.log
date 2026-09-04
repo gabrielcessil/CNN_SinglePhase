@@ -1,2 +1,3 @@
 /home/gabriel.silveira/dissertacao/CNN_SinglePhase/Utilities/dataset_reader.py:121: UserWarning: Number of samples not provided.The dataset will consider 224 samples from ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5.
   self._validate_file()
+slurmstepd-node008: error: *** JOB 27712 ON node008 CANCELLED AT 2026-09-03T15:01:15 ***

@@ -1,7 +1,7 @@
 {
   "model_name":             "javier_z",
   "binary_input":           false,
-  "NN_dataset_folder":      "../NN_Datasets_Grad/",
+  "NN_dataset_folder":      "../NN_Datasets_Grad_Dist_40_5_55/",
   "dataset_train_name":     ["Train_Silveira_SphPore_SAug_DNorm.h5", "Train_Silveira_SphGrain_SAug_DNorm.h5"],
   "dataset_valid_name":     ["Valid_Silveira_SphPore_SAug_DNorm.h5", "Valid_Silveira_SphGrain_SAug_DNorm.h5"],
   "train_range":            null,

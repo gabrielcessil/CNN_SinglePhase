@@ -1,7 +1,7 @@
 {
   "model_name":             "danny_z",
   "binary_input":           true,
-  "NN_dataset_folder":      "../NN_Datasets_Grad/",
+  "NN_dataset_folder":      "../NN_Datasets_Grad_Dist_40_5_55/",
   "dataset_train_name":     ["Train_Danny_SphPore_DAug_DNorm.h5"],
   "dataset_valid_name":     ["Valid_Danny_SphPore_DAug_DNorm.h5"],
   "train_range":            null,

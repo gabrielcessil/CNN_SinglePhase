@@ -19,12 +19,25 @@ from Utilities import dataset_reader as dr
 # ============================================================================== 
 # Input Datasets 
 dataset_paths = [ 
-    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5" 
+    # Data for tolerance analysis (100 samples for tol 1e-2, 1e-4, 1e-6)
+    #"../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5" 
+    
+    # Data for cross-dataset analysis (30 samples for tol 1e-2) and Shuffle
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Leopard_SAug_DNorm.h5",
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5", 
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5",
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphPore_SAug_DNorm.h5",
+    "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5",
+    
 ] 
-n_samples = 100 
-shuffle   = False 
+n_samples = 30 
+shuffle   = True 
 # Base Output Directory 
-RESULTS_DIR = "../TestSpeedUp_Simulations_1e2/" 
+RESULTS_DIR = "../TestSpeedUp_Simulations_CrossDatasets/" 
 os.makedirs(RESULTS_DIR, exist_ok=True) 
 
 raw_file = "domain.raw" 
@@ -32,7 +45,7 @@ shape = (120, 120, 120)
 device = "cpu" 
 
 # SLURM & Job Settings 
-jobs_running    = 10 
+jobs_running    = 15 
 CHUNK_SIZE      = max(n_samples//jobs_running,1) 
 NTASKS          = 1 
 
@@ -55,12 +68,17 @@ tolerance               = 1e-2
 # MODEL INITIALIZATION (Done once for all datasets) 
 # ============================================================================== 
 danny_model = Extended_DannyKo() 
-
+# Z- component
+model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+# X- component
+model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+# P- component
+model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
 model = SubModels_Composition( 
     main_model=danny_model,  
-    z_name="./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth", 
-    x_name="./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth",  
-    p_name="./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth",  
+    z_name=model_full_z_name, 
+    x_name=model_full_x_name,  
+    p_name=model_full_p_name,  
     device=device,  
     is_eval=True 
 ) 
