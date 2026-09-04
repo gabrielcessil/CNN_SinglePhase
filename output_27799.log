@@ -1,0 +1,342 @@
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Leopard_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Leopard_SAug_DNorm
+
+  -> Setting up: Sample_0108 (Chunk 000)
+  -> Setting up: Sample_0146 (Chunk 000)
+  -> Setting up: Sample_0020 (Chunk 001)
+  -> Setting up: Sample_0178 (Chunk 001)
+  -> Setting up: Sample_0249 (Chunk 002)
+  -> Setting up: Sample_0010 (Chunk 002)
+  -> Setting up: Sample_0260 (Chunk 003)
+  -> Setting up: Sample_0074 (Chunk 003)
+  -> Setting up: Sample_0123 (Chunk 004)
+  -> Setting up: Sample_0101 (Chunk 004)
+  -> Setting up: Sample_0267 (Chunk 005)
+  -> Setting up: Sample_0078 (Chunk 005)
+  -> Setting up: Sample_0254 (Chunk 006)
+  -> Setting up: Sample_0073 (Chunk 006)
+  -> Setting up: Sample_0191 (Chunk 007)
+  -> Setting up: Sample_0164 (Chunk 007)
+  -> Setting up: Sample_0041 (Chunk 008)
+  -> Setting up: Sample_0193 (Chunk 008)
+  -> Setting up: Sample_0160 (Chunk 009)
+  -> Setting up: Sample_0206 (Chunk 009)
+  -> Setting up: Sample_0090 (Chunk 010)
+  -> Setting up: Sample_0168 (Chunk 010)
+  -> Setting up: Sample_0217 (Chunk 011)
+  -> Setting up: Sample_0199 (Chunk 011)
+  -> Setting up: Sample_0023 (Chunk 012)
+  -> Setting up: Sample_0209 (Chunk 012)
+  -> Setting up: Sample_0002 (Chunk 013)
+  -> Setting up: Sample_0149 (Chunk 013)
+  -> Setting up: Sample_0216 (Chunk 014)
+  -> Setting up: Sample_0163 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Leopard_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_CastleGate_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_CastleGate_SAug_DNorm
+
+  -> Setting up: Sample_0191 (Chunk 000)
+  -> Setting up: Sample_0260 (Chunk 000)
+  -> Setting up: Sample_0262 (Chunk 001)
+  -> Setting up: Sample_0180 (Chunk 001)
+  -> Setting up: Sample_0238 (Chunk 002)
+  -> Setting up: Sample_0149 (Chunk 002)
+  -> Setting up: Sample_0034 (Chunk 003)
+  -> Setting up: Sample_0236 (Chunk 003)
+  -> Setting up: Sample_0164 (Chunk 004)
+  -> Setting up: Sample_0009 (Chunk 004)
+  -> Setting up: Sample_0080 (Chunk 005)
+  -> Setting up: Sample_0256 (Chunk 005)
+  -> Setting up: Sample_0247 (Chunk 006)
+  -> Setting up: Sample_0135 (Chunk 006)
+  -> Setting up: Sample_0040 (Chunk 007)
+  -> Setting up: Sample_0195 (Chunk 007)
+  -> Setting up: Sample_0215 (Chunk 008)
+  -> Setting up: Sample_0190 (Chunk 008)
+  -> Setting up: Sample_0188 (Chunk 009)
+  -> Setting up: Sample_0045 (Chunk 009)
+  -> Setting up: Sample_0240 (Chunk 010)
+  -> Setting up: Sample_0066 (Chunk 010)
+  -> Setting up: Sample_0171 (Chunk 011)
+  -> Setting up: Sample_0070 (Chunk 011)
+  -> Setting up: Sample_0208 (Chunk 012)
+  -> Setting up: Sample_0131 (Chunk 012)
+  -> Setting up: Sample_0209 (Chunk 013)
+  -> Setting up: Sample_0017 (Chunk 013)
+  -> Setting up: Sample_0151 (Chunk 014)
+  -> Setting up: Sample_0137 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_CastleGate_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaSinterGray_SAug_DNorm
+
+  -> Setting up: Sample_0183 (Chunk 000)
+  -> Setting up: Sample_0007 (Chunk 000)
+  -> Setting up: Sample_0067 (Chunk 001)
+  -> Setting up: Sample_0126 (Chunk 001)
+  -> Setting up: Sample_0159 (Chunk 002)
+  -> Setting up: Sample_0182 (Chunk 002)
+  -> Setting up: Sample_0143 (Chunk 003)
+  -> Setting up: Sample_0125 (Chunk 003)
+  -> Setting up: Sample_0174 (Chunk 004)
+  -> Setting up: Sample_0033 (Chunk 004)
+  -> Setting up: Sample_0171 (Chunk 005)
+  -> Setting up: Sample_0081 (Chunk 005)
+  -> Setting up: Sample_0140 (Chunk 006)
+  -> Setting up: Sample_0060 (Chunk 006)
+  -> Setting up: Sample_0152 (Chunk 007)
+  -> Setting up: Sample_0113 (Chunk 007)
+  -> Setting up: Sample_0166 (Chunk 008)
+  -> Setting up: Sample_0091 (Chunk 008)
+  -> Setting up: Sample_0154 (Chunk 009)
+  -> Setting up: Sample_0073 (Chunk 009)
+  -> Setting up: Sample_0107 (Chunk 010)
+  -> Setting up: Sample_0027 (Chunk 010)
+  -> Setting up: Sample_0015 (Chunk 011)
+  -> Setting up: Sample_0122 (Chunk 011)
+  -> Setting up: Sample_0169 (Chunk 012)
+  -> Setting up: Sample_0077 (Chunk 012)
+  -> Setting up: Sample_0111 (Chunk 013)
+  -> Setting up: Sample_0189 (Chunk 013)
+  -> Setting up: Sample_0042 (Chunk 014)
+  -> Setting up: Sample_0034 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaSinterGray_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaUpperGray_SAug_DNorm
+
+  -> Setting up: Sample_0023 (Chunk 000)
+  -> Setting up: Sample_0058 (Chunk 000)
+  -> Setting up: Sample_0000 (Chunk 001)
+  -> Setting up: Sample_0107 (Chunk 001)
+  -> Setting up: Sample_0175 (Chunk 002)
+  -> Setting up: Sample_0189 (Chunk 002)
+  -> Setting up: Sample_0040 (Chunk 003)
+  -> Setting up: Sample_0132 (Chunk 003)
+  -> Setting up: Sample_0125 (Chunk 004)
+  -> Setting up: Sample_0122 (Chunk 004)
+  -> Setting up: Sample_0129 (Chunk 005)
+  -> Setting up: Sample_0120 (Chunk 005)
+  -> Setting up: Sample_0191 (Chunk 006)
+  -> Setting up: Sample_0070 (Chunk 006)
+  -> Setting up: Sample_0214 (Chunk 007)
+  -> Setting up: Sample_0066 (Chunk 007)
+  -> Setting up: Sample_0198 (Chunk 008)
+  -> Setting up: Sample_0131 (Chunk 008)
+  -> Setting up: Sample_0001 (Chunk 009)
+  -> Setting up: Sample_0138 (Chunk 009)
+  -> Setting up: Sample_0004 (Chunk 010)
+  -> Setting up: Sample_0009 (Chunk 010)
+  -> Setting up: Sample_0076 (Chunk 011)
+  -> Setting up: Sample_0030 (Chunk 011)
+  -> Setting up: Sample_0021 (Chunk 012)
+  -> Setting up: Sample_0151 (Chunk 012)
+  -> Setting up: Sample_0069 (Chunk 013)
+  -> Setting up: Sample_0081 (Chunk 013)
+  -> Setting up: Sample_0186 (Chunk 014)
+  -> Setting up: Sample_0223 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaUpperGray_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaBuff_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaBuff_SAug_DNorm
+
+  -> Setting up: Sample_0076 (Chunk 000)
+  -> Setting up: Sample_0012 (Chunk 000)
+  -> Setting up: Sample_0151 (Chunk 001)
+  -> Setting up: Sample_0198 (Chunk 001)
+  -> Setting up: Sample_0200 (Chunk 002)
+  -> Setting up: Sample_0193 (Chunk 002)
+  -> Setting up: Sample_0183 (Chunk 003)
+  -> Setting up: Sample_0108 (Chunk 003)
+  -> Setting up: Sample_0069 (Chunk 004)
+  -> Setting up: Sample_0104 (Chunk 004)
+  -> Setting up: Sample_0046 (Chunk 005)
+  -> Setting up: Sample_0035 (Chunk 005)
+  -> Setting up: Sample_0167 (Chunk 006)
+  -> Setting up: Sample_0063 (Chunk 006)
+  -> Setting up: Sample_0078 (Chunk 007)
+  -> Setting up: Sample_0138 (Chunk 007)
+  -> Setting up: Sample_0206 (Chunk 008)
+  -> Setting up: Sample_0176 (Chunk 008)
+  -> Setting up: Sample_0060 (Chunk 009)
+  -> Setting up: Sample_0115 (Chunk 009)
+  -> Setting up: Sample_0148 (Chunk 010)
+  -> Setting up: Sample_0023 (Chunk 010)
+  -> Setting up: Sample_0087 (Chunk 011)
+  -> Setting up: Sample_0105 (Chunk 011)
+  -> Setting up: Sample_0050 (Chunk 012)
+  -> Setting up: Sample_0194 (Chunk 012)
+  -> Setting up: Sample_0121 (Chunk 013)
+  -> Setting up: Sample_0158 (Chunk 013)
+  -> Setting up: Sample_0056 (Chunk 014)
+  -> Setting up: Sample_0136 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaBuff_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Berea_SAug_DNorm
+
+  -> Setting up: Sample_0080 (Chunk 000)
+  -> Setting up: Sample_0153 (Chunk 000)
+  -> Setting up: Sample_0007 (Chunk 001)
+  -> Setting up: Sample_0098 (Chunk 001)
+  -> Setting up: Sample_0113 (Chunk 002)
+  -> Setting up: Sample_0033 (Chunk 002)
+  -> Setting up: Sample_0034 (Chunk 003)
+  -> Setting up: Sample_0143 (Chunk 003)
+  -> Setting up: Sample_0045 (Chunk 004)
+  -> Setting up: Sample_0131 (Chunk 004)
+  -> Setting up: Sample_0107 (Chunk 005)
+  -> Setting up: Sample_0066 (Chunk 005)
+  -> Setting up: Sample_0101 (Chunk 006)
+  -> Setting up: Sample_0127 (Chunk 006)
+  -> Setting up: Sample_0140 (Chunk 007)
+  -> Setting up: Sample_0022 (Chunk 007)
+  -> Setting up: Sample_0048 (Chunk 008)
+  -> Setting up: Sample_0194 (Chunk 008)
+  -> Setting up: Sample_0111 (Chunk 009)
+  -> Setting up: Sample_0081 (Chunk 009)
+  -> Setting up: Sample_0118 (Chunk 010)
+  -> Setting up: Sample_0165 (Chunk 010)
+  -> Setting up: Sample_0084 (Chunk 011)
+  -> Setting up: Sample_0114 (Chunk 011)
+  -> Setting up: Sample_0012 (Chunk 012)
+  -> Setting up: Sample_0152 (Chunk 012)
+  -> Setting up: Sample_0186 (Chunk 013)
+  -> Setting up: Sample_0095 (Chunk 013)
+  -> Setting up: Sample_0068 (Chunk 014)
+  -> Setting up: Sample_0019 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Berea_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Bentheimer_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm
+
+  -> Setting up: Sample_0159 (Chunk 000)
+  -> Setting up: Sample_0057 (Chunk 000)
+  -> Setting up: Sample_0179 (Chunk 001)
+  -> Setting up: Sample_0048 (Chunk 001)
+  -> Setting up: Sample_0276 (Chunk 002)
+  -> Setting up: Sample_0105 (Chunk 002)
+  -> Setting up: Sample_0164 (Chunk 003)
+  -> Setting up: Sample_0299 (Chunk 003)
+  -> Setting up: Sample_0294 (Chunk 004)
+  -> Setting up: Sample_0304 (Chunk 004)
+  -> Setting up: Sample_0167 (Chunk 005)
+  -> Setting up: Sample_0180 (Chunk 005)
+  -> Setting up: Sample_0189 (Chunk 006)
+  -> Setting up: Sample_0274 (Chunk 006)
+  -> Setting up: Sample_0387 (Chunk 007)
+  -> Setting up: Sample_0070 (Chunk 007)
+  -> Setting up: Sample_0265 (Chunk 008)
+  -> Setting up: Sample_0042 (Chunk 008)
+  -> Setting up: Sample_0201 (Chunk 009)
+  -> Setting up: Sample_0111 (Chunk 009)
+  -> Setting up: Sample_0129 (Chunk 010)
+  -> Setting up: Sample_0071 (Chunk 010)
+  -> Setting up: Sample_0359 (Chunk 011)
+  -> Setting up: Sample_0349 (Chunk 011)
+  -> Setting up: Sample_0029 (Chunk 012)
+  -> Setting up: Sample_0216 (Chunk 012)
+  -> Setting up: Sample_0031 (Chunk 013)
+  -> Setting up: Sample_0002 (Chunk 013)
+  -> Setting up: Sample_0337 (Chunk 014)
+  -> Setting up: Sample_0079 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphPore_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm
+
+  -> Setting up: Sample_0014 (Chunk 000)
+  -> Setting up: Sample_0100 (Chunk 000)
+  -> Setting up: Sample_0016 (Chunk 001)
+  -> Setting up: Sample_0005 (Chunk 001)
+  -> Setting up: Sample_0029 (Chunk 002)
+  -> Setting up: Sample_0056 (Chunk 002)
+  -> Setting up: Sample_0013 (Chunk 003)
+  -> Setting up: Sample_0042 (Chunk 003)
+  -> Setting up: Sample_0098 (Chunk 004)
+  -> Setting up: Sample_0120 (Chunk 004)
+  -> Setting up: Sample_0007 (Chunk 005)
+  -> Setting up: Sample_0058 (Chunk 005)
+  -> Setting up: Sample_0119 (Chunk 006)
+  -> Setting up: Sample_0044 (Chunk 006)
+  -> Setting up: Sample_0045 (Chunk 007)
+  -> Setting up: Sample_0038 (Chunk 007)
+  -> Setting up: Sample_0040 (Chunk 008)
+  -> Setting up: Sample_0076 (Chunk 008)
+  -> Setting up: Sample_0046 (Chunk 009)
+  -> Setting up: Sample_0097 (Chunk 009)
+  -> Setting up: Sample_0047 (Chunk 010)
+  -> Setting up: Sample_0118 (Chunk 010)
+  -> Setting up: Sample_0103 (Chunk 011)
+  -> Setting up: Sample_0009 (Chunk 011)
+  -> Setting up: Sample_0079 (Chunk 012)
+  -> Setting up: Sample_0122 (Chunk 012)
+  -> Setting up: Sample_0000 (Chunk 013)
+  -> Setting up: Sample_0101 (Chunk 013)
+  -> Setting up: Sample_0030 (Chunk 014)
+  -> Setting up: Sample_0085 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/submit_all_chained.sh
+
+================================================================================
+Loading Dataset: ../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5 ...
+================================================================================
+Processing 30 samples into 15 chunks.
+Outputs routed to: ../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphGrain_SAug_DNorm
+
+  -> Setting up: Sample_0000 (Chunk 000)
+  -> Setting up: Sample_0053 (Chunk 000)
+  -> Setting up: Sample_0112 (Chunk 001)
+  -> Setting up: Sample_0030 (Chunk 001)
+  -> Setting up: Sample_0088 (Chunk 002)
+  -> Setting up: Sample_0052 (Chunk 002)
+  -> Setting up: Sample_0050 (Chunk 003)
+  -> Setting up: Sample_0117 (Chunk 003)
+  -> Setting up: Sample_0037 (Chunk 004)
+  -> Setting up: Sample_0123 (Chunk 004)
+  -> Setting up: Sample_0094 (Chunk 005)
+  -> Setting up: Sample_0011 (Chunk 005)
+  -> Setting up: Sample_0042 (Chunk 006)
+  -> Setting up: Sample_0041 (Chunk 006)
+  -> Setting up: Sample_0070 (Chunk 007)
+  -> Setting up: Sample_0001 (Chunk 007)
+  -> Setting up: Sample_0029 (Chunk 008)
+  -> Setting up: Sample_0085 (Chunk 008)
+  -> Setting up: Sample_0054 (Chunk 009)
+  -> Setting up: Sample_0098 (Chunk 009)
+  -> Setting up: Sample_0058 (Chunk 010)
+  -> Setting up: Sample_0073 (Chunk 010)
+  -> Setting up: Sample_0079 (Chunk 011)
+  -> Setting up: Sample_0103 (Chunk 011)
+  -> Setting up: Sample_0092 (Chunk 012)
+  -> Setting up: Sample_0033 (Chunk 012)
+  -> Setting up: Sample_0091 (Chunk 013)
+  -> Setting up: Sample_0022 (Chunk 013)
+  -> Setting up: Sample_0024 (Chunk 014)
+  -> Setting up: Sample_0034 (Chunk 014)
+Completed dataset! Master chain script created at: ../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphGrain_SAug_DNorm/submit_all_chained.sh
