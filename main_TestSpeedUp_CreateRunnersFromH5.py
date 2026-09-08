@@ -60,7 +60,7 @@ GRES_STR        = ""
 MPI_PATH        = "mpirun" 
 LBPM_EXEC       = "lbpm_permeability_simulator" 
 
-analysis_interval       = 200 
+analysis_interval       = 50 
 visualization_interval  = 1000000000 
 tolerance               = 1e-2
 
