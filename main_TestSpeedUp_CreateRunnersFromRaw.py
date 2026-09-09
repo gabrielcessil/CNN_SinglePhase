@@ -23,7 +23,7 @@ n_samples = None
 shuffle = False
 
 # Base Output Directory
-RESULTS_DIR = "../TestSpeedUp_Simulations_BiggerCrops/DRP247_256_256_256/"
+RESULTS_DIR = "../TestSpeedUp_Simulations_BiggerCrops/DRP247_256_256_256(2)/"
 visualization_interval = 1000000000
 tolerance = 1e-2
 
@@ -31,8 +31,9 @@ raw_file = "domain.raw"
 device = "cpu"
 
 # SLURM & Job Settings
-jobs_running = 15
-NTASKS = 1
+jobs_running = 64
+NTASKS       = 1
+mem          = 30 * 8 * shape[0]**3 // (1024**3) # GB
 
 LBPM_VERSION = "lbpm/cpu/lbpm_init_07f0eef"
 PARTITION = "close_cpu"
@@ -129,7 +130,8 @@ for chunk_idx in range(jobs_running):
         c_f.write(f"#SBATCH -e perm_chunk_{chunk_str_id}_%j.err\n")
         c_f.write(f"#SBATCH --ntasks={NTASKS}\n")
         c_f.write("#SBATCH --nodelist=node[008-020]\n")
-        c_f.write("#SBATCH --cpus-per-task=1\n\n")
+        c_f.write("#SBATCH --cpus-per-task=4\n\n")
+        c_f.write(f"#SBATCH --mem={mem}G\n") 
         c_f.write("# ---------------- Environment Setup ----------------\n")
         c_f.write("module load $LBPM_VERSION\n\n")
         c_f.write(f"echo \"=== Starting Chunk {chunk_str_id} (Samples {start_idx} to {end_idx - 1}) ===\"\n\n")

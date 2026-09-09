@@ -18,8 +18,8 @@ main_folders = {
 }
 """
 main_folders = {
-    "Sph. Pore":      "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/",
-    "Sph. Grain":  "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphGrain_SAug_DNorm/",
+    "Spherical Pores":      "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/",
+    "Spherical Grains":  "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphGrain_SAug_DNorm/",
     "Leopard": "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Leopard_SAug_DNorm/",
     "CastleGate":      "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_CastleGate_SAug_DNorm/",
     "Berea Upper Gray":  "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
@@ -29,24 +29,14 @@ main_folders = {
     "Bentheimer": "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm/",
     
 }
-# Academic custom palette matching your preference
-"""dataset_colors = {
-    "Tol 1%": "#4c72b0",
-    "Tol 0.01%":  "#55a868",
-    "Tol 0.0001%": "#c44e52"
-}"""
 
-dataset_colors = {
-    "Sph. Pore":      "black",
-    "Sph. Grain":  "black",
-    "Leopard": "black",
-    "CastleGate":      "black",
-    "Berea Upper Gray":  "black",
-    "Berea Sinter Gray": "black",
-    "Berea Buff":      "black",
-    "Berea":  "black",
-    "Bentheimer": "black",
-    }
+
+
+dataset_colors = {}
+for key in main_folders.keys():
+    if key not in dataset_colors:
+        dataset_colors[key] = "black"
+        
 
 def get_max_timestep_from_vis(folder_path):
     p = Path(folder_path)
@@ -225,7 +215,7 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
             )
 
         # 3. Formatting and Scientific Frame
-        ax.set_ylabel("Speed-up Ratio ($T_{\\text{standard}} / T_{\\text{NN-started}}$)", fontweight="bold")
+        ax.set_ylabel("Speed-up Ratio", fontweight="bold")
         ax.set_xlabel("Tolerance Configuration", fontweight="bold")
         
         #ax.set_yscale('log')

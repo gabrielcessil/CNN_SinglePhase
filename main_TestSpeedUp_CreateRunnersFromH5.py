@@ -48,10 +48,12 @@ device = "cpu"
 jobs_running    = 15 
 CHUNK_SIZE      = max(n_samples//jobs_running,1) 
 NTASKS          = 1 
+mem             = 30 * 8 * shape[0]**3 / (1024**3) # GB
 
 #LBPM_VERSION    = "lbpm/gpu/lbpm_fork_965bd0d" 
 #PARTITION       = "all_gpu" 
 #GRES_STR        = "gpu:k40m:1" 
+#mem          = 30 * 8 * shape[0]**3 / (1024**3) # GB
 
 LBPM_VERSION    = "lbpm/cpu/lbpm_init_07f0eef" 
 PARTITION       = "close_cpu" 
@@ -158,7 +160,7 @@ for dataset_path in dataset_paths:
             c_f.write(f"#SBATCH --ntasks={NTASKS}\n") 
             c_f.write("#SBATCH --nodelist=node[008-020]\n") 
             c_f.write("#SBATCH --cpus-per-task=1\n") 
-            c_f.write("#SBATCH --mem=4G\n") 
+            c_f.write(f"#SBATCH --mem={mem}G\n")  
              
              
             c_f.write("# ---------------- Environment Setup ----------------\n") 
