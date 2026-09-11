@@ -1,269 +1,188 @@
 import os
-import shutil
-import subprocess
+import sys
 import gc
+import re
+import json
+import subprocess
+import shutil
+import concurrent.futures
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 
-from paraview.simple import *
-
-
-# ==============================================================================
-# CONFIGURATION
-# ==============================================================================
-
-BASE_DIR = "./Example_Bentheimer/"
-FILE = "output_data.vti"
-
-OUTPUT_DIR = "./rotation_video/"
-FRAME_DIR = os.path.join(OUTPUT_DIR, "frames")
-VIDEO_FILE = os.path.join(OUTPUT_DIR, "rotating_views.mp4")
-
-# Video
-N_FRAMES = 120
-FPS = 30
-ROTATION_DEG = 360.0
-
-# Render resolution of EACH individual view
-VIEW_RESOLUTION = [1200, 1200]
-
-# Final side-by-side resolution is approximately 3600 x 1200
-DPI = 120
-
-# Fixed camera: this is NEVER changed during the animation.
-CAMERA_POSITION = [-145.62500334229827, 258.12891252294224, 337.27420872575703]
-CAMERA_FOCAL_POINT = [54.23265623503145, 49.59503372400067, 63.19529352193284]
-CAMERA_VIEW_UP = [0.28077913995658044, 0.8513959344245512, -0.4430440580919559]
-CAMERA_VIEW_ANGLE = 30
-CAMERA_PARALLEL_SCALE = 103.05702305034819
-
-# Object rotation center
-ROTATION_CENTER = np.array([59.5, 59.5, 59.5], dtype=float)
-
-SOLID_COLOR = [0.5, 0.5, 0.5]
-
-SHOW_COLORBAR = True
-
+# We only import matplotlib inside the worker to prevent orchestrator overhead
+if '--worker' in sys.argv:
+    import matplotlib.pyplot as plt
+    import matplotlib.image as mpimg
 
 # ==============================================================================
-# OPTIONAL CUDA / OPTIX CHECK
+# 1. CONDITIONAL PARAVIEW IMPORT
 # ==============================================================================
+if '--worker' in sys.argv or '--preview' in sys.argv:
+    from paraview.simple import *
 
+# ==============================================================================
+# 2. IMMEDIATE-MODE RENDERER (Worker Mode)
+# ==============================================================================
 def cuda_available():
     if shutil.which("nvidia-smi") is None:
         return False
-
     try:
         subprocess.check_output(
-            ["nvidia-smi", "-L"],
-            stderr=subprocess.DEVNULL,
-            text=True,
-            timeout=5,
+            ["nvidia-smi", "-L"], stderr=subprocess.DEVNULL, text=True, timeout=5
         )
         return True
     except Exception:
         return False
+    
+class ParaViewRenderer:
+    def __init__(self, config):
+        self.config = config
+        self.view = None
+        self.lut = None
+        self.pwf = None
 
+    def _setup_view(self):
+        for v in GetRenderViews():
+            try: Delete(v)
+            except: pass
+            gc.collect()
+        
+        self.view = CreateRenderView()
+        self.view.ViewSize = self.config['resolution']
+        
+        # Strict White Background
+        self.view.Background = [1.0, 1.0, 1.0]
+        self.view.Background2 = [1.0, 1.0, 1.0]
+        self.view.OrientationAxesVisibility = 0
+        
+        if hasattr(self.view, 'OSPRayBackgroundMode'):
+            self.view.OSPRayBackgroundMode = 'Color'
+        if hasattr(self.view, 'EnvironmentalBG'):
+            self.view.EnvironmentalBG = [1.0, 1.0, 1.0]
+        
+        # Raytracing Setup
+        self.view.EnableRayTracing = 1
+        self.view.SamplesPerPixel = self.config.get('samples', 5)
+        self.view.AmbientSamples = self.config.get('ambient_samples', 5)
+        
+        backend = "OSPRay pathtracer"
+        try:
+            available = list(self.view.GetProperty("BackEnd").GetAvailable())
+            if "OptiX pathtracer" in available and cuda_available():
+                backend = "OptiX pathtracer"
+        except Exception:
+            pass
+        
+        self.view.BackEnd = backend
+        self.view.Shadows = 1
+        
+        if hasattr(self.view, "UseToneMapping"):
+            self.view.UseToneMapping = 0
+        if hasattr(self.view, "EnableOSPRayDenoiser"):
+            self.view.EnableOSPRayDenoiser = 1
 
-# ==============================================================================
-# CAMERA
-# ==============================================================================
+    def render_file(self, file_path, output_filename, frame_idx, override_camera_pos, override_view_up):
+        self._setup_view()
+        
+        # 1. Load Data
+        if file_path.endswith('.pvti'):
+            reader = XMLPartitionedImageDataReader(FileName=[file_path])
+        else:
+            reader = XMLImageDataReader(FileName=[file_path])
+            
+        reader.PointArrayStatus = [self.config['scalar_name'], self.config['vector_name']]
+        reader.UpdatePipeline()
+        
+        bounds = reader.GetDataInformation().GetBounds()
+        center = [(bounds[0] + bounds[1])/2, (bounds[2] + bounds[3])/2, (bounds[4] + bounds[5])/2]
+        
+        objects_to_delete = [reader]
+        
+        # ----------------------------------------------------------------------
+        # SOLID (Crystal Glass Shell)
+        # ----------------------------------------------------------------------
+        thresh = Threshold(Input=reader)
+        thresh.Scalars = ['POINTS', self.config['scalar_name']]
+        thresh.ThresholdMethod = 'Between'
+        thresh.LowerThreshold = -1e10
+        thresh.UpperThreshold = 0.0
+        
+        clip1 = Clip(Input=thresh)
+        clip1.ClipType = "Plane"
+        clip1.ClipType.Normal = [-1.0, 0.0, 0.0]
+        clip1.ClipType.Origin = center
 
-def configure_static_camera(view):
-    """
-    The camera remains completely static for the whole animation.
+        clip2 = Clip(Input=thresh)
+        clip2.ClipType = "Plane"
+        clip2.ClipType.Normal = [0.0, 1.0, 0.0]
+        clip2.ClipType.Origin = center
 
-    The rotation is applied to the rendered objects, NOT to the camera.
-    """
-    view.CameraPosition = CAMERA_POSITION
-    view.CameraFocalPoint = CAMERA_FOCAL_POINT
-    view.CameraViewUp = CAMERA_VIEW_UP
-    view.CameraViewAngle = CAMERA_VIEW_ANGLE
-    view.CameraParallelScale = CAMERA_PARALLEL_SCALE
-    view.CenterOfRotation = ROTATION_CENTER.tolist()
-
-
-# ==============================================================================
-# WIREFRAME
-# ==============================================================================
-
-def build_custom_wireframe():
-    wireframe_coords = [
-        ([59.5, 59.5, 59.5], [0.0, 59.5, 59.5]),
-        ([59.5, 59.5, 59.5], [59.5, 119.0, 59.5]),
-        ([59.5, 59.5, 59.5], [59.5, 59.5, 119.0]),
-        ([0.0, 59.5, 59.5], [0.0, 119.0, 59.5]),
-        ([0.0, 59.5, 59.5], [0.0, 59.5, 119.0]),
-        ([59.5, 119.0, 59.5], [0.0, 119.0, 59.5]),
-        ([59.5, 119.0, 59.5], [59.5, 119.0, 119.0]),
-        ([59.5, 59.5, 119.0], [0.0, 59.5, 119.0]),
-        ([59.5, 59.5, 119.0], [59.5, 119.0, 119.0]),
-        ([0.0, 0.0, 0.0], [119.0, 0.0, 0.0]),
-        ([0.0, 119.0, 0.0], [119.0, 119.0, 0.0]),
-        ([0.0, 0.0, 119.0], [119.0, 0.0, 119.0]),
-        ([0.0, 0.0, 0.0], [0.0, 119.0, 0.0]),
-        ([119.0, 0.0, 0.0], [119.0, 119.0, 0.0]),
-        ([119.0, 0.0, 119.0], [119.0, 119.0, 119.0]),
-        ([0.0, 0.0, 0.0], [0.0, 0.0, 119.0]),
-        ([119.0, 0.0, 0.0], [119.0, 0.0, 119.0]),
-        ([119.0, 119.0, 0.0], [119.0, 119.0, 119.0]),
-        ([0.0, 119.0, 0.0], [0.0, 119.0, 59.5]),
-        ([119.0, 119.0, 119.0], [59.5, 119.0, 119.0]),
-        ([0.0, 0.0, 119.0], [0.0, 59.5, 119.0]),
-    ]
-
-    tubes = []
-
-    for pt1, pt2 in wireframe_coords:
-        line = Line(Point1=pt1, Point2=pt2)
-        tube = Tube(Input=line)
+        clip3 = Clip(Input=thresh)
+        clip3.ClipType = "Plane"
+        clip3.ClipType.Normal = [0.0, 0.0, 1.0]
+        clip3.ClipType.Origin = center
+        
+        objects_to_delete.extend([thresh, clip1, clip2, clip3])
+        
+        solid_displays = []
+        for clip_obj in [clip1, clip2, clip3]:
+            # CRITICAL FIX: Extract only the outer surface to prevent interior 
+            # opacity stacking. This creates the hollow crystal glass look.
+            surf = ExtractSurface(Input=clip_obj)
+            objects_to_delete.append(surf)
+            
+            disp_solid = Show(surf, self.view)
+            disp_solid.Representation = 'Volume'
+            disp_solid.ColorArrayName = ["POINTS", ""]
+            
+            # Very pale, icy bluish tint
+            disp_solid.DiffuseColor = [0.85, 0.92, 1.0] 
+            disp_solid.AmbientColor = [0.85, 0.92, 1.0]
+            
+            # Almost transparent crystal glass
+            #disp_solid.Opacity = 0.3
+            
+            # Extreme gloss for sharp light reflections on the edges
+            disp_solid.Specular = 0.5
+            disp_solid.SpecularPower = 100
+            
+            disp_solid.OSPRayMaterial = "Water"
+            #disp_solid.ScalarOpacityUnitDistance =  3.0
+            solid_displays.append(disp_solid)
+            
+        
+        # ----------------------------------------------------------------------
+        # WIREFRAME (Dynamic adaptive bounds)
+        # ----------------------------------------------------------------------
+        outline = Outline(Input=reader)
+        tube = Tube(Input=outline)
         tube.Radius = 0.3
         tube.Capping = 1
-        tubes.append(tube)
+        objects_to_delete.extend([outline, tube])
+        
+        disp_wire = Show(tube, self.view)
+        disp_wire.ColorArrayName = ["POINTS", ""]
+        disp_wire.DiffuseColor = [0.0, 0.0, 0.0]
+        disp_wire.OSPRayMaterial = "None"
+        
+        # ----------------------------------------------------------------------
+        # STREAMLINES
+        # ----------------------------------------------------------------------
+        stream = StreamTracer(Input=reader, SeedType="Point Cloud")
+        stream.Vectors = ["POINTS", self.config['vector_name']]
+        stream.MaximumStreamlineLength = 1000.0
+        stream.SeedType.Center = center
+        stream.SeedType.Radius = (bounds[1]-bounds[0]) # Auto-scale radius
+        stream.SeedType.NumberOfPoints = 4000
+        objects_to_delete.append(stream)
 
-    return tubes
-
-
-# ==============================================================================
-# ROTATION
-# ==============================================================================
-
-def apply_rotation(transform_filter, angle_deg):
-    """
-    Rotate an object around ROTATION_CENTER.
-
-    This is the important difference from make_images_cameramove7.py:
-    there the camera position changes; here the camera stays fixed and
-    the rendered object rotates.
-    """
-    transform_filter.Transform.Rotate = [0.0, 0.0, angle_deg]
-    transform_filter.Transform.Translate = [
-        0.0,
-        0.0,
-        0.0,
-    ]
-
-    # ParaView's Transform filter rotates around its origin.
-    # Move the object so the rotation happens around ROTATION_CENTER.
-    transform_filter.Transform.Translate = (
-        ROTATION_CENTER -
-        np.array(transform_filter.GetDataInformation().GetBounds()[::2])
-    ).tolist()
-
-
-def make_rotation_transform(source, angle_deg):
-    """
-    Create a Transform filter that rotates source around ROTATION_CENTER.
-
-    ParaView Transform uses the object's origin. We therefore explicitly
-    construct the equivalent rotation around the desired center:
-        x' = C + R(x - C)
-    using Translate(C), Rotate(angle), Translate(-C).
-    """
-
-    transform = Transform(Input=source)
-
-    # The Transform filter applies operations in its transform.
-    # Use the standard ParaView center-of-rotation fields when available.
-    try:
-        transform.Transform.Center = ROTATION_CENTER.tolist()
-    except Exception:
-        pass
-
-    transform.Transform.Rotate = [0.0, 0.0, angle_deg]
-
-    return transform
-
-
-# ==============================================================================
-# PIPELINE CREATION
-# ==============================================================================
-
-def build_scene(vti_filepath, view):
-    reader = XMLImageDataReader(FileName=[vti_filepath])
-    reader.PointArrayStatus = ["Density", "Velocity"]
-    reader.UpdatePipeline()
-
-    objects = [reader]
-
-    # --------------------------------------------------------------------------
-    # SOLID
-    # --------------------------------------------------------------------------
-    thresh = Threshold(Input=reader)
-    thresh.Scalars = ["POINTS", "Density"]
-    thresh.ThresholdMethod = "Between"
-    thresh.LowerThreshold = -1e10
-    thresh.UpperThreshold = 0.0
-    objects.append(thresh)
-
-    clips = []
-
-    clip1 = Clip(Input=thresh)
-    clip1.ClipType = "Plane"
-    clip1.ClipType.Normal = [-1.0, 0.0, 0.0]
-    clip1.ClipType.Origin = ROTATION_CENTER.tolist()
-
-    clip2 = Clip(Input=thresh)
-    clip2.ClipType = "Plane"
-    clip2.ClipType.Normal = [0.0, 1.0, 0.0]
-    clip2.ClipType.Origin = ROTATION_CENTER.tolist()
-
-    clip3 = Clip(Input=thresh)
-    clip3.ClipType = "Plane"
-    clip3.ClipType.Normal = [0.0, 0.0, 1.0]
-    clip3.ClipType.Origin = ROTATION_CENTER.tolist()
-
-    clips.extend([clip1, clip2, clip3])
-    objects.extend(clips)
-
-    solid_displays = []
-
-    for clip in clips:
-        disp = Show(clip, view)
-        disp.ColorArrayName = ["POINTS", ""]
-        disp.DiffuseColor = SOLID_COLOR
-        disp.AmbientColor = SOLID_COLOR
-        disp.Opacity = 1.0
-        disp.Specular = 0.5
-        disp.SpecularPower = 10
-        solid_displays.append(disp)
-
-    # --------------------------------------------------------------------------
-    # WIREFRAME
-    # --------------------------------------------------------------------------
-    wireframe_sources = build_custom_wireframe()
-    objects.extend(wireframe_sources)
-
-    wireframe_displays = []
-
-    for source in wireframe_sources:
-        disp = Show(source, view)
-        disp.ColorArrayName = ["POINTS", ""]
-        disp.DiffuseColor = [0.0, 0.0, 0.0]
-        disp.AmbientColor = [0.0, 0.0, 0.0]
-        wireframe_displays.append(disp)
-
-    # --------------------------------------------------------------------------
-    # STREAMLINES
-    # --------------------------------------------------------------------------
-    stream = StreamTracer(Input=reader, SeedType="Point Cloud")
-    stream.Vectors = ["POINTS", "Velocity"]
-    stream.MaximumStreamlineLength = 1000.0
-    stream.SeedType.Center = ROTATION_CENTER.tolist()
-    stream.SeedType.Radius = 120.0
-    stream.SeedType.NumberOfPoints = 4000
-    objects.append(stream)
-
-    disp_stream = Show(stream, view)
-    ColorBy(disp_stream, ("POINTS", "Velocity", "Magnitude"))
-
-    velocity_lut = GetColorTransferFunction("Velocity")
-    velocity_lut.ApplyPreset("Plasma (matplotlib)", True)
-
-    if SHOW_COLORBAR:
-        disp_stream.SetScalarBarVisibility(view, True)
-        color_bar = GetScalarBar(velocity_lut, view)
+        disp_stream = Show(stream, self.view)
+        ColorBy(disp_stream, ("POINTS", self.config['vector_name'], "Magnitude"))
+        disp_stream.OSPRayMaterial = "None"
+        
+        self.lut = GetColorTransferFunction(self.config['vector_name'])
+        self.lut.ApplyPreset("Plasma (matplotlib)", True)
+        
+        color_bar = GetScalarBar(self.lut, self.view)
         color_bar.TitleColor = [0.0, 0.0, 0.0]
         color_bar.LabelColor = [0.0, 0.0, 0.0]
         color_bar.TitleFontFamily = "Times"
@@ -272,446 +191,299 @@ def build_scene(vti_filepath, view):
         color_bar.LabelFontSize = 28
         color_bar.AutomaticLabelFormat = 0
         color_bar.LabelFormat = "%.2e"
-    else:
-        disp_stream.SetScalarBarVisibility(view, False)
-
-    # --------------------------------------------------------------------------
-    # VOLUME
-    # --------------------------------------------------------------------------
-    disp_vol = Show(reader, view)
-    disp_vol.Representation = "Volume"
-    ColorBy(disp_vol, ("POINTS", "Velocity", "Magnitude"))
-
-    vel_info = reader.PointData.GetArray("Velocity")
-    max_vel = vel_info.GetRange(-1)[1] if vel_info else 1.0
-
-    velocity_pwf = GetOpacityTransferFunction("Velocity")
-    velocity_pwf.Points = [
-        0.0, 0.0, 0.5, 0.0,
-        max_vel, 1.0, 0.5, 0.0,
-    ]
-
-    disp_vol.Specular = 0.5
-    disp_vol.SpecularPower = 100
-    disp_vol.OSPRayMaterial = "Water"
-
-    return {
-        "reader": reader,
-        "objects": objects,
-        "solid": solid_displays,
-        "wireframe": wireframe_displays,
-        "stream": disp_stream,
-        "volume": disp_vol,
-        "lut": velocity_lut,
-        "pwf": velocity_pwf,
-    }
-
-
-# ==============================================================================
-# TRANSFORM ALL VISUAL OBJECTS
-# ==============================================================================
-
-def create_rotated_scene(scene, angle_deg, view):
-    """
-    Creates transformed copies of the visible objects.
-
-    The source data remains unchanged. Only the displayed geometry/volume
-    is rotated around ROTATION_CENTER.
-    """
-
-    transformed = []
-
-    # Solid clips
-    for disp in scene["solid"]:
-        source = disp.Input
-        tr = Transform(Input=source)
-
-        try:
-            tr.Transform.Center = ROTATION_CENTER.tolist()
-        except Exception:
-            pass
-
-        tr.Transform.Rotate = [0.0, 0.0, angle_deg]
-
-        new_disp = Show(tr, view)
-        new_disp.ColorArrayName = ["POINTS", ""]
-        new_disp.DiffuseColor = SOLID_COLOR
-        new_disp.AmbientColor = SOLID_COLOR
-        new_disp.Opacity = 1.0
-        new_disp.Specular = 0.5
-        new_disp.SpecularPower = 10
-
-        transformed.append((tr, new_disp, "solid"))
-
-    # Wireframe
-    for disp in scene["wireframe"]:
-        source = disp.Input
-        tr = Transform(Input=source)
-
-        try:
-            tr.Transform.Center = ROTATION_CENTER.tolist()
-        except Exception:
-            pass
-
-        tr.Transform.Rotate = [0.0, 0.0, angle_deg]
-
-        new_disp = Show(tr, view)
-        new_disp.ColorArrayName = ["POINTS", ""]
-        new_disp.DiffuseColor = [0.0, 0.0, 0.0]
-        new_disp.AmbientColor = [0.0, 0.0, 0.0]
-
-        transformed.append((tr, new_disp, "wireframe"))
-
-    # Streamlines
-    stream_source = scene["stream"].Input
-    tr_stream = Transform(Input=stream_source)
-
-    try:
-        tr_stream.Transform.Center = ROTATION_CENTER.tolist()
-    except Exception:
-        pass
-
-    tr_stream.Transform.Rotate = [0.0, 0.0, angle_deg]
-
-    disp_stream = Show(tr_stream, view)
-    ColorBy(disp_stream, ("POINTS", "Velocity", "Magnitude"))
-    disp_stream.SetScalarBarVisibility(view, SHOW_COLORBAR)
-
-    transformed.append((tr_stream, disp_stream, "stream"))
-
-    # Volume
-    volume_source = scene["reader"]
-    tr_vol = Transform(Input=volume_source)
-
-    try:
-        tr_vol.Transform.Center = ROTATION_CENTER.tolist()
-    except Exception:
-        pass
-
-    tr_vol.Transform.Rotate = [0.0, 0.0, angle_deg]
-
-    disp_vol = Show(tr_vol, view)
-    disp_vol.Representation = "Volume"
-    ColorBy(disp_vol, ("POINTS", "Velocity", "Magnitude"))
-    disp_vol.Specular = 0.5
-    disp_vol.SpecularPower = 100
-    disp_vol.OSPRayMaterial = "Water"
-
-    transformed.append((tr_vol, disp_vol, "volume"))
-
-    return transformed
-
-
-# ==============================================================================
-# RENDER ONE OF THE THREE PANELS
-# ==============================================================================
-
-def render_panel(view, scene, transformed, panel_type, output_path):
-    # Hide every transformed display first
-    for _, disp, _ in transformed:
-        disp.Visibility = 0
-
-    if panel_type == "solid_stream":
-        for _, disp, kind in transformed:
-            if kind in ("solid", "wireframe", "stream"):
-                disp.Visibility = 1
-
-    elif panel_type == "volume_stream":
-        for _, disp, kind in transformed:
-            if kind in ("stream", "volume"):
-                disp.Visibility = 1
-
-    elif panel_type == "solid_only":
-        for _, disp, kind in transformed:
-            if kind in ("solid", "wireframe"):
-                disp.Visibility = 1
-
-        for _, disp, kind in transformed:
-            if kind == "stream":
-                disp.SetScalarBarVisibility(view, False)
-
-    Render()
-
-    SaveScreenshot(
-        output_path,
-        view,
-        ImageResolution=VIEW_RESOLUTION,
-        TransparentBackground=0,
-        OverrideColorPalette="WhiteBackground",
-    )
-
-
-# ==============================================================================
-# COMBINE THE THREE PANELS
-# ==============================================================================
-
-def create_combined_image(img1, img2, img3, output_path):
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
-
-    titles = [
-        "Solid + Streamlines",
-        "Volume + Streamlines",
-        "Solid Only",
-    ]
-
-    for ax, image_path, title in zip(
-        axes,
-        [img1, img2, img3],
-        titles,
-    ):
-        img = mpimg.imread(image_path)
-        ax.imshow(img)
-        ax.set_title(title, fontsize=18, fontname="serif", pad=10)
-        ax.axis("off")
-
-    plt.tight_layout(pad=0.5)
-    plt.savefig(
-        output_path,
-        dpi=DPI,
-        bbox_inches="tight",
-        pad_inches=0.05,
-    )
-    plt.close(fig)
-
-
-# ==============================================================================
-# VIDEO CREATION
-# ==============================================================================
-
-def make_video(frame_pattern, output_video):
-    """
-    Uses FFmpeg to convert the rendered PNG sequence into MP4.
-    """
-
-    if shutil.which("ffmpeg") is None:
-        raise RuntimeError(
-            "ffmpeg was not found in PATH. Install/load ffmpeg before running."
-        )
-
-    cmd = [
-        "ffmpeg",
-        "-y",
-        "-framerate", str(FPS),
-        "-i", frame_pattern,
-        "-c:v", "libx264",
-        "-pix_fmt", "yuv420p",
-        "-crf", "18",
-        "-preset", "medium",
-        "-movflags", "+faststart",
-        output_video,
-    ]
-
-    print("\nCreating video...")
-    subprocess.run(cmd, check=True)
-    print(f"Video saved: {output_video}")
-
-
-# ==============================================================================
-# MAIN
-# ==============================================================================
-
-def main():
-
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    os.makedirs(FRAME_DIR, exist_ok=True)
-
-    vti_path = os.path.join(BASE_DIR, FILE)
-
-    if not os.path.exists(vti_path):
-        raise FileNotFoundError(
-            f"Could not find VTI file:\n{vti_path}"
-        )
-
-    print("=" * 70)
-    print("STATIC CAMERA / 360 DEGREE OBJECT ROTATION")
-    print("=" * 70)
-    print(f"Input:       {vti_path}")
-    print(f"Frames:      {N_FRAMES}")
-    print(f"FPS:         {FPS}")
-    print(f"Duration:    {N_FRAMES / FPS:.2f} s")
-    print(f"Rotation:    {ROTATION_DEG} degrees")
-    print("Camera:      STATIC")
-    print(f"Output:      {VIDEO_FILE}")
-    print("=" * 70)
-
-    # --------------------------------------------------------------------------
-    # Render view
-    # --------------------------------------------------------------------------
-    ResetSession()
-
-    view = CreateRenderView()
-    view.ViewSize = VIEW_RESOLUTION
-    view.Background = [1.0, 1.0, 1.0]
-    view.UseColorPaletteForBackground = 0
-    view.OrientationAxesVisibility = 0
-
-    # Same rendering philosophy as the original script
-    view.EnableRayTracing = 1
-    view.SamplesPerPixel = 40
-    view.AmbientSamples = 5
-
-    backend = "OSPRay pathtracer"
-
-    try:
-        available = list(view.GetProperty("BackEnd").GetAvailable())
-        if "OptiX pathtracer" in available and cuda_available():
-            backend = "OptiX pathtracer"
-    except Exception:
-        pass
-
-    try:
-        view.BackEnd = backend
-    except Exception:
-        pass
-
-    view.Shadows = 1
-
-    if hasattr(view, "UseToneMapping"):
-        view.UseToneMapping = 0
-
-    if hasattr(view, "EnableOSPRayDenoiser"):
-        view.EnableOSPRayDenoiser = 1
-
-    print(f"Ray-tracing backend: {backend}")
-
-    # IMPORTANT: camera is configured only once.
-    configure_static_camera(view)
-
-    # Build original scene once
-    scene = build_scene(vti_path, view)
-
-    # Hide original objects because we will display rotated transforms.
-    for disp in scene["solid"]:
-        disp.Visibility = 0
-
-    for disp in scene["wireframe"]:
-        disp.Visibility = 0
-
-    scene["stream"].Visibility = 0
-    scene["volume"].Visibility = 0
-
-    # --------------------------------------------------------------------------
-    # Generate rotation frames
-    # --------------------------------------------------------------------------
-    angles = np.linspace(
-        0.0,
-        ROTATION_DEG,
-        N_FRAMES,
-        endpoint=False,
-    )
-
-    for frame_idx, angle in enumerate(angles):
-
-        print(
-            f"[{frame_idx + 1:03d}/{N_FRAMES}] "
-            f"rotation = {angle:7.2f} deg",
-            flush=True,
-        )
-
-        # Create transformed visual objects for this frame
-        transformed = create_rotated_scene(
-            scene,
-            float(angle),
-            view,
-        )
-
-        frame_number = f"{frame_idx:04d}"
-
-        img1 = os.path.join(
-            FRAME_DIR,
-            f"frame_{frame_number}_solid_stream.png",
-        )
-
-        img2 = os.path.join(
-            FRAME_DIR,
-            f"frame_{frame_number}_volume_stream.png",
-        )
-
-        img3 = os.path.join(
-            FRAME_DIR,
-            f"frame_{frame_number}_solid_only.png",
-        )
-
-        combined = os.path.join(
-            FRAME_DIR,
-            f"frame_{frame_number}.png",
-        )
-
-        # Render all three side-by-side images
-        render_panel(
-            view,
-            scene,
-            transformed,
-            "solid_stream",
-            img1,
-        )
-
-        render_panel(
-            view,
-            scene,
-            transformed,
-            "volume_stream",
-            img2,
-        )
-
-        render_panel(
-            view,
-            scene,
-            transformed,
-            "solid_only",
-            img3,
-        )
-
-        create_combined_image(
-            img1,
-            img2,
-            img3,
-            combined,
-        )
-
-        # Delete transformed objects before next frame
-        for tr, disp, _ in reversed(transformed):
-            try:
-                Delete(disp)
-            except Exception:
-                pass
-
-            try:
-                Delete(tr)
-            except Exception:
-                pass
-
+        
+        # ----------------------------------------------------------------------
+        # VOLUME
+        # ----------------------------------------------------------------------
+        disp_vol = Show(reader, self.view)
+        disp_vol.Representation = "Volume"
+        ColorBy(disp_vol, ("POINTS", self.config['vector_name'], "Magnitude"))
+        
+        vel_info = reader.PointData.GetArray(self.config['vector_name'])
+        max_vel = vel_info.GetRange(-1)[1] if vel_info else 1.0
+
+        self.pwf = GetOpacityTransferFunction(self.config['vector_name'])
+        self.pwf.Points = [0.0, 0.0, 0.5, 0.0, max_vel, 1.0, 0.5, 0.0]
+
+        disp_vol.Specular = 0.5
+        disp_vol.SpecularPower = 100
+        disp_vol.OSPRayMaterial = "None"
+
+        # ----------------------------------------------------------------------
+        # CAMERA SETUP
+        # ----------------------------------------------------------------------
+        self.view.CameraPosition = override_camera_pos
+        self.view.CameraViewUp = override_view_up
+        self.view.CameraFocalPoint = self.config['focal_point']
+        self.view.CameraViewAngle = self.config['camera_view_angle']
+        self.view.CameraParallelScale = self.config['camera_parallel_scale']
+        self.view.Update()
+        
+        # ----------------------------------------------------------------------
+        # RENDER THE 3 PANELS
+        # ----------------------------------------------------------------------
+        out_dir = self.config['out_dir']
+        temp_1 = os.path.join(out_dir, f"temp_{frame_idx}_1.png")
+        temp_2 = os.path.join(out_dir, f"temp_{frame_idx}_2.png")
+        temp_3 = os.path.join(out_dir, f"temp_{frame_idx}_3.png")
+        final_out = os.path.join(out_dir, output_filename)
+        
+        # 1. Solid Only
+        for d in solid_displays: d.Visibility = 1
+        disp_wire.Visibility = 1
+        disp_stream.Visibility, disp_vol.Visibility = 0, 0
+        disp_stream.SetScalarBarVisibility(self.view, False)
+        SaveScreenshot(temp_1, self.view, ImageResolution=self.config['resolution'], TransparentBackground=0, OverrideColorPalette='WhiteBackground')
+        
+        # 2. Solid + Streamlines
+        for d in solid_displays: d.Visibility = 1
+        disp_wire.Visibility = 1
+        disp_stream.Visibility, disp_vol.Visibility = 1, 0
+        disp_stream.SetScalarBarVisibility(self.view, True)
+        SaveScreenshot(temp_2, self.view, ImageResolution=self.config['resolution'], TransparentBackground=0, OverrideColorPalette='WhiteBackground')
+        
+        # 3. Volume + Streamlines
+        for d in solid_displays: d.Visibility = 0
+        disp_wire.Visibility = 0
+        disp_stream.Visibility, disp_vol.Visibility = 1, 1
+        disp_stream.SetScalarBarVisibility(self.view, True)
+        SaveScreenshot(temp_3, self.view, ImageResolution=self.config['resolution'], TransparentBackground=0, OverrideColorPalette='WhiteBackground')
+
+        # Combine with Matplotlib
+        fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+        fig.patch.set_facecolor("white")
+        titles = ["Solid Only", "Streamlines in Crystal Solid", "Fluid Volume within Streamlines"]
+
+        for ax, img_path, title in zip(axes, [temp_1, temp_2, temp_3], titles):
+            img = mpimg.imread(img_path)
+            ax.imshow(img)
+            ax.set_title(title, fontsize=18, fontname="serif", pad=10)
+            ax.axis("off")
+
+        plt.tight_layout(pad=0.5)
+        plt.savefig(final_out, dpi=120, bbox_inches="tight", pad_inches=0.05, facecolor="white", edgecolor="white")
+        plt.close(fig)
+        
+        # Cleanup Temps
+        for t in [temp_1, temp_2, temp_3]:
+            try: os.remove(t)
+            except: pass
+        
+        # Full memory recovery
+        for obj in reversed(objects_to_delete):
+            try: Delete(obj)
+            except: pass
+        for disp in solid_displays + [disp_wire, disp_stream, disp_vol]:
+            try: Delete(disp)
+            except: pass
+            
+        try: Delete(self.lut)
+        except: pass
+        try: Delete(self.pwf)
+        except: pass
+        try: Delete(self.view)
+        except: pass
+        
+        Disconnect()
         gc.collect()
 
-    # --------------------------------------------------------------------------
-    # Create MP4
-    # --------------------------------------------------------------------------
-    make_video(
-        os.path.join(FRAME_DIR, "frame_%04d.png"),
-        VIDEO_FILE,
-    )
+# ==============================================================================
+# 3. MODULAR CAMERA SYSTEM
+# ==============================================================================
+def path_static(config, total_frames):
+    return [config['camera_pos']] * total_frames, [config['camera_view_up']] * total_frames
 
-    # --------------------------------------------------------------------------
-    # Cleanup
-    # --------------------------------------------------------------------------
+def path_circular(config, total_frames):
+    start_pos, focal_point, start_up = np.array(config['camera_pos']), np.array(config['focal_point']), np.array(config['camera_view_up'])
+    r = start_pos - focal_point
+    angles = np.linspace(0, np.deg2rad(config.get('rotation_angle', 360)), total_frames, endpoint=False)
+    positions, up_vectors = [], []
+    for theta in angles:
+        rx, ry = r[0] * np.cos(theta) - r[1] * np.sin(theta), r[0] * np.sin(theta) + r[1] * np.cos(theta)
+        positions.append((focal_point + np.array([rx, ry, r[2]])).tolist())
+        ux, uy = start_up[0] * np.cos(theta) - start_up[1] * np.sin(theta), start_up[0] * np.sin(theta) + start_up[1] * np.cos(theta)
+        up_vectors.append(np.array([ux, uy, start_up[2]]).tolist())
+    return positions, up_vectors
+
+def generate_camera_trajectory(config, total_frames):
+    path_type = config.get('camera_path_type', 'static')
+    if path_type == 'static':   return path_static(config, total_frames)
+    if path_type == 'circular': return path_circular(config, total_frames)
+    raise ValueError("Unknown path type.")
+
+# ==============================================================================
+# 4. CONFIGURATION
+# ==============================================================================
+config = {
+    'preview_only':     False,
+    
+    # Render Quality (Keep low for fast testing, raise for final render)
+    'samples':          5,
+    'ambient_samples':  5,
+    
+    'inp_dir':          './Example_Bentheimer/',
+    'out_dir':          './output_frames/',
+    
+    'resolution':       [1200, 1200],  # Resolution of EACH panel
+    'scalar_name':      'Density',     # Field for Rock/Fluid distinction
+    'vector_name':      'Velocity',    # Field for Streamlines
+    
+    'frames':           120, 
+    'camera_path_type': 'circular', 
+    'rotation_angle':   360, 
+    
+    'camera_pos':       [-145.62, 258.12, 337.27],
+    'focal_point':      [54.23, 49.59, 63.19],
+    'camera_view_up':   [0.28, 0.85, -0.44],
+    'camera_view_angle': 30,
+    'camera_parallel_scale': 103.05,
+    
+    'threads': 4,
+}
+
+# ==============================================================================
+# 5. SUBPROCESS LAUNCHER
+# ==============================================================================
+def launch_worker_process(job_file_path):
+    job_name = os.path.basename(job_file_path)
+    print(f"[Orchestrator] Launching {job_name}...", flush=True)
+
+    clean_env = os.environ.copy()
+    mpi_prefixes = ['OMPI_', 'PMIX_', 'ORTE_', 'MPI_', 'OPAL_']
+    for key in list(clean_env.keys()):
+        if any(key.startswith(prefix) for prefix in mpi_prefixes):
+            del clean_env[key]
+            
+    clean_env['HWLOC_HIDE_ERRORS'] = '1'
+    clean_env['OMP_NUM_THREADS'] = '1'
+    clean_env['TBB_NUM_THREADS'] = '1'
+    clean_env['VTK_SMP_MAX_THREADS'] = '1'
+    clean_env['OSPRAY_THREADS'] = '1'
+    clean_env['PYTHONUNBUFFERED'] = '1'
+
+    cmd = ["pvpython", "--force-offscreen-rendering", __file__, "--worker", job_file_path]
+    
     try:
-        Delete(scene["reader"])
-    except Exception:
-        pass
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=clean_env, timeout=3600)
+        print(f"\n{'='*60}\n[Finished {job_name} | RC: {result.returncode}]\n{result.stdout.strip()}\n{'='*60}\n", flush=True)
+        if result.returncode != 0:
+            print(f"[FATAL ERROR] {job_name} failed to render.", flush=True)
+    except subprocess.TimeoutExpired:
+        print(f"\n[TIMEOUT ERROR] {job_name} hung for 3600s.", flush=True)
 
-    try:
-        Delete(view)
-    except Exception:
-        pass
+    return job_name
 
-    Disconnect()
-    gc.collect()
+# ==============================================================================
+# 6. MAIN EXECUTION ROUTING
+# ==============================================================================
+if __name__ == '__main__':
+    
+    # ---------------------------------------------------------
+    # A. WORKER MODE
+    # ---------------------------------------------------------
+    if '--worker' in sys.argv:
+        job_file = sys.argv[sys.argv.index('--worker') + 1]
+        with open(job_file, 'r') as f:
+            job_data = json.load(f)
+            
+        print(f"--> [Worker PID: {os.getpid()}] Processing Frame {job_data['frame_idx']:03d} | Source: {os.path.basename(job_data['file_path'])}", flush=True)
+        
+        try:
+            renderer = ParaViewRenderer(job_data['config'])
+            renderer.render_file(job_data['file_path'], job_data['output_filename'], job_data['frame_idx'], job_data['camera_pos'], job_data['camera_view_up'])
+            del renderer
+            gc.collect()
+        except Exception as e:
+            print(f"--> [Worker PID: {os.getpid()}] ERROR: {e}", flush=True)
+            sys.exit(1)
+        
+        sys.exit(0)
+        
+    # ---------------------------------------------------------
+    # B. PREVIEW MODE (Optional, stripped down)
+    # ---------------------------------------------------------
+    elif '--preview' in sys.argv:
+        print("Preview mode triggered. Exiting for this implementation.", flush=True)
+        sys.exit(0)
+        
+    # ---------------------------------------------------------
+    # C. ORCHESTRATOR MODE
+    # ---------------------------------------------------------
+    else:
+        if not shutil.which("pvpython"):
+            print("\n[FATAL ERROR] pvpython not found in PATH!", flush=True)
+            sys.exit(1)
 
-    print("\n" + "=" * 70)
-    print("DONE")
-    print(f"Video: {VIDEO_FILE}")
-    print("=" * 70)
+        os.makedirs(config['out_dir'], exist_ok=True)
+        jobs_dir = os.path.join(config['out_dir'], 'job_configs')
+        os.makedirs(jobs_dir, exist_ok=True)
 
+        # Detect files (Supports both .pvti sequence OR single .vti file repeated)
+        available_files = [os.path.join(r, f) for r, _, fs in os.walk(config['inp_dir']) for f in fs if f.endswith(('.pvti', '.vti'))]
+        available_files.sort(key=lambda s: [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', s)])
 
-if __name__ == "__main__":
-    main()
+        if not available_files:
+            raise ValueError(f"No .pvti or .vti files found in {config['inp_dir']}")
+
+        # If only 1 file is found, repeat it for all frames (for static camera rotations over a single object)
+        if len(available_files) == 1:
+            mapped_files = [available_files[0]] * config['frames']
+        else:
+            n_frames = len(available_files) if config['frames'] is None else config['frames']
+            mapped_indices = np.round(np.linspace(0, len(available_files) - 1, n_frames)).astype(int)
+            mapped_files = [available_files[i] for i in mapped_indices]
+            
+        pos, up = generate_camera_trajectory(config, config['frames'])
+
+        num_workers = min(config['threads'], os.cpu_count() or 1)
+        job_paths = []
+        skipped_frames = 0
+        
+        for idx in range(config['frames']):
+            output_filename = f"frame_{idx:04d}.png"
+            expected_output_path = os.path.join(config['out_dir'], output_filename)
+            
+            if os.path.exists(expected_output_path):
+                skipped_frames += 1
+                continue
+            
+            job_data = {
+                'frame_idx': idx,
+                'file_path': mapped_files[idx],
+                'output_filename': output_filename,
+                'camera_pos': pos[idx],
+                'camera_view_up': up[idx],
+                'config': config 
+            }
+            job_path = os.path.join(jobs_dir, f"job_{idx:04d}.json")
+            with open(job_path, 'w') as f:
+                json.dump(job_data, f)
+            job_paths.append(job_path)
+
+        if skipped_frames > 0:
+            print(f"\n[Orchestrator] Skipped {skipped_frames} existing frames.", flush=True)
+
+        if job_paths:
+            print(f"\n[Orchestrator] Initiating Subprocess Pool with {num_workers} isolated processes...", flush=True)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
+                futures = {executor.submit(launch_worker_process, path): path for path in job_paths}
+                for future in concurrent.futures.as_completed(futures):
+                    pass
+            print("\n[Orchestrator] Render Complete.", flush=True)
+
+        # ----------------------------------------------------------------------
+        # AUTOMATIC FFmpeg VIDEO CREATION
+        # ----------------------------------------------------------------------
+        if shutil.which("ffmpeg") is not None:
+            output_video = os.path.join(config['out_dir'], "rotating_views.mp4")
+            cmd = [
+                "ffmpeg", "-y", "-framerate", "30",
+                "-i", os.path.join(config['out_dir'], "frame_%04d.png"),
+                "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18",
+                "-preset", "medium", "-movflags", "+faststart", output_video,
+            ]
+            print("\n[Orchestrator] Creating video via FFmpeg...", flush=True)
+            subprocess.run(cmd, check=True)
+            print(f"Video saved: {output_video}")
+        else:
+            print("\n[Orchestrator] ffmpeg not found in PATH. Skipping video creation.")

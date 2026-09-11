@@ -113,8 +113,14 @@ def flip_augmentation(my_solid, my_vel, vel_dir, axis):
 # -------------------------------------------------------------------
 
 infos = {
-    "../../GradSimulations/DONE_Valid_Danny_SphPore_120_120_120/":
-    "../../NN_Datasets_Grad/Valid_Danny_SphPore_DAug_DNorm.h5",
+    #"../../GradSimulations_Dist_40_5_55/DONE_Train_Danny_SphPore_120_120_120/":
+    #"../../NN_Datasets_Grad_Dist_40_5_55/Train_Danny_SphPore_DAug_DNorm.h5",
+    
+    #"../../GradSimulations_Dist_40_5_55/DONE_Test_Danny_SphPore_120_120_120/":
+    #"../../NN_Datasets_Grad_Dist_40_5_55/Test_Danny_SphPore_DAug_DNorm.h5",
+    
+    "../../GradSimulations_Dist_40_5_55/DONE_Valid_Danny_SphPore_120_120_120/":
+    "../../NN_Datasets_Grad_Dist_40_5_55/Valid_Danny_SphPore_DAug_DNorm.h5",
     
 }
 

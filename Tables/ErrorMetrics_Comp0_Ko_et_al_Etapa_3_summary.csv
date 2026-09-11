@@ -1,0 +1,13 @@
+Dataset,Bias_Error_,Magnitude_Error_,Correlation
+Bentheimer,33.665,57.094,0.859
+Berea,32.421,55.175,0.833
+Berea Buff,24.256,45.599,0.87
+Berea Sinter Gray,49.029,74.907,0.802
+Berea Upper Gray,57.527,79.915,0.754
+Castle Gate,40.609,64.416,0.833
+Cylindrical Grains,27.806,39.908,0.902
+Cylindrical Pores,33.189,40.475,0.881
+Leopard,615.394,619.02,0.74
+Spherical Grains,61.849,75.359,0.878
+Spherical Pores,9.381,24.189,0.943
+Median,33.665,57.094,0.859

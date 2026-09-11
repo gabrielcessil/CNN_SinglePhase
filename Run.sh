@@ -23,7 +23,8 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 # ---------------- Job Execution --------------------
 
 # Run the simulation using MPI with 4 processes
-python -u main_Train_subModel.py --config exp/Etapa_3_DM_SA_DN_danny_x.json
+#python -u main_Train_subModel.py --config exp/Etapa_3_DM_SA_DN_javier_z.json
 
+python -u main_Train_subModel_NEW.py --config exp/SampNumber_Etapa_1_DM_SA_DN_danny_z.json
 # Continue a optimization previously stopped
-#python -u main_Train_subModel.py --folder ../NN_Results/NN_Trainning_25_August_2026_03-40PM_Job27066/
+#python -u main_Train_subModel.py --folder ../NN_Results/NN_Trainning_9_September_2026_01-49PM_Job28304/

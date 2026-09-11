@@ -80,7 +80,7 @@ def Bias_Comparison(batch_inputs, batch_outputs, batch_targets):
         vz_true_i   = v_true[s_i:s_i+1][s_i_mask].mean()
         vz_pred_i   = v_pred[s_i:s_i+1][s_i_mask].mean()
         
-        pe_i        = ( 100*(vz_pred_i-vz_true_i).abs() / vz_true_i.abs() ).item()
+        pe_i        = ( 100*(vz_pred_i.abs()-vz_true_i.abs()).abs() / vz_true_i.abs() ).item()
         pe_means.append(pe_i)
     print(f"Mean: {np.mean(pe_means):.4f}, Std: {np.std(pe_means):.4f}")
     print("------------------------------------------------------------------")

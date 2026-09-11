@@ -12,26 +12,32 @@ from scipy.stats import gaussian_kde
 # ==============================================================================
 """
 main_folders = {
-    "Tol 1%":      "../TestSpeedUp_Simulations_1e2/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
-    "Tol 0.01%":  "../TestSpeedUp_Simulations_1e4/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
-    "Tol 0.0001%": "../TestSpeedUp_Simulations_1e6/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
+    "Tol 1%":                   "../TestSpeedUp_Simulations_1e2/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
+    "Tol 0.01%":                "../TestSpeedUp_Simulations_1e4/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
+    "Tol 0.0001%":              "../TestSpeedUp_Simulations_1e6/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
 }
 """
+
+"""
 main_folders = {
-    "Spherical Pores":      "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/",
-    "Spherical Grains":  "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphGrain_SAug_DNorm/",
-    "Leopard": "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Leopard_SAug_DNorm/",
-    "CastleGate":      "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_CastleGate_SAug_DNorm/",
-    "Berea Upper Gray":  "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
-    "Berea Sinter Gray": "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaSinterGray_SAug_DNorm/",
-    "Berea Buff":      "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaBuff_SAug_DNorm/",
-    "Berea":  "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Berea_SAug_DNorm/",
-    "Bentheimer": "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm/",
-    
+    "Spherical Pores":          "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/",
+    "Spherical Grains":         "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphGrain_SAug_DNorm/",
+    "Leopard":                  "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Leopard_SAug_DNorm/",
+    "CastleGate":               "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_CastleGate_SAug_DNorm/",
+    "Berea Upper Gray":         "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
+    "Berea Sinter Gray":        "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaSinterGray_SAug_DNorm/",
+    "Berea Buff":               "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_BereaBuff_SAug_DNorm/",
+    "Berea":                    "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Berea_SAug_DNorm/",
+    "Bentheimer":               "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm/",
 }
+"""
 
-
-
+main_folders = {
+    "256 cubic":                   "../TestSpeedUp_Simulations_BiggerCrops/DRP247_256_256_256/",
+    "512 cubic":                   "../TestSpeedUp_Simulations_BiggerCrops/DRP247_512_512_512/",
+    }
+remove_outliers = False
+logscale        = True
 dataset_colors = {}
 for key in main_folders.keys():
     if key not in dataset_colors:
@@ -120,7 +126,7 @@ plt.rcParams.update(
 # ==============================================================================
 # 4. PLOT GENERATION FUNCTION (Density-Proportional Scatter Boxplot)
 # ==============================================================================
-def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dataset_colors: dict, remove_outliers: bool = False):
+def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dataset_colors: dict, remove_outliers: bool = False, logscale = False):
     """
     Generates box plots overlaid with density-calculated data points.
     Synchronizes the scatter points precisely with the mathematical bounds of the boxplot whiskers.
@@ -218,7 +224,7 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
         ax.set_ylabel("Speed-up Ratio", fontweight="bold")
         ax.set_xlabel("Tolerance Configuration", fontweight="bold")
         
-        #ax.set_yscale('log')
+        if logscale: ax.set_yscale('log')
 
         # Add a horizontal reference line at Speedup = 1.0 (baseline comparison)
         ax.axhline(1.0, color="gray", linestyle="--", linewidth=1.0, alpha=0.7, label="No Speedup (1.0x)", zorder=1)
@@ -252,5 +258,6 @@ plot_error_boxplots(
     error_cols=["Speedup_Ratio"],
     output_dir="./Plots/",
     dataset_colors=dataset_colors,
-    remove_outliers=True  # Set to True if you want to clip extreme scatter outliers
+    remove_outliers=remove_outliers,
+    logscale=logscale
 )

@@ -16,19 +16,19 @@ from Utilities import velocity_usage as vu
 # ==============================================================================
 # CONFIGURATION
 # ==============================================================================
-ROOT_DATASET_FOLDER = "../LBPMSimulations_BiggerCrops/DRP-247/Samples_256_256_256/"
-shape = (256, 256, 256)
+ROOT_DATASET_FOLDER = "../LBPMSimulations_BiggerCrops/DRP-247/Samples_1024_1024_1024/"
+shape               = (1024, 1024, 1024)
 
-n_samples = None
-shuffle = False
+n_samples           = None
+shuffle             = False
 
 # Base Output Directory
-RESULTS_DIR = "../TestSpeedUp_Simulations_BiggerCrops/DRP247_256_256_256(2)/"
-visualization_interval = 1000000000
-tolerance = 1e-2
+RESULTS_DIR             = "../TestSpeedUp_Simulations_BiggerCrops/DRP247_1024_1024_1024/"
+visualization_interval  = 1000000000
+tolerance               = 1e-2
 
-raw_file = "domain.raw"
-device = "cpu"
+raw_file        = "domain.raw"
+device          = "cpu"
 
 # SLURM & Job Settings
 jobs_running = 64

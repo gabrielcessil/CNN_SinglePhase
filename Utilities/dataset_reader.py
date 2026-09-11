@@ -112,13 +112,23 @@ class LazyDatasetTorch(Dataset):
       Y: (1 or 4, Z, Y, X) 
     """
 
-    def __init__(self, h5_path, list_ids=None, x_dtype=torch.float32, y_dtype=torch.float32, component=None):
+    def __init__(self, h5_path, list_ids=None, x_dtype=torch.float32, y_dtype=torch.float32, component=None, fraction=1.0):
         self.h5_path        = h5_path
         self.list_ids       = list_ids
         self.x_dtype        = x_dtype
         self.y_dtype        = y_dtype
         self.component      = component
+            
+        # Verify content of .h5 and create list of ID
         self._validate_file()
+        
+        # Keep desired fraction of data
+        if fraction is not None and fraction < 1.0:
+            subset_size = int(len(self.list_ids) * fraction)
+            self.list_ids = np.random.choice(self.list_ids, subset_size, replace=False).tolist()
+            self.list_ids.sort()
+        
+        print(f"Considering {len(self.list_ids)} samples from {self.h5_path}.")
         
     def _validate_file(self):
         try:
@@ -131,18 +141,16 @@ class LazyDatasetTorch(Dataset):
                 self.total_samples = f['vel_z'].shape[0]
                 
                 # Verify ID range
-                if self.list_ids is None or np.max(self.list_ids) >= self.total_samples:
-                    if self.list_ids is None: 
-                        warnings.warn(f"Number of samples not provided."
-                                      f"The dataset will consider {self.total_samples} samples from {self.h5_path}.", 
-                                      UserWarning, stacklevel=2)
-                    elif np.max(self.list_ids) >= self.total_samples:
-                        warnings.warn(f"Max listed ID {np.max(self.list_ids)} "
-                                      f"exceeds the provided total. The dataset will consider only {self.total_samples} samples from {self.h5_path}.", 
-                                      UserWarning, stacklevel=2)
-                    
-                    
+                if self.list_ids is None:
                     self.list_ids = list(range(self.total_samples))
+                    
+                elif np.max(self.list_ids) >= self.total_samples:
+                    warnings.warn(f"Max listed ID {np.max(self.list_ids)} "
+                                  f"exceeds the provided total. The dataset will consider only {self.total_samples} samples from {self.h5_path}.", 
+                                  UserWarning, stacklevel=2)
+                
+                
+                self.list_ids = list(range(self.total_samples))
                 
         except FileNotFoundError:
             raise FileNotFoundError(f"File not found: {self.h5_path}")
@@ -370,7 +378,7 @@ class LazyDatasetTorch(Dataset):
 
 class MultiLazyDatasetTorch(Dataset):
    
-    def __init__(self, h5_paths, x_dtype=torch.float32, y_dtype=torch.float32):
+    def __init__(self, h5_paths, x_dtype=torch.float32, y_dtype=torch.float32, fraction=1.0):
 
         self.h5_paths = h5_paths
         self.datasets = []
@@ -380,8 +388,10 @@ class MultiLazyDatasetTorch(Dataset):
                 h5_path=path,
                 list_ids=None,
                 x_dtype=x_dtype,
-                y_dtype=y_dtype
+                y_dtype=y_dtype,
+                fraction=fraction
             )
+            
             self.datasets.append(dataset)
             
         self.combined_dataset = ConcatDataset(self.datasets)

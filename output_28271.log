@@ -1,0 +1,5606 @@
+Initializing models...
+Models initialized successfully. Starting evaluation...
+
+Processing Dataset: Spherical Pores
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 8.3768, Std: 4.6352
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=35.4888%; std=27.1821
+ -- Sample 1: mean=34.5772%; std=26.8918
+ -- Sample 2: mean=36.0336%; std=28.3131
+ -- Sample 3: mean=35.5464%; std=28.9273
+ -- Sample 4: mean=35.2564%; std=30.1844
+ -- Sample 5: mean=34.4180%; std=26.3369
+ -- Sample 6: mean=37.1475%; std=29.7045
+ -- Sample 7: mean=31.0660%; std=25.9085
+ -- Sample 8: mean=45.1273%; std=55.6338
+ -- Sample 9: mean=45.1544%; std=53.6846
+ -- Sample 10: mean=43.6949%; std=45.3479
+ -- Sample 11: mean=45.9780%; std=52.8846
+ -- Sample 12: mean=36.1336%; std=24.9209
+ -- Sample 13: mean=29.8330%; std=22.8106
+ -- Sample 14: mean=31.7506%; std=25.2281
+ -- Sample 15: mean=30.0306%; std=23.3552
+ -- Sample 16: mean=44.4321%; std=41.0720
+ -- Sample 17: mean=46.3587%; std=41.2337
+ -- Sample 18: mean=44.6739%; std=35.6051
+ -- Sample 19: mean=49.8188%; std=48.8072
+ -- Sample 20: mean=32.3948%; std=24.0176
+ -- Sample 21: mean=33.8629%; std=24.0511
+ -- Sample 22: mean=30.3549%; std=24.2250
+ -- Sample 23: mean=29.6390%; std=21.8655
+ -- Sample 24: mean=51.2899%; std=39.3056
+Mean: 38.0024%, Std: 6.6839%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9267
+ -- Sample 1: 0.9316
+ -- Sample 2: 0.9300
+ -- Sample 3: 0.9268
+ -- Sample 4: 0.9191
+ -- Sample 5: 0.9395
+ -- Sample 6: 0.9220
+ -- Sample 7: 0.9517
+ -- Sample 8: 0.8939
+ -- Sample 9: 0.9054
+ -- Sample 10: 0.8968
+ -- Sample 11: 0.9051
+ -- Sample 12: 0.9243
+ -- Sample 13: 0.9578
+ -- Sample 14: 0.9519
+ -- Sample 15: 0.9510
+ -- Sample 16: 0.8911
+ -- Sample 17: 0.8818
+ -- Sample 18: 0.8849
+ -- Sample 19: 0.8556
+ -- Sample 20: 0.9440
+ -- Sample 21: 0.9343
+ -- Sample 22: 0.9507
+ -- Sample 23: 0.9536
+ -- Sample 24: 0.9050
+Mean=0.9214, Std=0.0265
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 6.5769, Std: 7.6155
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=41.1465%; std=30.5448
+ -- Sample 1: mean=43.2898%; std=34.2852
+ -- Sample 2: mean=57.1147%; std=55.3740
+ -- Sample 3: mean=57.5785%; std=69.7779
+ -- Sample 4: mean=57.0162%; std=56.6777
+ -- Sample 5: mean=59.5279%; std=61.1572
+ -- Sample 6: mean=59.9554%; std=59.1747
+ -- Sample 7: mean=26.4834%; std=22.5584
+ -- Sample 8: mean=28.3005%; std=22.2670
+ -- Sample 9: mean=23.6204%; std=19.8007
+ -- Sample 10: mean=25.7957%; std=20.3868
+ -- Sample 11: mean=27.2307%; std=21.3132
+ -- Sample 12: mean=27.9604%; std=22.6141
+ -- Sample 13: mean=28.4904%; std=22.3396
+ -- Sample 14: mean=26.6491%; std=21.6147
+ -- Sample 15: mean=25.5569%; std=24.5347
+ -- Sample 16: mean=22.2000%; std=20.1765
+ -- Sample 17: mean=26.4669%; std=26.7853
+ -- Sample 18: mean=21.7173%; std=19.1130
+ -- Sample 19: mean=34.0251%; std=25.5820
+ -- Sample 20: mean=29.5457%; std=26.2758
+ -- Sample 21: mean=32.1184%; std=24.3822
+ -- Sample 22: mean=28.2984%; std=22.9288
+ -- Sample 23: mean=31.9116%; std=22.7337
+ -- Sample 24: mean=29.8462%; std=23.4802
+Mean: 34.8738%, Std: 12.6333%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9447
+ -- Sample 1: 0.9277
+ -- Sample 2: 0.9108
+ -- Sample 3: 0.8730
+ -- Sample 4: 0.8439
+ -- Sample 5: 0.9125
+ -- Sample 6: 0.8512
+ -- Sample 7: 0.9599
+ -- Sample 8: 0.9514
+ -- Sample 9: 0.9668
+ -- Sample 10: 0.9592
+ -- Sample 11: 0.9586
+ -- Sample 12: 0.9595
+ -- Sample 13: 0.9527
+ -- Sample 14: 0.9611
+ -- Sample 15: 0.9570
+ -- Sample 16: 0.9723
+ -- Sample 17: 0.9509
+ -- Sample 18: 0.9714
+ -- Sample 19: 0.9418
+ -- Sample 20: 0.9545
+ -- Sample 21: 0.9430
+ -- Sample 22: 0.9564
+ -- Sample 23: 0.9532
+ -- Sample 24: 0.9552
+Mean=0.9395, Std=0.0345
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 13.9454, Std: 8.9271
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=32.9516%; std=23.1293
+ -- Sample 1: mean=31.9900%; std=23.0284
+ -- Sample 2: mean=34.2505%; std=22.3542
+ -- Sample 3: mean=30.2142%; std=20.2675
+ -- Sample 4: mean=31.2455%; std=20.7694
+ -- Sample 5: mean=29.8666%; std=20.5503
+ -- Sample 6: mean=34.3390%; std=24.7152
+ -- Sample 7: mean=32.5008%; std=31.1830
+ -- Sample 8: mean=35.6654%; std=24.0866
+ -- Sample 9: mean=36.9596%; std=31.5685
+ -- Sample 10: mean=56.6795%; std=49.6543
+ -- Sample 11: mean=43.1088%; std=40.9388
+ -- Sample 12: mean=57.3324%; std=48.9746
+ -- Sample 13: mean=39.2191%; std=37.5879
+ -- Sample 14: mean=20.6844%; std=17.6683
+ -- Sample 15: mean=21.8388%; std=18.7642
+ -- Sample 16: mean=20.3508%; std=17.2061
+ -- Sample 17: mean=20.7893%; std=18.1228
+ -- Sample 18: mean=23.8496%; std=20.0931
+ -- Sample 19: mean=21.4211%; std=18.3874
+ -- Sample 20: mean=23.6561%; std=19.4748
+ -- Sample 21: mean=21.8494%; std=18.1452
+ -- Sample 22: mean=30.5628%; std=22.4259
+ -- Sample 23: mean=30.8398%; std=25.6047
+ -- Sample 24: mean=31.6910%; std=22.4848
+Mean: 31.7542%, Std: 9.6541%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9462
+ -- Sample 1: 0.9471
+ -- Sample 2: 0.9384
+ -- Sample 3: 0.9551
+ -- Sample 4: 0.9551
+ -- Sample 5: 0.9417
+ -- Sample 6: 0.9449
+ -- Sample 7: 0.9410
+ -- Sample 8: 0.9456
+ -- Sample 9: 0.9431
+ -- Sample 10: 0.9051
+ -- Sample 11: 0.9378
+ -- Sample 12: 0.9090
+ -- Sample 13: 0.9498
+ -- Sample 14: 0.9700
+ -- Sample 15: 0.9685
+ -- Sample 16: 0.9716
+ -- Sample 17: 0.9704
+ -- Sample 18: 0.9641
+ -- Sample 19: 0.9708
+ -- Sample 20: 0.9648
+ -- Sample 21: 0.9700
+ -- Sample 22: 0.9815
+ -- Sample 23: 0.9739
+ -- Sample 24: 0.9807
+Mean=0.9539, Std=0.0193
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 8.1300, Std: 3.9885
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=31.8323%; std=26.9238
+ -- Sample 1: mean=19.7738%; std=16.8104
+ -- Sample 2: mean=21.1074%; std=18.1450
+ -- Sample 3: mean=18.5403%; std=15.8220
+ -- Sample 4: mean=19.6971%; std=17.9495
+ -- Sample 5: mean=18.7227%; std=16.2844
+ -- Sample 6: mean=18.0574%; std=15.7200
+ -- Sample 7: mean=18.3391%; std=14.7034
+ -- Sample 8: mean=18.9944%; std=17.0314
+ -- Sample 9: mean=20.8262%; std=16.6150
+ -- Sample 10: mean=20.9907%; std=16.4368
+ -- Sample 11: mean=21.5535%; std=16.6538
+ -- Sample 12: mean=21.4002%; std=17.2077
+ -- Sample 13: mean=22.2150%; std=17.5015
+ -- Sample 14: mean=21.2665%; std=16.8290
+ -- Sample 15: mean=21.3620%; std=18.1573
+ -- Sample 16: mean=18.5472%; std=15.5448
+ -- Sample 17: mean=25.4573%; std=21.2764
+ -- Sample 18: mean=22.3999%; std=21.9839
+ -- Sample 19: mean=26.1735%; std=22.5429
+ -- Sample 20: mean=20.7996%; std=18.6682
+ -- Sample 21: mean=20.1508%; std=17.3530
+ -- Sample 22: mean=19.6911%; std=16.0771
+ -- Sample 23: mean=19.8512%; std=16.8154
+ -- Sample 24: mean=19.2869%; std=15.7382
+Mean: 21.0814%, Std: 2.9319%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9710
+ -- Sample 1: 0.9756
+ -- Sample 2: 0.9701
+ -- Sample 3: 0.9760
+ -- Sample 4: 0.9745
+ -- Sample 5: 0.9791
+ -- Sample 6: 0.9799
+ -- Sample 7: 0.9788
+ -- Sample 8: 0.9755
+ -- Sample 9: 0.9717
+ -- Sample 10: 0.9722
+ -- Sample 11: 0.9698
+ -- Sample 12: 0.9722
+ -- Sample 13: 0.9783
+ -- Sample 14: 0.9780
+ -- Sample 15: 0.9790
+ -- Sample 16: 0.9770
+ -- Sample 17: 0.9624
+ -- Sample 18: 0.9806
+ -- Sample 19: 0.9688
+ -- Sample 20: 0.9836
+ -- Sample 21: 0.9811
+ -- Sample 22: 0.9777
+ -- Sample 23: 0.9813
+ -- Sample 24: 0.9796
+Mean=0.9758, Std=0.0048
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 7.9030, Std: 4.2110
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=17.2537%; std=14.7177
+ -- Sample 1: mean=18.1873%; std=15.2180
+ -- Sample 2: mean=17.7645%; std=14.7944
+ -- Sample 3: mean=18.7157%; std=15.3854
+ -- Sample 4: mean=21.5687%; std=18.6034
+ -- Sample 5: mean=21.6148%; std=18.4988
+ -- Sample 6: mean=20.3716%; std=16.9505
+ -- Sample 7: mean=22.4839%; std=20.3314
+ -- Sample 8: mean=15.8140%; std=13.1040
+ -- Sample 9: mean=17.6342%; std=15.6614
+ -- Sample 10: mean=16.6695%; std=13.1489
+ -- Sample 11: mean=15.4946%; std=12.9548
+ -- Sample 12: mean=16.1338%; std=12.9692
+ -- Sample 13: mean=18.3913%; std=14.1689
+ -- Sample 14: mean=16.6527%; std=13.9505
+ -- Sample 15: mean=21.5699%; std=17.3804
+ -- Sample 16: mean=18.3576%; std=14.4117
+ -- Sample 17: mean=19.4497%; std=12.8892
+ -- Sample 18: mean=19.0174%; std=14.1244
+ -- Sample 19: mean=17.5654%; std=12.1670
+ -- Sample 20: mean=19.7864%; std=14.9798
+ -- Sample 21: mean=16.5015%; std=12.8274
+ -- Sample 22: mean=18.8209%; std=15.3116
+ -- Sample 23: mean=15.7444%; std=12.5957
+ -- Sample 24: mean=21.4282%; std=14.6871
+Mean: 18.5197%, Std: 2.0347%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9777
+ -- Sample 1: 0.9758
+ -- Sample 2: 0.9780
+ -- Sample 3: 0.9747
+ -- Sample 4: 0.9800
+ -- Sample 5: 0.9751
+ -- Sample 6: 0.9819
+ -- Sample 7: 0.9724
+ -- Sample 8: 0.9830
+ -- Sample 9: 0.9799
+ -- Sample 10: 0.9805
+ -- Sample 11: 0.9835
+ -- Sample 12: 0.9831
+ -- Sample 13: 0.9788
+ -- Sample 14: 0.9831
+ -- Sample 15: 0.9691
+ -- Sample 16: 0.9799
+ -- Sample 17: 0.9835
+ -- Sample 18: 0.9782
+ -- Sample 19: 0.9850
+ -- Sample 20: 0.9782
+ -- Sample 21: 0.9844
+ -- Sample 22: 0.9776
+ -- Sample 23: 0.9847
+ -- Sample 24: 0.9792
+Mean=0.9795, Std=0.0039
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 3)...
+Bias Error: using Single Component
+Mean: 15.4072, Std: 2.0432
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=21.2877%; std=14.0935
+ -- Sample 1: mean=20.2902%; std=15.7169
+ -- Sample 2: mean=24.5632%; std=15.6903
+Mean: 22.0470%, Std: 1.8252%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9748
+ -- Sample 1: 0.9773
+ -- Sample 2: 0.9655
+Mean=0.9725, Std=0.0051
+------------------------------------------------------------------
+
+Processing Dataset: Spherical Grains
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 65.2133, Std: 178.8592
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=32.3481%; std=21.1286
+ -- Sample 1: mean=37.2111%; std=22.0889
+ -- Sample 2: mean=37.5666%; std=23.6281
+ -- Sample 3: mean=33.4275%; std=21.4357
+ -- Sample 4: mean=26.1475%; std=19.1249
+ -- Sample 5: mean=24.8365%; std=24.1840
+ -- Sample 6: mean=24.5947%; std=25.7019
+ -- Sample 7: mean=27.3090%; std=27.5152
+ -- Sample 8: mean=35.7904%; std=20.1246
+ -- Sample 9: mean=34.0696%; std=31.6870
+ -- Sample 10: mean=41.2373%; std=24.3277
+ -- Sample 11: mean=34.6257%; std=27.9182
+ -- Sample 12: mean=37.8976%; std=34.7904
+ -- Sample 13: mean=49.0217%; std=53.5675
+ -- Sample 14: mean=45.1617%; std=39.4724
+ -- Sample 15: mean=50.4898%; std=52.9788
+ -- Sample 16: mean=82.0002%; std=96.8250
+ -- Sample 17: mean=68.6235%; std=66.8126
+ -- Sample 18: mean=98.9274%; std=86.6745
+ -- Sample 19: mean=72.1689%; std=60.0056
+ -- Sample 20: mean=32.3659%; std=21.4361
+ -- Sample 21: mean=29.8731%; std=18.8508
+ -- Sample 22: mean=35.8593%; std=18.6034
+ -- Sample 23: mean=33.0799%; std=20.6333
+ -- Sample 24: mean=700.8136%; std=1320.3365
+Mean: 69.0179%, Std: 130.2585%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9647
+ -- Sample 1: 0.9434
+ -- Sample 2: 0.9414
+ -- Sample 3: 0.9444
+ -- Sample 4: 0.9900
+ -- Sample 5: 0.9724
+ -- Sample 6: 0.9826
+ -- Sample 7: 0.9714
+ -- Sample 8: 0.9523
+ -- Sample 9: 0.9641
+ -- Sample 10: 0.9420
+ -- Sample 11: 0.9650
+ -- Sample 12: 0.9336
+ -- Sample 13: 0.8998
+ -- Sample 14: 0.9674
+ -- Sample 15: 0.8877
+ -- Sample 16: 0.8784
+ -- Sample 17: 0.9065
+ -- Sample 18: 0.9236
+ -- Sample 19: 0.9592
+ -- Sample 20: 0.9620
+ -- Sample 21: 0.9746
+ -- Sample 22: 0.9725
+ -- Sample 23: 0.9595
+ -- Sample 24: 0.2717
+Mean=0.9212, Std=0.1356
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 166.4657, Std: 368.4820
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=1442.3405%; std=2682.8159
+ -- Sample 1: mean=576.1522%; std=1870.5092
+ -- Sample 2: mean=1361.7679%; std=2369.7598
+ -- Sample 3: mean=50.9674%; std=38.0710
+ -- Sample 4: mean=47.8958%; std=26.9170
+ -- Sample 5: mean=45.1982%; std=31.1581
+ -- Sample 6: mean=35.5707%; std=22.5220
+ -- Sample 7: mean=121.2293%; std=136.5989
+ -- Sample 8: mean=76.4981%; std=80.2249
+ -- Sample 9: mean=116.1750%; std=130.2767
+ -- Sample 10: mean=59.4391%; std=55.0470
+ -- Sample 11: mean=36.8334%; std=23.1422
+ -- Sample 12: mean=36.5367%; std=29.2552
+ -- Sample 13: mean=40.5182%; std=30.6281
+ -- Sample 14: mean=36.9510%; std=25.5339
+ -- Sample 15: mean=33.3373%; std=20.3054
+ -- Sample 16: mean=34.5781%; std=20.2509
+ -- Sample 17: mean=31.9823%; std=18.4664
+ -- Sample 18: mean=29.9520%; std=19.5093
+ -- Sample 19: mean=73.2146%; std=63.0411
+ -- Sample 20: mean=60.0558%; std=44.4943
+ -- Sample 21: mean=52.3332%; std=39.6121
+ -- Sample 22: mean=61.7835%; std=48.4693
+ -- Sample 23: mean=27.6488%; std=26.2735
+ -- Sample 24: mean=35.8791%; std=29.0158
+Mean: 180.9935%, Std: 375.2877%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.3449
+ -- Sample 1: 0.1753
+ -- Sample 2: 0.3589
+ -- Sample 3: 0.8548
+ -- Sample 4: 0.9489
+ -- Sample 5: 0.8338
+ -- Sample 6: 0.9594
+ -- Sample 7: 0.7298
+ -- Sample 8: 0.8481
+ -- Sample 9: 0.7483
+ -- Sample 10: 0.8605
+ -- Sample 11: 0.9548
+ -- Sample 12: 0.9670
+ -- Sample 13: 0.9469
+ -- Sample 14: 0.9630
+ -- Sample 15: 0.9646
+ -- Sample 16: 0.9421
+ -- Sample 17: 0.9715
+ -- Sample 18: 0.9474
+ -- Sample 19: 0.9387
+ -- Sample 20: 0.9569
+ -- Sample 21: 0.9479
+ -- Sample 22: 0.9549
+ -- Sample 23: 0.9820
+ -- Sample 24: 0.9370
+Mean=0.8415, Std=0.2149
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 50.3841, Std: 78.6991
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=29.4957%; std=25.7699
+ -- Sample 1: mean=32.8517%; std=28.8893
+ -- Sample 2: mean=29.3818%; std=21.7629
+ -- Sample 3: mean=24.5177%; std=20.0586
+ -- Sample 4: mean=25.5756%; std=19.7554
+ -- Sample 5: mean=23.3350%; std=20.6991
+ -- Sample 6: mean=37.2689%; std=28.7288
+ -- Sample 7: mean=25.2866%; std=16.9016
+ -- Sample 8: mean=35.9117%; std=31.7433
+ -- Sample 9: mean=23.1371%; std=16.5039
+ -- Sample 10: mean=54.9403%; std=42.1044
+ -- Sample 11: mean=181.3518%; std=415.9012
+ -- Sample 12: mean=46.2903%; std=39.4792
+ -- Sample 13: mean=257.4586%; std=631.2536
+ -- Sample 14: mean=39.2593%; std=34.2939
+ -- Sample 15: mean=30.5860%; std=27.4786
+ -- Sample 16: mean=37.9972%; std=30.1588
+ -- Sample 17: mean=39.3516%; std=36.7983
+ -- Sample 18: mean=28.6156%; std=18.0029
+ -- Sample 19: mean=29.7421%; std=19.8770
+ -- Sample 20: mean=29.4642%; std=20.0516
+ -- Sample 21: mean=30.6094%; std=19.3835
+ -- Sample 22: mean=35.5823%; std=22.5636
+ -- Sample 23: mean=40.8013%; std=21.8441
+ -- Sample 24: mean=36.1024%; std=24.6137
+Mean: 48.1966%, Std: 52.1304%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9804
+ -- Sample 1: 0.9507
+ -- Sample 2: 0.9594
+ -- Sample 3: 0.9744
+ -- Sample 4: 0.9674
+ -- Sample 5: 0.9817
+ -- Sample 6: 0.9141
+ -- Sample 7: 0.9708
+ -- Sample 8: 0.8586
+ -- Sample 9: 0.9820
+ -- Sample 10: 0.5116
+ -- Sample 11: 0.5787
+ -- Sample 12: 0.4306
+ -- Sample 13: 0.3647
+ -- Sample 14: 0.9729
+ -- Sample 15: 0.9709
+ -- Sample 16: 0.9728
+ -- Sample 17: 0.9727
+ -- Sample 18: 0.9692
+ -- Sample 19: 0.9533
+ -- Sample 20: 0.9717
+ -- Sample 21: 0.9637
+ -- Sample 22: 0.9545
+ -- Sample 23: 0.9421
+ -- Sample 24: 0.9440
+Mean=0.8805, Std=0.1832
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 20.6548, Std: 8.8081
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=34.1126%; std=22.0852
+ -- Sample 1: mean=24.2805%; std=12.7699
+ -- Sample 2: mean=26.6834%; std=16.0617
+ -- Sample 3: mean=22.9652%; std=12.0867
+ -- Sample 4: mean=30.1695%; std=15.2094
+ -- Sample 5: mean=34.8723%; std=17.1565
+ -- Sample 6: mean=38.8000%; std=20.6050
+ -- Sample 7: mean=40.1117%; std=19.6254
+ -- Sample 8: mean=37.4749%; std=21.3570
+ -- Sample 9: mean=34.8851%; std=24.2954
+ -- Sample 10: mean=32.4564%; std=24.2927
+ -- Sample 11: mean=40.6113%; std=27.9755
+ -- Sample 12: mean=35.4217%; std=25.3372
+ -- Sample 13: mean=33.6029%; std=27.2729
+ -- Sample 14: mean=33.0744%; std=23.8041
+ -- Sample 15: mean=37.9638%; std=23.8907
+ -- Sample 16: mean=27.3696%; std=21.8548
+ -- Sample 17: mean=53.0915%; std=83.6080
+ -- Sample 18: mean=42.7814%; std=54.7927
+ -- Sample 19: mean=52.3224%; std=81.7514
+ -- Sample 20: mean=60.4212%; std=67.3840
+ -- Sample 21: mean=25.3861%; std=21.1952
+ -- Sample 22: mean=28.8827%; std=24.1652
+ -- Sample 23: mean=25.0938%; std=20.2651
+ -- Sample 24: mean=27.8327%; std=24.4222
+Mean: 35.2267%, Std: 9.2147%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9423
+ -- Sample 1: 0.9871
+ -- Sample 2: 0.9814
+ -- Sample 3: 0.9855
+ -- Sample 4: 0.9786
+ -- Sample 5: 0.9613
+ -- Sample 6: 0.9094
+ -- Sample 7: 0.9585
+ -- Sample 8: 0.9188
+ -- Sample 9: 0.9486
+ -- Sample 10: 0.9177
+ -- Sample 11: 0.9118
+ -- Sample 12: 0.9205
+ -- Sample 13: 0.9553
+ -- Sample 14: 0.9654
+ -- Sample 15: 0.9578
+ -- Sample 16: 0.9760
+ -- Sample 17: 0.9098
+ -- Sample 18: 0.9319
+ -- Sample 19: 0.9255
+ -- Sample 20: 0.8963
+ -- Sample 21: 0.9756
+ -- Sample 22: 0.9710
+ -- Sample 23: 0.9816
+ -- Sample 24: 0.9803
+Mean=0.9499, Std=0.0284
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 15.9905, Std: 8.9718
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=26.1029%; std=19.7766
+ -- Sample 1: mean=24.3936%; std=18.4146
+ -- Sample 2: mean=22.4848%; std=16.1595
+ -- Sample 3: mean=22.9155%; std=18.4275
+ -- Sample 4: mean=26.2896%; std=20.9708
+ -- Sample 5: mean=33.4765%; std=26.4608
+ -- Sample 6: mean=28.5745%; std=23.4484
+ -- Sample 7: mean=32.3036%; std=26.2514
+ -- Sample 8: mean=41.7502%; std=37.5626
+ -- Sample 9: mean=33.3011%; std=33.7573
+ -- Sample 10: mean=43.5905%; std=42.3766
+ -- Sample 11: mean=34.4476%; std=36.0830
+ -- Sample 12: mean=19.4750%; std=17.5214
+ -- Sample 13: mean=21.2587%; std=14.9707
+ -- Sample 14: mean=25.4751%; std=20.6892
+ -- Sample 15: mean=21.2949%; std=16.1404
+ -- Sample 16: mean=22.8883%; std=22.0606
+ -- Sample 17: mean=27.5917%; std=21.7984
+ -- Sample 18: mean=26.8368%; std=22.4730
+ -- Sample 19: mean=22.6219%; std=16.0023
+ -- Sample 20: mean=39.9681%; std=32.5507
+ -- Sample 21: mean=28.9493%; std=24.2893
+ -- Sample 22: mean=36.6860%; std=27.7251
+ -- Sample 23: mean=31.5765%; std=23.1365
+ -- Sample 24: mean=31.1699%; std=22.6096
+Mean: 29.0169%, Std: 6.5392%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9791
+ -- Sample 1: 0.9785
+ -- Sample 2: 0.9868
+ -- Sample 3: 0.9792
+ -- Sample 4: 0.9719
+ -- Sample 5: 0.9598
+ -- Sample 6: 0.9680
+ -- Sample 7: 0.9544
+ -- Sample 8: 0.9685
+ -- Sample 9: 0.9648
+ -- Sample 10: 0.9616
+ -- Sample 11: 0.9598
+ -- Sample 12: 0.9750
+ -- Sample 13: 0.9740
+ -- Sample 14: 0.9582
+ -- Sample 15: 0.9743
+ -- Sample 16: 0.9747
+ -- Sample 17: 0.9503
+ -- Sample 18: 0.9717
+ -- Sample 19: 0.9670
+ -- Sample 20: 0.9598
+ -- Sample 21: 0.9787
+ -- Sample 22: 0.9588
+ -- Sample 23: 0.9835
+ -- Sample 24: 0.9556
+Mean=0.9686, Std=0.0097
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 3)...
+Bias Error: using Single Component
+Mean: 13.8788, Std: 3.9874
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=28.5690%; std=19.3875
+ -- Sample 1: mean=28.7431%; std=23.4810
+ -- Sample 2: mean=28.2490%; std=23.3344
+Mean: 28.5204%, Std: 0.2046%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9697
+ -- Sample 1: 0.9671
+ -- Sample 2: 0.9546
+Mean=0.9638, Std=0.0066
+------------------------------------------------------------------
+
+Processing Dataset: Cylindrical Pores
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 46.5433, Std: 9.1734
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=52.5113%; std=18.9357
+ -- Sample 1: mean=52.7254%; std=18.9830
+ -- Sample 2: mean=53.9194%; std=17.4496
+ -- Sample 3: mean=57.7838%; std=13.9212
+ -- Sample 4: mean=53.7824%; std=21.0665
+ -- Sample 5: mean=48.5315%; std=14.3193
+ -- Sample 6: mean=62.1907%; std=28.3312
+ -- Sample 7: mean=51.0998%; std=16.4015
+ -- Sample 8: mean=50.4350%; std=21.5235
+ -- Sample 9: mean=50.0529%; std=21.4433
+ -- Sample 10: mean=61.1042%; std=20.9748
+ -- Sample 11: mean=50.7204%; std=20.5867
+ -- Sample 12: mean=63.1019%; std=24.4132
+ -- Sample 13: mean=46.7499%; std=21.5673
+ -- Sample 14: mean=60.2673%; std=25.3693
+ -- Sample 15: mean=47.4942%; std=22.2316
+ -- Sample 16: mean=68.4618%; std=21.9016
+ -- Sample 17: mean=53.2004%; std=23.6812
+ -- Sample 18: mean=62.5415%; std=20.5695
+ -- Sample 19: mean=50.3152%; std=29.6605
+ -- Sample 20: mean=54.3775%; std=17.4717
+ -- Sample 21: mean=58.7253%; std=22.9106
+ -- Sample 22: mean=56.7945%; std=20.1015
+ -- Sample 23: mean=59.6686%; std=24.0198
+ -- Sample 24: mean=69.3398%; std=17.7608
+Mean: 55.8358%, Std: 6.1316%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9338
+ -- Sample 1: 0.9365
+ -- Sample 2: 0.9447
+ -- Sample 3: 0.9560
+ -- Sample 4: 0.6894
+ -- Sample 5: 0.9444
+ -- Sample 6: 0.6101
+ -- Sample 7: 0.9276
+ -- Sample 8: 0.8951
+ -- Sample 9: 0.9532
+ -- Sample 10: 0.9218
+ -- Sample 11: 0.9600
+ -- Sample 12: 0.8645
+ -- Sample 13: 0.9294
+ -- Sample 14: 0.8683
+ -- Sample 15: 0.9196
+ -- Sample 16: 0.8828
+ -- Sample 17: 0.9163
+ -- Sample 18: 0.9355
+ -- Sample 19: 0.9369
+ -- Sample 20: 0.9584
+ -- Sample 21: 0.9006
+ -- Sample 22: 0.9333
+ -- Sample 23: 0.9076
+ -- Sample 24: 0.8955
+Mean=0.9009, Std=0.0792
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 71.0232, Std: 92.7845
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=66.7285%; std=15.9106
+ -- Sample 1: mean=66.5468%; std=21.9815
+ -- Sample 2: mean=68.0683%; std=15.4617
+ -- Sample 3: mean=39.8369%; std=28.7671
+ -- Sample 4: mean=54.8936%; std=61.4386
+ -- Sample 5: mean=41.0373%; std=36.0120
+ -- Sample 6: mean=58.8281%; std=78.9628
+ -- Sample 7: mean=53.8635%; std=25.7385
+ -- Sample 8: mean=64.3134%; std=35.8925
+ -- Sample 9: mean=52.7911%; std=24.1803
+ -- Sample 10: mean=62.7473%; std=51.5301
+ -- Sample 11: mean=61.1686%; std=19.2813
+ -- Sample 12: mean=53.0447%; std=19.8901
+ -- Sample 13: mean=57.2230%; std=19.7134
+ -- Sample 14: mean=56.0679%; std=16.1458
+ -- Sample 15: mean=37.8512%; std=21.9169
+ -- Sample 16: mean=48.7797%; std=24.0307
+ -- Sample 17: mean=56.7373%; std=25.1433
+ -- Sample 18: mean=43.1757%; std=23.4702
+ -- Sample 19: mean=65.6550%; std=41.5047
+ -- Sample 20: mean=52.2171%; std=23.9557
+ -- Sample 21: mean=66.4079%; std=31.6295
+ -- Sample 22: mean=43.4736%; std=27.1712
+ -- Sample 23: mean=54.8159%; std=31.2122
+ -- Sample 24: mean=51.3158%; std=27.7167
+Mean: 55.1035%, Std: 8.8438%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9006
+ -- Sample 1: 0.8836
+ -- Sample 2: 0.8817
+ -- Sample 3: 0.8633
+ -- Sample 4: 0.8460
+ -- Sample 5: 0.8061
+ -- Sample 6: 0.8438
+ -- Sample 7: 0.7987
+ -- Sample 8: 0.8234
+ -- Sample 9: 0.7801
+ -- Sample 10: 0.8142
+ -- Sample 11: 0.9398
+ -- Sample 12: 0.9238
+ -- Sample 13: 0.9128
+ -- Sample 14: 0.9360
+ -- Sample 15: 0.5354
+ -- Sample 16: 0.4502
+ -- Sample 17: 0.5560
+ -- Sample 18: 0.4459
+ -- Sample 19: 0.8247
+ -- Sample 20: 0.9388
+ -- Sample 21: 0.8532
+ -- Sample 22: 0.9480
+ -- Sample 23: 0.7917
+ -- Sample 24: 0.8897
+Mean=0.8075, Std=0.1453
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 31.7403, Std: 16.6782
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=54.7967%; std=30.0063
+ -- Sample 1: mean=47.2451%; std=26.3913
+ -- Sample 2: mean=52.6483%; std=26.6174
+ -- Sample 3: mean=58.5990%; std=58.2060
+ -- Sample 4: mean=54.4778%; std=26.4040
+ -- Sample 5: mean=53.9017%; std=55.6597
+ -- Sample 6: mean=34.6214%; std=16.5183
+ -- Sample 7: mean=32.1326%; std=22.1680
+ -- Sample 8: mean=32.1006%; std=17.7773
+ -- Sample 9: mean=29.2392%; std=20.2365
+ -- Sample 10: mean=59.6915%; std=14.7080
+ -- Sample 11: mean=59.1119%; std=20.4778
+ -- Sample 12: mean=59.6142%; std=14.8139
+ -- Sample 13: mean=57.5983%; std=20.7000
+ -- Sample 14: mean=46.9130%; std=30.9035
+ -- Sample 15: mean=48.6765%; std=80.6247
+ -- Sample 16: mean=45.3893%; std=30.6077
+ -- Sample 17: mean=62.2970%; std=90.1455
+ -- Sample 18: mean=57.0591%; std=24.8905
+ -- Sample 19: mean=47.2458%; std=29.1737
+ -- Sample 20: mean=62.3277%; std=22.0069
+ -- Sample 21: mean=51.3560%; std=23.0763
+ -- Sample 22: mean=37.8754%; std=19.1460
+ -- Sample 23: mean=44.4882%; std=18.3815
+ -- Sample 24: mean=40.4639%; std=19.6003
+Mean: 49.1948%, Std: 9.8553%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7700
+ -- Sample 1: 0.9007
+ -- Sample 2: 0.8416
+ -- Sample 3: 0.8244
+ -- Sample 4: 0.8287
+ -- Sample 5: 0.8539
+ -- Sample 6: 0.9761
+ -- Sample 7: 0.9698
+ -- Sample 8: 0.9655
+ -- Sample 9: 0.9599
+ -- Sample 10: 0.9532
+ -- Sample 11: 0.9179
+ -- Sample 12: 0.9561
+ -- Sample 13: 0.9089
+ -- Sample 14: 0.9383
+ -- Sample 15: 0.9056
+ -- Sample 16: 0.9503
+ -- Sample 17: 0.8199
+ -- Sample 18: 0.9231
+ -- Sample 19: 0.9084
+ -- Sample 20: 0.9214
+ -- Sample 21: 0.9066
+ -- Sample 22: 0.9712
+ -- Sample 23: 0.9455
+ -- Sample 24: 0.9684
+Mean=0.9114, Std=0.0560
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 38.1408, Std: 12.3345
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=42.0222%; std=19.5554
+ -- Sample 1: mean=37.7101%; std=19.8735
+ -- Sample 2: mean=45.7319%; std=15.8728
+ -- Sample 3: mean=41.5974%; std=19.2080
+ -- Sample 4: mean=43.0002%; std=17.4038
+ -- Sample 5: mean=48.4284%; std=16.0462
+ -- Sample 6: mean=37.0702%; std=19.4874
+ -- Sample 7: mean=43.6905%; std=17.4438
+ -- Sample 8: mean=40.5478%; std=19.2958
+ -- Sample 9: mean=55.9933%; std=19.3507
+ -- Sample 10: mean=51.7004%; std=21.1738
+ -- Sample 11: mean=53.4364%; std=19.7221
+ -- Sample 12: mean=51.7796%; std=21.2027
+ -- Sample 13: mean=38.6783%; std=27.8581
+ -- Sample 14: mean=37.0740%; std=30.2665
+ -- Sample 15: mean=38.7556%; std=27.3870
+ -- Sample 16: mean=40.6500%; std=33.3844
+ -- Sample 17: mean=53.3487%; std=21.9212
+ -- Sample 18: mean=48.2024%; std=21.7308
+ -- Sample 19: mean=51.6708%; std=17.2927
+ -- Sample 20: mean=46.0799%; std=22.5187
+ -- Sample 21: mean=39.0791%; std=20.8315
+ -- Sample 22: mean=37.6247%; std=18.2292
+ -- Sample 23: mean=38.0353%; std=20.3928
+ -- Sample 24: mean=37.9015%; std=20.0992
+Mean: 43.9923%, Std: 6.0215%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9476
+ -- Sample 1: 0.9662
+ -- Sample 2: 0.9694
+ -- Sample 3: 0.9636
+ -- Sample 4: 0.9570
+ -- Sample 5: 0.9711
+ -- Sample 6: 0.9540
+ -- Sample 7: 0.9682
+ -- Sample 8: 0.9620
+ -- Sample 9: 0.9234
+ -- Sample 10: 0.9253
+ -- Sample 11: 0.8995
+ -- Sample 12: 0.9304
+ -- Sample 13: 0.9294
+ -- Sample 14: 0.9144
+ -- Sample 15: 0.8943
+ -- Sample 16: 0.8951
+ -- Sample 17: 0.8912
+ -- Sample 18: 0.9299
+ -- Sample 19: 0.9400
+ -- Sample 20: 0.9189
+ -- Sample 21: 0.9515
+ -- Sample 22: 0.9645
+ -- Sample 23: 0.9618
+ -- Sample 24: 0.9562
+Mean=0.9394, Std=0.0256
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 20)...
+Bias Error: using Single Component
+Mean: 42.2167, Std: 7.7281
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=42.8782%; std=21.2792
+ -- Sample 1: mean=45.6989%; std=20.7356
+ -- Sample 2: mean=40.7392%; std=19.1700
+ -- Sample 3: mean=44.2781%; std=21.8826
+ -- Sample 4: mean=39.7953%; std=21.0380
+ -- Sample 5: mean=43.4632%; std=18.0978
+ -- Sample 6: mean=39.6043%; std=23.2223
+ -- Sample 7: mean=42.9514%; std=18.4885
+ -- Sample 8: mean=29.8515%; std=16.7863
+ -- Sample 9: mean=31.2582%; std=16.4708
+ -- Sample 10: mean=37.7819%; std=17.2613
+ -- Sample 11: mean=36.2356%; std=18.4944
+ -- Sample 12: mean=55.5058%; std=17.0056
+ -- Sample 13: mean=52.5194%; std=23.3544
+ -- Sample 14: mean=57.8788%; std=14.9120
+ -- Sample 15: mean=55.2014%; std=23.0983
+ -- Sample 16: mean=44.4380%; std=21.3065
+ -- Sample 17: mean=50.1834%; std=19.1233
+ -- Sample 18: mean=42.8034%; std=17.7649
+ -- Sample 19: mean=49.8793%; std=20.1027
+Mean: 44.1473%, Std: 7.4558%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9372
+ -- Sample 1: 0.9320
+ -- Sample 2: 0.9523
+ -- Sample 3: 0.9203
+ -- Sample 4: 0.9433
+ -- Sample 5: 0.9604
+ -- Sample 6: 0.9308
+ -- Sample 7: 0.9572
+ -- Sample 8: 0.9768
+ -- Sample 9: 0.9654
+ -- Sample 10: 0.9756
+ -- Sample 11: 0.9626
+ -- Sample 12: 0.9394
+ -- Sample 13: 0.8960
+ -- Sample 14: 0.9577
+ -- Sample 15: 0.8895
+ -- Sample 16: 0.9370
+ -- Sample 17: 0.9349
+ -- Sample 18: 0.9496
+ -- Sample 19: 0.9226
+Mean=0.9420, Std=0.0227
+------------------------------------------------------------------
+
+Processing Dataset: Cylindrical Grains
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 20.5621, Std: 6.8008
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=23.7758%; std=20.0709
+ -- Sample 1: mean=26.1537%; std=21.2198
+ -- Sample 2: mean=23.9704%; std=19.9629
+ -- Sample 3: mean=24.4264%; std=20.9239
+ -- Sample 4: mean=28.2009%; std=22.8905
+ -- Sample 5: mean=27.4971%; std=24.4010
+ -- Sample 6: mean=27.0550%; std=22.1592
+ -- Sample 7: mean=30.2491%; std=24.4210
+ -- Sample 8: mean=42.5389%; std=32.6993
+ -- Sample 9: mean=38.7239%; std=26.4003
+ -- Sample 10: mean=42.2220%; std=33.8027
+ -- Sample 11: mean=41.8152%; std=34.3133
+ -- Sample 12: mean=27.0834%; std=18.2319
+ -- Sample 13: mean=22.7280%; std=18.8794
+ -- Sample 14: mean=22.5825%; std=16.7578
+ -- Sample 15: mean=23.1571%; std=17.9631
+ -- Sample 16: mean=34.1806%; std=21.7891
+ -- Sample 17: mean=32.8005%; std=23.7841
+ -- Sample 18: mean=38.4061%; std=27.3084
+ -- Sample 19: mean=34.1370%; std=27.1656
+ -- Sample 20: mean=25.0648%; std=18.7376
+ -- Sample 21: mean=25.8439%; std=19.4889
+ -- Sample 22: mean=28.1018%; std=19.8269
+ -- Sample 23: mean=26.0736%; std=19.4178
+ -- Sample 24: mean=36.0822%; std=23.3644
+Mean: 30.1148%, Std: 6.4347%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9807
+ -- Sample 1: 0.9813
+ -- Sample 2: 0.9768
+ -- Sample 3: 0.9746
+ -- Sample 4: 0.9729
+ -- Sample 5: 0.9656
+ -- Sample 6: 0.9800
+ -- Sample 7: 0.9712
+ -- Sample 8: 0.9650
+ -- Sample 9: 0.9631
+ -- Sample 10: 0.9642
+ -- Sample 11: 0.9463
+ -- Sample 12: 0.9613
+ -- Sample 13: 0.9717
+ -- Sample 14: 0.9711
+ -- Sample 15: 0.9736
+ -- Sample 16: 0.9523
+ -- Sample 17: 0.9606
+ -- Sample 18: 0.9316
+ -- Sample 19: 0.9577
+ -- Sample 20: 0.9631
+ -- Sample 21: 0.9625
+ -- Sample 22: 0.9575
+ -- Sample 23: 0.9605
+ -- Sample 24: 0.8729
+Mean=0.9615, Std=0.0212
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 28.4781, Std: 16.5779
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=42.3863%; std=37.7760
+ -- Sample 1: mean=34.1803%; std=24.4777
+ -- Sample 2: mean=39.6883%; std=33.1373
+ -- Sample 3: mean=31.5527%; std=20.9901
+ -- Sample 4: mean=34.1631%; std=24.3358
+ -- Sample 5: mean=25.8415%; std=17.9017
+ -- Sample 6: mean=34.8419%; std=22.4088
+ -- Sample 7: mean=35.3557%; std=19.3010
+ -- Sample 8: mean=30.6277%; std=16.5861
+ -- Sample 9: mean=37.3507%; std=20.7188
+ -- Sample 10: mean=32.6171%; std=16.4771
+ -- Sample 11: mean=26.0860%; std=19.9032
+ -- Sample 12: mean=20.3086%; std=17.3054
+ -- Sample 13: mean=25.8807%; std=19.5394
+ -- Sample 14: mean=23.7766%; std=19.0003
+ -- Sample 15: mean=58.2975%; std=45.7044
+ -- Sample 16: mean=45.1213%; std=28.7429
+ -- Sample 17: mean=58.5258%; std=38.6627
+ -- Sample 18: mean=50.3749%; std=38.5135
+ -- Sample 19: mean=48.5168%; std=41.2621
+ -- Sample 20: mean=59.9072%; std=43.3674
+ -- Sample 21: mean=65.1520%; std=51.2016
+ -- Sample 22: mean=73.2579%; std=47.3283
+ -- Sample 23: mean=29.9474%; std=17.7491
+ -- Sample 24: mean=31.2765%; std=20.7025
+Mean: 39.8014%, Std: 13.8312%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8928
+ -- Sample 1: 0.8773
+ -- Sample 2: 0.8960
+ -- Sample 3: 0.9562
+ -- Sample 4: 0.8892
+ -- Sample 5: 0.9707
+ -- Sample 6: 0.9298
+ -- Sample 7: 0.9443
+ -- Sample 8: 0.9770
+ -- Sample 9: 0.9519
+ -- Sample 10: 0.9779
+ -- Sample 11: 0.9635
+ -- Sample 12: 0.9821
+ -- Sample 13: 0.9597
+ -- Sample 14: 0.9717
+ -- Sample 15: 0.9649
+ -- Sample 16: 0.9598
+ -- Sample 17: 0.9640
+ -- Sample 18: 0.9544
+ -- Sample 19: 0.9547
+ -- Sample 20: 0.9733
+ -- Sample 21: 0.9311
+ -- Sample 22: 0.9733
+ -- Sample 23: 0.9796
+ -- Sample 24: 0.9468
+Mean=0.9497, Std=0.0298
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 14.9082, Std: 13.5883
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=24.9930%; std=19.8963
+ -- Sample 1: mean=35.2567%; std=23.2827
+ -- Sample 2: mean=30.3256%; std=26.9181
+ -- Sample 3: mean=48.6463%; std=34.5420
+ -- Sample 4: mean=30.0326%; std=23.8646
+ -- Sample 5: mean=55.1785%; std=49.9835
+ -- Sample 6: mean=33.8456%; std=32.5282
+ -- Sample 7: mean=26.5977%; std=24.9180
+ -- Sample 8: mean=33.0224%; std=32.9662
+ -- Sample 9: mean=30.3569%; std=28.1066
+ -- Sample 10: mean=28.6294%; std=21.6988
+ -- Sample 11: mean=26.4336%; std=22.9307
+ -- Sample 12: mean=30.7157%; std=25.0472
+ -- Sample 13: mean=25.8823%; std=18.7087
+ -- Sample 14: mean=38.5320%; std=19.3934
+ -- Sample 15: mean=43.8097%; std=19.3244
+ -- Sample 16: mean=36.1101%; std=19.9731
+ -- Sample 17: mean=43.0425%; std=21.2569
+ -- Sample 18: mean=48.8067%; std=26.1471
+ -- Sample 19: mean=65.3120%; std=48.7460
+ -- Sample 20: mean=40.8528%; std=27.1342
+ -- Sample 21: mean=69.8097%; std=63.3895
+ -- Sample 22: mean=52.0349%; std=39.7203
+ -- Sample 23: mean=63.1450%; std=58.3444
+ -- Sample 24: mean=54.3293%; std=43.2309
+Mean: 40.6280%, Std: 13.0053%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9773
+ -- Sample 1: 0.9315
+ -- Sample 2: 0.9785
+ -- Sample 3: 0.8464
+ -- Sample 4: 0.9779
+ -- Sample 5: 0.8495
+ -- Sample 6: 0.9422
+ -- Sample 7: 0.9650
+ -- Sample 8: 0.9441
+ -- Sample 9: 0.9472
+ -- Sample 10: 0.9605
+ -- Sample 11: 0.9794
+ -- Sample 12: 0.9482
+ -- Sample 13: 0.9808
+ -- Sample 14: 0.9437
+ -- Sample 15: 0.9530
+ -- Sample 16: 0.9429
+ -- Sample 17: 0.9437
+ -- Sample 18: 0.9308
+ -- Sample 19: 0.8078
+ -- Sample 20: 0.9468
+ -- Sample 21: 0.8010
+ -- Sample 22: 0.9297
+ -- Sample 23: 0.8073
+ -- Sample 24: 0.9262
+Mean=0.9265, Std=0.0552
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 21)...
+Bias Error: using Single Component
+Mean: 34.4894, Std: 21.5558
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=49.9843%; std=38.7916
+ -- Sample 1: mean=53.1647%; std=36.2869
+ -- Sample 2: mean=57.0035%; std=46.2531
+ -- Sample 3: mean=43.5217%; std=40.2223
+ -- Sample 4: mean=38.4217%; std=29.2457
+ -- Sample 5: mean=38.7090%; std=20.6651
+ -- Sample 6: mean=39.3460%; std=13.0480
+ -- Sample 7: mean=44.3818%; std=24.7622
+ -- Sample 8: mean=43.9951%; std=18.3427
+ -- Sample 9: mean=57.1761%; std=59.4251
+ -- Sample 10: mean=61.8727%; std=53.6099
+ -- Sample 11: mean=45.4721%; std=37.8529
+ -- Sample 12: mean=80.9725%; std=91.2037
+ -- Sample 13: mean=63.6012%; std=68.2148
+ -- Sample 14: mean=54.6826%; std=47.0314
+ -- Sample 15: mean=55.8253%; std=51.2556
+ -- Sample 16: mean=56.4661%; std=42.5289
+ -- Sample 17: mean=31.5608%; std=20.8219
+ -- Sample 18: mean=37.1640%; std=25.3289
+ -- Sample 19: mean=35.2187%; std=26.2636
+ -- Sample 20: mean=36.5054%; std=26.9078
+Mean: 48.8117%, Std: 11.6993%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8613
+ -- Sample 1: 0.9289
+ -- Sample 2: 0.8859
+ -- Sample 3: 0.9290
+ -- Sample 4: 0.9376
+ -- Sample 5: 0.9733
+ -- Sample 6: 0.9915
+ -- Sample 7: 0.9615
+ -- Sample 8: 0.9778
+ -- Sample 9: 0.9063
+ -- Sample 10: 0.8512
+ -- Sample 11: 0.9292
+ -- Sample 12: 0.9138
+ -- Sample 13: 0.9030
+ -- Sample 14: 0.9194
+ -- Sample 15: 0.9526
+ -- Sample 16: 0.9359
+ -- Sample 17: 0.9791
+ -- Sample 18: 0.9030
+ -- Sample 19: 0.9747
+ -- Sample 20: 0.8751
+Mean=0.9281, Std=0.0391
+------------------------------------------------------------------
+
+Processing Dataset: Bentheimer
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 22.7207, Std: 18.9567
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=36.0695%; std=25.7868
+ -- Sample 1: mean=41.3630%; std=24.0921
+ -- Sample 2: mean=33.0866%; std=24.9845
+ -- Sample 3: mean=38.4368%; std=25.3931
+ -- Sample 4: mean=67.8933%; std=51.3899
+ -- Sample 5: mean=51.1009%; std=32.7031
+ -- Sample 6: mean=72.6609%; std=54.3774
+ -- Sample 7: mean=50.3734%; std=34.8136
+ -- Sample 8: mean=98.1327%; std=84.5504
+ -- Sample 9: mean=117.0810%; std=117.6714
+ -- Sample 10: mean=82.4321%; std=73.6311
+ -- Sample 11: mean=98.0209%; std=84.4935
+ -- Sample 12: mean=48.7036%; std=34.6694
+ -- Sample 13: mean=36.5316%; std=25.3202
+ -- Sample 14: mean=44.9809%; std=34.6463
+ -- Sample 15: mean=41.0559%; std=27.9413
+ -- Sample 16: mean=34.7348%; std=18.0269
+ -- Sample 17: mean=30.5427%; std=21.6670
+ -- Sample 18: mean=31.3964%; std=17.1732
+ -- Sample 19: mean=28.9521%; std=17.9687
+ -- Sample 20: mean=49.7301%; std=35.7535
+ -- Sample 21: mean=38.1856%; std=39.2440
+ -- Sample 22: mean=41.7562%; std=29.7025
+ -- Sample 23: mean=45.0177%; std=46.6327
+ -- Sample 24: mean=42.3093%; std=24.1117
+Mean: 52.0219%, Std: 23.3035%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9348
+ -- Sample 1: 0.8850
+ -- Sample 2: 0.9430
+ -- Sample 3: 0.8938
+ -- Sample 4: 0.8067
+ -- Sample 5: 0.9101
+ -- Sample 6: 0.8411
+ -- Sample 7: 0.9226
+ -- Sample 8: 0.8565
+ -- Sample 9: 0.8119
+ -- Sample 10: 0.8638
+ -- Sample 11: 0.8570
+ -- Sample 12: 0.9078
+ -- Sample 13: 0.9629
+ -- Sample 14: 0.9007
+ -- Sample 15: 0.9457
+ -- Sample 16: 0.9750
+ -- Sample 17: 0.9597
+ -- Sample 18: 0.9820
+ -- Sample 19: 0.9787
+ -- Sample 20: 0.9145
+ -- Sample 21: 0.9364
+ -- Sample 22: 0.9206
+ -- Sample 23: 0.9223
+ -- Sample 24: 0.9753
+Mean=0.9123, Std=0.0496
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 93.3632, Std: 155.7884
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=42.8954%; std=25.5834
+ -- Sample 1: mean=40.0762%; std=23.1617
+ -- Sample 2: mean=45.0216%; std=24.1327
+ -- Sample 3: mean=32.8834%; std=27.8928
+ -- Sample 4: mean=36.4340%; std=25.1704
+ -- Sample 5: mean=36.8618%; std=26.8917
+ -- Sample 6: mean=29.8574%; std=23.3384
+ -- Sample 7: mean=544.9251%; std=776.9302
+ -- Sample 8: mean=454.1934%; std=664.9623
+ -- Sample 9: mean=527.2195%; std=726.9293
+ -- Sample 10: mean=638.3853%; std=750.6567
+ -- Sample 11: mean=44.2173%; std=22.2754
+ -- Sample 12: mean=39.8683%; std=20.0705
+ -- Sample 13: mean=40.4604%; std=19.8106
+ -- Sample 14: mean=33.2889%; std=21.0805
+ -- Sample 15: mean=47.9526%; std=22.9634
+ -- Sample 16: mean=36.1412%; std=21.6382
+ -- Sample 17: mean=44.9604%; std=22.5940
+ -- Sample 18: mean=36.0548%; std=19.6307
+ -- Sample 19: mean=31.4047%; std=22.7458
+ -- Sample 20: mean=34.5760%; std=22.4772
+ -- Sample 21: mean=32.8867%; std=23.2578
+ -- Sample 22: mean=37.4891%; std=25.3303
+ -- Sample 23: mean=46.6441%; std=22.7331
+ -- Sample 24: mean=46.9790%; std=29.8574
+Mean: 119.2671%, Std: 186.0662%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9202
+ -- Sample 1: 0.9780
+ -- Sample 2: 0.9137
+ -- Sample 3: 0.9169
+ -- Sample 4: 0.8765
+ -- Sample 5: 0.9128
+ -- Sample 6: 0.9098
+ -- Sample 7: 0.3760
+ -- Sample 8: 0.3059
+ -- Sample 9: 0.3916
+ -- Sample 10: 0.3365
+ -- Sample 11: 0.9319
+ -- Sample 12: 0.9549
+ -- Sample 13: 0.9574
+ -- Sample 14: 0.9623
+ -- Sample 15: 0.9271
+ -- Sample 16: 0.9467
+ -- Sample 17: 0.9320
+ -- Sample 18: 0.9578
+ -- Sample 19: 0.9763
+ -- Sample 20: 0.9521
+ -- Sample 21: 0.9700
+ -- Sample 22: 0.9290
+ -- Sample 23: 0.8985
+ -- Sample 24: 0.6259
+Mean=0.8304, Std=0.2189
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 23.0065, Std: 20.3598
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=39.7627%; std=25.5829
+ -- Sample 1: mean=55.0334%; std=27.4500
+ -- Sample 2: mean=35.7887%; std=42.4325
+ -- Sample 3: mean=47.6071%; std=58.3558
+ -- Sample 4: mean=30.1627%; std=41.8147
+ -- Sample 5: mean=44.3188%; std=50.5934
+ -- Sample 6: mean=37.5323%; std=28.6772
+ -- Sample 7: mean=36.8659%; std=30.9602
+ -- Sample 8: mean=45.4180%; std=33.1541
+ -- Sample 9: mean=38.8463%; std=34.8134
+ -- Sample 10: mean=91.5504%; std=113.6926
+ -- Sample 11: mean=58.7747%; std=104.6698
+ -- Sample 12: mean=86.3362%; std=113.5120
+ -- Sample 13: mean=57.9655%; std=95.7224
+ -- Sample 14: mean=39.7476%; std=29.9092
+ -- Sample 15: mean=32.9198%; std=24.8760
+ -- Sample 16: mean=36.3514%; std=29.0941
+ -- Sample 17: mean=38.3984%; std=29.9017
+ -- Sample 18: mean=39.9144%; std=31.3028
+ -- Sample 19: mean=40.1448%; std=34.3147
+ -- Sample 20: mean=40.6266%; std=39.2929
+ -- Sample 21: mean=45.2943%; std=31.9070
+ -- Sample 22: mean=65.1477%; std=69.9608
+ -- Sample 23: mean=95.2852%; std=98.5179
+ -- Sample 24: mean=77.7857%; std=92.2341
+Mean: 50.3031%, Std: 18.4398%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9121
+ -- Sample 1: 0.6465
+ -- Sample 2: 0.9381
+ -- Sample 3: 0.9197
+ -- Sample 4: 0.9544
+ -- Sample 5: 0.9331
+ -- Sample 6: 0.9335
+ -- Sample 7: 0.8982
+ -- Sample 8: 0.9303
+ -- Sample 9: 0.9082
+ -- Sample 10: 0.7882
+ -- Sample 11: 0.8715
+ -- Sample 12: 0.8176
+ -- Sample 13: 0.8660
+ -- Sample 14: 0.9315
+ -- Sample 15: 0.9496
+ -- Sample 16: 0.9437
+ -- Sample 17: 0.9290
+ -- Sample 18: 0.9281
+ -- Sample 19: 0.9134
+ -- Sample 20: 0.9178
+ -- Sample 21: 0.8865
+ -- Sample 22: 0.6041
+ -- Sample 23: 0.8231
+ -- Sample 24: 0.5801
+Mean=0.8690, Std=0.1045
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 41.2986, Std: 48.9383
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=103.4319%; std=122.1857
+ -- Sample 1: mean=43.3205%; std=27.5616
+ -- Sample 2: mean=52.1928%; std=31.3883
+ -- Sample 3: mean=47.2059%; std=25.8927
+ -- Sample 4: mean=52.1205%; std=34.7815
+ -- Sample 5: mean=51.1948%; std=34.6089
+ -- Sample 6: mean=45.5807%; std=30.6746
+ -- Sample 7: mean=52.0131%; std=38.5869
+ -- Sample 8: mean=47.0129%; std=29.7073
+ -- Sample 9: mean=202.0049%; std=219.1269
+ -- Sample 10: mean=131.4447%; std=165.5652
+ -- Sample 11: mean=233.8408%; std=290.9068
+ -- Sample 12: mean=144.5172%; std=199.2809
+ -- Sample 13: mean=44.7913%; std=36.3720
+ -- Sample 14: mean=60.4633%; std=40.7035
+ -- Sample 15: mean=42.6651%; std=36.9608
+ -- Sample 16: mean=60.1157%; std=39.4417
+ -- Sample 17: mean=26.8744%; std=24.1044
+ -- Sample 18: mean=34.7807%; std=31.8743
+ -- Sample 19: mean=27.4948%; std=22.6067
+ -- Sample 20: mean=23.9899%; std=18.9089
+ -- Sample 21: mean=45.5931%; std=23.3518
+ -- Sample 22: mean=47.5963%; std=25.4042
+ -- Sample 23: mean=43.0706%; std=26.2757
+ -- Sample 24: mean=48.0831%; std=25.4082
+Mean: 68.4560%, Std: 52.6208%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7637
+ -- Sample 1: 0.9143
+ -- Sample 2: 0.9123
+ -- Sample 3: 0.8936
+ -- Sample 4: 0.9225
+ -- Sample 5: 0.8189
+ -- Sample 6: 0.8577
+ -- Sample 7: 0.8253
+ -- Sample 8: 0.8442
+ -- Sample 9: 0.6203
+ -- Sample 10: 0.6529
+ -- Sample 11: 0.5789
+ -- Sample 12: 0.6447
+ -- Sample 13: 0.9361
+ -- Sample 14: 0.9674
+ -- Sample 15: 0.9217
+ -- Sample 16: 0.9544
+ -- Sample 17: 0.9660
+ -- Sample 18: 0.9471
+ -- Sample 19: 0.9634
+ -- Sample 20: 0.9647
+ -- Sample 21: 0.9458
+ -- Sample 22: 0.9062
+ -- Sample 23: 0.9477
+ -- Sample 24: 0.9201
+Mean=0.8636, Std=0.1166
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 21.2201, Std: 11.2491
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=36.3573%; std=26.7384
+ -- Sample 1: mean=29.8167%; std=22.0019
+ -- Sample 2: mean=30.3640%; std=26.5726
+ -- Sample 3: mean=33.6258%; std=22.2916
+ -- Sample 4: mean=48.3052%; std=22.5432
+ -- Sample 5: mean=46.2176%; std=20.9470
+ -- Sample 6: mean=42.9447%; std=21.3980
+ -- Sample 7: mean=36.1272%; std=22.8302
+ -- Sample 8: mean=44.0403%; std=29.3856
+ -- Sample 9: mean=38.2267%; std=38.1169
+ -- Sample 10: mean=39.6639%; std=34.3481
+ -- Sample 11: mean=38.6410%; std=26.7923
+ -- Sample 12: mean=49.8859%; std=50.6906
+ -- Sample 13: mean=44.6620%; std=40.4689
+ -- Sample 14: mean=42.7026%; std=43.9624
+ -- Sample 15: mean=34.1273%; std=35.2893
+ -- Sample 16: mean=42.0817%; std=29.3472
+ -- Sample 17: mean=47.4251%; std=34.4329
+ -- Sample 18: mean=49.8928%; std=28.8215
+ -- Sample 19: mean=42.5350%; std=35.7109
+ -- Sample 20: mean=52.6897%; std=26.5417
+ -- Sample 21: mean=47.6888%; std=20.5659
+ -- Sample 22: mean=44.9223%; std=23.8226
+ -- Sample 23: mean=47.4743%; std=21.2805
+ -- Sample 24: mean=44.2629%; std=28.9690
+Mean: 42.1872%, Std: 6.0894%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9219
+ -- Sample 1: 0.9772
+ -- Sample 2: 0.9485
+ -- Sample 3: 0.9675
+ -- Sample 4: 0.9415
+ -- Sample 5: 0.8883
+ -- Sample 6: 0.9594
+ -- Sample 7: 0.9111
+ -- Sample 8: 0.8970
+ -- Sample 9: 0.9537
+ -- Sample 10: 0.9083
+ -- Sample 11: 0.9467
+ -- Sample 12: 0.9338
+ -- Sample 13: 0.9417
+ -- Sample 14: 0.9507
+ -- Sample 15: 0.9572
+ -- Sample 16: 0.9322
+ -- Sample 17: 0.9243
+ -- Sample 18: 0.9409
+ -- Sample 19: 0.9232
+ -- Sample 20: 0.9244
+ -- Sample 21: 0.8954
+ -- Sample 22: 0.9459
+ -- Sample 23: 0.8774
+ -- Sample 24: 0.8759
+Mean=0.9298, Std=0.0270
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 25)...
+Bias Error: using Single Component
+Mean: 51.5834, Std: 64.2422
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=43.2766%; std=23.3436
+ -- Sample 1: mean=42.3517%; std=28.6700
+ -- Sample 2: mean=43.4381%; std=24.0527
+ -- Sample 3: mean=256.0410%; std=293.2227
+ -- Sample 4: mean=275.3893%; std=261.0492
+ -- Sample 5: mean=258.7480%; std=310.4839
+ -- Sample 6: mean=290.8105%; std=281.3119
+ -- Sample 7: mean=42.5875%; std=27.2925
+ -- Sample 8: mean=30.3218%; std=23.6736
+ -- Sample 9: mean=38.7131%; std=23.5671
+ -- Sample 10: mean=33.1666%; std=27.5122
+ -- Sample 11: mean=30.6462%; std=19.9868
+ -- Sample 12: mean=30.2414%; std=14.7083
+ -- Sample 13: mean=34.6075%; std=16.2557
+ -- Sample 14: mean=30.5580%; std=17.6175
+ -- Sample 15: mean=37.6602%; std=31.0168
+ -- Sample 16: mean=38.7669%; std=34.9619
+ -- Sample 17: mean=34.5682%; std=28.1390
+ -- Sample 18: mean=41.6772%; std=65.8632
+ -- Sample 19: mean=27.0265%; std=22.7749
+ -- Sample 20: mean=37.2094%; std=31.1789
+ -- Sample 21: mean=28.8273%; std=24.2619
+ -- Sample 22: mean=34.2171%; std=25.3153
+ -- Sample 23: mean=43.6675%; std=21.5369
+ -- Sample 24: mean=31.9775%; std=18.2283
+Mean: 73.4598%, Std: 86.2041%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9123
+ -- Sample 1: 0.8670
+ -- Sample 2: 0.8746
+ -- Sample 3: 0.6058
+ -- Sample 4: 0.6014
+ -- Sample 5: 0.5671
+ -- Sample 6: 0.5286
+ -- Sample 7: 0.9136
+ -- Sample 8: 0.9685
+ -- Sample 9: 0.9494
+ -- Sample 10: 0.9771
+ -- Sample 11: 0.9781
+ -- Sample 12: 0.9886
+ -- Sample 13: 0.9832
+ -- Sample 14: 0.9785
+ -- Sample 15: 0.9585
+ -- Sample 16: 0.7371
+ -- Sample 17: 0.9462
+ -- Sample 18: 0.7082
+ -- Sample 19: 0.9777
+ -- Sample 20: 0.9540
+ -- Sample 21: 0.9754
+ -- Sample 22: 0.9566
+ -- Sample 23: 0.9319
+ -- Sample 24: 0.9400
+Mean=0.8712, Std=0.1463
+------------------------------------------------------------------
+  Processing Batch 7 (Size: 25)...
+Bias Error: using Single Component
+Mean: 11.7655, Std: 8.8372
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=46.5527%; std=19.2214
+ -- Sample 1: mean=30.6513%; std=18.3933
+ -- Sample 2: mean=23.1385%; std=16.6579
+ -- Sample 3: mean=23.6545%; std=18.9804
+ -- Sample 4: mean=25.0866%; std=17.4745
+ -- Sample 5: mean=25.8227%; std=18.4062
+ -- Sample 6: mean=36.5065%; std=26.3735
+ -- Sample 7: mean=38.6646%; std=28.5486
+ -- Sample 8: mean=32.2876%; std=24.8859
+ -- Sample 9: mean=35.9391%; std=30.0797
+ -- Sample 10: mean=27.6541%; std=22.6898
+ -- Sample 11: mean=22.7369%; std=19.9029
+ -- Sample 12: mean=26.5521%; std=19.7006
+ -- Sample 13: mean=24.6058%; std=19.6202
+ -- Sample 14: mean=29.5869%; std=17.8668
+ -- Sample 15: mean=32.2610%; std=22.2697
+ -- Sample 16: mean=30.7703%; std=16.0638
+ -- Sample 17: mean=34.5319%; std=19.1941
+ -- Sample 18: mean=36.9166%; std=38.6734
+ -- Sample 19: mean=54.6562%; std=55.9103
+ -- Sample 20: mean=42.1199%; std=44.9871
+ -- Sample 21: mean=50.7933%; std=47.3914
+ -- Sample 22: mean=29.4692%; std=23.5216
+ -- Sample 23: mean=30.0113%; std=19.7434
+ -- Sample 24: mean=30.1267%; std=24.1369
+Mean: 32.8438%, Std: 8.2947%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9270
+ -- Sample 1: 0.9501
+ -- Sample 2: 0.9699
+ -- Sample 3: 0.9662
+ -- Sample 4: 0.9619
+ -- Sample 5: 0.9558
+ -- Sample 6: 0.9638
+ -- Sample 7: 0.9622
+ -- Sample 8: 0.9687
+ -- Sample 9: 0.9592
+ -- Sample 10: 0.9778
+ -- Sample 11: 0.9705
+ -- Sample 12: 0.9796
+ -- Sample 13: 0.9627
+ -- Sample 14: 0.9719
+ -- Sample 15: 0.9577
+ -- Sample 16: 0.9823
+ -- Sample 17: 0.9580
+ -- Sample 18: 0.9006
+ -- Sample 19: 0.8595
+ -- Sample 20: 0.8908
+ -- Sample 21: 0.8584
+ -- Sample 22: 0.9527
+ -- Sample 23: 0.9396
+ -- Sample 24: 0.9505
+Mean=0.9479, Std=0.0338
+------------------------------------------------------------------
+  Processing Batch 8 (Size: 25)...
+Bias Error: using Single Component
+Mean: 19.3983, Std: 19.4253
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=29.9243%; std=23.1997
+ -- Sample 1: mean=36.8773%; std=34.2223
+ -- Sample 2: mean=24.6601%; std=18.6849
+ -- Sample 3: mean=41.5142%; std=47.8563
+ -- Sample 4: mean=22.3421%; std=18.4670
+ -- Sample 5: mean=111.8203%; std=144.7901
+ -- Sample 6: mean=84.1558%; std=80.3648
+ -- Sample 7: mean=96.2394%; std=102.7678
+ -- Sample 8: mean=95.4097%; std=94.0569
+ -- Sample 9: mean=61.5078%; std=46.2678
+ -- Sample 10: mean=59.1269%; std=52.5856
+ -- Sample 11: mean=66.1175%; std=50.4850
+ -- Sample 12: mean=54.9150%; std=47.8034
+ -- Sample 13: mean=44.5408%; std=51.4097
+ -- Sample 14: mean=28.0209%; std=22.7089
+ -- Sample 15: mean=33.3481%; std=27.5073
+ -- Sample 16: mean=32.5480%; std=24.6452
+ -- Sample 17: mean=52.3102%; std=59.1116
+ -- Sample 18: mean=38.4051%; std=29.1103
+ -- Sample 19: mean=37.7480%; std=30.1346
+ -- Sample 20: mean=35.6813%; std=27.7613
+ -- Sample 21: mean=28.7036%; std=21.7467
+ -- Sample 22: mean=29.8228%; std=24.2890
+ -- Sample 23: mean=36.5716%; std=28.6965
+ -- Sample 24: mean=26.2943%; std=25.1910
+Mean: 48.3442%, Std: 24.3857%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9120
+ -- Sample 1: 0.9404
+ -- Sample 2: 0.9555
+ -- Sample 3: 0.9462
+ -- Sample 4: 0.9551
+ -- Sample 5: 0.7095
+ -- Sample 6: 0.7544
+ -- Sample 7: 0.7729
+ -- Sample 8: 0.6823
+ -- Sample 9: 0.8434
+ -- Sample 10: 0.8679
+ -- Sample 11: 0.8681
+ -- Sample 12: 0.8612
+ -- Sample 13: 0.8902
+ -- Sample 14: 0.9632
+ -- Sample 15: 0.9269
+ -- Sample 16: 0.9353
+ -- Sample 17: 0.9301
+ -- Sample 18: 0.9475
+ -- Sample 19: 0.9466
+ -- Sample 20: 0.9634
+ -- Sample 21: 0.9475
+ -- Sample 22: 0.9667
+ -- Sample 23: 0.9172
+ -- Sample 24: 0.9644
+Mean=0.8947, Std=0.0809
+------------------------------------------------------------------
+  Processing Batch 9 (Size: 25)...
+Bias Error: using Single Component
+Mean: 66.2052, Std: 108.5907
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=29.5239%; std=17.2173
+ -- Sample 1: mean=34.9201%; std=23.1092
+ -- Sample 2: mean=29.4134%; std=19.2771
+ -- Sample 3: mean=34.1885%; std=22.9260
+ -- Sample 4: mean=87.5413%; std=121.6503
+ -- Sample 5: mean=488.0928%; std=568.9285
+ -- Sample 6: mean=99.2353%; std=142.6729
+ -- Sample 7: mean=562.7622%; std=647.1924
+ -- Sample 8: mean=29.3404%; std=20.9238
+ -- Sample 9: mean=32.1100%; std=24.9049
+ -- Sample 10: mean=37.4328%; std=24.6979
+ -- Sample 11: mean=35.1850%; std=25.2137
+ -- Sample 12: mean=32.7270%; std=20.1558
+ -- Sample 13: mean=30.8722%; std=20.3937
+ -- Sample 14: mean=34.9515%; std=21.5354
+ -- Sample 15: mean=35.7316%; std=19.0112
+ -- Sample 16: mean=43.6201%; std=23.1327
+ -- Sample 17: mean=43.8741%; std=26.3742
+ -- Sample 18: mean=40.8794%; std=25.9450
+ -- Sample 19: mean=48.1647%; std=34.4623
+ -- Sample 20: mean=54.4884%; std=21.3316
+ -- Sample 21: mean=50.8209%; std=19.2765
+ -- Sample 22: mean=57.9939%; std=20.6424
+ -- Sample 23: mean=54.3476%; std=22.0535
+ -- Sample 24: mean=54.4011%; std=41.6444
+Mean: 83.3047%, Std: 131.8758%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9573
+ -- Sample 1: 0.9503
+ -- Sample 2: 0.9507
+ -- Sample 3: 0.9510
+ -- Sample 4: 0.7463
+ -- Sample 5: 0.6135
+ -- Sample 6: 0.7053
+ -- Sample 7: 0.6091
+ -- Sample 8: 0.9559
+ -- Sample 9: 0.9673
+ -- Sample 10: 0.9578
+ -- Sample 11: 0.9640
+ -- Sample 12: 0.9423
+ -- Sample 13: 0.9674
+ -- Sample 14: 0.9288
+ -- Sample 15: 0.9634
+ -- Sample 16: 0.9342
+ -- Sample 17: 0.9405
+ -- Sample 18: 0.9319
+ -- Sample 19: 0.9010
+ -- Sample 20: 0.9632
+ -- Sample 21: 0.9649
+ -- Sample 22: 0.9633
+ -- Sample 23: 0.9353
+ -- Sample 24: 0.8910
+Mean=0.9022, Std=0.1063
+------------------------------------------------------------------
+  Processing Batch 10 (Size: 25)...
+Bias Error: using Single Component
+Mean: 17.4548, Std: 14.1257
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=48.5381%; std=38.3327
+ -- Sample 1: mean=49.7939%; std=54.6141
+ -- Sample 2: mean=45.1058%; std=36.2752
+ -- Sample 3: mean=30.0712%; std=20.6002
+ -- Sample 4: mean=26.6045%; std=19.7349
+ -- Sample 5: mean=27.3931%; std=21.6804
+ -- Sample 6: mean=32.8423%; std=19.5145
+ -- Sample 7: mean=53.2484%; std=49.8816
+ -- Sample 8: mean=42.5720%; std=32.1693
+ -- Sample 9: mean=42.4733%; std=43.8764
+ -- Sample 10: mean=34.2072%; std=27.0349
+ -- Sample 11: mean=29.2622%; std=19.7291
+ -- Sample 12: mean=24.6107%; std=18.2196
+ -- Sample 13: mean=25.9698%; std=21.1248
+ -- Sample 14: mean=26.6415%; std=18.2460
+ -- Sample 15: mean=57.5308%; std=22.1490
+ -- Sample 16: mean=50.1267%; std=24.0937
+ -- Sample 17: mean=46.8093%; std=25.4325
+ -- Sample 18: mean=48.4293%; std=21.3854
+ -- Sample 19: mean=38.9066%; std=27.8241
+ -- Sample 20: mean=31.7863%; std=24.0990
+ -- Sample 21: mean=34.0135%; std=29.1181
+ -- Sample 22: mean=33.6594%; std=26.8881
+ -- Sample 23: mean=30.5830%; std=27.5587
+ -- Sample 24: mean=30.0686%; std=27.9949
+Mean: 37.6499%, Std: 9.7027%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9055
+ -- Sample 1: 0.8926
+ -- Sample 2: 0.9083
+ -- Sample 3: 0.9483
+ -- Sample 4: 0.9692
+ -- Sample 5: 0.9452
+ -- Sample 6: 0.9563
+ -- Sample 7: 0.9430
+ -- Sample 8: 0.9623
+ -- Sample 9: 0.9435
+ -- Sample 10: 0.9790
+ -- Sample 11: 0.9691
+ -- Sample 12: 0.9656
+ -- Sample 13: 0.9618
+ -- Sample 14: 0.9579
+ -- Sample 15: 0.9019
+ -- Sample 16: 0.8460
+ -- Sample 17: 0.9005
+ -- Sample 18: 0.8953
+ -- Sample 19: 0.9533
+ -- Sample 20: 0.9455
+ -- Sample 21: 0.9565
+ -- Sample 22: 0.9420
+ -- Sample 23: 0.9516
+ -- Sample 24: 0.9723
+Mean=0.9389, Std=0.0319
+------------------------------------------------------------------
+  Processing Batch 11 (Size: 25)...
+Bias Error: using Single Component
+Mean: 34.6133, Std: 29.5014
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=24.2952%; std=24.7859
+ -- Sample 1: mean=29.8231%; std=26.3692
+ -- Sample 2: mean=44.0727%; std=38.9417
+ -- Sample 3: mean=43.8202%; std=38.0293
+ -- Sample 4: mean=41.9705%; std=33.4595
+ -- Sample 5: mean=53.3543%; std=48.5349
+ -- Sample 6: mean=43.6272%; std=22.5679
+ -- Sample 7: mean=39.9103%; std=23.6068
+ -- Sample 8: mean=41.6026%; std=24.4800
+ -- Sample 9: mean=37.4274%; std=19.2300
+ -- Sample 10: mean=38.0541%; std=29.9977
+ -- Sample 11: mean=33.5208%; std=26.3873
+ -- Sample 12: mean=39.8297%; std=31.1673
+ -- Sample 13: mean=31.7030%; std=27.9112
+ -- Sample 14: mean=40.6463%; std=19.7804
+ -- Sample 15: mean=36.1365%; std=22.5024
+ -- Sample 16: mean=45.1051%; std=23.2036
+ -- Sample 17: mean=32.7091%; std=23.1114
+ -- Sample 18: mean=44.9336%; std=31.1171
+ -- Sample 19: mean=35.7199%; std=24.8852
+ -- Sample 20: mean=41.3928%; std=29.6943
+ -- Sample 21: mean=41.8845%; std=29.2831
+ -- Sample 22: mean=143.7804%; std=133.4283
+ -- Sample 23: mean=161.2269%; std=125.9509
+ -- Sample 24: mean=136.2478%; std=105.4431
+Mean: 52.1118%, Std: 35.7245%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9623
+ -- Sample 1: 0.9753
+ -- Sample 2: 0.9492
+ -- Sample 3: 0.9249
+ -- Sample 4: 0.9691
+ -- Sample 5: 0.9494
+ -- Sample 6: 0.9024
+ -- Sample 7: 0.9463
+ -- Sample 8: 0.9374
+ -- Sample 9: 0.9523
+ -- Sample 10: 0.9472
+ -- Sample 11: 0.9393
+ -- Sample 12: 0.9437
+ -- Sample 13: 0.9235
+ -- Sample 14: 0.9512
+ -- Sample 15: 0.9476
+ -- Sample 16: 0.9486
+ -- Sample 17: 0.9484
+ -- Sample 18: 0.8242
+ -- Sample 19: 0.8569
+ -- Sample 20: 0.8479
+ -- Sample 21: 0.8118
+ -- Sample 22: 0.8453
+ -- Sample 23: 0.6175
+ -- Sample 24: 0.8942
+Mean=0.9086, Std=0.0751
+------------------------------------------------------------------
+  Processing Batch 12 (Size: 25)...
+Bias Error: using Single Component
+Mean: 20.2555, Std: 15.8371
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=152.8140%; std=125.8053
+ -- Sample 1: mean=41.1921%; std=29.5480
+ -- Sample 2: mean=41.6624%; std=30.0655
+ -- Sample 3: mean=42.6316%; std=27.6725
+ -- Sample 4: mean=52.1759%; std=43.8410
+ -- Sample 5: mean=36.0062%; std=41.6548
+ -- Sample 6: mean=46.0225%; std=40.0560
+ -- Sample 7: mean=40.5416%; std=31.0976
+ -- Sample 8: mean=51.9210%; std=41.7682
+ -- Sample 9: mean=38.4213%; std=31.0005
+ -- Sample 10: mean=46.0167%; std=35.5733
+ -- Sample 11: mean=39.2274%; std=41.0579
+ -- Sample 12: mean=45.3155%; std=41.8371
+ -- Sample 13: mean=38.5340%; std=25.4963
+ -- Sample 14: mean=35.4166%; std=25.4673
+ -- Sample 15: mean=34.4363%; std=19.5698
+ -- Sample 16: mean=34.9589%; std=22.1418
+ -- Sample 17: mean=61.9688%; std=65.3618
+ -- Sample 18: mean=50.3358%; std=50.6044
+ -- Sample 19: mean=62.4731%; std=66.2174
+ -- Sample 20: mean=47.0147%; std=38.2164
+ -- Sample 21: mean=41.8269%; std=19.0285
+ -- Sample 22: mean=42.5764%; std=23.3450
+ -- Sample 23: mean=42.8325%; std=21.7058
+ -- Sample 24: mean=38.6610%; std=20.0316
+Mean: 48.1993%, Std: 22.5485%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.6211
+ -- Sample 1: 0.8888
+ -- Sample 2: 0.9134
+ -- Sample 3: 0.9136
+ -- Sample 4: 0.8410
+ -- Sample 5: 0.9297
+ -- Sample 6: 0.9015
+ -- Sample 7: 0.9502
+ -- Sample 8: 0.9319
+ -- Sample 9: 0.8884
+ -- Sample 10: 0.9432
+ -- Sample 11: 0.8587
+ -- Sample 12: 0.9219
+ -- Sample 13: 0.9205
+ -- Sample 14: 0.9212
+ -- Sample 15: 0.9616
+ -- Sample 16: 0.9437
+ -- Sample 17: 0.7592
+ -- Sample 18: 0.8464
+ -- Sample 19: 0.7777
+ -- Sample 20: 0.9006
+ -- Sample 21: 0.9178
+ -- Sample 22: 0.8977
+ -- Sample 23: 0.8422
+ -- Sample 24: 0.9298
+Mean=0.8849, Std=0.0730
+------------------------------------------------------------------
+  Processing Batch 13 (Size: 25)...
+Bias Error: using Single Component
+Mean: 21.6873, Std: 11.1012
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=73.4907%; std=75.3133
+ -- Sample 1: mean=65.2247%; std=64.0816
+ -- Sample 2: mean=61.7275%; std=63.8791
+ -- Sample 3: mean=64.3727%; std=59.8368
+ -- Sample 4: mean=29.6492%; std=18.3285
+ -- Sample 5: mean=31.2012%; std=20.5505
+ -- Sample 6: mean=38.1377%; std=18.6978
+ -- Sample 7: mean=26.6570%; std=20.3647
+ -- Sample 8: mean=45.5937%; std=49.8201
+ -- Sample 9: mean=42.1849%; std=66.5771
+ -- Sample 10: mean=57.2918%; std=55.0436
+ -- Sample 11: mean=31.0498%; std=43.4219
+ -- Sample 12: mean=30.1725%; std=21.4925
+ -- Sample 13: mean=61.3018%; std=49.8536
+ -- Sample 14: mean=39.9045%; std=29.3228
+ -- Sample 15: mean=49.7234%; std=35.9601
+ -- Sample 16: mean=42.6881%; std=33.8571
+ -- Sample 17: mean=36.2056%; std=27.1738
+ -- Sample 18: mean=47.8400%; std=37.7841
+ -- Sample 19: mean=43.5226%; std=35.3641
+ -- Sample 20: mean=35.0778%; std=20.8313
+ -- Sample 21: mean=32.8951%; std=17.8328
+ -- Sample 22: mean=29.9566%; std=18.6554
+ -- Sample 23: mean=33.7263%; std=19.9404
+ -- Sample 24: mean=37.4773%; std=26.5444
+Mean: 43.4829%, Std: 13.0594%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8403
+ -- Sample 1: 0.8609
+ -- Sample 2: 0.8982
+ -- Sample 3: 0.8424
+ -- Sample 4: 0.9564
+ -- Sample 5: 0.9615
+ -- Sample 6: 0.9395
+ -- Sample 7: 0.9668
+ -- Sample 8: 0.8951
+ -- Sample 9: 0.9429
+ -- Sample 10: 0.9024
+ -- Sample 11: 0.9616
+ -- Sample 12: 0.9433
+ -- Sample 13: 0.8561
+ -- Sample 14: 0.9302
+ -- Sample 15: 0.8869
+ -- Sample 16: 0.9090
+ -- Sample 17: 0.9116
+ -- Sample 18: 0.8606
+ -- Sample 19: 0.8795
+ -- Sample 20: 0.9381
+ -- Sample 21: 0.9377
+ -- Sample 22: 0.9586
+ -- Sample 23: 0.9464
+ -- Sample 24: 0.9309
+Mean=0.9143, Std=0.0392
+------------------------------------------------------------------
+  Processing Batch 14 (Size: 25)...
+Bias Error: using Single Component
+Mean: 21.5140, Std: 12.2122
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=54.2850%; std=42.8905
+ -- Sample 1: mean=44.5280%; std=42.8698
+ -- Sample 2: mean=55.2556%; std=38.8637
+ -- Sample 3: mean=89.8047%; std=66.9458
+ -- Sample 4: mean=45.3793%; std=40.6270
+ -- Sample 5: mean=89.9988%; std=73.6924
+ -- Sample 6: mean=55.6678%; std=52.9173
+ -- Sample 7: mean=43.2460%; std=28.9873
+ -- Sample 8: mean=44.9024%; std=29.9952
+ -- Sample 9: mean=50.0597%; std=31.0117
+ -- Sample 10: mean=41.5310%; std=35.6491
+ -- Sample 11: mean=38.2058%; std=21.3221
+ -- Sample 12: mean=30.1324%; std=18.0840
+ -- Sample 13: mean=42.7284%; std=22.6647
+ -- Sample 14: mean=30.4235%; std=19.9240
+ -- Sample 15: mean=29.3052%; std=18.4721
+ -- Sample 16: mean=31.5269%; std=22.4340
+ -- Sample 17: mean=26.1709%; std=17.0951
+ -- Sample 18: mean=36.9358%; std=22.5088
+ -- Sample 19: mean=32.2593%; std=23.5014
+ -- Sample 20: mean=25.3296%; std=15.8454
+ -- Sample 21: mean=36.3481%; std=30.2212
+ -- Sample 22: mean=26.5190%; std=17.1971
+ -- Sample 23: mean=30.4833%; std=18.9778
+ -- Sample 24: mean=30.4586%; std=30.0631
+Mean: 42.4594%, Std: 16.6582%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8530
+ -- Sample 1: 0.8940
+ -- Sample 2: 0.8071
+ -- Sample 3: 0.8042
+ -- Sample 4: 0.9038
+ -- Sample 5: 0.7842
+ -- Sample 6: 0.8701
+ -- Sample 7: 0.8633
+ -- Sample 8: 0.9328
+ -- Sample 9: 0.7716
+ -- Sample 10: 0.9353
+ -- Sample 11: 0.9609
+ -- Sample 12: 0.9647
+ -- Sample 13: 0.9252
+ -- Sample 14: 0.9634
+ -- Sample 15: 0.9644
+ -- Sample 16: 0.9593
+ -- Sample 17: 0.9710
+ -- Sample 18: 0.9587
+ -- Sample 19: 0.9492
+ -- Sample 20: 0.9577
+ -- Sample 21: 0.9289
+ -- Sample 22: 0.9532
+ -- Sample 23: 0.9412
+ -- Sample 24: 0.9336
+Mean=0.9100, Std=0.0610
+------------------------------------------------------------------
+  Processing Batch 15 (Size: 25)...
+Bias Error: using Single Component
+Mean: 30.6295, Std: 15.4496
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=35.2039%; std=23.7233
+ -- Sample 1: mean=29.5475%; std=19.5327
+ -- Sample 2: mean=43.8826%; std=31.5104
+ -- Sample 3: mean=41.3137%; std=26.6060
+ -- Sample 4: mean=37.7398%; std=25.4033
+ -- Sample 5: mean=40.5589%; std=27.6626
+ -- Sample 6: mean=38.3213%; std=26.1033
+ -- Sample 7: mean=46.2988%; std=41.8058
+ -- Sample 8: mean=40.9213%; std=25.4370
+ -- Sample 9: mean=44.6271%; std=61.1554
+ -- Sample 10: mean=42.8768%; std=26.1000
+ -- Sample 11: mean=31.6574%; std=22.9088
+ -- Sample 12: mean=36.8930%; std=26.2400
+ -- Sample 13: mean=32.4523%; std=24.5085
+ -- Sample 14: mean=38.3174%; std=24.3466
+ -- Sample 15: mean=45.1184%; std=25.5948
+ -- Sample 16: mean=35.5489%; std=24.6631
+ -- Sample 17: mean=40.3703%; std=27.1102
+ -- Sample 18: mean=51.7277%; std=46.7131
+ -- Sample 19: mean=57.9501%; std=53.6677
+ -- Sample 20: mean=67.7907%; std=90.6072
+ -- Sample 21: mean=44.7923%; std=38.9528
+ -- Sample 22: mean=88.6044%; std=110.8729
+ -- Sample 23: mean=103.2247%; std=101.1618
+ -- Sample 24: mean=100.9790%; std=117.9049
+Mean: 48.6687%, Std: 19.8668%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9156
+ -- Sample 1: 0.9558
+ -- Sample 2: 0.8642
+ -- Sample 3: 0.8881
+ -- Sample 4: 0.9203
+ -- Sample 5: 0.9194
+ -- Sample 6: 0.9431
+ -- Sample 7: 0.9008
+ -- Sample 8: 0.9391
+ -- Sample 9: 0.8984
+ -- Sample 10: 0.9232
+ -- Sample 11: 0.9546
+ -- Sample 12: 0.9396
+ -- Sample 13: 0.9383
+ -- Sample 14: 0.9038
+ -- Sample 15: 0.8799
+ -- Sample 16: 0.9207
+ -- Sample 17: 0.9193
+ -- Sample 18: 0.8776
+ -- Sample 19: 0.8941
+ -- Sample 20: 0.7965
+ -- Sample 21: 0.9424
+ -- Sample 22: 0.7963
+ -- Sample 23: 0.8641
+ -- Sample 24: 0.8352
+Mean=0.9012, Std=0.0429
+------------------------------------------------------------------
+  Processing Batch 16 (Size: 25)...
+Bias Error: using Single Component
+Mean: 23.3994, Std: 19.8614
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=124.3953%; std=135.6605
+ -- Sample 1: mean=46.8123%; std=25.5719
+ -- Sample 2: mean=47.4922%; std=23.6942
+ -- Sample 3: mean=45.5832%; std=26.3735
+ -- Sample 4: mean=46.4077%; std=28.1845
+ -- Sample 5: mean=24.3041%; std=16.4469
+ -- Sample 6: mean=28.0130%; std=25.3845
+ -- Sample 7: mean=20.3528%; std=15.4904
+ -- Sample 8: mean=28.6287%; std=21.9681
+ -- Sample 9: mean=41.1392%; std=35.7719
+ -- Sample 10: mean=42.2268%; std=49.7559
+ -- Sample 11: mean=41.5996%; std=35.9767
+ -- Sample 12: mean=55.1087%; std=66.4049
+ -- Sample 13: mean=38.7572%; std=36.8949
+ -- Sample 14: mean=47.1682%; std=50.6826
+ -- Sample 15: mean=37.0440%; std=36.9962
+ -- Sample 16: mean=43.5442%; std=42.5862
+ -- Sample 17: mean=33.6766%; std=22.8428
+ -- Sample 18: mean=27.9577%; std=20.0543
+ -- Sample 19: mean=38.5043%; std=25.2542
+ -- Sample 20: mean=31.1854%; std=23.5968
+ -- Sample 21: mean=37.4216%; std=17.1757
+ -- Sample 22: mean=34.4634%; std=19.4492
+ -- Sample 23: mean=40.3115%; std=16.4461
+ -- Sample 24: mean=33.4056%; std=19.3203
+Mean: 41.4201%, Std: 18.7717%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8570
+ -- Sample 1: 0.8540
+ -- Sample 2: 0.8823
+ -- Sample 3: 0.8550
+ -- Sample 4: 0.8848
+ -- Sample 5: 0.9705
+ -- Sample 6: 0.9505
+ -- Sample 7: 0.9792
+ -- Sample 8: 0.9606
+ -- Sample 9: 0.9273
+ -- Sample 10: 0.9526
+ -- Sample 11: 0.9379
+ -- Sample 12: 0.9318
+ -- Sample 13: 0.9416
+ -- Sample 14: 0.9337
+ -- Sample 15: 0.9334
+ -- Sample 16: 0.9500
+ -- Sample 17: 0.9447
+ -- Sample 18: 0.9605
+ -- Sample 19: 0.9281
+ -- Sample 20: 0.9540
+ -- Sample 21: 0.9708
+ -- Sample 22: 0.9628
+ -- Sample 23: 0.9658
+ -- Sample 24: 0.9509
+Mean=0.9336, Std=0.0366
+------------------------------------------------------------------
+  Processing Batch 17 (Size: 24)...
+Bias Error: using Single Component
+Mean: 15.6189, Std: 16.3698
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=40.0457%; std=29.5960
+ -- Sample 1: mean=34.8205%; std=27.6698
+ -- Sample 2: mean=28.9707%; std=26.1295
+ -- Sample 3: mean=32.7950%; std=26.6575
+ -- Sample 4: mean=28.3544%; std=21.5912
+ -- Sample 5: mean=29.6820%; std=20.8287
+ -- Sample 6: mean=23.6438%; std=18.4655
+ -- Sample 7: mean=35.8065%; std=29.6045
+ -- Sample 8: mean=56.3041%; std=22.0732
+ -- Sample 9: mean=49.8042%; std=22.1590
+ -- Sample 10: mean=57.2700%; std=24.7048
+ -- Sample 11: mean=48.7424%; std=21.7492
+ -- Sample 12: mean=65.5760%; std=72.5882
+ -- Sample 13: mean=39.6019%; std=37.8354
+ -- Sample 14: mean=59.0561%; std=60.7406
+ -- Sample 15: mean=28.3660%; std=24.2455
+ -- Sample 16: mean=34.7880%; std=36.4838
+ -- Sample 17: mean=23.3990%; std=20.8357
+ -- Sample 18: mean=31.5966%; std=32.7372
+ -- Sample 19: mean=34.1229%; std=32.2330
+ -- Sample 20: mean=38.9281%; std=22.7640
+ -- Sample 21: mean=36.4416%; std=25.9094
+ -- Sample 22: mean=35.4714%; std=24.1240
+ -- Sample 23: mean=34.9940%; std=24.3242
+Mean: 38.6909%, Std: 11.2604%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9259
+ -- Sample 1: 0.9319
+ -- Sample 2: 0.9686
+ -- Sample 3: 0.9328
+ -- Sample 4: 0.9588
+ -- Sample 5: 0.9499
+ -- Sample 6: 0.9746
+ -- Sample 7: 0.9341
+ -- Sample 8: 0.9008
+ -- Sample 9: 0.9512
+ -- Sample 10: 0.8556
+ -- Sample 11: 0.9552
+ -- Sample 12: 0.8161
+ -- Sample 13: 0.9262
+ -- Sample 14: 0.8761
+ -- Sample 15: 0.9521
+ -- Sample 16: 0.9392
+ -- Sample 17: 0.9744
+ -- Sample 18: 0.9575
+ -- Sample 19: 0.9193
+ -- Sample 20: 0.9075
+ -- Sample 21: 0.9556
+ -- Sample 22: 0.9069
+ -- Sample 23: 0.9608
+Mean=0.9305, Std=0.0377
+------------------------------------------------------------------
+
+Processing Dataset: Berea Buff
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 14.6859, Std: 10.6148
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=44.2176%; std=39.5644
+ -- Sample 1: mean=46.7974%; std=38.7663
+ -- Sample 2: mean=41.1290%; std=39.4034
+ -- Sample 3: mean=64.5049%; std=43.1191
+ -- Sample 4: mean=45.5924%; std=35.6953
+ -- Sample 5: mean=43.0894%; std=25.3241
+ -- Sample 6: mean=49.0585%; std=48.8562
+ -- Sample 7: mean=41.3378%; std=32.1315
+ -- Sample 8: mean=31.7140%; std=23.0098
+ -- Sample 9: mean=32.0607%; std=23.8145
+ -- Sample 10: mean=34.7372%; std=23.3632
+ -- Sample 11: mean=29.5591%; std=24.1027
+ -- Sample 12: mean=31.0389%; std=20.7029
+ -- Sample 13: mean=38.0120%; std=35.1209
+ -- Sample 14: mean=29.3939%; std=21.1131
+ -- Sample 15: mean=36.3478%; std=33.8141
+ -- Sample 16: mean=38.6242%; std=27.7083
+ -- Sample 17: mean=33.7835%; std=23.5107
+ -- Sample 18: mean=36.5002%; std=27.1186
+ -- Sample 19: mean=30.4521%; std=25.8317
+ -- Sample 20: mean=57.5350%; std=39.8048
+ -- Sample 21: mean=52.5517%; std=45.3850
+ -- Sample 22: mean=50.1556%; std=36.9889
+ -- Sample 23: mean=55.1419%; std=38.6315
+ -- Sample 24: mean=29.8600%; std=20.9004
+Mean: 40.9278%, Std: 9.5741%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9502
+ -- Sample 1: 0.9370
+ -- Sample 2: 0.9479
+ -- Sample 3: 0.9256
+ -- Sample 4: 0.9206
+ -- Sample 5: 0.8876
+ -- Sample 6: 0.8876
+ -- Sample 7: 0.8771
+ -- Sample 8: 0.9362
+ -- Sample 9: 0.9649
+ -- Sample 10: 0.9267
+ -- Sample 11: 0.9711
+ -- Sample 12: 0.9252
+ -- Sample 13: 0.9240
+ -- Sample 14: 0.9366
+ -- Sample 15: 0.9432
+ -- Sample 16: 0.9229
+ -- Sample 17: 0.9402
+ -- Sample 18: 0.9320
+ -- Sample 19: 0.9588
+ -- Sample 20: 0.8427
+ -- Sample 21: 0.8473
+ -- Sample 22: 0.8728
+ -- Sample 23: 0.7868
+ -- Sample 24: 0.9563
+Mean=0.9169, Std=0.0430
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 24.2127, Std: 20.8557
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=29.2666%; std=20.7850
+ -- Sample 1: mean=29.5018%; std=21.5911
+ -- Sample 2: mean=23.5390%; std=18.5473
+ -- Sample 3: mean=65.0790%; std=51.3916
+ -- Sample 4: mean=58.0108%; std=36.7437
+ -- Sample 5: mean=60.6819%; std=47.9340
+ -- Sample 6: mean=60.5671%; std=35.0570
+ -- Sample 7: mean=145.1284%; std=150.6793
+ -- Sample 8: mean=145.5712%; std=140.7077
+ -- Sample 9: mean=122.8745%; std=119.6283
+ -- Sample 10: mean=124.5360%; std=148.8017
+ -- Sample 11: mean=56.0764%; std=31.5542
+ -- Sample 12: mean=60.4009%; std=28.8337
+ -- Sample 13: mean=48.9401%; std=30.3459
+ -- Sample 14: mean=46.1162%; std=27.7417
+ -- Sample 15: mean=43.5410%; std=31.9042
+ -- Sample 16: mean=40.2579%; std=23.2995
+ -- Sample 17: mean=48.7817%; std=27.2520
+ -- Sample 18: mean=40.0367%; std=26.7425
+ -- Sample 19: mean=43.0593%; std=20.8871
+ -- Sample 20: mean=45.4918%; std=21.5021
+ -- Sample 21: mean=53.2901%; std=18.7445
+ -- Sample 22: mean=39.7797%; std=24.5976
+ -- Sample 23: mean=56.7452%; std=57.5286
+ -- Sample 24: mean=41.8652%; std=27.7455
+Mean: 61.1655%, Std: 33.8789%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9610
+ -- Sample 1: 0.9537
+ -- Sample 2: 0.9691
+ -- Sample 3: 0.7772
+ -- Sample 4: 0.7252
+ -- Sample 5: 0.8281
+ -- Sample 6: 0.7194
+ -- Sample 7: 0.4974
+ -- Sample 8: 0.6485
+ -- Sample 9: 0.6200
+ -- Sample 10: 0.6511
+ -- Sample 11: 0.8255
+ -- Sample 12: 0.7842
+ -- Sample 13: 0.8469
+ -- Sample 14: 0.8841
+ -- Sample 15: 0.8579
+ -- Sample 16: 0.9417
+ -- Sample 17: 0.8346
+ -- Sample 18: 0.9288
+ -- Sample 19: 0.9417
+ -- Sample 20: 0.9501
+ -- Sample 21: 0.9307
+ -- Sample 22: 0.9556
+ -- Sample 23: 0.8115
+ -- Sample 24: 0.8857
+Mean=0.8292, Std=0.1236
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 22.3941, Std: 19.0540
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=54.1742%; std=55.4618
+ -- Sample 1: mean=38.8940%; std=32.5888
+ -- Sample 2: mean=35.1472%; std=24.6761
+ -- Sample 3: mean=34.4008%; std=22.8111
+ -- Sample 4: mean=36.7880%; std=30.7047
+ -- Sample 5: mean=26.8205%; std=23.3464
+ -- Sample 6: mean=89.0305%; std=154.2736
+ -- Sample 7: mean=93.3889%; std=110.8014
+ -- Sample 8: mean=76.2361%; std=99.2066
+ -- Sample 9: mean=89.7355%; std=86.3457
+ -- Sample 10: mean=46.7053%; std=33.8711
+ -- Sample 11: mean=48.3274%; std=25.5230
+ -- Sample 12: mean=36.0040%; std=35.0151
+ -- Sample 13: mean=48.3127%; std=26.5573
+ -- Sample 14: mean=38.1547%; std=18.7118
+ -- Sample 15: mean=39.6451%; std=23.3296
+ -- Sample 16: mean=36.9340%; std=19.3836
+ -- Sample 17: mean=41.3254%; std=25.0855
+ -- Sample 18: mean=30.8599%; std=20.5380
+ -- Sample 19: mean=40.9268%; std=39.7498
+ -- Sample 20: mean=33.1328%; std=26.6824
+ -- Sample 21: mean=37.1858%; std=47.3755
+ -- Sample 22: mean=41.4589%; std=13.7616
+ -- Sample 23: mean=42.6799%; std=20.2746
+ -- Sample 24: mean=41.1933%; std=16.3734
+Mean: 47.0985%, Std: 18.5328%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8298
+ -- Sample 1: 0.8961
+ -- Sample 2: 0.9326
+ -- Sample 3: 0.9211
+ -- Sample 4: 0.9152
+ -- Sample 5: 0.9419
+ -- Sample 6: 0.6939
+ -- Sample 7: 0.7843
+ -- Sample 8: 0.8356
+ -- Sample 9: 0.8111
+ -- Sample 10: 0.8876
+ -- Sample 11: 0.8499
+ -- Sample 12: 0.9130
+ -- Sample 13: 0.8536
+ -- Sample 14: 0.9710
+ -- Sample 15: 0.9067
+ -- Sample 16: 0.9663
+ -- Sample 17: 0.8692
+ -- Sample 18: 0.9649
+ -- Sample 19: 0.9103
+ -- Sample 20: 0.9298
+ -- Sample 21: 0.9149
+ -- Sample 22: 0.9812
+ -- Sample 23: 0.9283
+ -- Sample 24: 0.9720
+Mean=0.8952, Std=0.0661
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 13.0688, Std: 11.0947
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=40.5833%; std=18.9465
+ -- Sample 1: mean=35.8190%; std=26.4873
+ -- Sample 2: mean=32.0407%; std=21.2226
+ -- Sample 3: mean=33.6879%; std=22.6543
+ -- Sample 4: mean=37.2458%; std=26.0247
+ -- Sample 5: mean=41.9701%; std=30.1420
+ -- Sample 6: mean=46.3666%; std=34.1237
+ -- Sample 7: mean=46.0455%; std=30.6096
+ -- Sample 8: mean=43.4988%; std=29.6325
+ -- Sample 9: mean=63.2338%; std=49.2193
+ -- Sample 10: mean=63.9053%; std=40.8485
+ -- Sample 11: mean=70.9904%; std=75.4665
+ -- Sample 12: mean=53.9097%; std=41.8788
+ -- Sample 13: mean=38.6977%; std=26.6193
+ -- Sample 14: mean=40.2477%; std=26.4718
+ -- Sample 15: mean=47.2521%; std=37.1006
+ -- Sample 16: mean=39.4437%; std=27.0745
+ -- Sample 17: mean=71.5164%; std=60.3326
+ -- Sample 18: mean=46.4173%; std=37.3419
+ -- Sample 19: mean=57.4185%; std=45.8418
+ -- Sample 20: mean=43.1699%; std=30.7823
+ -- Sample 21: mean=36.7361%; std=29.3011
+ -- Sample 22: mean=47.3277%; std=33.8948
+ -- Sample 23: mean=45.1090%; std=36.3579
+ -- Sample 24: mean=35.0341%; std=24.1434
+Mean: 46.3067%, Std: 10.9732%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9380
+ -- Sample 1: 0.9333
+ -- Sample 2: 0.9448
+ -- Sample 3: 0.9264
+ -- Sample 4: 0.9231
+ -- Sample 5: 0.9086
+ -- Sample 6: 0.8614
+ -- Sample 7: 0.9001
+ -- Sample 8: 0.8888
+ -- Sample 9: 0.9168
+ -- Sample 10: 0.8196
+ -- Sample 11: 0.8780
+ -- Sample 12: 0.9252
+ -- Sample 13: 0.8893
+ -- Sample 14: 0.8833
+ -- Sample 15: 0.8478
+ -- Sample 16: 0.8907
+ -- Sample 17: 0.7905
+ -- Sample 18: 0.9563
+ -- Sample 19: 0.8763
+ -- Sample 20: 0.9412
+ -- Sample 21: 0.9409
+ -- Sample 22: 0.8756
+ -- Sample 23: 0.9283
+ -- Sample 24: 0.9232
+Mean=0.9003, Std=0.0398
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 28.9535, Std: 18.6339
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=43.5508%; std=19.2130
+ -- Sample 1: mean=41.9769%; std=19.6103
+ -- Sample 2: mean=43.5370%; std=17.3430
+ -- Sample 3: mean=45.3589%; std=24.0204
+ -- Sample 4: mean=27.8787%; std=28.6474
+ -- Sample 5: mean=37.2972%; std=43.2248
+ -- Sample 6: mean=41.3138%; std=41.2930
+ -- Sample 7: mean=43.4358%; std=35.0164
+ -- Sample 8: mean=37.3686%; std=29.9917
+ -- Sample 9: mean=39.0930%; std=27.9419
+ -- Sample 10: mean=34.0949%; std=28.9659
+ -- Sample 11: mean=34.0267%; std=25.1478
+ -- Sample 12: mean=46.3560%; std=17.7211
+ -- Sample 13: mean=49.3015%; std=23.2704
+ -- Sample 14: mean=48.1065%; std=16.9758
+ -- Sample 15: mean=55.7338%; std=23.4582
+ -- Sample 16: mean=35.1785%; std=28.8198
+ -- Sample 17: mean=49.0817%; std=28.7033
+ -- Sample 18: mean=30.3061%; std=27.0178
+ -- Sample 19: mean=48.2423%; std=31.5484
+ -- Sample 20: mean=84.4450%; std=131.4573
+ -- Sample 21: mean=81.6337%; std=66.5038
+ -- Sample 22: mean=87.3887%; std=148.7229
+ -- Sample 23: mean=67.0669%; std=73.0068
+ -- Sample 24: mean=32.1633%; std=17.9851
+Mean: 47.3575%, Std: 16.0084%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9226
+ -- Sample 1: 0.9487
+ -- Sample 2: 0.9283
+ -- Sample 3: 0.9324
+ -- Sample 4: 0.9671
+ -- Sample 5: 0.9460
+ -- Sample 6: 0.9501
+ -- Sample 7: 0.9444
+ -- Sample 8: 0.9546
+ -- Sample 9: 0.9102
+ -- Sample 10: 0.9657
+ -- Sample 11: 0.9481
+ -- Sample 12: 0.9757
+ -- Sample 13: 0.9327
+ -- Sample 14: 0.9775
+ -- Sample 15: 0.9168
+ -- Sample 16: 0.9258
+ -- Sample 17: 0.8924
+ -- Sample 18: 0.9491
+ -- Sample 19: 0.8766
+ -- Sample 20: 0.6326
+ -- Sample 21: 0.8001
+ -- Sample 22: 0.6232
+ -- Sample 23: 0.8393
+ -- Sample 24: 0.9740
+Mean=0.9054, Std=0.0914
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 25)...
+Bias Error: using Single Component
+Mean: 27.0908, Std: 19.0168
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=36.0955%; std=22.2386
+ -- Sample 1: mean=27.8958%; std=19.1600
+ -- Sample 2: mean=34.9991%; std=22.6238
+ -- Sample 3: mean=99.1639%; std=111.4148
+ -- Sample 4: mean=92.9892%; std=119.3214
+ -- Sample 5: mean=81.5053%; std=102.0812
+ -- Sample 6: mean=55.7982%; std=51.6211
+ -- Sample 7: mean=57.1511%; std=38.6187
+ -- Sample 8: mean=40.1312%; std=35.5899
+ -- Sample 9: mean=40.0023%; std=31.0476
+ -- Sample 10: mean=48.7772%; std=36.9282
+ -- Sample 11: mean=34.1501%; std=25.8745
+ -- Sample 12: mean=30.8205%; std=16.4997
+ -- Sample 13: mean=38.1868%; std=29.3364
+ -- Sample 14: mean=33.9101%; std=19.2186
+ -- Sample 15: mean=32.1319%; std=21.9735
+ -- Sample 16: mean=29.4838%; std=26.4092
+ -- Sample 17: mean=34.2644%; std=20.2811
+ -- Sample 18: mean=30.9628%; std=21.2899
+ -- Sample 19: mean=34.5445%; std=25.5128
+ -- Sample 20: mean=42.1130%; std=32.9831
+ -- Sample 21: mean=34.4790%; std=25.6668
+ -- Sample 22: mean=37.5057%; std=24.6387
+ -- Sample 23: mean=50.7621%; std=44.6672
+ -- Sample 24: mean=54.5258%; std=45.7783
+Mean: 45.2940%, Std: 18.9542%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9305
+ -- Sample 1: 0.9697
+ -- Sample 2: 0.9428
+ -- Sample 3: 0.9141
+ -- Sample 4: 0.8263
+ -- Sample 5: 0.9076
+ -- Sample 6: 0.9004
+ -- Sample 7: 0.9820
+ -- Sample 8: 0.9677
+ -- Sample 9: 0.9847
+ -- Sample 10: 0.9619
+ -- Sample 11: 0.9292
+ -- Sample 12: 0.9633
+ -- Sample 13: 0.9200
+ -- Sample 14: 0.9520
+ -- Sample 15: 0.9543
+ -- Sample 16: 0.9515
+ -- Sample 17: 0.9476
+ -- Sample 18: 0.9562
+ -- Sample 19: 0.9497
+ -- Sample 20: 0.8771
+ -- Sample 21: 0.9418
+ -- Sample 22: 0.8910
+ -- Sample 23: 0.8618
+ -- Sample 24: 0.8464
+Mean=0.9292, Std=0.0412
+------------------------------------------------------------------
+  Processing Batch 7 (Size: 25)...
+Bias Error: using Single Component
+Mean: 30.1783, Std: 31.6348
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=51.6252%; std=49.5376
+ -- Sample 1: mean=55.5753%; std=44.3008
+ -- Sample 2: mean=43.7760%; std=36.8557
+ -- Sample 3: mean=43.0718%; std=33.7697
+ -- Sample 4: mean=46.0510%; std=43.6699
+ -- Sample 5: mean=37.3322%; std=29.8801
+ -- Sample 6: mean=27.1236%; std=23.2392
+ -- Sample 7: mean=42.3676%; std=41.3272
+ -- Sample 8: mean=24.6667%; std=19.9614
+ -- Sample 9: mean=37.3514%; std=29.0491
+ -- Sample 10: mean=46.7523%; std=40.4007
+ -- Sample 11: mean=44.9138%; std=34.0392
+ -- Sample 12: mean=50.4259%; std=42.0789
+ -- Sample 13: mean=42.0816%; std=35.0245
+ -- Sample 14: mean=42.0036%; std=25.1331
+ -- Sample 15: mean=49.9590%; std=26.7564
+ -- Sample 16: mean=47.2328%; std=26.3738
+ -- Sample 17: mean=42.6664%; std=27.4986
+ -- Sample 18: mean=156.3796%; std=293.9841
+ -- Sample 19: mean=63.1977%; std=41.0496
+ -- Sample 20: mean=134.3252%; std=229.4781
+ -- Sample 21: mean=58.2600%; std=49.2521
+ -- Sample 22: mean=28.3653%; std=17.4949
+ -- Sample 23: mean=34.4218%; std=19.5149
+ -- Sample 24: mean=25.4771%; std=14.8419
+Mean: 51.0161%, Std: 29.5707%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8383
+ -- Sample 1: 0.8139
+ -- Sample 2: 0.8840
+ -- Sample 3: 0.9558
+ -- Sample 4: 0.8705
+ -- Sample 5: 0.9510
+ -- Sample 6: 0.9583
+ -- Sample 7: 0.9229
+ -- Sample 8: 0.9674
+ -- Sample 9: 0.9284
+ -- Sample 10: 0.9181
+ -- Sample 11: 0.9234
+ -- Sample 12: 0.9300
+ -- Sample 13: 0.9098
+ -- Sample 14: 0.9096
+ -- Sample 15: 0.8890
+ -- Sample 16: 0.8936
+ -- Sample 17: 0.9017
+ -- Sample 18: 0.6255
+ -- Sample 19: 0.8720
+ -- Sample 20: 0.6974
+ -- Sample 21: 0.8892
+ -- Sample 22: 0.9741
+ -- Sample 23: 0.9438
+ -- Sample 24: 0.9839
+Mean=0.8941, Std=0.0801
+------------------------------------------------------------------
+  Processing Batch 8 (Size: 25)...
+Bias Error: using Single Component
+Mean: 19.1983, Std: 9.5227
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=29.8227%; std=16.0335
+ -- Sample 1: mean=77.1094%; std=85.2970
+ -- Sample 2: mean=58.4065%; std=67.4279
+ -- Sample 3: mean=62.3207%; std=58.3994
+ -- Sample 4: mean=58.5917%; std=48.4689
+ -- Sample 5: mean=33.7140%; std=21.3312
+ -- Sample 6: mean=42.6689%; std=23.7474
+ -- Sample 7: mean=34.9062%; std=23.6878
+ -- Sample 8: mean=42.7358%; std=24.1584
+ -- Sample 9: mean=32.2094%; std=23.5357
+ -- Sample 10: mean=43.2624%; std=36.1820
+ -- Sample 11: mean=29.4610%; std=25.3836
+ -- Sample 12: mean=50.4846%; std=30.1497
+ -- Sample 13: mean=28.3377%; std=18.5964
+ -- Sample 14: mean=34.8209%; std=18.5082
+ -- Sample 15: mean=36.9291%; std=21.5989
+ -- Sample 16: mean=26.8617%; std=17.9718
+ -- Sample 17: mean=34.5210%; std=22.6460
+ -- Sample 18: mean=29.5963%; std=17.9031
+ -- Sample 19: mean=36.4537%; std=38.6181
+ -- Sample 20: mean=33.5321%; std=19.9519
+ -- Sample 21: mean=30.5697%; std=27.1391
+ -- Sample 22: mean=39.0502%; std=35.7592
+ -- Sample 23: mean=27.1952%; std=24.2976
+ -- Sample 24: mean=37.3245%; std=35.6864
+Mean: 39.6354%, Std: 12.3789%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9666
+ -- Sample 1: 0.8738
+ -- Sample 2: 0.9336
+ -- Sample 3: 0.9044
+ -- Sample 4: 0.9244
+ -- Sample 5: 0.9510
+ -- Sample 6: 0.9392
+ -- Sample 7: 0.9474
+ -- Sample 8: 0.9503
+ -- Sample 9: 0.9641
+ -- Sample 10: 0.9246
+ -- Sample 11: 0.9717
+ -- Sample 12: 0.8896
+ -- Sample 13: 0.9533
+ -- Sample 14: 0.9545
+ -- Sample 15: 0.9224
+ -- Sample 16: 0.9684
+ -- Sample 17: 0.9559
+ -- Sample 18: 0.9724
+ -- Sample 19: 0.9372
+ -- Sample 20: 0.9430
+ -- Sample 21: 0.9557
+ -- Sample 22: 0.9244
+ -- Sample 23: 0.9596
+ -- Sample 24: 0.9252
+Mean=0.9405, Std=0.0247
+------------------------------------------------------------------
+  Processing Batch 9 (Size: 8)...
+Bias Error: using Single Component
+Mean: 15.6251, Std: 6.5703
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=52.9493%; std=46.8139
+ -- Sample 1: mean=65.9399%; std=58.7191
+ -- Sample 2: mean=44.4446%; std=39.3042
+ -- Sample 3: mean=59.3049%; std=63.2251
+ -- Sample 4: mean=32.6591%; std=24.3945
+ -- Sample 5: mean=35.4751%; std=23.9258
+ -- Sample 6: mean=38.4713%; std=33.3720
+ -- Sample 7: mean=42.1542%; std=24.5319
+Mean: 46.4248%, Std: 11.0912%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9316
+ -- Sample 1: 0.8378
+ -- Sample 2: 0.9466
+ -- Sample 3: 0.8940
+ -- Sample 4: 0.9439
+ -- Sample 5: 0.9204
+ -- Sample 6: 0.9196
+ -- Sample 7: 0.8961
+Mean=0.9112, Std=0.0332
+------------------------------------------------------------------
+
+Processing Dataset: Leopard
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 111.0046, Std: 190.7749
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=36.1638%; std=35.9401
+ -- Sample 1: mean=41.0883%; std=71.2889
+ -- Sample 2: mean=34.6211%; std=33.2769
+ -- Sample 3: mean=38.9584%; std=69.3815
+ -- Sample 4: mean=30.4976%; std=21.3068
+ -- Sample 5: mean=33.1558%; std=24.6005
+ -- Sample 6: mean=23.9832%; std=16.0037
+ -- Sample 7: mean=33.5560%; std=23.7334
+ -- Sample 8: mean=709.7733%; std=609.2162
+ -- Sample 9: mean=433.0521%; std=581.5881
+ -- Sample 10: mean=542.4100%; std=448.2448
+ -- Sample 11: mean=467.8883%; std=519.1728
+ -- Sample 12: mean=148.6090%; std=160.8917
+ -- Sample 13: mean=120.7332%; std=126.9401
+ -- Sample 14: mean=147.0115%; std=154.0029
+ -- Sample 15: mean=129.7864%; std=146.9682
+ -- Sample 16: mean=64.1416%; std=44.3144
+ -- Sample 17: mean=96.1614%; std=91.3152
+ -- Sample 18: mean=54.5571%; std=38.3545
+ -- Sample 19: mean=58.5108%; std=42.8244
+ -- Sample 20: mean=77.8569%; std=87.9637
+ -- Sample 21: mean=92.9066%; std=114.6074
+ -- Sample 22: mean=89.4037%; std=93.5767
+ -- Sample 23: mean=89.7270%; std=89.4751
+ -- Sample 24: mean=43.0821%; std=26.7044
+Mean: 145.5054%, Std: 180.2288%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9611
+ -- Sample 1: 0.8419
+ -- Sample 2: 0.9596
+ -- Sample 3: 0.8900
+ -- Sample 4: 0.9374
+ -- Sample 5: 0.9618
+ -- Sample 6: 0.9525
+ -- Sample 7: 0.9536
+ -- Sample 8: 0.6441
+ -- Sample 9: 0.2621
+ -- Sample 10: 0.6420
+ -- Sample 11: 0.3349
+ -- Sample 12: 0.6510
+ -- Sample 13: 0.6562
+ -- Sample 14: 0.6676
+ -- Sample 15: 0.7075
+ -- Sample 16: 0.8058
+ -- Sample 17: 0.6884
+ -- Sample 18: 0.7916
+ -- Sample 19: 0.7683
+ -- Sample 20: 0.7731
+ -- Sample 21: 0.7701
+ -- Sample 22: 0.7541
+ -- Sample 23: 0.7328
+ -- Sample 24: 0.8498
+Mean=0.7583, Std=0.1741
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 86.2625, Std: 183.3362
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=34.2514%; std=24.2884
+ -- Sample 1: mean=44.2276%; std=30.8060
+ -- Sample 2: mean=33.3518%; std=22.9893
+ -- Sample 3: mean=23.7619%; std=18.8685
+ -- Sample 4: mean=30.8810%; std=24.3989
+ -- Sample 5: mean=31.0584%; std=22.0885
+ -- Sample 6: mean=29.7558%; std=22.1495
+ -- Sample 7: mean=45.8726%; std=25.7335
+ -- Sample 8: mean=47.3470%; std=30.4022
+ -- Sample 9: mean=49.8570%; std=23.7340
+ -- Sample 10: mean=45.3429%; std=31.3732
+ -- Sample 11: mean=33.6005%; std=27.1829
+ -- Sample 12: mean=39.1251%; std=32.0862
+ -- Sample 13: mean=37.1036%; std=28.1109
+ -- Sample 14: mean=43.9558%; std=32.8167
+ -- Sample 15: mean=57.8528%; std=49.2874
+ -- Sample 16: mean=44.3153%; std=33.8784
+ -- Sample 17: mean=51.5951%; std=41.3135
+ -- Sample 18: mean=43.9752%; std=35.4360
+ -- Sample 19: mean=83.1584%; std=103.6656
+ -- Sample 20: mean=94.9084%; std=108.3519
+ -- Sample 21: mean=102.0648%; std=93.7590
+ -- Sample 22: mean=136.0363%; std=146.8104
+ -- Sample 23: mean=454.4602%; std=787.6401
+ -- Sample 24: mean=170.8848%; std=374.6053
+Mean: 72.3497%, Std: 85.3446%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9049
+ -- Sample 1: 0.8052
+ -- Sample 2: 0.9022
+ -- Sample 3: 0.9793
+ -- Sample 4: 0.9448
+ -- Sample 5: 0.9686
+ -- Sample 6: 0.9548
+ -- Sample 7: 0.8926
+ -- Sample 8: 0.8431
+ -- Sample 9: 0.9066
+ -- Sample 10: 0.8388
+ -- Sample 11: 0.9642
+ -- Sample 12: 0.9689
+ -- Sample 13: 0.9673
+ -- Sample 14: 0.9748
+ -- Sample 15: 0.8593
+ -- Sample 16: 0.8857
+ -- Sample 17: 0.8798
+ -- Sample 18: 0.9111
+ -- Sample 19: 0.8100
+ -- Sample 20: 0.7482
+ -- Sample 21: 0.8088
+ -- Sample 22: 0.7180
+ -- Sample 23: 0.1344
+ -- Sample 24: 0.2961
+Mean=0.8347, Std=0.1970
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 88.8167, Std: 130.3213
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=315.8838%; std=543.4615
+ -- Sample 1: mean=217.7139%; std=277.9196
+ -- Sample 2: mean=34.0405%; std=17.1633
+ -- Sample 3: mean=28.8738%; std=19.5403
+ -- Sample 4: mean=30.4387%; std=22.4098
+ -- Sample 5: mean=29.5625%; std=19.2537
+ -- Sample 6: mean=34.8327%; std=18.2144
+ -- Sample 7: mean=27.4656%; std=18.9303
+ -- Sample 8: mean=34.8681%; std=21.5553
+ -- Sample 9: mean=25.3810%; std=16.3207
+ -- Sample 10: mean=115.7526%; std=182.4345
+ -- Sample 11: mean=121.7202%; std=156.2755
+ -- Sample 12: mean=103.2644%; std=153.7225
+ -- Sample 13: mean=155.4211%; std=185.0011
+ -- Sample 14: mean=37.1183%; std=24.1089
+ -- Sample 15: mean=34.8914%; std=25.5060
+ -- Sample 16: mean=30.0029%; std=23.0253
+ -- Sample 17: mean=34.9708%; std=38.5781
+ -- Sample 18: mean=66.0238%; std=62.9375
+ -- Sample 19: mean=55.3013%; std=59.3541
+ -- Sample 20: mean=58.1927%; std=58.9423
+ -- Sample 21: mean=60.2999%; std=98.4106
+ -- Sample 22: mean=40.8162%; std=28.8489
+ -- Sample 23: mean=34.6438%; std=25.1143
+ -- Sample 24: mean=36.8918%; std=25.5610
+Mean: 70.5749%, Std: 68.3231%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.2271
+ -- Sample 1: 0.2843
+ -- Sample 2: 0.9718
+ -- Sample 3: 0.9632
+ -- Sample 4: 0.9549
+ -- Sample 5: 0.9776
+ -- Sample 6: 0.9491
+ -- Sample 7: 0.9417
+ -- Sample 8: 0.9507
+ -- Sample 9: 0.9653
+ -- Sample 10: 0.4469
+ -- Sample 11: 0.6039
+ -- Sample 12: 0.5383
+ -- Sample 13: 0.6510
+ -- Sample 14: 0.9202
+ -- Sample 15: 0.9349
+ -- Sample 16: 0.9466
+ -- Sample 17: 0.9253
+ -- Sample 18: 0.8741
+ -- Sample 19: 0.8369
+ -- Sample 20: 0.8944
+ -- Sample 21: 0.6967
+ -- Sample 22: 0.9022
+ -- Sample 23: 0.9154
+ -- Sample 24: 0.9350
+Mean=0.8083, Std=0.2180
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 31.0482, Std: 31.4427
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=45.1551%; std=24.5859
+ -- Sample 1: mean=181.1652%; std=315.5058
+ -- Sample 2: mean=119.3485%; std=207.6177
+ -- Sample 3: mean=191.5593%; std=340.5838
+ -- Sample 4: mean=122.4210%; std=256.8463
+ -- Sample 5: mean=46.2946%; std=23.8134
+ -- Sample 6: mean=48.4779%; std=16.0805
+ -- Sample 7: mean=44.7723%; std=22.4079
+ -- Sample 8: mean=47.4918%; std=16.6949
+ -- Sample 9: mean=35.4811%; std=28.6042
+ -- Sample 10: mean=33.5303%; std=27.4452
+ -- Sample 11: mean=34.6254%; std=25.7751
+ -- Sample 12: mean=34.9771%; std=22.9292
+ -- Sample 13: mean=77.3283%; std=70.2064
+ -- Sample 14: mean=44.8779%; std=28.8654
+ -- Sample 15: mean=58.1274%; std=40.5391
+ -- Sample 16: mean=36.5256%; std=41.6517
+ -- Sample 17: mean=46.0958%; std=31.7115
+ -- Sample 18: mean=34.7369%; std=20.1192
+ -- Sample 19: mean=48.6071%; std=34.9133
+ -- Sample 20: mean=35.2543%; std=23.4908
+ -- Sample 21: mean=46.5422%; std=49.4492
+ -- Sample 22: mean=60.1820%; std=51.4831
+ -- Sample 23: mean=65.6191%; std=68.0630
+ -- Sample 24: mean=53.7191%; std=67.3617
+Mean: 63.7166%, Std: 42.6486%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8706
+ -- Sample 1: 0.6456
+ -- Sample 2: 0.7435
+ -- Sample 3: 0.5648
+ -- Sample 4: 0.6974
+ -- Sample 5: 0.9626
+ -- Sample 6: 0.9658
+ -- Sample 7: 0.9652
+ -- Sample 8: 0.9709
+ -- Sample 9: 0.9500
+ -- Sample 10: 0.9698
+ -- Sample 11: 0.9587
+ -- Sample 12: 0.9544
+ -- Sample 13: 0.6765
+ -- Sample 14: 0.9303
+ -- Sample 15: 0.8910
+ -- Sample 16: 0.9550
+ -- Sample 17: 0.9096
+ -- Sample 18: 0.9123
+ -- Sample 19: 0.8916
+ -- Sample 20: 0.9023
+ -- Sample 21: 0.9035
+ -- Sample 22: 0.8641
+ -- Sample 23: 0.8496
+ -- Sample 24: 0.8859
+Mean=0.8716, Std=0.1119
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 34.6174, Std: 31.0100
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=34.6364%; std=27.5708
+ -- Sample 1: mean=60.2222%; std=43.1376
+ -- Sample 2: mean=44.0902%; std=37.3689
+ -- Sample 3: mean=52.2868%; std=39.0390
+ -- Sample 4: mean=75.0209%; std=58.1691
+ -- Sample 5: mean=77.5205%; std=80.5151
+ -- Sample 6: mean=66.5874%; std=54.0571
+ -- Sample 7: mean=54.1127%; std=59.1860
+ -- Sample 8: mean=139.8868%; std=175.2874
+ -- Sample 9: mean=48.4279%; std=30.7790
+ -- Sample 10: mean=120.5333%; std=148.6667
+ -- Sample 11: mean=44.2880%; std=26.3252
+ -- Sample 12: mean=107.5522%; std=77.2134
+ -- Sample 13: mean=80.4144%; std=67.0421
+ -- Sample 14: mean=98.9774%; std=75.7666
+ -- Sample 15: mean=78.4911%; std=65.8896
+ -- Sample 16: mean=32.6894%; std=22.1372
+ -- Sample 17: mean=24.9341%; std=16.3197
+ -- Sample 18: mean=29.3004%; std=22.2483
+ -- Sample 19: mean=21.6841%; std=15.1375
+ -- Sample 20: mean=38.7041%; std=29.1539
+ -- Sample 21: mean=35.0174%; std=29.4629
+ -- Sample 22: mean=38.4912%; std=26.9907
+ -- Sample 23: mean=31.7618%; std=20.9602
+ -- Sample 24: mean=174.0679%; std=138.4057
+Mean: 64.3879%, Std: 37.8347%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9594
+ -- Sample 1: 0.9444
+ -- Sample 2: 0.9488
+ -- Sample 3: 0.9697
+ -- Sample 4: 0.8782
+ -- Sample 5: 0.7986
+ -- Sample 6: 0.8634
+ -- Sample 7: 0.8778
+ -- Sample 8: 0.7305
+ -- Sample 9: 0.8620
+ -- Sample 10: 0.7567
+ -- Sample 11: 0.9086
+ -- Sample 12: 0.7175
+ -- Sample 13: 0.7463
+ -- Sample 14: 0.7631
+ -- Sample 15: 0.7516
+ -- Sample 16: 0.9674
+ -- Sample 17: 0.9656
+ -- Sample 18: 0.9673
+ -- Sample 19: 0.9742
+ -- Sample 20: 0.9237
+ -- Sample 21: 0.9720
+ -- Sample 22: 0.9264
+ -- Sample 23: 0.9668
+ -- Sample 24: 0.6418
+Mean=0.8713, Std=0.0999
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 25)...
+Bias Error: using Single Component
+Mean: 30.7702, Std: 33.3825
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=136.2418%; std=120.0420
+ -- Sample 1: mean=146.1951%; std=110.1576
+ -- Sample 2: mean=143.5188%; std=112.8781
+ -- Sample 3: mean=57.1086%; std=57.1392
+ -- Sample 4: mean=50.9486%; std=57.7863
+ -- Sample 5: mean=48.2387%; std=34.7456
+ -- Sample 6: mean=48.2834%; std=37.8890
+ -- Sample 7: mean=36.0491%; std=24.0397
+ -- Sample 8: mean=43.4694%; std=20.6169
+ -- Sample 9: mean=37.0018%; std=21.7313
+ -- Sample 10: mean=47.8248%; std=22.6572
+ -- Sample 11: mean=38.3884%; std=35.7435
+ -- Sample 12: mean=49.3224%; std=46.4795
+ -- Sample 13: mean=40.0837%; std=28.1052
+ -- Sample 14: mean=52.8951%; std=46.8796
+ -- Sample 15: mean=40.5110%; std=25.2087
+ -- Sample 16: mean=40.9564%; std=30.2928
+ -- Sample 17: mean=35.1967%; std=24.1891
+ -- Sample 18: mean=42.5798%; std=29.3782
+ -- Sample 19: mean=48.2332%; std=34.0543
+ -- Sample 20: mean=27.1734%; std=21.2074
+ -- Sample 21: mean=26.7220%; std=20.8037
+ -- Sample 22: mean=48.8158%; std=51.7065
+ -- Sample 23: mean=59.1933%; std=51.5816
+ -- Sample 24: mean=63.7480%; std=102.4441
+Mean: 56.3480%, Std: 32.8189%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7932
+ -- Sample 1: 0.7076
+ -- Sample 2: 0.7931
+ -- Sample 3: 0.7914
+ -- Sample 4: 0.8115
+ -- Sample 5: 0.8501
+ -- Sample 6: 0.9279
+ -- Sample 7: 0.9357
+ -- Sample 8: 0.9164
+ -- Sample 9: 0.9387
+ -- Sample 10: 0.8683
+ -- Sample 11: 0.9284
+ -- Sample 12: 0.9488
+ -- Sample 13: 0.9109
+ -- Sample 14: 0.9128
+ -- Sample 15: 0.8885
+ -- Sample 16: 0.8616
+ -- Sample 17: 0.9248
+ -- Sample 18: 0.8374
+ -- Sample 19: 0.9345
+ -- Sample 20: 0.9613
+ -- Sample 21: 0.9667
+ -- Sample 22: 0.9057
+ -- Sample 23: 0.8218
+ -- Sample 24: 0.8452
+Mean=0.8793, Std=0.0646
+------------------------------------------------------------------
+  Processing Batch 7 (Size: 25)...
+Bias Error: using Single Component
+Mean: 1663.9968, Std: 3806.7669
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=49.7680%; std=46.0516
+ -- Sample 1: mean=72.4971%; std=130.2258
+ -- Sample 2: mean=28.4943%; std=19.8330
+ -- Sample 3: mean=26.5634%; std=17.5782
+ -- Sample 4: mean=29.4048%; std=22.7665
+ -- Sample 5: mean=28.2338%; std=18.9987
+ -- Sample 6: mean=34.2963%; std=23.5739
+ -- Sample 7: mean=38.6500%; std=18.6956
+ -- Sample 8: mean=34.2887%; std=22.1877
+ -- Sample 9: mean=32.5150%; std=16.6641
+ -- Sample 10: mean=149.6800%; std=257.9488
+ -- Sample 11: mean=165.5324%; std=280.0463
+ -- Sample 12: mean=175.6128%; std=306.3376
+ -- Sample 13: mean=179.5947%; std=285.8517
+ -- Sample 14: mean=140.1002%; std=206.2375
+ -- Sample 15: mean=160.0229%; std=157.6565
+ -- Sample 16: mean=133.3475%; std=200.3691
+ -- Sample 17: mean=149.0116%; std=144.4961
+ -- Sample 18: mean=15346.5205%; std=27401.0781
+ -- Sample 19: mean=6690.6143%; std=12280.4736
+ -- Sample 20: mean=14939.0469%; std=24044.1289
+ -- Sample 21: mean=7129.6855%; std=15103.2451
+ -- Sample 22: mean=197.2726%; std=313.7793
+ -- Sample 23: mean=356.0119%; std=533.4343
+ -- Sample 24: mean=137.4594%; std=221.2888
+Mean: 1856.9690%, Std: 4328.8691%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8722
+ -- Sample 1: 0.8140
+ -- Sample 2: 0.9546
+ -- Sample 3: 0.9615
+ -- Sample 4: 0.9612
+ -- Sample 5: 0.9540
+ -- Sample 6: 0.9435
+ -- Sample 7: 0.9718
+ -- Sample 8: 0.9576
+ -- Sample 9: 0.9675
+ -- Sample 10: 0.7506
+ -- Sample 11: 0.5775
+ -- Sample 12: 0.6777
+ -- Sample 13: 0.5208
+ -- Sample 14: 0.7528
+ -- Sample 15: 0.7535
+ -- Sample 16: 0.7414
+ -- Sample 17: 0.7339
+ -- Sample 18: 0.1810
+ -- Sample 19: 0.2389
+ -- Sample 20: 0.1557
+ -- Sample 21: 0.2155
+ -- Sample 22: 0.4508
+ -- Sample 23: 0.3468
+ -- Sample 24: 0.7513
+Mean=0.6883, Std=0.2711
+------------------------------------------------------------------
+  Processing Batch 8 (Size: 25)...
+Bias Error: using Single Component
+Mean: 47.2795, Std: 60.4152
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=330.4047%; std=591.9844
+ -- Sample 1: mean=39.1311%; std=43.0761
+ -- Sample 2: mean=51.9338%; std=57.9998
+ -- Sample 3: mean=43.5465%; std=43.0875
+ -- Sample 4: mean=46.2259%; std=59.3073
+ -- Sample 5: mean=67.9309%; std=54.0173
+ -- Sample 6: mean=62.3060%; std=54.9621
+ -- Sample 7: mean=74.1435%; std=60.5120
+ -- Sample 8: mean=55.7279%; std=42.7365
+ -- Sample 9: mean=46.0548%; std=24.5179
+ -- Sample 10: mean=47.8939%; std=27.2387
+ -- Sample 11: mean=45.9829%; std=26.4584
+ -- Sample 12: mean=46.6726%; std=26.4071
+ -- Sample 13: mean=41.1137%; std=21.7410
+ -- Sample 14: mean=37.5385%; std=13.9284
+ -- Sample 15: mean=36.4046%; std=20.9524
+ -- Sample 16: mean=47.0689%; std=16.4826
+ -- Sample 17: mean=39.7276%; std=29.4275
+ -- Sample 18: mean=47.9650%; std=23.3779
+ -- Sample 19: mean=42.0172%; std=26.1291
+ -- Sample 20: mean=48.4031%; std=22.1183
+ -- Sample 21: mean=50.5076%; std=50.2189
+ -- Sample 22: mean=83.1654%; std=58.2953
+ -- Sample 23: mean=55.7610%; std=41.1988
+ -- Sample 24: mean=68.1665%; std=65.8345
+Mean: 62.2317%, Std: 55.9525%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.3481
+ -- Sample 1: 0.9444
+ -- Sample 2: 0.8275
+ -- Sample 3: 0.9552
+ -- Sample 4: 0.8440
+ -- Sample 5: 0.8851
+ -- Sample 6: 0.8979
+ -- Sample 7: 0.8618
+ -- Sample 8: 0.9123
+ -- Sample 9: 0.8659
+ -- Sample 10: 0.7711
+ -- Sample 11: 0.8848
+ -- Sample 12: 0.8415
+ -- Sample 13: 0.9444
+ -- Sample 14: 0.9507
+ -- Sample 15: 0.9586
+ -- Sample 16: 0.9374
+ -- Sample 17: 0.9266
+ -- Sample 18: 0.9478
+ -- Sample 19: 0.9314
+ -- Sample 20: 0.9668
+ -- Sample 21: 0.9403
+ -- Sample 22: 0.9640
+ -- Sample 23: 0.9307
+ -- Sample 24: 0.9064
+Mean=0.8858, Std=0.1201
+------------------------------------------------------------------
+  Processing Batch 9 (Size: 25)...
+Bias Error: using Single Component
+Mean: 1043.5237, Std: 1349.7300
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=35.6492%; std=22.8206
+ -- Sample 1: mean=34.3260%; std=27.2835
+ -- Sample 2: mean=31.7974%; std=20.4256
+ -- Sample 3: mean=37.0827%; std=27.2432
+ -- Sample 4: mean=651.7693%; std=795.7876
+ -- Sample 5: mean=775.4840%; std=841.6079
+ -- Sample 6: mean=558.7224%; std=762.3447
+ -- Sample 7: mean=1029.9388%; std=1140.5941
+ -- Sample 8: mean=3763.1985%; std=5590.2251
+ -- Sample 9: mean=3026.1589%; std=3733.9397
+ -- Sample 10: mean=2478.1021%; std=2847.5950
+ -- Sample 11: mean=3615.0579%; std=3157.5034
+ -- Sample 12: mean=42.6920%; std=29.4676
+ -- Sample 13: mean=43.0931%; std=27.0368
+ -- Sample 14: mean=47.7482%; std=29.0823
+ -- Sample 15: mean=45.8004%; std=25.7270
+ -- Sample 16: mean=38.5333%; std=32.7975
+ -- Sample 17: mean=41.8843%; std=35.2999
+ -- Sample 18: mean=39.9020%; std=37.2322
+ -- Sample 19: mean=41.6189%; std=29.1651
+ -- Sample 20: mean=2001.1897%; std=2618.4102
+ -- Sample 21: mean=1769.2941%; std=1748.6624
+ -- Sample 22: mean=881.0663%; std=1140.2666
+ -- Sample 23: mean=971.3940%; std=1400.8359
+ -- Sample 24: mean=265.8625%; std=334.4768
+Mean: 890.6946%, Std: 1166.8731%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9358
+ -- Sample 1: 0.9245
+ -- Sample 2: 0.9350
+ -- Sample 3: 0.8339
+ -- Sample 4: 0.4084
+ -- Sample 5: 0.4222
+ -- Sample 6: 0.3577
+ -- Sample 7: 0.3652
+ -- Sample 8: 0.4951
+ -- Sample 9: 0.3501
+ -- Sample 10: 0.4910
+ -- Sample 11: 0.4195
+ -- Sample 12: 0.9143
+ -- Sample 13: 0.9382
+ -- Sample 14: 0.8782
+ -- Sample 15: 0.9092
+ -- Sample 16: 0.9301
+ -- Sample 17: 0.9374
+ -- Sample 18: 0.9228
+ -- Sample 19: 0.9498
+ -- Sample 20: 0.2165
+ -- Sample 21: 0.1153
+ -- Sample 22: 0.2110
+ -- Sample 23: 0.1399
+ -- Sample 24: 0.5506
+Mean=0.6221, Std=0.3004
+------------------------------------------------------------------
+  Processing Batch 10 (Size: 25)...
+Bias Error: using Single Component
+Mean: 37.6150, Std: 30.8771
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=140.2145%; std=211.2197
+ -- Sample 1: mean=267.4504%; std=318.3036
+ -- Sample 2: mean=125.2436%; std=187.4337
+ -- Sample 3: mean=38.9081%; std=29.2307
+ -- Sample 4: mean=36.5756%; std=31.9062
+ -- Sample 5: mean=31.9464%; std=25.0975
+ -- Sample 6: mean=45.7761%; std=45.7907
+ -- Sample 7: mean=37.4576%; std=22.3627
+ -- Sample 8: mean=35.6905%; std=24.3945
+ -- Sample 9: mean=44.9067%; std=26.2793
+ -- Sample 10: mean=30.7032%; std=22.7447
+ -- Sample 11: mean=43.1706%; std=27.4940
+ -- Sample 12: mean=44.8764%; std=25.6350
+ -- Sample 13: mean=45.2139%; std=22.5729
+ -- Sample 14: mean=41.0178%; std=29.4077
+ -- Sample 15: mean=46.0636%; std=15.9455
+ -- Sample 16: mean=60.7614%; std=16.0630
+ -- Sample 17: mean=42.7456%; std=17.3250
+ -- Sample 18: mean=58.8643%; std=16.4416
+ -- Sample 19: mean=31.6658%; std=21.9435
+ -- Sample 20: mean=40.3908%; std=24.8734
+ -- Sample 21: mean=35.2811%; std=23.8155
+ -- Sample 22: mean=39.5138%; std=24.8692
+ -- Sample 23: mean=64.9444%; std=55.1089
+ -- Sample 24: mean=40.6914%; std=23.9209
+Mean: 58.8030%, Std: 49.8233%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7788
+ -- Sample 1: 0.5647
+ -- Sample 2: 0.7917
+ -- Sample 3: 0.9752
+ -- Sample 4: 0.9672
+ -- Sample 5: 0.9737
+ -- Sample 6: 0.9460
+ -- Sample 7: 0.9389
+ -- Sample 8: 0.9345
+ -- Sample 9: 0.9031
+ -- Sample 10: 0.9614
+ -- Sample 11: 0.9271
+ -- Sample 12: 0.8912
+ -- Sample 13: 0.9501
+ -- Sample 14: 0.9003
+ -- Sample 15: 0.9555
+ -- Sample 16: 0.9009
+ -- Sample 17: 0.9572
+ -- Sample 18: 0.9327
+ -- Sample 19: 0.9533
+ -- Sample 20: 0.9186
+ -- Sample 21: 0.9389
+ -- Sample 22: 0.8982
+ -- Sample 23: 0.7152
+ -- Sample 24: 0.9622
+Mean=0.9015, Std=0.0931
+------------------------------------------------------------------
+  Processing Batch 11 (Size: 25)...
+Bias Error: using Single Component
+Mean: 89.1260, Std: 94.4595
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=54.2350%; std=46.1305
+ -- Sample 1: mean=46.4195%; std=21.3186
+ -- Sample 2: mean=35.5047%; std=19.3898
+ -- Sample 3: mean=34.1832%; std=20.4634
+ -- Sample 4: mean=37.0245%; std=18.6831
+ -- Sample 5: mean=37.2322%; std=19.9391
+ -- Sample 6: mean=38.0018%; std=21.7929
+ -- Sample 7: mean=36.5707%; std=30.1523
+ -- Sample 8: mean=47.2812%; std=26.2297
+ -- Sample 9: mean=22.7175%; std=16.5541
+ -- Sample 10: mean=136.2512%; std=232.1980
+ -- Sample 11: mean=252.0247%; std=293.3251
+ -- Sample 12: mean=176.8494%; std=297.2675
+ -- Sample 13: mean=268.2937%; std=279.7827
+ -- Sample 14: mean=22.1461%; std=17.5792
+ -- Sample 15: mean=34.0658%; std=24.3123
+ -- Sample 16: mean=32.2734%; std=25.3791
+ -- Sample 17: mean=25.4985%; std=20.4360
+ -- Sample 18: mean=280.0205%; std=308.4743
+ -- Sample 19: mean=320.6235%; std=299.3373
+ -- Sample 20: mean=274.8445%; std=302.0235
+ -- Sample 21: mean=271.2209%; std=294.0095
+ -- Sample 22: mean=179.8321%; std=186.6615
+ -- Sample 23: mean=151.4657%; std=165.3401
+ -- Sample 24: mean=181.3542%; std=212.2553
+Mean: 119.8374%, Std: 102.7528%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7167
+ -- Sample 1: 0.9451
+ -- Sample 2: 0.9752
+ -- Sample 3: 0.9454
+ -- Sample 4: 0.9753
+ -- Sample 5: 0.9419
+ -- Sample 6: 0.8716
+ -- Sample 7: 0.9706
+ -- Sample 8: 0.8308
+ -- Sample 9: 0.9765
+ -- Sample 10: 0.7095
+ -- Sample 11: 0.6537
+ -- Sample 12: 0.6715
+ -- Sample 13: 0.6848
+ -- Sample 14: 0.9735
+ -- Sample 15: 0.9456
+ -- Sample 16: 0.9594
+ -- Sample 17: 0.9668
+ -- Sample 18: 0.4835
+ -- Sample 19: 0.6721
+ -- Sample 20: 0.5005
+ -- Sample 21: 0.6779
+ -- Sample 22: 0.6805
+ -- Sample 23: 0.7320
+ -- Sample 24: 0.6221
+Mean=0.8033, Std=0.1591
+------------------------------------------------------------------
+  Processing Batch 12 (Size: 1)...
+Bias Error: using Single Component
+Mean: 147.2260, Std: 0.0000
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=212.7881%; std=291.1820
+Mean: 212.7881%, Std: 0.0000%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.6389
+Mean=0.6389, Std=0.0000
+------------------------------------------------------------------
+
+Processing Dataset: Castle Gate
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 42.8324, Std: 76.1999
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=54.2646%; std=51.1511
+ -- Sample 1: mean=27.4714%; std=24.6344
+ -- Sample 2: mean=44.0529%; std=42.9809
+ -- Sample 3: mean=29.5303%; std=25.9576
+ -- Sample 4: mean=42.9810%; std=33.5007
+ -- Sample 5: mean=56.6220%; std=41.4436
+ -- Sample 6: mean=43.5091%; std=28.6884
+ -- Sample 7: mean=58.6864%; std=56.3890
+ -- Sample 8: mean=29.4610%; std=19.1590
+ -- Sample 9: mean=56.9289%; std=51.1620
+ -- Sample 10: mean=35.5056%; std=25.0749
+ -- Sample 11: mean=55.9461%; std=52.2449
+ -- Sample 12: mean=42.9648%; std=32.6981
+ -- Sample 13: mean=57.6666%; std=42.3232
+ -- Sample 14: mean=48.3691%; std=31.5910
+ -- Sample 15: mean=47.7768%; std=34.1348
+ -- Sample 16: mean=54.8251%; std=39.4364
+ -- Sample 17: mean=45.0505%; std=32.6944
+ -- Sample 18: mean=51.5909%; std=27.0849
+ -- Sample 19: mean=52.5024%; std=35.5742
+ -- Sample 20: mean=224.8898%; std=262.2326
+ -- Sample 21: mean=297.1080%; std=363.6566
+ -- Sample 22: mean=174.0735%; std=190.7929
+ -- Sample 23: mean=266.8416%; std=333.1376
+ -- Sample 24: mean=33.2244%; std=25.0950
+Mean: 77.2737%, Std: 74.2501%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8872
+ -- Sample 1: 0.9686
+ -- Sample 2: 0.9169
+ -- Sample 3: 0.9735
+ -- Sample 4: 0.8993
+ -- Sample 5: 0.8485
+ -- Sample 6: 0.8884
+ -- Sample 7: 0.7575
+ -- Sample 8: 0.9506
+ -- Sample 9: 0.8476
+ -- Sample 10: 0.9240
+ -- Sample 11: 0.8519
+ -- Sample 12: 0.8894
+ -- Sample 13: 0.9105
+ -- Sample 14: 0.8880
+ -- Sample 15: 0.9172
+ -- Sample 16: 0.8467
+ -- Sample 17: 0.8257
+ -- Sample 18: 0.8635
+ -- Sample 19: 0.8313
+ -- Sample 20: 0.6293
+ -- Sample 21: 0.6994
+ -- Sample 22: 0.7485
+ -- Sample 23: 0.6675
+ -- Sample 24: 0.9385
+Mean=0.8548, Std=0.0890
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 35.9284, Std: 31.7864
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=30.7855%; std=21.4423
+ -- Sample 1: mean=32.5381%; std=22.2102
+ -- Sample 2: mean=35.5601%; std=23.4945
+ -- Sample 3: mean=39.4661%; std=35.7853
+ -- Sample 4: mean=30.7903%; std=24.0008
+ -- Sample 5: mean=35.0330%; std=26.3539
+ -- Sample 6: mean=25.4256%; std=24.3393
+ -- Sample 7: mean=40.4065%; std=24.4730
+ -- Sample 8: mean=45.2885%; std=46.6099
+ -- Sample 9: mean=39.1385%; std=32.2045
+ -- Sample 10: mean=42.6851%; std=51.7181
+ -- Sample 11: mean=106.6270%; std=103.6487
+ -- Sample 12: mean=106.0695%; std=180.5759
+ -- Sample 13: mean=119.2544%; std=129.8329
+ -- Sample 14: mean=94.0616%; std=103.6576
+ -- Sample 15: mean=37.1855%; std=21.6133
+ -- Sample 16: mean=36.5864%; std=20.4715
+ -- Sample 17: mean=37.0175%; std=19.3735
+ -- Sample 18: mean=30.7785%; std=21.1370
+ -- Sample 19: mean=47.1567%; std=20.7888
+ -- Sample 20: mean=50.6731%; std=20.2877
+ -- Sample 21: mean=49.2590%; std=18.3449
+ -- Sample 22: mean=44.5282%; std=20.3207
+ -- Sample 23: mean=87.9885%; std=91.5986
+ -- Sample 24: mean=62.0360%; std=54.3603
+Mean: 52.2536%, Std: 26.7929%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9423
+ -- Sample 1: 0.9569
+ -- Sample 2: 0.9138
+ -- Sample 3: 0.9283
+ -- Sample 4: 0.9362
+ -- Sample 5: 0.9471
+ -- Sample 6: 0.9638
+ -- Sample 7: 0.8949
+ -- Sample 8: 0.8605
+ -- Sample 9: 0.9226
+ -- Sample 10: 0.8567
+ -- Sample 11: 0.8470
+ -- Sample 12: 0.8529
+ -- Sample 13: 0.8222
+ -- Sample 14: 0.9102
+ -- Sample 15: 0.9710
+ -- Sample 16: 0.9548
+ -- Sample 17: 0.9765
+ -- Sample 18: 0.9666
+ -- Sample 19: 0.9553
+ -- Sample 20: 0.9509
+ -- Sample 21: 0.9665
+ -- Sample 22: 0.9566
+ -- Sample 23: 0.9187
+ -- Sample 24: 0.9507
+Mean=0.9249, Std=0.0437
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 42.4478, Std: 56.7290
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=66.2698%; std=65.5481
+ -- Sample 1: mean=77.7860%; std=69.1371
+ -- Sample 2: mean=47.4455%; std=45.0019
+ -- Sample 3: mean=62.9817%; std=60.9810
+ -- Sample 4: mean=54.5596%; std=63.5678
+ -- Sample 5: mean=62.2869%; std=62.2135
+ -- Sample 6: mean=54.6956%; std=32.4130
+ -- Sample 7: mean=53.3816%; std=24.4679
+ -- Sample 8: mean=59.5190%; std=32.5428
+ -- Sample 9: mean=61.2040%; std=24.1088
+ -- Sample 10: mean=36.8202%; std=23.5594
+ -- Sample 11: mean=35.1396%; std=28.7102
+ -- Sample 12: mean=46.4245%; std=33.7812
+ -- Sample 13: mean=38.2833%; std=26.6279
+ -- Sample 14: mean=31.6240%; std=24.6521
+ -- Sample 15: mean=44.1095%; std=25.1527
+ -- Sample 16: mean=28.4503%; std=20.4001
+ -- Sample 17: mean=50.0523%; std=27.2017
+ -- Sample 18: mean=151.6352%; std=170.7085
+ -- Sample 19: mean=293.2402%; std=309.6614
+ -- Sample 20: mean=161.3922%; std=169.4181
+ -- Sample 21: mean=185.9547%; std=193.2924
+ -- Sample 22: mean=57.7977%; std=52.0907
+ -- Sample 23: mean=31.2840%; std=25.0867
+ -- Sample 24: mean=45.7320%; std=31.5632
+Mean: 73.5228%, Std: 59.9994%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9568
+ -- Sample 1: 0.9518
+ -- Sample 2: 0.9118
+ -- Sample 3: 0.8535
+ -- Sample 4: 0.8966
+ -- Sample 5: 0.8709
+ -- Sample 6: 0.9120
+ -- Sample 7: 0.7377
+ -- Sample 8: 0.9189
+ -- Sample 9: 0.7467
+ -- Sample 10: 0.9247
+ -- Sample 11: 0.9296
+ -- Sample 12: 0.8930
+ -- Sample 13: 0.9136
+ -- Sample 14: 0.9629
+ -- Sample 15: 0.8631
+ -- Sample 16: 0.9662
+ -- Sample 17: 0.8344
+ -- Sample 18: 0.7729
+ -- Sample 19: 0.5053
+ -- Sample 20: 0.7759
+ -- Sample 21: 0.5641
+ -- Sample 22: 0.8801
+ -- Sample 23: 0.9404
+ -- Sample 24: 0.9093
+Mean=0.8557, Std=0.1146
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 43.4653, Std: 53.4266
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=32.6411%; std=25.1223
+ -- Sample 1: mean=42.4724%; std=33.0190
+ -- Sample 2: mean=46.4618%; std=30.7238
+ -- Sample 3: mean=39.1526%; std=30.5332
+ -- Sample 4: mean=55.8240%; std=36.1255
+ -- Sample 5: mean=89.0582%; std=115.6035
+ -- Sample 6: mean=318.2219%; std=487.1743
+ -- Sample 7: mean=96.0599%; std=125.0938
+ -- Sample 8: mean=270.9737%; std=377.3881
+ -- Sample 9: mean=36.2886%; std=15.4900
+ -- Sample 10: mean=48.0017%; std=17.5587
+ -- Sample 11: mean=36.7254%; std=17.5445
+ -- Sample 12: mean=46.8493%; std=22.5377
+ -- Sample 13: mean=38.4905%; std=24.9700
+ -- Sample 14: mean=35.8637%; std=17.6095
+ -- Sample 15: mean=38.7456%; std=25.0566
+ -- Sample 16: mean=41.5564%; std=17.8379
+ -- Sample 17: mean=95.8421%; std=123.2727
+ -- Sample 18: mean=82.9960%; std=98.1971
+ -- Sample 19: mean=72.9624%; std=95.5929
+ -- Sample 20: mean=96.8588%; std=117.5599
+ -- Sample 21: mean=42.6950%; std=40.4345
+ -- Sample 22: mean=34.2994%; std=26.6938
+ -- Sample 23: mean=43.1017%; std=43.7528
+ -- Sample 24: mean=32.7589%; std=29.5990
+Mean: 72.5960%, Std: 69.1790%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9355
+ -- Sample 1: 0.8685
+ -- Sample 2: 0.8919
+ -- Sample 3: 0.8990
+ -- Sample 4: 0.8360
+ -- Sample 5: 0.3056
+ -- Sample 6: 0.5664
+ -- Sample 7: 0.1792
+ -- Sample 8: 0.6542
+ -- Sample 9: 0.9825
+ -- Sample 10: 0.9686
+ -- Sample 11: 0.9817
+ -- Sample 12: 0.9527
+ -- Sample 13: 0.9207
+ -- Sample 14: 0.9736
+ -- Sample 15: 0.9287
+ -- Sample 16: 0.9642
+ -- Sample 17: 0.7683
+ -- Sample 18: 0.7712
+ -- Sample 19: 0.8066
+ -- Sample 20: 0.7733
+ -- Sample 21: 0.9244
+ -- Sample 22: 0.9471
+ -- Sample 23: 0.9342
+ -- Sample 24: 0.9539
+Mean=0.8275, Std=0.2017
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 27.6674, Std: 17.3078
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=46.6983%; std=25.2574
+ -- Sample 1: mean=44.8499%; std=26.6874
+ -- Sample 2: mean=52.5383%; std=27.5155
+ -- Sample 3: mean=47.2961%; std=27.0697
+ -- Sample 4: mean=34.9914%; std=42.0331
+ -- Sample 5: mean=40.7063%; std=33.1001
+ -- Sample 6: mean=42.4038%; std=38.8825
+ -- Sample 7: mean=36.2311%; std=29.4462
+ -- Sample 8: mean=39.1576%; std=27.8791
+ -- Sample 9: mean=37.2814%; std=51.4503
+ -- Sample 10: mean=44.2631%; std=33.9211
+ -- Sample 11: mean=38.7749%; std=57.0194
+ -- Sample 12: mean=101.3225%; std=165.3787
+ -- Sample 13: mean=67.6868%; std=90.2936
+ -- Sample 14: mean=104.6324%; std=149.1809
+ -- Sample 15: mean=66.8440%; std=141.1851
+ -- Sample 16: mean=41.7626%; std=24.1807
+ -- Sample 17: mean=49.7508%; std=26.4566
+ -- Sample 18: mean=41.8866%; std=33.5908
+ -- Sample 19: mean=45.8936%; std=27.5775
+ -- Sample 20: mean=49.7708%; std=28.9099
+ -- Sample 21: mean=62.4905%; std=35.2567
+ -- Sample 22: mean=49.6198%; std=30.7984
+ -- Sample 23: mean=51.2828%; std=36.1361
+ -- Sample 24: mean=71.6620%; std=62.4213
+Mean: 52.3919%, Std: 17.7744%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9130
+ -- Sample 1: 0.9169
+ -- Sample 2: 0.9089
+ -- Sample 3: 0.9162
+ -- Sample 4: 0.9355
+ -- Sample 5: 0.9264
+ -- Sample 6: 0.9072
+ -- Sample 7: 0.9372
+ -- Sample 8: 0.9140
+ -- Sample 9: 0.9115
+ -- Sample 10: 0.9066
+ -- Sample 11: 0.8941
+ -- Sample 12: 0.6857
+ -- Sample 13: 0.8146
+ -- Sample 14: 0.7490
+ -- Sample 15: 0.7448
+ -- Sample 16: 0.9299
+ -- Sample 17: 0.8478
+ -- Sample 18: 0.8932
+ -- Sample 19: 0.8848
+ -- Sample 20: 0.8114
+ -- Sample 21: 0.8325
+ -- Sample 22: 0.8073
+ -- Sample 23: 0.8734
+ -- Sample 24: 0.8041
+Mean=0.8666, Std=0.0668
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 25)...
+Bias Error: using Single Component
+Mean: 36.1965, Std: 31.8020
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=46.0528%; std=43.5930
+ -- Sample 1: mean=61.0384%; std=46.1555
+ -- Sample 2: mean=57.1540%; std=36.7208
+ -- Sample 3: mean=101.1985%; std=100.0122
+ -- Sample 4: mean=62.8549%; std=46.3930
+ -- Sample 5: mean=86.4654%; std=104.0200
+ -- Sample 6: mean=75.8225%; std=75.9943
+ -- Sample 7: mean=128.8935%; std=125.5730
+ -- Sample 8: mean=191.7315%; std=176.4749
+ -- Sample 9: mean=111.8529%; std=132.3961
+ -- Sample 10: mean=170.1570%; std=162.5022
+ -- Sample 11: mean=25.4521%; std=21.7797
+ -- Sample 12: mean=27.8261%; std=31.0432
+ -- Sample 13: mean=28.1146%; std=21.7466
+ -- Sample 14: mean=30.4335%; std=25.0488
+ -- Sample 15: mean=43.3663%; std=67.2909
+ -- Sample 16: mean=31.8697%; std=30.7503
+ -- Sample 17: mean=52.0691%; std=56.2205
+ -- Sample 18: mean=30.8583%; std=31.0456
+ -- Sample 19: mean=42.7199%; std=30.2848
+ -- Sample 20: mean=39.3416%; std=31.6020
+ -- Sample 21: mean=42.5935%; std=29.4025
+ -- Sample 22: mean=41.5071%; std=37.0770
+ -- Sample 23: mean=93.2385%; std=171.4991
+ -- Sample 24: mean=142.4326%; std=240.4109
+Mean: 70.6018%, Std: 45.7571%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8931
+ -- Sample 1: 0.8599
+ -- Sample 2: 0.8498
+ -- Sample 3: 0.7624
+ -- Sample 4: 0.8358
+ -- Sample 5: 0.8114
+ -- Sample 6: 0.8175
+ -- Sample 7: 0.7290
+ -- Sample 8: 0.6255
+ -- Sample 9: 0.7165
+ -- Sample 10: 0.6595
+ -- Sample 11: 0.9731
+ -- Sample 12: 0.9694
+ -- Sample 13: 0.9657
+ -- Sample 14: 0.9719
+ -- Sample 15: 0.9462
+ -- Sample 16: 0.9624
+ -- Sample 17: 0.9448
+ -- Sample 18: 0.9758
+ -- Sample 19: 0.8696
+ -- Sample 20: 0.9253
+ -- Sample 21: 0.8862
+ -- Sample 22: 0.9173
+ -- Sample 23: 0.8690
+ -- Sample 24: 0.7522
+Mean=0.8596, Std=0.1011
+------------------------------------------------------------------
+  Processing Batch 7 (Size: 25)...
+Bias Error: using Single Component
+Mean: 46.0731, Std: 30.5587
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=114.8214%; std=235.2042
+ -- Sample 1: mean=152.2351%; std=270.4408
+ -- Sample 2: mean=41.6695%; std=34.1971
+ -- Sample 3: mean=35.3653%; std=20.4876
+ -- Sample 4: mean=35.4298%; std=27.9231
+ -- Sample 5: mean=41.2060%; std=31.0012
+ -- Sample 6: mean=41.4275%; std=38.0203
+ -- Sample 7: mean=42.2271%; std=37.8030
+ -- Sample 8: mean=44.2729%; std=29.3044
+ -- Sample 9: mean=38.0200%; std=32.8280
+ -- Sample 10: mean=51.5549%; std=16.0707
+ -- Sample 11: mean=50.2712%; std=18.3108
+ -- Sample 12: mean=50.4408%; std=19.4347
+ -- Sample 13: mean=51.4682%; std=18.3993
+ -- Sample 14: mean=34.3158%; std=19.2623
+ -- Sample 15: mean=39.1999%; std=23.0249
+ -- Sample 16: mean=36.4051%; std=16.1687
+ -- Sample 17: mean=32.5870%; std=19.1419
+ -- Sample 18: mean=124.9272%; std=106.3065
+ -- Sample 19: mean=115.0900%; std=112.0161
+ -- Sample 20: mean=145.6546%; std=128.9497
+ -- Sample 21: mean=106.8179%; std=96.2546
+ -- Sample 22: mean=37.4986%; std=19.6201
+ -- Sample 23: mean=41.0771%; std=23.3229
+ -- Sample 24: mean=32.1060%; std=22.2879
+Mean: 61.4436%, Std: 37.8966%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8057
+ -- Sample 1: 0.7975
+ -- Sample 2: 0.9433
+ -- Sample 3: 0.9334
+ -- Sample 4: 0.9476
+ -- Sample 5: 0.9321
+ -- Sample 6: 0.9490
+ -- Sample 7: 0.9477
+ -- Sample 8: 0.9492
+ -- Sample 9: 0.9174
+ -- Sample 10: 0.9766
+ -- Sample 11: 0.9330
+ -- Sample 12: 0.9552
+ -- Sample 13: 0.9346
+ -- Sample 14: 0.9627
+ -- Sample 15: 0.9426
+ -- Sample 16: 0.9801
+ -- Sample 17: 0.9708
+ -- Sample 18: 0.7173
+ -- Sample 19: 0.6987
+ -- Sample 20: 0.6564
+ -- Sample 21: 0.6764
+ -- Sample 22: 0.9529
+ -- Sample 23: 0.9268
+ -- Sample 24: 0.9640
+Mean=0.8948, Std=0.1003
+------------------------------------------------------------------
+  Processing Batch 8 (Size: 25)...
+Bias Error: using Single Component
+Mean: 18.0227, Std: 12.8610
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=37.7073%; std=21.7834
+ -- Sample 1: mean=47.7495%; std=25.2413
+ -- Sample 2: mean=45.2250%; std=19.1332
+ -- Sample 3: mean=46.8606%; std=23.7469
+ -- Sample 4: mean=40.9533%; std=19.0853
+ -- Sample 5: mean=28.6042%; std=27.9505
+ -- Sample 6: mean=32.9622%; std=24.4966
+ -- Sample 7: mean=31.0362%; std=23.8418
+ -- Sample 8: mean=33.6835%; std=22.4277
+ -- Sample 9: mean=36.2278%; std=30.9082
+ -- Sample 10: mean=45.7820%; std=40.9565
+ -- Sample 11: mean=31.7929%; std=24.2201
+ -- Sample 12: mean=52.2907%; std=46.3772
+ -- Sample 13: mean=36.6026%; std=27.8978
+ -- Sample 14: mean=28.2744%; std=23.5414
+ -- Sample 15: mean=30.6039%; std=28.6665
+ -- Sample 16: mean=29.7039%; std=24.8217
+ -- Sample 17: mean=32.6991%; std=26.4761
+ -- Sample 18: mean=44.6859%; std=31.5321
+ -- Sample 19: mean=32.0724%; std=25.5558
+ -- Sample 20: mean=45.3973%; std=32.5319
+ -- Sample 21: mean=31.5446%; std=23.4582
+ -- Sample 22: mean=32.2252%; std=22.5791
+ -- Sample 23: mean=28.8965%; std=21.3705
+ -- Sample 24: mean=30.7837%; std=21.8857
+Mean: 36.5746%, Std: 7.1097%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9630
+ -- Sample 1: 0.8667
+ -- Sample 2: 0.9658
+ -- Sample 3: 0.9016
+ -- Sample 4: 0.9666
+ -- Sample 5: 0.9772
+ -- Sample 6: 0.9679
+ -- Sample 7: 0.9747
+ -- Sample 8: 0.9686
+ -- Sample 9: 0.9488
+ -- Sample 10: 0.9233
+ -- Sample 11: 0.9522
+ -- Sample 12: 0.9300
+ -- Sample 13: 0.9272
+ -- Sample 14: 0.9611
+ -- Sample 15: 0.9434
+ -- Sample 16: 0.9534
+ -- Sample 17: 0.9510
+ -- Sample 18: 0.9272
+ -- Sample 19: 0.9438
+ -- Sample 20: 0.9186
+ -- Sample 21: 0.9388
+ -- Sample 22: 0.9434
+ -- Sample 23: 0.9507
+ -- Sample 24: 0.9516
+Mean=0.9447, Std=0.0243
+------------------------------------------------------------------
+  Processing Batch 9 (Size: 25)...
+Bias Error: using Single Component
+Mean: 24.0943, Std: 31.7082
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=41.2303%; std=36.2378
+ -- Sample 1: mean=49.0941%; std=41.0135
+ -- Sample 2: mean=43.1667%; std=32.2865
+ -- Sample 3: mean=44.5057%; std=35.9228
+ -- Sample 4: mean=38.8512%; std=42.9753
+ -- Sample 5: mean=27.5910%; std=22.6037
+ -- Sample 6: mean=45.9114%; std=44.3213
+ -- Sample 7: mean=34.6654%; std=22.4697
+ -- Sample 8: mean=83.1568%; std=63.1872
+ -- Sample 9: mean=96.6025%; std=59.1260
+ -- Sample 10: mean=92.1406%; std=67.2980
+ -- Sample 11: mean=113.3330%; std=81.5365
+ -- Sample 12: mean=44.5498%; std=28.8884
+ -- Sample 13: mean=44.2555%; std=36.6985
+ -- Sample 14: mean=42.1591%; std=29.7198
+ -- Sample 15: mean=47.7607%; std=60.9471
+ -- Sample 16: mean=19.0602%; std=16.4084
+ -- Sample 17: mean=27.4840%; std=23.6786
+ -- Sample 18: mean=20.9175%; std=19.2445
+ -- Sample 19: mean=28.0778%; std=23.8812
+ -- Sample 20: mean=39.1207%; std=20.8263
+ -- Sample 21: mean=36.6042%; std=21.8758
+ -- Sample 22: mean=30.4546%; std=19.7501
+ -- Sample 23: mean=39.8027%; std=22.1887
+ -- Sample 24: mean=42.0275%; std=24.6554
+Mean: 46.9009%, Std: 23.3393%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8374
+ -- Sample 1: 0.8103
+ -- Sample 2: 0.8238
+ -- Sample 3: 0.8187
+ -- Sample 4: 0.9265
+ -- Sample 5: 0.9664
+ -- Sample 6: 0.8744
+ -- Sample 7: 0.9533
+ -- Sample 8: 0.9555
+ -- Sample 9: 0.9681
+ -- Sample 10: 0.9416
+ -- Sample 11: 0.9562
+ -- Sample 12: 0.9012
+ -- Sample 13: 0.9292
+ -- Sample 14: 0.9150
+ -- Sample 15: 0.9203
+ -- Sample 16: 0.9813
+ -- Sample 17: 0.9654
+ -- Sample 18: 0.9758
+ -- Sample 19: 0.9546
+ -- Sample 20: 0.9655
+ -- Sample 21: 0.9253
+ -- Sample 22: 0.9670
+ -- Sample 23: 0.9290
+ -- Sample 24: 0.9001
+Mean=0.9225, Std=0.0507
+------------------------------------------------------------------
+  Processing Batch 10 (Size: 25)...
+Bias Error: using Single Component
+Mean: 22.3368, Std: 14.3007
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=46.5654%; std=27.2225
+ -- Sample 1: mean=42.6276%; std=23.2705
+ -- Sample 2: mean=51.8600%; std=26.9132
+ -- Sample 3: mean=32.6943%; std=16.6409
+ -- Sample 4: mean=33.8174%; std=18.2207
+ -- Sample 5: mean=33.3537%; std=17.6834
+ -- Sample 6: mean=37.9615%; std=18.3262
+ -- Sample 7: mean=37.1621%; std=23.3145
+ -- Sample 8: mean=39.8429%; std=30.8499
+ -- Sample 9: mean=38.7110%; std=24.6481
+ -- Sample 10: mean=34.4281%; std=25.8021
+ -- Sample 11: mean=22.3227%; std=16.8177
+ -- Sample 12: mean=26.6456%; std=18.9469
+ -- Sample 13: mean=20.6859%; std=15.9927
+ -- Sample 14: mean=23.4299%; std=19.2099
+ -- Sample 15: mean=22.3233%; std=16.8041
+ -- Sample 16: mean=33.2303%; std=26.7942
+ -- Sample 17: mean=19.6493%; std=18.9400
+ -- Sample 18: mean=29.4138%; std=22.1544
+ -- Sample 19: mean=46.1453%; std=24.0659
+ -- Sample 20: mean=49.5665%; std=23.5850
+ -- Sample 21: mean=43.3282%; std=24.8490
+ -- Sample 22: mean=49.2982%; std=24.1054
+ -- Sample 23: mean=42.3485%; std=22.0088
+ -- Sample 24: mean=36.3433%; std=22.2181
+Mean: 35.7502%, Std: 9.3563%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8791
+ -- Sample 1: 0.9053
+ -- Sample 2: 0.8722
+ -- Sample 3: 0.9784
+ -- Sample 4: 0.9512
+ -- Sample 5: 0.9706
+ -- Sample 6: 0.9541
+ -- Sample 7: 0.9312
+ -- Sample 8: 0.9225
+ -- Sample 9: 0.9156
+ -- Sample 10: 0.9395
+ -- Sample 11: 0.9795
+ -- Sample 12: 0.9659
+ -- Sample 13: 0.9808
+ -- Sample 14: 0.9711
+ -- Sample 15: 0.9756
+ -- Sample 16: 0.9589
+ -- Sample 17: 0.9796
+ -- Sample 18: 0.9518
+ -- Sample 19: 0.9112
+ -- Sample 20: 0.9180
+ -- Sample 21: 0.9180
+ -- Sample 22: 0.9259
+ -- Sample 23: 0.9549
+ -- Sample 24: 0.9619
+Mean=0.9429, Std=0.0309
+------------------------------------------------------------------
+  Processing Batch 11 (Size: 25)...
+Bias Error: using Single Component
+Mean: 19.5057, Std: 14.6330
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=41.3997%; std=23.1126
+ -- Sample 1: mean=40.2359%; std=20.2424
+ -- Sample 2: mean=30.7575%; std=28.8583
+ -- Sample 3: mean=30.1620%; std=26.5991
+ -- Sample 4: mean=31.8237%; std=26.2359
+ -- Sample 5: mean=29.1730%; std=26.7546
+ -- Sample 6: mean=45.4007%; std=39.3958
+ -- Sample 7: mean=44.3628%; std=32.9264
+ -- Sample 8: mean=46.2897%; std=40.0342
+ -- Sample 9: mean=42.0909%; std=34.6682
+ -- Sample 10: mean=38.7418%; std=20.1599
+ -- Sample 11: mean=33.1203%; std=19.6992
+ -- Sample 12: mean=47.6828%; std=21.7806
+ -- Sample 13: mean=33.2832%; std=18.4797
+ -- Sample 14: mean=35.7896%; std=27.9331
+ -- Sample 15: mean=38.0741%; std=27.0680
+ -- Sample 16: mean=31.4486%; std=22.2545
+ -- Sample 17: mean=36.6513%; std=25.7633
+ -- Sample 18: mean=36.6376%; std=24.3998
+ -- Sample 19: mean=37.4120%; std=35.2336
+ -- Sample 20: mean=41.7686%; std=36.9947
+ -- Sample 21: mean=39.2923%; std=44.8342
+ -- Sample 22: mean=49.2916%; std=18.2225
+ -- Sample 23: mean=50.5351%; std=18.1179
+ -- Sample 24: mean=52.3501%; std=18.4257
+Mean: 39.3510%, Std: 6.5733%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9369
+ -- Sample 1: 0.9493
+ -- Sample 2: 0.9768
+ -- Sample 3: 0.9735
+ -- Sample 4: 0.9776
+ -- Sample 5: 0.9775
+ -- Sample 6: 0.6132
+ -- Sample 7: 0.8709
+ -- Sample 8: 0.6868
+ -- Sample 9: 0.8927
+ -- Sample 10: 0.9451
+ -- Sample 11: 0.9510
+ -- Sample 12: 0.9326
+ -- Sample 13: 0.9593
+ -- Sample 14: 0.9223
+ -- Sample 15: 0.9217
+ -- Sample 16: 0.9508
+ -- Sample 17: 0.9159
+ -- Sample 18: 0.9215
+ -- Sample 19: 0.9296
+ -- Sample 20: 0.8871
+ -- Sample 21: 0.9142
+ -- Sample 22: 0.9412
+ -- Sample 23: 0.9323
+ -- Sample 24: 0.9166
+Mean=0.9119, Std=0.0824
+------------------------------------------------------------------
+  Processing Batch 12 (Size: 9)...
+Bias Error: using Single Component
+Mean: 16.0365, Std: 12.7651
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=49.8830%; std=21.1960
+ -- Sample 1: mean=37.8600%; std=25.7018
+ -- Sample 2: mean=27.9227%; std=19.9715
+ -- Sample 3: mean=30.2129%; std=29.6617
+ -- Sample 4: mean=25.0424%; std=20.7033
+ -- Sample 5: mean=39.0098%; std=18.7865
+ -- Sample 6: mean=34.9931%; std=21.7743
+ -- Sample 7: mean=35.8146%; std=24.0984
+ -- Sample 8: mean=33.4400%; std=21.1181
+Mean: 34.9087%, Std: 6.8390%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9168
+ -- Sample 1: 0.9352
+ -- Sample 2: 0.9607
+ -- Sample 3: 0.9612
+ -- Sample 4: 0.9647
+ -- Sample 5: 0.9448
+ -- Sample 6: 0.9325
+ -- Sample 7: 0.9429
+ -- Sample 8: 0.9273
+Mean=0.9429, Std=0.0157
+------------------------------------------------------------------
+
+Processing Dataset: Berea Upper Gray
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 18.7372, Std: 14.0103
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=51.4088%; std=23.7200
+ -- Sample 1: mean=52.1473%; std=27.8225
+ -- Sample 2: mean=46.8519%; std=24.8194
+ -- Sample 3: mean=54.9001%; std=25.2292
+ -- Sample 4: mean=31.0441%; std=24.5521
+ -- Sample 5: mean=27.1977%; std=23.2820
+ -- Sample 6: mean=29.8572%; std=23.9437
+ -- Sample 7: mean=29.3792%; std=27.3152
+ -- Sample 8: mean=44.8104%; std=29.0102
+ -- Sample 9: mean=50.5126%; std=37.8985
+ -- Sample 10: mean=44.8415%; std=29.8262
+ -- Sample 11: mean=47.2210%; std=31.1510
+ -- Sample 12: mean=62.9196%; std=45.9276
+ -- Sample 13: mean=78.4460%; std=58.1542
+ -- Sample 14: mean=65.7825%; std=63.2512
+ -- Sample 15: mean=69.2329%; std=40.7152
+ -- Sample 16: mean=67.8234%; std=37.6560
+ -- Sample 17: mean=54.6895%; std=27.4526
+ -- Sample 18: mean=70.0602%; std=45.7995
+ -- Sample 19: mean=55.2799%; std=31.8484
+ -- Sample 20: mean=50.2254%; std=24.5543
+ -- Sample 21: mean=55.9270%; std=44.7021
+ -- Sample 22: mean=50.0584%; std=27.8863
+ -- Sample 23: mean=62.2847%; std=53.9088
+ -- Sample 24: mean=49.9818%; std=20.3306
+Mean: 52.1153%, Std: 13.0408%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9036
+ -- Sample 1: 0.8692
+ -- Sample 2: 0.9116
+ -- Sample 3: 0.8934
+ -- Sample 4: 0.9612
+ -- Sample 5: 0.9638
+ -- Sample 6: 0.9609
+ -- Sample 7: 0.9587
+ -- Sample 8: 0.8910
+ -- Sample 9: 0.8309
+ -- Sample 10: 0.8868
+ -- Sample 11: 0.8480
+ -- Sample 12: 0.8165
+ -- Sample 13: 0.7611
+ -- Sample 14: 0.7972
+ -- Sample 15: 0.7708
+ -- Sample 16: 0.8451
+ -- Sample 17: 0.9505
+ -- Sample 18: 0.8299
+ -- Sample 19: 0.9378
+ -- Sample 20: 0.9188
+ -- Sample 21: 0.8180
+ -- Sample 22: 0.8614
+ -- Sample 23: 0.8209
+ -- Sample 24: 0.9516
+Mean=0.8784, Std=0.0617
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 22.2698, Std: 14.5411
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=55.5531%; std=24.9684
+ -- Sample 1: mean=54.8615%; std=19.9976
+ -- Sample 2: mean=55.5168%; std=24.7785
+ -- Sample 3: mean=35.7918%; std=25.5306
+ -- Sample 4: mean=38.3150%; std=26.0651
+ -- Sample 5: mean=37.3710%; std=25.1246
+ -- Sample 6: mean=39.7794%; std=24.5864
+ -- Sample 7: mean=57.3569%; std=46.6183
+ -- Sample 8: mean=60.5935%; std=37.8127
+ -- Sample 9: mean=51.7736%; std=35.4538
+ -- Sample 10: mean=51.2621%; std=33.3361
+ -- Sample 11: mean=66.6874%; std=58.8299
+ -- Sample 12: mean=98.3141%; std=97.7807
+ -- Sample 13: mean=67.4162%; std=58.6674
+ -- Sample 14: mean=107.5203%; std=111.7191
+ -- Sample 15: mean=57.0565%; std=24.4289
+ -- Sample 16: mean=57.2714%; std=26.4135
+ -- Sample 17: mean=53.0811%; std=23.5759
+ -- Sample 18: mean=54.2904%; std=28.5437
+ -- Sample 19: mean=78.2785%; std=108.3692
+ -- Sample 20: mean=76.6404%; std=86.2634
+ -- Sample 21: mean=65.5192%; std=85.4805
+ -- Sample 22: mean=76.6137%; std=104.8968
+ -- Sample 23: mean=34.4587%; std=28.9041
+ -- Sample 24: mean=35.3929%; std=29.7459
+Mean: 58.6686%, Std: 18.1641%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8918
+ -- Sample 1: 0.9353
+ -- Sample 2: 0.9113
+ -- Sample 3: 0.9064
+ -- Sample 4: 0.8973
+ -- Sample 5: 0.9068
+ -- Sample 6: 0.8940
+ -- Sample 7: 0.8302
+ -- Sample 8: 0.8131
+ -- Sample 9: 0.8451
+ -- Sample 10: 0.8605
+ -- Sample 11: 0.6823
+ -- Sample 12: 0.5337
+ -- Sample 13: 0.7578
+ -- Sample 14: 0.4350
+ -- Sample 15: 0.8138
+ -- Sample 16: 0.8707
+ -- Sample 17: 0.8599
+ -- Sample 18: 0.8692
+ -- Sample 19: 0.6326
+ -- Sample 20: 0.7346
+ -- Sample 21: 0.7555
+ -- Sample 22: 0.6978
+ -- Sample 23: 0.9385
+ -- Sample 24: 0.9368
+Mean=0.8084, Std=0.1267
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 31.2234, Std: 39.8312
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=46.6168%; std=21.2946
+ -- Sample 1: mean=35.9393%; std=26.6889
+ -- Sample 2: mean=32.6924%; std=23.7764
+ -- Sample 3: mean=37.7533%; std=25.8116
+ -- Sample 4: mean=38.9315%; std=27.9295
+ -- Sample 5: mean=31.1875%; std=21.6388
+ -- Sample 6: mean=35.7453%; std=27.5831
+ -- Sample 7: mean=40.0007%; std=27.1213
+ -- Sample 8: mean=36.3337%; std=26.3721
+ -- Sample 9: mean=38.9883%; std=27.9185
+ -- Sample 10: mean=38.9480%; std=25.2935
+ -- Sample 11: mean=51.1538%; std=31.4083
+ -- Sample 12: mean=43.5053%; std=23.6883
+ -- Sample 13: mean=43.0822%; std=30.1143
+ -- Sample 14: mean=32.2509%; std=24.5631
+ -- Sample 15: mean=40.9678%; std=31.0618
+ -- Sample 16: mean=39.0531%; std=31.6961
+ -- Sample 17: mean=36.0699%; std=30.0379
+ -- Sample 18: mean=174.1459%; std=170.0765
+ -- Sample 19: mean=110.2933%; std=98.1345
+ -- Sample 20: mean=192.7158%; std=183.7059
+ -- Sample 21: mean=130.1175%; std=117.6187
+ -- Sample 22: mean=48.5862%; std=29.3789
+ -- Sample 23: mean=45.5390%; std=45.5373
+ -- Sample 24: mean=49.3702%; std=33.7944
+Mean: 57.9995%, Std: 43.3252%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9234
+ -- Sample 1: 0.9292
+ -- Sample 2: 0.9599
+ -- Sample 3: 0.9329
+ -- Sample 4: 0.9524
+ -- Sample 5: 0.9565
+ -- Sample 6: 0.9703
+ -- Sample 7: 0.9407
+ -- Sample 8: 0.9660
+ -- Sample 9: 0.9459
+ -- Sample 10: 0.9493
+ -- Sample 11: 0.8464
+ -- Sample 12: 0.9487
+ -- Sample 13: 0.8866
+ -- Sample 14: 0.9593
+ -- Sample 15: 0.9313
+ -- Sample 16: 0.9448
+ -- Sample 17: 0.9543
+ -- Sample 18: 0.5419
+ -- Sample 19: -0.0445
+ -- Sample 20: 0.5311
+ -- Sample 21: 0.2565
+ -- Sample 22: 0.8742
+ -- Sample 23: 0.8007
+ -- Sample 24: 0.8398
+Mean=0.8279, Std=0.2447
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 24.1159, Std: 20.9691
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=51.0179%; std=34.7354
+ -- Sample 1: mean=93.6875%; std=120.3017
+ -- Sample 2: mean=134.0129%; std=193.9887
+ -- Sample 3: mean=94.0612%; std=131.6962
+ -- Sample 4: mean=121.3987%; std=151.2200
+ -- Sample 5: mean=47.4798%; std=36.3474
+ -- Sample 6: mean=53.3821%; std=39.8281
+ -- Sample 7: mean=48.3670%; std=35.8428
+ -- Sample 8: mean=47.1157%; std=37.1053
+ -- Sample 9: mean=34.6149%; std=27.4970
+ -- Sample 10: mean=40.9810%; std=29.8097
+ -- Sample 11: mean=37.9611%; std=31.9160
+ -- Sample 12: mean=34.3116%; std=25.0988
+ -- Sample 13: mean=41.4606%; std=24.8761
+ -- Sample 14: mean=36.0852%; std=24.0918
+ -- Sample 15: mean=40.2415%; std=22.3943
+ -- Sample 16: mean=37.9849%; std=22.6965
+ -- Sample 17: mean=42.5836%; std=22.3786
+ -- Sample 18: mean=48.0141%; std=25.1829
+ -- Sample 19: mean=47.0851%; std=24.7685
+ -- Sample 20: mean=46.2982%; std=26.2732
+ -- Sample 21: mean=40.2935%; std=25.1981
+ -- Sample 22: mean=39.1391%; std=22.5364
+ -- Sample 23: mean=44.4730%; std=29.7304
+ -- Sample 24: mean=47.9081%; std=27.6363
+Mean: 53.9983%, Std: 26.2142%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8183
+ -- Sample 1: 0.5743
+ -- Sample 2: 0.2266
+ -- Sample 3: 0.4714
+ -- Sample 4: 0.4994
+ -- Sample 5: 0.8215
+ -- Sample 6: 0.7760
+ -- Sample 7: 0.7683
+ -- Sample 8: 0.8753
+ -- Sample 9: 0.9532
+ -- Sample 10: 0.9203
+ -- Sample 11: 0.9443
+ -- Sample 12: 0.9599
+ -- Sample 13: 0.8915
+ -- Sample 14: 0.9097
+ -- Sample 15: 0.9096
+ -- Sample 16: 0.9128
+ -- Sample 17: 0.9206
+ -- Sample 18: 0.8778
+ -- Sample 19: 0.8948
+ -- Sample 20: 0.8609
+ -- Sample 21: 0.9239
+ -- Sample 22: 0.9429
+ -- Sample 23: 0.9375
+ -- Sample 24: 0.8715
+Mean=0.8185, Std=0.1789
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 81.8844, Std: 132.6826
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=312.3492%; std=351.4009
+ -- Sample 1: mean=288.0233%; std=368.6291
+ -- Sample 2: mean=299.0286%; std=341.0768
+ -- Sample 3: mean=378.6540%; std=368.3791
+ -- Sample 4: mean=68.2441%; std=115.6876
+ -- Sample 5: mean=51.5726%; std=50.1383
+ -- Sample 6: mean=73.5225%; std=111.3361
+ -- Sample 7: mean=40.7495%; std=33.6075
+ -- Sample 8: mean=104.4032%; std=167.8266
+ -- Sample 9: mean=148.4543%; std=248.1873
+ -- Sample 10: mean=130.1525%; std=218.3507
+ -- Sample 11: mean=102.1334%; std=166.9488
+ -- Sample 12: mean=49.8854%; std=33.3683
+ -- Sample 13: mean=73.1358%; std=92.8441
+ -- Sample 14: mean=68.8076%; std=87.9204
+ -- Sample 15: mean=57.4223%; std=58.1299
+ -- Sample 16: mean=23.4177%; std=21.1764
+ -- Sample 17: mean=28.0335%; std=22.7354
+ -- Sample 18: mean=25.9756%; std=23.4300
+ -- Sample 19: mean=34.5805%; std=28.2862
+ -- Sample 20: mean=40.2999%; std=22.3758
+ -- Sample 21: mean=42.7599%; std=26.3203
+ -- Sample 22: mean=40.6585%; std=25.7811
+ -- Sample 23: mean=41.7101%; std=23.4365
+ -- Sample 24: mean=48.5026%; std=25.4575
+Mean: 102.8991%, Std: 100.3146%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.6019
+ -- Sample 1: 0.6326
+ -- Sample 2: 0.5596
+ -- Sample 3: 0.7569
+ -- Sample 4: 0.8051
+ -- Sample 5: 0.8771
+ -- Sample 6: 0.8516
+ -- Sample 7: 0.9464
+ -- Sample 8: 0.6589
+ -- Sample 9: 0.6299
+ -- Sample 10: 0.5969
+ -- Sample 11: 0.8166
+ -- Sample 12: 0.8664
+ -- Sample 13: 0.7581
+ -- Sample 14: 0.6412
+ -- Sample 15: 0.8569
+ -- Sample 16: 0.9724
+ -- Sample 17: 0.9561
+ -- Sample 18: 0.9700
+ -- Sample 19: 0.9514
+ -- Sample 20: 0.9359
+ -- Sample 21: 0.8988
+ -- Sample 22: 0.9307
+ -- Sample 23: 0.9155
+ -- Sample 24: 0.8590
+Mean=0.8098, Std=0.1338
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 25)...
+Bias Error: using Single Component
+Mean: 23.3594, Std: 13.7995
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=38.0695%; std=24.7258
+ -- Sample 1: mean=46.1288%; std=23.5329
+ -- Sample 2: mean=46.9814%; std=26.8077
+ -- Sample 3: mean=42.7534%; std=29.8858
+ -- Sample 4: mean=36.6997%; std=28.7164
+ -- Sample 5: mean=46.0597%; std=37.5826
+ -- Sample 6: mean=38.8388%; std=24.8707
+ -- Sample 7: mean=35.1315%; std=20.6294
+ -- Sample 8: mean=37.8184%; std=21.5589
+ -- Sample 9: mean=39.0723%; std=21.8434
+ -- Sample 10: mean=37.6142%; std=21.2239
+ -- Sample 11: mean=54.0205%; std=19.5656
+ -- Sample 12: mean=46.1345%; std=23.2943
+ -- Sample 13: mean=51.2128%; std=23.8235
+ -- Sample 14: mean=43.3885%; std=24.4883
+ -- Sample 15: mean=37.5097%; std=22.1900
+ -- Sample 16: mean=45.5784%; std=25.3916
+ -- Sample 17: mean=38.8814%; std=22.2593
+ -- Sample 18: mean=44.4411%; std=31.6927
+ -- Sample 19: mean=33.3038%; std=20.3917
+ -- Sample 20: mean=35.8726%; std=17.4927
+ -- Sample 21: mean=37.4607%; std=20.6401
+ -- Sample 22: mean=32.7605%; std=18.3836
+ -- Sample 23: mean=33.7802%; std=24.6415
+ -- Sample 24: mean=30.6784%; std=24.3316
+Mean: 40.4076%, Std: 5.8428%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9212
+ -- Sample 1: 0.8842
+ -- Sample 2: 0.9112
+ -- Sample 3: 0.8974
+ -- Sample 4: 0.9444
+ -- Sample 5: 0.8908
+ -- Sample 6: 0.9180
+ -- Sample 7: 0.9613
+ -- Sample 8: 0.9580
+ -- Sample 9: 0.9494
+ -- Sample 10: 0.9509
+ -- Sample 11: 0.9392
+ -- Sample 12: 0.9284
+ -- Sample 13: 0.9027
+ -- Sample 14: 0.9285
+ -- Sample 15: 0.9556
+ -- Sample 16: 0.9361
+ -- Sample 17: 0.9598
+ -- Sample 18: 0.9362
+ -- Sample 19: 0.9645
+ -- Sample 20: 0.9696
+ -- Sample 21: 0.9625
+ -- Sample 22: 0.9703
+ -- Sample 23: 0.9171
+ -- Sample 24: 0.9402
+Mean=0.9359, Std=0.0248
+------------------------------------------------------------------
+  Processing Batch 7 (Size: 25)...
+Bias Error: using Single Component
+Mean: 68.6962, Std: 91.5027
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=41.7529%; std=32.9067
+ -- Sample 1: mean=27.4869%; std=22.7255
+ -- Sample 2: mean=108.5737%; std=462.1888
+ -- Sample 3: mean=106.4895%; std=489.3939
+ -- Sample 4: mean=92.7458%; std=344.5719
+ -- Sample 5: mean=104.6505%; std=443.0840
+ -- Sample 6: mean=141.7631%; std=132.2256
+ -- Sample 7: mean=104.7399%; std=124.4024
+ -- Sample 8: mean=112.4534%; std=162.3027
+ -- Sample 9: mean=118.6946%; std=131.9038
+ -- Sample 10: mean=36.8396%; std=30.5741
+ -- Sample 11: mean=29.5030%; std=39.4705
+ -- Sample 12: mean=35.7755%; std=29.8452
+ -- Sample 13: mean=37.7696%; std=43.0221
+ -- Sample 14: mean=26.6393%; std=21.0672
+ -- Sample 15: mean=37.3841%; std=45.8607
+ -- Sample 16: mean=32.8890%; std=26.2762
+ -- Sample 17: mean=36.5960%; std=50.6872
+ -- Sample 18: mean=71.3068%; std=72.9572
+ -- Sample 19: mean=61.0907%; std=61.4800
+ -- Sample 20: mean=83.6624%; std=100.7974
+ -- Sample 21: mean=57.8538%; std=55.9234
+ -- Sample 22: mean=53.3384%; std=70.6179
+ -- Sample 23: mean=38.0800%; std=32.1094
+ -- Sample 24: mean=44.7276%; std=43.9798
+Mean: 65.7122%, Std: 34.6124%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8757
+ -- Sample 1: 0.9426
+ -- Sample 2: 0.1268
+ -- Sample 3: 0.1056
+ -- Sample 4: 0.2482
+ -- Sample 5: 0.1006
+ -- Sample 6: 0.5928
+ -- Sample 7: 0.6625
+ -- Sample 8: 0.6401
+ -- Sample 9: 0.6824
+ -- Sample 10: 0.9134
+ -- Sample 11: 0.9578
+ -- Sample 12: 0.9300
+ -- Sample 13: 0.9284
+ -- Sample 14: 0.9651
+ -- Sample 15: 0.9094
+ -- Sample 16: 0.9434
+ -- Sample 17: 0.9143
+ -- Sample 18: 0.8314
+ -- Sample 19: 0.8733
+ -- Sample 20: 0.7544
+ -- Sample 21: 0.8433
+ -- Sample 22: 0.8457
+ -- Sample 23: 0.9597
+ -- Sample 24: 0.9094
+Mean=0.7383, Std=0.2796
+------------------------------------------------------------------
+  Processing Batch 8 (Size: 25)...
+Bias Error: using Single Component
+Mean: 34.3853, Std: 37.8190
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=35.9465%; std=28.1419
+ -- Sample 1: mean=219.4199%; std=338.2636
+ -- Sample 2: mean=120.3896%; std=172.6092
+ -- Sample 3: mean=161.8982%; std=237.8946
+ -- Sample 4: mean=152.5067%; std=208.6675
+ -- Sample 5: mean=53.5666%; std=90.8810
+ -- Sample 6: mean=35.1058%; std=27.7698
+ -- Sample 7: mean=51.8935%; std=75.3351
+ -- Sample 8: mean=36.9908%; std=28.4998
+ -- Sample 9: mean=71.4682%; std=58.9902
+ -- Sample 10: mean=56.8872%; std=54.9733
+ -- Sample 11: mean=68.4079%; std=79.4500
+ -- Sample 12: mean=69.1599%; std=62.8173
+ -- Sample 13: mean=62.0672%; std=46.1035
+ -- Sample 14: mean=47.5677%; std=47.5939
+ -- Sample 15: mean=69.4001%; std=66.8923
+ -- Sample 16: mean=52.3989%; std=41.0390
+ -- Sample 17: mean=44.8022%; std=44.1287
+ -- Sample 18: mean=47.7956%; std=33.2522
+ -- Sample 19: mean=46.9637%; std=41.1287
+ -- Sample 20: mean=45.2710%; std=32.4645
+ -- Sample 21: mean=36.0296%; std=27.1596
+ -- Sample 22: mean=37.8269%; std=32.4911
+ -- Sample 23: mean=36.5155%; std=26.5968
+ -- Sample 24: mean=38.9599%; std=30.7212
+Mean: 67.9696%, Std: 45.4653%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9480
+ -- Sample 1: 0.3788
+ -- Sample 2: 0.3711
+ -- Sample 3: 0.4848
+ -- Sample 4: 0.4079
+ -- Sample 5: 0.7593
+ -- Sample 6: 0.9186
+ -- Sample 7: 0.8125
+ -- Sample 8: 0.9113
+ -- Sample 9: 0.9436
+ -- Sample 10: 0.9564
+ -- Sample 11: 0.9094
+ -- Sample 12: 0.9618
+ -- Sample 13: 0.8402
+ -- Sample 14: 0.8896
+ -- Sample 15: 0.8167
+ -- Sample 16: 0.8457
+ -- Sample 17: 0.9112
+ -- Sample 18: 0.8829
+ -- Sample 19: 0.8998
+ -- Sample 20: 0.9128
+ -- Sample 21: 0.9438
+ -- Sample 22: 0.9532
+ -- Sample 23: 0.9523
+ -- Sample 24: 0.9618
+Mean=0.8229, Std=0.1878
+------------------------------------------------------------------
+  Processing Batch 9 (Size: 24)...
+Bias Error: using Single Component
+Mean: 70.2302, Std: 59.1371
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=77.8180%; std=76.2371
+ -- Sample 1: mean=101.2617%; std=93.1463
+ -- Sample 2: mean=70.4242%; std=59.3567
+ -- Sample 3: mean=95.2778%; std=85.3036
+ -- Sample 4: mean=53.6640%; std=30.4483
+ -- Sample 5: mean=58.2714%; std=36.8531
+ -- Sample 6: mean=61.5763%; std=35.8199
+ -- Sample 7: mean=55.5117%; std=28.9711
+ -- Sample 8: mean=68.6077%; std=75.1110
+ -- Sample 9: mean=41.2568%; std=41.0505
+ -- Sample 10: mean=42.0656%; std=43.5355
+ -- Sample 11: mean=49.8489%; std=57.9806
+ -- Sample 12: mean=175.3539%; std=190.4630
+ -- Sample 13: mean=182.0870%; std=188.2036
+ -- Sample 14: mean=198.4317%; std=221.9465
+ -- Sample 15: mean=186.4819%; std=205.1276
+ -- Sample 16: mean=93.3724%; std=95.0754
+ -- Sample 17: mean=162.6827%; std=277.3984
+ -- Sample 18: mean=114.2985%; std=137.2268
+ -- Sample 19: mean=195.8738%; std=355.0273
+ -- Sample 20: mean=36.7284%; std=23.4610
+ -- Sample 21: mean=31.5721%; std=23.5271
+ -- Sample 22: mean=38.9359%; std=24.8450
+ -- Sample 23: mean=31.3570%; std=25.1217
+Mean: 92.6150%, Std: 56.9406%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8463
+ -- Sample 1: 0.8953
+ -- Sample 2: 0.8947
+ -- Sample 3: 0.8893
+ -- Sample 4: 0.8854
+ -- Sample 5: 0.7884
+ -- Sample 6: 0.7766
+ -- Sample 7: 0.8160
+ -- Sample 8: 0.9258
+ -- Sample 9: 0.9493
+ -- Sample 10: 0.9355
+ -- Sample 11: 0.9308
+ -- Sample 12: 0.7113
+ -- Sample 13: 0.6633
+ -- Sample 14: 0.6909
+ -- Sample 15: 0.7226
+ -- Sample 16: 0.7636
+ -- Sample 17: 0.4875
+ -- Sample 18: 0.6415
+ -- Sample 19: 0.3574
+ -- Sample 20: 0.9520
+ -- Sample 21: 0.9707
+ -- Sample 22: 0.9503
+ -- Sample 23: 0.9695
+Mean=0.8089, Std=0.1549
+------------------------------------------------------------------
+
+Processing Dataset: Berea Sinter Gray
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 32.1034, Std: 29.8108
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=54.4172%; std=41.6652
+ -- Sample 1: mean=47.1743%; std=44.2630
+ -- Sample 2: mean=44.9690%; std=42.2415
+ -- Sample 3: mean=44.3823%; std=39.0589
+ -- Sample 4: mean=82.4562%; std=90.7204
+ -- Sample 5: mean=54.3688%; std=52.9101
+ -- Sample 6: mean=94.2681%; std=117.6486
+ -- Sample 7: mean=71.3284%; std=99.3475
+ -- Sample 8: mean=55.7408%; std=54.2780
+ -- Sample 9: mean=41.0424%; std=29.7368
+ -- Sample 10: mean=45.1845%; std=41.1599
+ -- Sample 11: mean=40.7121%; std=28.4576
+ -- Sample 12: mean=48.4232%; std=36.6555
+ -- Sample 13: mean=48.0739%; std=36.7336
+ -- Sample 14: mean=49.3804%; std=45.6054
+ -- Sample 15: mean=50.6896%; std=47.2004
+ -- Sample 16: mean=52.0564%; std=46.2306
+ -- Sample 17: mean=60.0999%; std=55.7541
+ -- Sample 18: mean=37.0284%; std=40.6533
+ -- Sample 19: mean=57.7788%; std=48.6599
+ -- Sample 20: mean=90.6497%; std=92.8142
+ -- Sample 21: mean=208.0224%; std=206.4715
+ -- Sample 22: mean=71.0717%; std=62.1814
+ -- Sample 23: mean=90.5325%; std=74.2104
+ -- Sample 24: mean=39.9633%; std=27.5714
+Mean: 63.1926%, Std: 33.8208%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9009
+ -- Sample 1: 0.8775
+ -- Sample 2: 0.9152
+ -- Sample 3: 0.8758
+ -- Sample 4: 0.7488
+ -- Sample 5: 0.8585
+ -- Sample 6: 0.7235
+ -- Sample 7: 0.7709
+ -- Sample 8: 0.8905
+ -- Sample 9: 0.9083
+ -- Sample 10: 0.9372
+ -- Sample 11: 0.8968
+ -- Sample 12: 0.9650
+ -- Sample 13: 0.9580
+ -- Sample 14: 0.9548
+ -- Sample 15: 0.9376
+ -- Sample 16: 0.9206
+ -- Sample 17: 0.8946
+ -- Sample 18: 0.9337
+ -- Sample 19: 0.9072
+ -- Sample 20: 0.7576
+ -- Sample 21: 0.6424
+ -- Sample 22: 0.8086
+ -- Sample 23: 0.7382
+ -- Sample 24: 0.9137
+Mean=0.8654, Std=0.0850
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 36.5320, Std: 39.5229
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=36.1408%; std=27.9551
+ -- Sample 1: mean=38.2404%; std=27.4294
+ -- Sample 2: mean=41.9136%; std=31.4098
+ -- Sample 3: mean=63.8370%; std=83.0927
+ -- Sample 4: mean=85.6414%; std=168.6876
+ -- Sample 5: mean=60.3133%; std=91.8804
+ -- Sample 6: mean=86.7821%; std=146.2179
+ -- Sample 7: mean=75.0876%; std=112.0645
+ -- Sample 8: mean=66.0985%; std=77.9494
+ -- Sample 9: mean=57.8924%; std=76.9513
+ -- Sample 10: mean=74.8960%; std=71.3152
+ -- Sample 11: mean=134.9808%; std=141.8232
+ -- Sample 12: mean=126.6068%; std=197.8251
+ -- Sample 13: mean=109.1459%; std=134.5927
+ -- Sample 14: mean=153.7221%; std=220.9716
+ -- Sample 15: mean=60.7917%; std=50.0049
+ -- Sample 16: mean=63.6938%; std=44.7414
+ -- Sample 17: mean=61.3213%; std=45.4413
+ -- Sample 18: mean=70.3267%; std=48.7032
+ -- Sample 19: mean=34.2300%; std=30.5597
+ -- Sample 20: mean=36.5695%; std=35.0533
+ -- Sample 21: mean=33.8641%; std=30.7488
+ -- Sample 22: mean=37.3686%; std=37.7464
+ -- Sample 23: mean=43.2086%; std=26.7367
+ -- Sample 24: mean=35.4408%; std=27.4905
+Mean: 67.5246%, Std: 32.5632%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9251
+ -- Sample 1: 0.9091
+ -- Sample 2: 0.8801
+ -- Sample 3: 0.8144
+ -- Sample 4: 0.7124
+ -- Sample 5: 0.8390
+ -- Sample 6: 0.7171
+ -- Sample 7: 0.8486
+ -- Sample 8: 0.8658
+ -- Sample 9: 0.9183
+ -- Sample 10: 0.8687
+ -- Sample 11: 0.7769
+ -- Sample 12: 0.6643
+ -- Sample 13: 0.7656
+ -- Sample 14: 0.6928
+ -- Sample 15: 0.7875
+ -- Sample 16: 0.8101
+ -- Sample 17: 0.7827
+ -- Sample 18: 0.7319
+ -- Sample 19: 0.9641
+ -- Sample 20: 0.9370
+ -- Sample 21: 0.9546
+ -- Sample 22: 0.9464
+ -- Sample 23: 0.9234
+ -- Sample 24: 0.9570
+Mean=0.8397, Std=0.0903
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 16.9622, Std: 11.3611
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=41.1182%; std=28.7145
+ -- Sample 1: mean=42.3669%; std=28.5615
+ -- Sample 2: mean=32.2739%; std=24.6889
+ -- Sample 3: mean=44.1987%; std=30.4726
+ -- Sample 4: mean=37.2932%; std=26.5560
+ -- Sample 5: mean=41.1703%; std=31.1328
+ -- Sample 6: mean=41.1271%; std=26.4441
+ -- Sample 7: mean=39.9637%; std=25.9587
+ -- Sample 8: mean=36.0778%; std=27.9933
+ -- Sample 9: mean=40.5282%; std=23.7335
+ -- Sample 10: mean=23.7725%; std=18.7901
+ -- Sample 11: mean=28.0897%; std=23.4336
+ -- Sample 12: mean=28.1150%; std=21.8863
+ -- Sample 13: mean=32.4297%; std=24.9109
+ -- Sample 14: mean=71.8393%; std=53.2035
+ -- Sample 15: mean=63.3741%; std=58.2887
+ -- Sample 16: mean=66.7883%; std=50.9208
+ -- Sample 17: mean=54.4070%; std=48.7224
+ -- Sample 18: mean=51.6096%; std=36.7763
+ -- Sample 19: mean=49.1533%; std=34.8331
+ -- Sample 20: mean=56.8020%; std=41.0859
+ -- Sample 21: mean=56.0379%; std=45.3919
+ -- Sample 22: mean=35.4476%; std=33.3041
+ -- Sample 23: mean=42.0694%; std=28.8568
+ -- Sample 24: mean=44.7858%; std=51.6202
+Mean: 44.0336%, Std: 11.9968%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9124
+ -- Sample 1: 0.9572
+ -- Sample 2: 0.9253
+ -- Sample 3: 0.9044
+ -- Sample 4: 0.9105
+ -- Sample 5: 0.9188
+ -- Sample 6: 0.9329
+ -- Sample 7: 0.9347
+ -- Sample 8: 0.9360
+ -- Sample 9: 0.9480
+ -- Sample 10: 0.9671
+ -- Sample 11: 0.9637
+ -- Sample 12: 0.9591
+ -- Sample 13: 0.9389
+ -- Sample 14: 0.8801
+ -- Sample 15: 0.8297
+ -- Sample 16: 0.8752
+ -- Sample 17: 0.9044
+ -- Sample 18: 0.8502
+ -- Sample 19: 0.8849
+ -- Sample 20: 0.8135
+ -- Sample 21: 0.8768
+ -- Sample 22: 0.9559
+ -- Sample 23: 0.9599
+ -- Sample 24: 0.9096
+Mean=0.9140, Std=0.0413
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 70.1448, Std: 94.2986
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=45.3602%; std=46.9244
+ -- Sample 1: mean=41.5973%; std=30.0966
+ -- Sample 2: mean=28.6930%; std=23.7972
+ -- Sample 3: mean=39.0874%; std=28.6341
+ -- Sample 4: mean=29.7173%; std=23.9544
+ -- Sample 5: mean=60.6857%; std=58.9701
+ -- Sample 6: mean=58.9294%; std=56.5215
+ -- Sample 7: mean=60.3162%; std=61.2093
+ -- Sample 8: mean=56.5428%; std=54.9788
+ -- Sample 9: mean=49.5733%; std=34.3969
+ -- Sample 10: mean=50.8068%; std=46.3756
+ -- Sample 11: mean=62.7331%; std=54.7242
+ -- Sample 12: mean=57.4492%; std=47.7060
+ -- Sample 13: mean=33.0028%; std=24.7018
+ -- Sample 14: mean=30.2224%; std=23.3400
+ -- Sample 15: mean=36.6268%; std=27.9346
+ -- Sample 16: mean=28.9197%; std=20.7940
+ -- Sample 17: mean=92.2214%; std=110.8801
+ -- Sample 18: mean=97.0649%; std=108.3080
+ -- Sample 19: mean=95.0914%; std=105.1140
+ -- Sample 20: mean=105.9432%; std=123.2656
+ -- Sample 21: mean=289.9438%; std=241.2719
+ -- Sample 22: mean=234.5447%; std=187.8536
+ -- Sample 23: mean=340.4649%; std=241.4827
+ -- Sample 24: mean=270.7703%; std=195.6060
+Mean: 91.8523%, Std: 87.8751%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9344
+ -- Sample 1: 0.8977
+ -- Sample 2: 0.9667
+ -- Sample 3: 0.9238
+ -- Sample 4: 0.9596
+ -- Sample 5: 0.9070
+ -- Sample 6: 0.9036
+ -- Sample 7: 0.9319
+ -- Sample 8: 0.9113
+ -- Sample 9: 0.8853
+ -- Sample 10: 0.8740
+ -- Sample 11: 0.8658
+ -- Sample 12: 0.8917
+ -- Sample 13: 0.9390
+ -- Sample 14: 0.9405
+ -- Sample 15: 0.9292
+ -- Sample 16: 0.9439
+ -- Sample 17: 0.8621
+ -- Sample 18: 0.7947
+ -- Sample 19: 0.8591
+ -- Sample 20: 0.8005
+ -- Sample 21: 0.6618
+ -- Sample 22: 0.6017
+ -- Sample 23: 0.6672
+ -- Sample 24: 0.5739
+Mean=0.8570, Std=0.1101
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 76.1725, Std: 104.3715
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=48.5826%; std=55.2834
+ -- Sample 1: mean=49.6997%; std=34.3902
+ -- Sample 2: mean=45.3716%; std=39.7536
+ -- Sample 3: mean=48.1027%; std=32.4957
+ -- Sample 4: mean=47.8538%; std=21.4413
+ -- Sample 5: mean=44.8183%; std=23.8923
+ -- Sample 6: mean=51.2610%; std=21.2851
+ -- Sample 7: mean=49.5890%; std=21.2855
+ -- Sample 8: mean=48.7880%; std=48.5214
+ -- Sample 9: mean=53.4437%; std=44.4750
+ -- Sample 10: mean=57.6168%; std=54.4464
+ -- Sample 11: mean=54.8956%; std=44.9284
+ -- Sample 12: mean=42.2947%; std=20.7960
+ -- Sample 13: mean=48.0809%; std=20.1478
+ -- Sample 14: mean=44.7304%; std=23.4639
+ -- Sample 15: mean=41.7908%; std=18.5535
+ -- Sample 16: mean=40.1305%; std=28.4572
+ -- Sample 17: mean=58.1724%; std=69.6905
+ -- Sample 18: mean=39.0418%; std=39.4326
+ -- Sample 19: mean=57.0015%; std=96.6299
+ -- Sample 20: mean=355.1655%; std=367.4177
+ -- Sample 21: mean=234.7034%; std=262.7229
+ -- Sample 22: mean=315.9237%; std=324.2441
+ -- Sample 23: mean=266.7600%; std=297.9792
+ -- Sample 24: mean=198.4694%; std=258.6799
+Mean: 93.6915%, Std: 93.7888%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8694
+ -- Sample 1: 0.8096
+ -- Sample 2: 0.8883
+ -- Sample 3: 0.8491
+ -- Sample 4: 0.9347
+ -- Sample 5: 0.9531
+ -- Sample 6: 0.9352
+ -- Sample 7: 0.9080
+ -- Sample 8: 0.8334
+ -- Sample 9: 0.8258
+ -- Sample 10: 0.8335
+ -- Sample 11: 0.8076
+ -- Sample 12: 0.9575
+ -- Sample 13: 0.9539
+ -- Sample 14: 0.9476
+ -- Sample 15: 0.9730
+ -- Sample 16: 0.8795
+ -- Sample 17: 0.8515
+ -- Sample 18: 0.8548
+ -- Sample 19: 0.8499
+ -- Sample 20: 0.6321
+ -- Sample 21: 0.6273
+ -- Sample 22: 0.6097
+ -- Sample 23: 0.6587
+ -- Sample 24: 0.4887
+Mean=0.8293, Std=0.1255
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 25)...
+Bias Error: using Single Component
+Mean: 43.3828, Std: 61.4689
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=258.7425%; std=338.6756
+ -- Sample 1: mean=264.9269%; std=326.9922
+ -- Sample 2: mean=269.2826%; std=252.5164
+ -- Sample 3: mean=37.3918%; std=30.0738
+ -- Sample 4: mean=31.2294%; std=22.1165
+ -- Sample 5: mean=31.5336%; std=24.8565
+ -- Sample 6: mean=23.9850%; std=20.7650
+ -- Sample 7: mean=40.6452%; std=32.8499
+ -- Sample 8: mean=35.0112%; std=28.5680
+ -- Sample 9: mean=45.8645%; std=30.5303
+ -- Sample 10: mean=38.0679%; std=32.2037
+ -- Sample 11: mean=65.7680%; std=55.7115
+ -- Sample 12: mean=52.3541%; std=68.5708
+ -- Sample 13: mean=70.7761%; std=52.2280
+ -- Sample 14: mean=60.0506%; std=79.4660
+ -- Sample 15: mean=52.7126%; std=63.0278
+ -- Sample 16: mean=54.5629%; std=50.3845
+ -- Sample 17: mean=53.5625%; std=49.9824
+ -- Sample 18: mean=59.8879%; std=61.2510
+ -- Sample 19: mean=61.3705%; std=74.2789
+ -- Sample 20: mean=58.3554%; std=40.3675
+ -- Sample 21: mean=53.8229%; std=36.2572
+ -- Sample 22: mean=68.6069%; std=61.8522
+ -- Sample 23: mean=58.0668%; std=48.0426
+ -- Sample 24: mean=59.7416%; std=59.6237
+Mean: 76.2528%, Std: 70.5033%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.3235
+ -- Sample 1: 0.5068
+ -- Sample 2: 0.3479
+ -- Sample 3: 0.9219
+ -- Sample 4: 0.9570
+ -- Sample 5: 0.9406
+ -- Sample 6: 0.9751
+ -- Sample 7: 0.9424
+ -- Sample 8: 0.9530
+ -- Sample 9: 0.9660
+ -- Sample 10: 0.9382
+ -- Sample 11: 0.8639
+ -- Sample 12: 0.8799
+ -- Sample 13: 0.8429
+ -- Sample 14: 0.8741
+ -- Sample 15: 0.9000
+ -- Sample 16: 0.8659
+ -- Sample 17: 0.9255
+ -- Sample 18: 0.8370
+ -- Sample 19: 0.7976
+ -- Sample 20: 0.9278
+ -- Sample 21: 0.8498
+ -- Sample 22: 0.9063
+ -- Sample 23: 0.8487
+ -- Sample 24: 0.8469
+Mean=0.8375, Std=0.1728
+------------------------------------------------------------------
+  Processing Batch 7 (Size: 25)...
+Bias Error: using Single Component
+Mean: 29.4886, Std: 24.6309
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=56.3615%; std=47.2572
+ -- Sample 1: mean=67.5805%; std=81.0319
+ -- Sample 2: mean=37.9384%; std=24.9302
+ -- Sample 3: mean=33.7360%; std=25.1692
+ -- Sample 4: mean=37.5048%; std=26.3267
+ -- Sample 5: mean=38.8391%; std=24.2971
+ -- Sample 6: mean=95.6412%; std=90.6146
+ -- Sample 7: mean=74.0397%; std=89.0907
+ -- Sample 8: mean=98.4982%; std=132.6037
+ -- Sample 9: mean=83.2016%; std=104.2929
+ -- Sample 10: mean=30.4125%; std=40.9625
+ -- Sample 11: mean=46.0619%; std=41.4601
+ -- Sample 12: mean=29.5402%; std=36.9701
+ -- Sample 13: mean=44.0816%; std=52.8083
+ -- Sample 14: mean=45.4413%; std=21.7248
+ -- Sample 15: mean=44.5661%; std=40.7294
+ -- Sample 16: mean=47.2936%; std=26.2315
+ -- Sample 17: mean=42.3819%; std=28.2689
+ -- Sample 18: mean=42.6313%; std=34.0950
+ -- Sample 19: mean=47.9542%; std=37.9148
+ -- Sample 20: mean=46.6497%; std=39.7475
+ -- Sample 21: mean=40.1941%; std=31.5436
+ -- Sample 22: mean=60.1014%; std=53.3309
+ -- Sample 23: mean=61.1317%; std=41.7318
+ -- Sample 24: mean=69.9563%; std=62.5360
+Mean: 52.8696%, Std: 18.6637%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8869
+ -- Sample 1: 0.7922
+ -- Sample 2: 0.9403
+ -- Sample 3: 0.9413
+ -- Sample 4: 0.9108
+ -- Sample 5: 0.9224
+ -- Sample 6: 0.9001
+ -- Sample 7: 0.8660
+ -- Sample 8: 0.8774
+ -- Sample 9: 0.8627
+ -- Sample 10: 0.9468
+ -- Sample 11: 0.9221
+ -- Sample 12: 0.9531
+ -- Sample 13: 0.9173
+ -- Sample 14: 0.9395
+ -- Sample 15: 0.8872
+ -- Sample 16: 0.9173
+ -- Sample 17: 0.9116
+ -- Sample 18: 0.9030
+ -- Sample 19: 0.9056
+ -- Sample 20: 0.8673
+ -- Sample 21: 0.9294
+ -- Sample 22: 0.8369
+ -- Sample 23: 0.8920
+ -- Sample 24: 0.6997
+Mean=0.8932, Std=0.0536
+------------------------------------------------------------------
+  Processing Batch 8 (Size: 17)...
+Bias Error: using Single Component
+Mean: 34.1396, Std: 28.9517
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=60.6736%; std=64.1373
+ -- Sample 1: mean=106.7973%; std=100.1180
+ -- Sample 2: mean=99.2796%; std=100.9693
+ -- Sample 3: mean=120.1189%; std=99.5317
+ -- Sample 4: mean=109.1718%; std=106.7710
+ -- Sample 5: mean=47.8213%; std=36.1750
+ -- Sample 6: mean=65.1843%; std=33.5949
+ -- Sample 7: mean=44.8857%; std=22.3619
+ -- Sample 8: mean=49.0891%; std=27.6373
+ -- Sample 9: mean=34.5916%; std=20.5533
+ -- Sample 10: mean=29.8141%; std=21.4006
+ -- Sample 11: mean=43.5871%; std=21.4326
+ -- Sample 12: mean=31.4078%; std=23.3554
+ -- Sample 13: mean=53.6605%; std=42.9881
+ -- Sample 14: mean=44.6338%; std=32.5627
+ -- Sample 15: mean=64.5203%; std=49.4465
+ -- Sample 16: mean=41.4126%; std=34.8388
+Mean: 61.5676%, Std: 28.2138%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8421
+ -- Sample 1: 0.8109
+ -- Sample 2: 0.8444
+ -- Sample 3: 0.8077
+ -- Sample 4: 0.8520
+ -- Sample 5: 0.8948
+ -- Sample 6: 0.8379
+ -- Sample 7: 0.8715
+ -- Sample 8: 0.8788
+ -- Sample 9: 0.9693
+ -- Sample 10: 0.9634
+ -- Sample 11: 0.9576
+ -- Sample 12: 0.9504
+ -- Sample 13: 0.8885
+ -- Sample 14: 0.8595
+ -- Sample 15: 0.8840
+ -- Sample 16: 0.9258
+Mean=0.8846, Std=0.0507
+------------------------------------------------------------------
+
+Processing Dataset: Berea
+  Processing Batch 1 (Size: 25)...
+Bias Error: using Single Component
+Mean: 29.3300, Std: 27.9174
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=116.6234%; std=111.9390
+ -- Sample 1: mean=89.1695%; std=96.9504
+ -- Sample 2: mean=180.6629%; std=184.3787
+ -- Sample 3: mean=87.3351%; std=94.0092
+ -- Sample 4: mean=50.8659%; std=42.7997
+ -- Sample 5: mean=47.1764%; std=38.0240
+ -- Sample 6: mean=53.0764%; std=47.0068
+ -- Sample 7: mean=45.8600%; std=35.7099
+ -- Sample 8: mean=64.0369%; std=75.0032
+ -- Sample 9: mean=98.8973%; std=87.9578
+ -- Sample 10: mean=61.2174%; std=78.1739
+ -- Sample 11: mean=55.2048%; std=56.2919
+ -- Sample 12: mean=41.7418%; std=29.7719
+ -- Sample 13: mean=45.3209%; std=42.3126
+ -- Sample 14: mean=41.3422%; std=32.6535
+ -- Sample 15: mean=35.4073%; std=27.2997
+ -- Sample 16: mean=37.8037%; std=21.2171
+ -- Sample 17: mean=38.2468%; std=19.9339
+ -- Sample 18: mean=37.0727%; std=21.1912
+ -- Sample 19: mean=36.5320%; std=19.6668
+ -- Sample 20: mean=43.6104%; std=26.6638
+ -- Sample 21: mean=39.6508%; std=28.3562
+ -- Sample 22: mean=52.1767%; std=32.5783
+ -- Sample 23: mean=57.2584%; std=38.8526
+ -- Sample 24: mean=33.7830%; std=23.9454
+Mean: 59.6029%, Std: 32.4914%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7915
+ -- Sample 1: 0.8480
+ -- Sample 2: 0.6194
+ -- Sample 3: 0.8784
+ -- Sample 4: 0.8651
+ -- Sample 5: 0.9404
+ -- Sample 6: 0.8400
+ -- Sample 7: 0.9327
+ -- Sample 8: 0.8771
+ -- Sample 9: 0.8437
+ -- Sample 10: 0.8672
+ -- Sample 11: 0.9075
+ -- Sample 12: 0.9226
+ -- Sample 13: 0.9255
+ -- Sample 14: 0.9050
+ -- Sample 15: 0.9593
+ -- Sample 16: 0.9532
+ -- Sample 17: 0.9517
+ -- Sample 18: 0.9589
+ -- Sample 19: 0.9541
+ -- Sample 20: 0.8847
+ -- Sample 21: 0.8631
+ -- Sample 22: 0.9014
+ -- Sample 23: 0.6583
+ -- Sample 24: 0.9223
+Mean=0.8788, Std=0.0829
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 25)...
+Bias Error: using Single Component
+Mean: 27.0661, Std: 13.7738
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=40.2252%; std=24.7717
+ -- Sample 1: mean=38.1638%; std=25.3852
+ -- Sample 2: mean=40.2896%; std=24.3372
+ -- Sample 3: mean=36.7413%; std=27.8086
+ -- Sample 4: mean=43.3678%; std=27.7582
+ -- Sample 5: mean=40.9463%; std=30.6562
+ -- Sample 6: mean=38.2283%; std=26.6772
+ -- Sample 7: mean=86.2723%; std=72.7327
+ -- Sample 8: mean=78.8276%; std=59.6951
+ -- Sample 9: mean=70.8914%; std=54.6946
+ -- Sample 10: mean=70.7434%; std=56.9705
+ -- Sample 11: mean=53.1180%; std=65.6990
+ -- Sample 12: mean=70.8081%; std=60.1358
+ -- Sample 13: mean=44.3555%; std=41.6613
+ -- Sample 14: mean=45.7808%; std=50.1084
+ -- Sample 15: mean=53.9101%; std=23.1791
+ -- Sample 16: mean=55.0303%; std=19.6585
+ -- Sample 17: mean=52.3770%; std=21.2033
+ -- Sample 18: mean=50.4488%; std=24.4888
+ -- Sample 19: mean=31.9181%; std=22.2432
+ -- Sample 20: mean=29.7896%; std=23.6637
+ -- Sample 21: mean=30.8800%; std=22.4098
+ -- Sample 22: mean=26.9288%; std=21.5004
+ -- Sample 23: mean=39.7867%; std=22.7414
+ -- Sample 24: mean=50.8580%; std=31.1480
+Mean: 48.8275%, Std: 15.5261%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8944
+ -- Sample 1: 0.9160
+ -- Sample 2: 0.8896
+ -- Sample 3: 0.9275
+ -- Sample 4: 0.8815
+ -- Sample 5: 0.9086
+ -- Sample 6: 0.9276
+ -- Sample 7: 0.7422
+ -- Sample 8: 0.8339
+ -- Sample 9: 0.7647
+ -- Sample 10: 0.8173
+ -- Sample 11: 0.9416
+ -- Sample 12: 0.9029
+ -- Sample 13: 0.9607
+ -- Sample 14: 0.9294
+ -- Sample 15: 0.9061
+ -- Sample 16: 0.9590
+ -- Sample 17: 0.9253
+ -- Sample 18: 0.9330
+ -- Sample 19: 0.9532
+ -- Sample 20: 0.9657
+ -- Sample 21: 0.9660
+ -- Sample 22: 0.9720
+ -- Sample 23: 0.9585
+ -- Sample 24: 0.8846
+Mean=0.9065, Std=0.0592
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 25)...
+Bias Error: using Single Component
+Mean: 22.2865, Std: 20.6180
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=39.6515%; std=21.1521
+ -- Sample 1: mean=42.8736%; std=24.3783
+ -- Sample 2: mean=106.5862%; std=101.7326
+ -- Sample 3: mean=52.1096%; std=51.2509
+ -- Sample 4: mean=99.7725%; std=101.2141
+ -- Sample 5: mean=44.4687%; std=49.7233
+ -- Sample 6: mean=64.6553%; std=41.9198
+ -- Sample 7: mean=54.7616%; std=36.4493
+ -- Sample 8: mean=55.6469%; std=32.6701
+ -- Sample 9: mean=47.8888%; std=33.1083
+ -- Sample 10: mean=36.3578%; std=18.4255
+ -- Sample 11: mean=40.6585%; std=20.9559
+ -- Sample 12: mean=37.4940%; std=20.6084
+ -- Sample 13: mean=36.0069%; std=22.2800
+ -- Sample 14: mean=44.0397%; std=45.8541
+ -- Sample 15: mean=31.0537%; std=27.3150
+ -- Sample 16: mean=34.7654%; std=28.4009
+ -- Sample 17: mean=33.8874%; std=25.5226
+ -- Sample 18: mean=61.9742%; std=36.9991
+ -- Sample 19: mean=41.5054%; std=27.8672
+ -- Sample 20: mean=57.3144%; std=43.4613
+ -- Sample 21: mean=52.3482%; std=32.8309
+ -- Sample 22: mean=42.5797%; std=35.8068
+ -- Sample 23: mean=43.6453%; std=32.4334
+ -- Sample 24: mean=38.5965%; std=31.0016
+Mean: 49.6257%, Std: 18.0603%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9621
+ -- Sample 1: 0.9213
+ -- Sample 2: 0.7686
+ -- Sample 3: 0.8719
+ -- Sample 4: 0.7896
+ -- Sample 5: 0.9037
+ -- Sample 6: 0.7353
+ -- Sample 7: 0.8235
+ -- Sample 8: 0.7813
+ -- Sample 9: 0.8314
+ -- Sample 10: 0.9677
+ -- Sample 11: 0.9526
+ -- Sample 12: 0.9680
+ -- Sample 13: 0.9519
+ -- Sample 14: 0.9278
+ -- Sample 15: 0.9484
+ -- Sample 16: 0.9497
+ -- Sample 17: 0.9294
+ -- Sample 18: 0.8402
+ -- Sample 19: 0.8923
+ -- Sample 20: 0.8389
+ -- Sample 21: 0.8524
+ -- Sample 22: 0.8993
+ -- Sample 23: 0.9100
+ -- Sample 24: 0.9245
+Mean=0.8857, Std=0.0671
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 25)...
+Bias Error: using Single Component
+Mean: 39.6954, Std: 31.8379
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=48.5688%; std=36.2956
+ -- Sample 1: mean=44.4204%; std=17.3725
+ -- Sample 2: mean=32.5158%; std=17.1223
+ -- Sample 3: mean=40.5384%; std=20.6670
+ -- Sample 4: mean=35.2394%; std=19.0978
+ -- Sample 5: mean=34.9645%; std=24.2273
+ -- Sample 6: mean=27.2220%; std=25.0734
+ -- Sample 7: mean=35.7982%; std=32.0990
+ -- Sample 8: mean=27.4428%; std=20.6237
+ -- Sample 9: mean=36.9982%; std=22.3151
+ -- Sample 10: mean=40.7988%; std=21.4263
+ -- Sample 11: mean=39.7417%; std=24.3071
+ -- Sample 12: mean=44.2038%; std=23.1305
+ -- Sample 13: mean=107.6688%; std=129.3647
+ -- Sample 14: mean=123.4200%; std=150.1747
+ -- Sample 15: mean=126.1440%; std=171.8203
+ -- Sample 16: mean=140.8805%; std=155.6236
+ -- Sample 17: mean=89.0789%; std=161.5199
+ -- Sample 18: mean=117.5708%; std=137.3506
+ -- Sample 19: mean=79.1880%; std=94.0851
+ -- Sample 20: mean=90.8900%; std=177.0329
+ -- Sample 21: mean=46.7681%; std=35.6298
+ -- Sample 22: mean=41.8602%; std=21.7546
+ -- Sample 23: mean=49.2580%; std=30.4304
+ -- Sample 24: mean=44.2069%; std=25.1897
+Mean: 61.8155%, Std: 34.9315%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.8968
+ -- Sample 1: 0.9510
+ -- Sample 2: 0.9736
+ -- Sample 3: 0.9516
+ -- Sample 4: 0.9688
+ -- Sample 5: 0.9423
+ -- Sample 6: 0.9723
+ -- Sample 7: 0.9578
+ -- Sample 8: 0.9705
+ -- Sample 9: 0.9181
+ -- Sample 10: 0.8844
+ -- Sample 11: 0.9019
+ -- Sample 12: 0.8914
+ -- Sample 13: 0.7930
+ -- Sample 14: 0.7577
+ -- Sample 15: 0.7502
+ -- Sample 16: 0.7042
+ -- Sample 17: 0.7929
+ -- Sample 18: 0.7328
+ -- Sample 19: 0.8498
+ -- Sample 20: 0.7478
+ -- Sample 21: 0.9069
+ -- Sample 22: 0.9493
+ -- Sample 23: 0.9052
+ -- Sample 24: 0.9569
+Mean=0.8811, Std=0.0862
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 25)...
+Bias Error: using Single Component
+Mean: 26.9849, Std: 20.8241
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=42.2983%; std=32.9493
+ -- Sample 1: mean=31.6776%; std=19.4935
+ -- Sample 2: mean=33.3473%; std=28.4913
+ -- Sample 3: mean=34.9254%; std=19.1234
+ -- Sample 4: mean=95.2851%; std=90.5386
+ -- Sample 5: mean=116.8091%; std=109.9801
+ -- Sample 6: mean=92.3478%; std=81.6582
+ -- Sample 7: mean=105.1209%; std=82.8070
+ -- Sample 8: mean=43.4621%; std=40.5528
+ -- Sample 9: mean=41.7018%; std=25.1128
+ -- Sample 10: mean=41.4715%; std=29.0490
+ -- Sample 11: mean=42.7128%; std=30.8353
+ -- Sample 12: mean=35.3837%; std=22.0286
+ -- Sample 13: mean=32.6802%; std=18.5878
+ -- Sample 14: mean=36.4992%; std=25.8923
+ -- Sample 15: mean=36.8915%; std=19.3893
+ -- Sample 16: mean=37.6011%; std=27.7459
+ -- Sample 17: mean=51.8520%; std=29.5322
+ -- Sample 18: mean=38.4900%; std=32.4322
+ -- Sample 19: mean=44.0759%; std=26.6647
+ -- Sample 20: mean=37.4917%; std=23.3756
+ -- Sample 21: mean=36.3549%; std=23.5285
+ -- Sample 22: mean=39.1769%; std=22.2812
+ -- Sample 23: mean=39.9440%; std=23.4230
+ -- Sample 24: mean=40.6274%; std=30.2834
+Mean: 49.1291%, Std: 23.9208%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9097
+ -- Sample 1: 0.9594
+ -- Sample 2: 0.9425
+ -- Sample 3: 0.9593
+ -- Sample 4: 0.7166
+ -- Sample 5: 0.7716
+ -- Sample 6: 0.7414
+ -- Sample 7: 0.7962
+ -- Sample 8: 0.8961
+ -- Sample 9: 0.9387
+ -- Sample 10: 0.9165
+ -- Sample 11: 0.9089
+ -- Sample 12: 0.9439
+ -- Sample 13: 0.9663
+ -- Sample 14: 0.9310
+ -- Sample 15: 0.9628
+ -- Sample 16: 0.9416
+ -- Sample 17: 0.8819
+ -- Sample 18: 0.9428
+ -- Sample 19: 0.8980
+ -- Sample 20: 0.9447
+ -- Sample 21: 0.9263
+ -- Sample 22: 0.9390
+ -- Sample 23: 0.9257
+ -- Sample 24: 0.9195
+Mean=0.9032, Std=0.0684
+------------------------------------------------------------------
+  Processing Batch 6 (Size: 25)...
+Bias Error: using Single Component
+Mean: 26.8685, Std: 22.4663
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=35.7580%; std=28.0821
+ -- Sample 1: mean=42.0763%; std=34.4543
+ -- Sample 2: mean=40.0723%; std=31.1966
+ -- Sample 3: mean=28.0967%; std=22.1605
+ -- Sample 4: mean=29.9155%; std=19.4931
+ -- Sample 5: mean=32.8258%; std=20.8882
+ -- Sample 6: mean=23.4294%; std=19.4801
+ -- Sample 7: mean=38.8224%; std=36.8664
+ -- Sample 8: mean=32.0552%; std=25.5895
+ -- Sample 9: mean=27.2140%; std=21.4814
+ -- Sample 10: mean=38.1523%; std=24.7982
+ -- Sample 11: mean=48.8260%; std=45.5151
+ -- Sample 12: mean=31.0580%; std=30.3958
+ -- Sample 13: mean=43.5904%; std=44.2223
+ -- Sample 14: mean=34.0924%; std=31.9544
+ -- Sample 15: mean=97.8434%; std=112.3698
+ -- Sample 16: mean=97.3744%; std=105.6979
+ -- Sample 17: mean=89.4510%; std=85.4594
+ -- Sample 18: mean=93.6018%; std=115.8169
+ -- Sample 19: mean=54.5882%; std=19.7508
+ -- Sample 20: mean=51.6954%; std=19.8289
+ -- Sample 21: mean=55.8307%; std=22.6201
+ -- Sample 22: mean=53.8601%; std=20.1212
+ -- Sample 23: mean=41.4733%; std=20.7333
+ -- Sample 24: mean=40.4495%; std=23.2285
+Mean: 48.0861%, Std: 22.0410%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9316
+ -- Sample 1: 0.9101
+ -- Sample 2: 0.9185
+ -- Sample 3: 0.9562
+ -- Sample 4: 0.9466
+ -- Sample 5: 0.9393
+ -- Sample 6: 0.9695
+ -- Sample 7: 0.9542
+ -- Sample 8: 0.9541
+ -- Sample 9: 0.9820
+ -- Sample 10: 0.9486
+ -- Sample 11: 0.8780
+ -- Sample 12: 0.9680
+ -- Sample 13: 0.8747
+ -- Sample 14: 0.9594
+ -- Sample 15: 0.7718
+ -- Sample 16: 0.7109
+ -- Sample 17: 0.8113
+ -- Sample 18: 0.7767
+ -- Sample 19: 0.9483
+ -- Sample 20: 0.9517
+ -- Sample 21: 0.9237
+ -- Sample 22: 0.9548
+ -- Sample 23: 0.9667
+ -- Sample 24: 0.9329
+Mean=0.9136, Std=0.0699
+------------------------------------------------------------------
+  Processing Batch 7 (Size: 25)...
+Bias Error: using Single Component
+Mean: 44.9897, Std: 25.9266
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=40.0002%; std=24.5406
+ -- Sample 1: mean=39.2079%; std=25.4639
+ -- Sample 2: mean=38.0616%; std=22.0056
+ -- Sample 3: mean=38.0544%; std=22.5709
+ -- Sample 4: mean=40.0574%; std=22.2139
+ -- Sample 5: mean=37.1132%; std=25.9616
+ -- Sample 6: mean=137.0560%; std=148.9995
+ -- Sample 7: mean=73.2591%; std=86.6089
+ -- Sample 8: mean=118.9583%; std=130.0586
+ -- Sample 9: mean=91.2754%; std=118.3476
+ -- Sample 10: mean=71.5985%; std=76.2708
+ -- Sample 11: mean=101.8826%; std=119.1497
+ -- Sample 12: mean=87.9686%; std=82.5170
+ -- Sample 13: mean=101.9667%; std=106.8827
+ -- Sample 14: mean=144.0887%; std=140.2608
+ -- Sample 15: mean=72.9677%; std=81.1037
+ -- Sample 16: mean=119.5963%; std=118.3390
+ -- Sample 17: mean=82.5776%; std=97.2876
+ -- Sample 18: mean=36.3914%; std=25.3992
+ -- Sample 19: mean=38.7215%; std=28.1322
+ -- Sample 20: mean=41.8666%; std=24.2931
+ -- Sample 21: mean=35.5579%; std=25.9927
+ -- Sample 22: mean=36.4156%; std=22.3254
+ -- Sample 23: mean=38.5757%; std=21.9333
+ -- Sample 24: mean=38.2152%; std=21.5091
+Mean: 68.0574%, Std: 35.1114%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9472
+ -- Sample 1: 0.9376
+ -- Sample 2: 0.9655
+ -- Sample 3: 0.9573
+ -- Sample 4: 0.9620
+ -- Sample 5: 0.9370
+ -- Sample 6: 0.7043
+ -- Sample 7: 0.7588
+ -- Sample 8: 0.7476
+ -- Sample 9: 0.6907
+ -- Sample 10: 0.8615
+ -- Sample 11: 0.8932
+ -- Sample 12: 0.8648
+ -- Sample 13: 0.8815
+ -- Sample 14: 0.7595
+ -- Sample 15: 0.7035
+ -- Sample 16: 0.7428
+ -- Sample 17: 0.6962
+ -- Sample 18: 0.9351
+ -- Sample 19: 0.9194
+ -- Sample 20: 0.9220
+ -- Sample 21: 0.9279
+ -- Sample 22: 0.9435
+ -- Sample 23: 0.9431
+ -- Sample 24: 0.9435
+Mean=0.8618, Std=0.0983
+------------------------------------------------------------------
+  Processing Batch 8 (Size: 25)...
+Bias Error: using Single Component
+Mean: 18.7962, Std: 11.7710
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=39.3657%; std=22.1676
+ -- Sample 1: mean=33.3487%; std=17.9626
+ -- Sample 2: mean=28.8661%; std=20.8690
+ -- Sample 3: mean=27.7670%; std=18.2221
+ -- Sample 4: mean=32.4485%; std=21.8453
+ -- Sample 5: mean=29.8042%; std=21.9555
+ -- Sample 6: mean=35.7723%; std=25.6660
+ -- Sample 7: mean=30.1987%; std=22.2288
+ -- Sample 8: mean=34.3961%; std=22.9875
+ -- Sample 9: mean=29.1680%; std=24.5689
+ -- Sample 10: mean=43.2976%; std=27.0870
+ -- Sample 11: mean=34.4810%; std=26.2627
+ -- Sample 12: mean=47.4293%; std=35.9083
+ -- Sample 13: mean=33.0938%; std=26.2101
+ -- Sample 14: mean=30.9639%; std=27.5886
+ -- Sample 15: mean=27.9909%; std=27.6737
+ -- Sample 16: mean=34.6922%; std=27.6800
+ -- Sample 17: mean=62.2872%; std=64.2138
+ -- Sample 18: mean=61.3865%; std=51.8128
+ -- Sample 19: mean=79.7226%; std=75.8614
+ -- Sample 20: mean=56.1828%; std=48.7024
+ -- Sample 21: mean=42.7752%; std=22.6557
+ -- Sample 22: mean=42.6207%; std=23.8462
+ -- Sample 23: mean=40.6415%; std=22.5175
+ -- Sample 24: mean=41.5023%; std=23.4070
+Mean: 40.0081%, Std: 12.5718%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9362
+ -- Sample 1: 0.9790
+ -- Sample 2: 0.9655
+ -- Sample 3: 0.9722
+ -- Sample 4: 0.9525
+ -- Sample 5: 0.9477
+ -- Sample 6: 0.9228
+ -- Sample 7: 0.9507
+ -- Sample 8: 0.9415
+ -- Sample 9: 0.9486
+ -- Sample 10: 0.9059
+ -- Sample 11: 0.9463
+ -- Sample 12: 0.8905
+ -- Sample 13: 0.9548
+ -- Sample 14: 0.9614
+ -- Sample 15: 0.9727
+ -- Sample 16: 0.9480
+ -- Sample 17: 0.7964
+ -- Sample 18: 0.8724
+ -- Sample 19: 0.7909
+ -- Sample 20: 0.8623
+ -- Sample 21: 0.9157
+ -- Sample 22: 0.9191
+ -- Sample 23: 0.9342
+ -- Sample 24: 0.9210
+Mean=0.9243, Std=0.0482
+------------------------------------------------------------------
+  Processing Batch 9 (Size: 24)...
+Bias Error: using Single Component
+Mean: 14.4769, Std: 9.1681
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=38.6179%; std=27.3648
+ -- Sample 1: mean=45.0610%; std=31.4629
+ -- Sample 2: mean=43.5764%; std=32.2612
+ -- Sample 3: mean=45.0404%; std=30.4601
+ -- Sample 4: mean=32.1715%; std=25.5171
+ -- Sample 5: mean=44.1740%; std=40.5151
+ -- Sample 6: mean=37.2485%; std=28.0534
+ -- Sample 7: mean=41.6390%; std=29.9663
+ -- Sample 8: mean=71.8318%; std=56.6722
+ -- Sample 9: mean=84.7979%; std=68.1008
+ -- Sample 10: mean=72.1007%; std=57.7849
+ -- Sample 11: mean=68.4614%; std=58.3767
+ -- Sample 12: mean=48.0499%; std=42.5302
+ -- Sample 13: mean=39.8394%; std=34.0789
+ -- Sample 14: mean=49.3208%; std=41.5050
+ -- Sample 15: mean=42.7823%; std=37.8826
+ -- Sample 16: mean=59.8586%; std=41.8523
+ -- Sample 17: mean=49.6973%; std=37.1378
+ -- Sample 18: mean=53.5898%; std=38.3849
+ -- Sample 19: mean=48.7544%; std=29.1380
+ -- Sample 20: mean=43.9737%; std=31.5656
+ -- Sample 21: mean=47.9077%; std=26.2337
+ -- Sample 22: mean=45.4283%; std=30.6891
+ -- Sample 23: mean=43.8074%; std=26.8980
+Mean: 49.9054%, Std: 12.4029%
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9333
+ -- Sample 1: 0.9170
+ -- Sample 2: 0.9164
+ -- Sample 3: 0.9215
+ -- Sample 4: 0.9545
+ -- Sample 5: 0.9030
+ -- Sample 6: 0.9423
+ -- Sample 7: 0.9243
+ -- Sample 8: 0.7422
+ -- Sample 9: 0.7734
+ -- Sample 10: 0.7348
+ -- Sample 11: 0.7840
+ -- Sample 12: 0.9240
+ -- Sample 13: 0.9337
+ -- Sample 14: 0.9395
+ -- Sample 15: 0.9211
+ -- Sample 16: 0.8918
+ -- Sample 17: 0.8597
+ -- Sample 18: 0.9096
+ -- Sample 19: 0.8774
+ -- Sample 20: 0.8879
+ -- Sample 21: 0.8744
+ -- Sample 22: 0.8748
+ -- Sample 23: 0.8915
+Mean=0.8847, Std=0.0616
+------------------------------------------------------------------
+Saved metrics for 'Ko et al (Etapa 3)' to ./Tables/ErrorMetrics_Comp2_Ko_et_al_Etapa_3.csv
+
+Extraction complete! Generated files:
+- Ko et al (Etapa 3): ./Tables/ErrorMetrics_Comp2_Ko_et_al_Etapa_3.csv

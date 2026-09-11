@@ -94,7 +94,7 @@ nnt.set_logger_output_folder(NN_results_folder)
 
 
 #######################################################
-#************ HARDWARE SETUP:              ***********#
+#************ HANDLE DEVICE CHOICE:       ***********#
 #######################################################
 
 if isinstance(device_set, int):

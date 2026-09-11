@@ -9,7 +9,7 @@ This class implements a composite architecture that generates a final output
 by aggregating predictions from a suite of specialized, pre-trained sub-models.
 """
 class SubModels_Composition(nn.Module):
-    def __init__(self, main_model, z_name, x_name, p_name, device, is_eval=False):
+    def __init__(self, main_model, z_name, x_name, p_name, device, is_eval=False, bin_input=True):
         super().__init__() 
         
         # Check attributes
@@ -27,6 +27,10 @@ class SubModels_Composition(nn.Module):
         self.z_model.load_state_dict(torch.load(z_name, map_location=torch.device(device), weights_only=True))
         self.x_model.load_state_dict(torch.load(x_name, map_location=torch.device(device), weights_only=True))
         self.p_model.load_state_dict(torch.load(p_name, map_location=torch.device(device), weights_only=True))
+        
+        self.z_model.bin_input = bin_input
+        self.x_model.bin_input = bin_input
+        self.p_model.bin_input = bin_input
         
         self.concat = Channel_Concat()
         
