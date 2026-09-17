@@ -1,0 +1,59 @@
+Initializing Neural Network Models...
+Total Samples: 8 | Dividing into 8 chunks (~1 samples/job).
+-> Setting up sample: Sample_00000 (Chunk 000)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+-> Setting up sample: Sample_00001 (Chunk 001)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+-> Setting up sample: Sample_00002 (Chunk 002)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+-> Setting up sample: Sample_00003 (Chunk 003)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+-> Setting up sample: Sample_00004 (Chunk 004)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+-> Setting up sample: Sample_00005 (Chunk 005)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+-> Setting up sample: Sample_00006 (Chunk 006)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+-> Setting up sample: Sample_00007 (Chunk 007)
+  -> Calculating pressure drop
+  -> Creating prediction
+    -> Original geometry shape:  (500, 500, 500)
+    -> Padded geometry shape:    (512, 512, 512)
+    -> EDT shape:                torch.Size([1, 1, 512, 512, 512])
+    -> Final prediction shape:   torch.Size([1, 4, 500, 500, 500])
+Setup complete! Master submission script ready at: ../TestSpeedUp_Simulations_BiggerCrops/IC_Doddington_500_500_500/submit_all_jobs.sh

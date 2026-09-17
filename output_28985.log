@@ -1,0 +1,109 @@
+[*] Loading configs from standard config file: exp/SampNumber_Etapa_3_DM_SA_DN_danny_xyzp.json
+Global seed set to 42
+Current device:      cuda
+
+
+Configurations:
+{
+    "model_name": "danny_zyxp",
+    "binary_input": true,
+    "NN_dataset_folder": "../NN_Datasets_Grad_Dist_40_5_55/",
+    "dataset_train_name": [
+        "Train_Silveira_SphPore_SAug_DNorm.h5",
+        "Train_Silveira_SphGrain_SAug_DNorm.h5",
+        "Train_Oliveira_Leopard_SAug_DNorm.h5",
+        "Train_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Train_Oliveira_Berea_SAug_DNorm.h5",
+        "Train_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "dataset_valid_name": [
+        "Valid_Silveira_SphPore_SAug_DNorm.h5",
+        "Valid_Silveira_SphGrain_SAug_DNorm.h5",
+        "Valid_Oliveira_Leopard_SAug_DNorm.h5",
+        "Valid_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Valid_Oliveira_Berea_SAug_DNorm.h5",
+        "Valid_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "train_fraction": 0.125,
+    "valid_fraction": 1.0,
+    "batch_size": 8,
+    "num_workers": 4,
+    "num_threads": null,
+    "device": "cuda",
+    "N_epochs": 1000,
+    "partial_epochs": 1000,
+    "patience": 200,
+    "tolerance": null,
+    "learning_rate": 0.001,
+    "earlyStopping_loss": "PI-MSE",
+    "backPropagation_loss": "PI-MSE",
+    "optimizer": "ADAM",
+    "weight_init": null,
+    "seed": 42,
+    "train_comment": "Training refinement model",
+    "NN_results_folder": "/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_17_September_2026_02-32PM_Job28985/"
+}
+
+
+/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_17_September_2026_02-32PM_Job28985/
+Metadata saved at: /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_17_September_2026_02-32PM_Job28985/metadata.json
+Loading Training Data ... 
+Considering 80 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Silveira_SphPore_SAug_DNorm.h5.
+Considering 80 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Silveira_SphGrain_SAug_DNorm.h5.
+Considering 25 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Leopard_SAug_DNorm.h5.
+Considering 25 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_CastleGate_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+Considering 17 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+Considering 19 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaBuff_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Berea_SAug_DNorm.h5.
+Considering 38 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Bentheimer_SAug_DNorm.h5.
+  - 324 samples considered.
+Loading Validation Data ... 
+Considering 64 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphPore_SAug_DNorm.h5.
+Considering 64 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphGrain_SAug_DNorm.h5.
+Considering 24 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Leopard_SAug_DNorm.h5.
+Considering 24 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_CastleGate_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+Considering 16 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaBuff_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Berea_SAug_DNorm.h5.
+Considering 36 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Bentheimer_SAug_DNorm.h5.
+  - 288 samples considered.
+Loading Model ... 
+Model size: 15.254MB
+Model size: 3995730 total parameters
+Model size: 111387 trainable parameters
+Model size: 3884343 frozen parameters
+
+Starting Train on cuda... 
+
+No previous checkpoints found in /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_17_September_2026_02-32PM_Job28985/
+
+
+Trainning session has started.
+
+--> New best solution for Validation dataset achieved at 0 / 1000: 0.1229375892629226 (100.000000% better)
+
+Executing epoch 0 / 1000 (0.0%)
+--> Average epoch processing time (seconds):  257.503636
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.126464   | 0.122938  
+Divergent             0.017919   | 0.017857  
+MSE in Void Space     0.328732   | 0.328035  
+Bias Error            4700.916598 | 13005.317051
+Pearson Correlation   0.426406   | 0.410932  
+--> New best solution for Validation dataset achieved at 1 / 1000: 0.0677145120377342 (44.919603% better)
+--> New best solution for Validation dataset achieved at 2 / 1000: 0.06270935769296354 (7.391553% better)
+--> New best solution for Validation dataset achieved at 3 / 1000: 0.04803395359259513 (23.402255% better)
+--> New best solution for Validation dataset achieved at 4 / 1000: 0.039523375427557364 (17.717838% better)
+--> New best solution for Validation dataset achieved at 5 / 1000: 0.03631060694654783 (8.128781% better)
+--> New best solution for Validation dataset achieved at 6 / 1000: 0.0318672556637062 (12.237061% better)
+--> New best solution for Validation dataset achieved at 7 / 1000: 0.029226298495713208 (8.287369% better)

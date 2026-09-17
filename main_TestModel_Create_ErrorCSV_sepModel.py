@@ -6,6 +6,8 @@ from torch.utils.data import DataLoader, Subset
 
 # Import local architectures
 from Architectures.Unet import Extended_DannyKo
+from Architectures.MSnet import Extended_JavierSantos
+
 from Architectures.Models import SubModels_Composition
 
 # Import local utilities
@@ -69,6 +71,7 @@ def generate_metrics_per_model(
 
                 # Loop through each model for the current batch
                 for model_name, model in models_dict.items():
+                    print(f"    Evaluating {model_name}")
                     batch_outputs = model.predict(batch_inputs)
                     batch_outputs = batch_outputs.clone().detach().to(dtype=torch.float32)
 
@@ -145,10 +148,10 @@ def generate_metrics_per_model(
 # =======================================================
 # MAIN SETUP
 # =======================================================
-component   = 0 # Uz =0, Ux=2 v, P=3 v, (Uz,Uy,Ux)=5 v
-batch_size  = 25
+component   = 5 # Uz =0, Ux=2, P=3, (Uz,Uy,Ux)=5
+batch_size  = 50
 N_samples   = None 
-device      = 'cpu'
+device      = 'cuda'
 
 output_results_dir = "./Tables/"
 
@@ -172,25 +175,102 @@ print("Initializing models...")
 models_dict = {}
 
 if component == 0:
+    #==========================================================================
+    # Increasing Diversity - Javier Santos
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_06-38PM_Job28309/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D0 N4)"] = model_z_3
+    
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_01-53PM_Job28306/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D1 N4)"] = model_z_3
+    
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_10_September_2026_12-32PM_Job28376/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D2 N4)"] = model_z_3
+    
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_10_September_2026_12-33PM_Job28377/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D3 N4)"] = model_z_3
+    #==========================================================================
+    
+    
+    #==========================================================================
+    # Increasing Diversity - Danny Ko
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_02-04PM_Job28308/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D0 N4)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_01-49PM_Job28304/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D1 N4)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_01-51PM_Job28305/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D2 N4)"] = model_z_3
+    
     danny_model_base3 = Extended_DannyKo()
     model_z_3 = danny_model_base3.z_model
     model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
     model_z_3.bin_input = True
-    models_dict["Ko et al (Etapa 3)"] = model_z_3
-
+    models_dict["Ko et al (D3 N4)"] = model_z_3
+    #==========================================================================
+    
+    
+    #==========================================================================
+    # Increasing number of samples but keeping diversity - Danny Ko
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-56PM_Job28438/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N0)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo() # 0.125
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-55PM_Job28437/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N1)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-53PM_Job28436/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N2)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-53PM_Job28435/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N3)"] = model_z_3
+    #==========================================================================
+    
 elif component == 2:
     danny_model_base3 = Extended_DannyKo()
     model_x_3 = danny_model_base3.x_model
     model_x_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
     model_x_3.bin_input = True
-    models_dict["Ko et al (Etapa 3)"] = model_x_3
+    models_dict["Ko et al (D3)"] = model_x_3
    
 elif component == 3:
     danny_model_base3 = Extended_DannyKo()
     model_p_3 = danny_model_base3.p_model
     model_p_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
     model_p_3.bin_input = True
-    models_dict["Ko et al (Etapa 3)"] = model_p_3
+    models_dict["Ko et al (D3)"] = model_p_3
     
 elif component == 5:
     print("Initializing Neural Network Models...")
@@ -207,7 +287,7 @@ elif component == 5:
         device=device,  
         is_eval=True 
     ) 
-    models_dict["Ko et al (Etapas 3)"] = model
+    models_dict["Ko et al (D3)"] = model
     
 else:
     raise ValueError(f"Component {component} is not configured in the main block.")

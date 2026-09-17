@@ -34,26 +34,27 @@ dataset_paths = [
     "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5",
     
 ] 
-n_samples = 30 
-shuffle   = True 
+n_samples       = 30 
+shuffle         = True 
 # Base Output Directory 
-RESULTS_DIR = "../TestSpeedUp_Simulations_CrossDatasets/" 
+RESULTS_DIR     = "../TestSpeedUp_Simulations_CrossDatasets/" 
 os.makedirs(RESULTS_DIR, exist_ok=True) 
 
-raw_file = "domain.raw" 
-shape = (120, 120, 120) 
-device = "cpu" 
+raw_file        = "domain.raw" 
+shape           = (120, 120, 120) 
+nproc           = (1,1,1)
+device          = "cpu" 
 
 # SLURM & Job Settings 
 jobs_running    = 15 
 CHUNK_SIZE      = max(n_samples//jobs_running,1) 
-NTASKS          = 1 
+NTASKS          = nproc[0]*nproc[1]*nproc[2]
 mem             = 30 * 8 * shape[0]**3 / (1024**3) # GB
 
 #LBPM_VERSION    = "lbpm/gpu/lbpm_fork_965bd0d" 
 #PARTITION       = "all_gpu" 
 #GRES_STR        = "gpu:k40m:1" 
-#mem          = 30 * 8 * shape[0]**3 / (1024**3) # GB
+#mem             = 30 * 8 * shape[0]**3 / (1024**3) # GB
 
 LBPM_VERSION    = "lbpm/cpu/lbpm_init_07f0eef" 
 PARTITION       = "close_cpu" 
@@ -62,7 +63,7 @@ GRES_STR        = ""
 MPI_PATH        = "mpirun" 
 LBPM_EXEC       = "lbpm_permeability_simulator" 
 
-analysis_interval       = 50 
+analysis_interval       = 200 
 visualization_interval  = 1000000000 
 tolerance               = 1e-2
 
@@ -216,8 +217,9 @@ for dataset_path in dataset_paths:
             pr_grad[~geometry_bool] = 0.0 
 
             sh.write_start_raw( 
-                filename=os.path.join(grad_dir, "Start.00000"), 
-                ux=ux_null, uy=uy_null, uz=uz_null, pr=pr_grad 
+                dirpath=grad_dir, 
+                ux=ux_null, uy=uy_null, uz=uz_null, pr=pr_grad,
+                nproc=nproc
             ) 
              
             sh.write_lbpm_db( 
@@ -225,7 +227,9 @@ for dataset_path in dataset_paths:
                 db_name="lbpm.db", 
                 domain_filename=f"../{raw_file}", 
                 Start=True, tau=1.5, bc=3, din=1.0, dout=1.0 - 3*p_drop, 
-                nproc=(1, 1, NTASKS), n=(shape[2]//NTASKS, shape[1]//NTASKS, shape[0]//NTASKS), N=shape,  
+                nproc=nproc, 
+                n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
+                N=shape, 
                 analysis_interval=analysis_interval, visualization_interval=visualization_interval, 
                 tolerance=tolerance, out_format="vtk" 
             ) 
@@ -245,8 +249,9 @@ for dataset_path in dataset_paths:
             pr_nn = pred[0,3].numpy().astype(np.float64) 
 
             sh.write_start_raw( 
-                filename=os.path.join(nn_dir, "Start.00000"), 
-                ux=ux_nn, uy=uy_nn, uz=uz_nn, pr=pr_nn 
+                dirpath=nn_dir, 
+                ux=ux_nn, uy=uy_nn, uz=uz_nn, pr=pr_nn,
+                nproc=nproc
             ) 
              
             sh.write_lbpm_db( 
@@ -254,7 +259,9 @@ for dataset_path in dataset_paths:
                 db_name="lbpm.db", 
                 domain_filename=f"../{raw_file}", 
                 Start=True, tau=1.5, bc=3, din=1.0, dout=1.0 - 3*p_drop, 
-                nproc=(1, 1, NTASKS), n=(shape[2]//NTASKS, shape[1]//NTASKS, shape[0]//NTASKS), N=shape,  
+                nproc=nproc, 
+                n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
+                N=shape, 
                 analysis_interval=analysis_interval, visualization_interval=visualization_interval, 
                 tolerance=tolerance, out_format="vtk" 
             ) 

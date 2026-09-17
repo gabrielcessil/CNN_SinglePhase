@@ -42,8 +42,7 @@ def get_non_overlapping_crops(volume_data, crop_D, crop_H, crop_W):
                 
                 if np.sum(crop>0)/(crop_D*crop_H*crop_W)<0.5:
                     crops.append(crop)
-            
-
+    print(len(crops))
     return crops
 
 def get_N_crops(volume: np.ndarray, crop_size: int, N: int) -> list[np.ndarray]:
@@ -175,15 +174,54 @@ repositories    = [
 # Author: 	Amir Hossein Kohanpur (University of Illinois at Urbana-Champaign)
 #           Albert Valocchi (University of Illinois at Urbana-Champaign)
 #           Dustin Crandall (University of Illinois at Urbana-Champaign)
+"""
 original_shape  = (1200,1200,1200)
 solid_value     = 1
-crop_shape      = (256,256,256)
+crop_shape      = (1024,1024,1024)
 repositories = [
 ("../../LBPMSimulations_BiggerCrops/DRP-247/",
 "mtsimon-bi-1200_DRP-247.raw",
 55),
 ]
+"""
 
+# Image used as ODD test for bigger geometries than those trained with, also very tight and heterogenous
+# Link: https://digitalporousmedia.org/published-datasets/drp.project.published.DRP-503
+# Author: 		Alyne Vidal (Universidade Estadual do Estado do Rio de Janeiro)
+#               Carlos Eduardo Menezes dos Anjos (Universidade Estadual do Estado do Rio de Janeiro)
+#               Lizianne Medeiros (Universidade Estadual do Estado do Rio de Janeiro)
+#               Rodrigo Surmas (Universidade Estadual do Estado do Rio de Janeiro)
+#               Aurea Neta (Universidade Estadual do Estado do Rio de Janeiro)
+#               Alexandre Evsukoff (Universidade Estadual do Estado do Rio de Janeiro)
+#               Julio Vargas (Universidade Estadual do Estado do Rio de Janeiro)
+#original_shape  = (1578,1198,1348)
+#solid_value     = 1
+#crop_shape      = (1024,1024,1024)
+#repositories    = [
+#("../../LBPMSimulations_BiggerCrops/DRP-503/",
+#"sw02-1348-1198-1578-6p0um.raw",
+#35),
+#]
+
+# Image used as ODD test for bigger geometries than those trained with . Used to increase the 512³ statistics
+# Link: https://www.imperial.ac.uk/earth-science/research/research-groups/pore-scale-modelling/micro-ct-images-and-networks/
+# Author: 		Imperial College London
+original_shape  = (1000,1000,1000)
+solid_value     = 1
+crop_shape      = (256,256,256)
+repositories    = [
+("../../LBPMSimulations_BiggerCrops/IC_Estaillades/",
+"Estaillades_1000c_3p31136um.raw",
+55),
+
+("../../LBPMSimulations_BiggerCrops/IC_Ketton/",
+"Ketton_1000c_3p00006um.raw",
+55),
+
+("../../LBPMSimulations_BiggerCrops/IC_Doddington/",
+"Doddington_1000c_2p6929um.raw",
+55),
+]
 
 for base_dir, rock_name, target_percentage  in repositories:
         
@@ -205,7 +243,8 @@ for base_dir, rock_name, target_percentage  in repositories:
     vol         = np.fromfile(base_dir+rock_name, dtype=np.uint8)
     vol         = vol.reshape(original_shape)    # now a 3D numpy array
     vol         = vol.astype(np.uint8)    # (x, y, z) 0/1
-    
+    print("Values on image: ", np.unique(vol))
+    print(f" - Porosity: {np.mean(~(vol==solid_value))}")
     
     # Make it on LBPM convention (0-> Solid, 1-> Void) 
     if solid_value==1:  vol         = 1 - vol

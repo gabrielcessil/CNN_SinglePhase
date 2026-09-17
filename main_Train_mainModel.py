@@ -13,6 +13,7 @@ from Utilities import model_handler as mh
 from Utilities import dataset_reader as dr
 from Architectures import Unet
 from Architectures import MSnet
+from Architectures import PINN_Model
 
 
 #######################################################
@@ -50,25 +51,34 @@ binary_input            = config["binary_input"]
 NN_dataset_folder       = config["NN_dataset_folder"]
 dataset_train_name      = config["dataset_train_name"]
 dataset_valid_name      = config["dataset_valid_name"]
-train_range             = None if config["train_range"] is None else tuple(config["train_range"]) 
-valid_range             = None if config["train_range"] is None else tuple(config["valid_range"])
-batch_size              = config["batch_size"]
+t_range                 = config.get("train_range", None)
+v_range                 = config.get("valid_range", None)
+train_range             = tuple(t_range) if t_range is not None else None
+valid_range             = tuple(v_range) if v_range is not None else None
+train_fraction          = config.get("train_fraction", 1) if train_range is None else 1
+valid_fraction          = config.get("valid_fraction", 1) if valid_range is None else 1
+
+# Hardware aspects
 num_workers             = config["num_workers"]
-num_threads             = config["num_threads"]
+num_threads             = config.get("num_threads", None)
+
 # Learning aspects
+batch_size              = config["batch_size"]
 N_epochs                = config["N_epochs"]
 partial_epochs          = config["partial_epochs"]
-patience                = config["patience"]
+patience                = config.get("patience", N_epochs//10)
 tolerance               = config["tolerance"]
 learning_rate           = config["learning_rate"]
-earlyStopping_loss      = config["earlyStopping_loss"]
 backPropagation_loss    = config["backPropagation_loss"]
+earlyStopping_loss      = config.get("earlyStopping_loss", backPropagation_loss)
 optimizer               = config["optimizer"]
 weight_init             = config["weight_init"]
-seed                    = config["seed"]
-train_comment           = config["train_comment"]
-NN_results_folder       = config["NN_results_folder"]
+seed                    = config.get("seed", 42)
+train_comment           = config.get("train_comment", "No comments included.")
 device_set              = config["device"]
+
+# Set seed to random initializations
+nnt.set_global_seed(seed) 
 
 #######################################################
 #************ HANDLE RESULTS FOLDER:       ***********#
@@ -77,18 +87,17 @@ device_set              = config["device"]
 # If no configuration folder was passed: create a new folder for results
 if args.folder is not None:  
     NN_results_folder       = args.folder
+    # Ignore and update .json (the metadata.json saved in the folder will have the correct path)
     config["NN_results_folder"] = NN_results_folder
 else:
+    # If a folder was specified in .json:
     NN_results_folder       = config["NN_results_folder"]
-    
+    # If the specified value was None: create a new folder for the data
     if NN_results_folder is None:
         NN_results_folder           = nnt.create_training_data_folder(base_dir="../NN_Results")
+        # Ignore and update .json (the metadata.json saved in the folder will have the new path)
         config["NN_results_folder"] = NN_results_folder
-    
-# Update used results folder config
-dataset_train_full_name     = NN_dataset_folder+dataset_train_name
-dataset_valid_full_name     = NN_dataset_folder+dataset_valid_name
-
+        
 # Redirect prints to results folder
 nnt.set_logger_output_folder(NN_results_folder)
 
@@ -108,8 +117,7 @@ else:
 print('Current device:     ', device)
 
 dtype                   = torch.float32
-# Set seed to random initializations
-nnt.set_global_seed(seed) 
+
 
 
 #######################################################
@@ -120,10 +128,10 @@ loss_functions  = {
     # Optimization Loss Functions:          "Thresholded" = False, to evaluate the outputs 
     "PI-MSE":                  {"obj":  lf.MSE_Divergent(div_weight=3),              "Thresholded": False},
     # Perfomance analysis Loss Functions:   "Thresholded" = True, to evaluate in final prediction mode
-    #"MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
-    #"Divergent":               {"obj":  lf.Divergent(),                              "Thresholded": True}, 
+    "Divergent":               {"obj":  lf.Divergent(),                              "Thresholded": True}, 
+    "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
     "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
-    #"Inv. Corr":               {"obj":  lf.Mask_LossFunction(lf.PearsonCorr(2000, reverse=True)),  "Thresholded": True},
+    "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr()),      "Thresholded": True},
 }
 
 
@@ -145,18 +153,49 @@ print(f"Metadata saved at: {metadata_file}")
 #************ LOADING DATA          ******************#
 #######################################################
 
+print("Loading Training Data ... ")
+# Prepares dataset names for MultiLazy class (that receives a list of '.h5' files)
+if isinstance(dataset_train_name, list):
+    dataset_train_full_name = [os.path.join(NN_dataset_folder, item) for item in dataset_train_name]
+    train_ds                = dr.MultiLazyDatasetTorch(h5_paths = dataset_train_full_name,
+                                                       x_dtype = torch.float32,
+                                                       y_dtype = torch.float32,
+                                                       fraction= train_fraction)
+    if train_range is not None: raise Exception("Setting the index interval is not possible if a list of datasets is provided.")
+
+# Prepares dataset name for single Lazy class (that receives one '.h5' file)
+else:
+    dataset_train_full_name = os.path.join(NN_dataset_folder, dataset_train_name)
+    t_list_ids              = None if train_range is None else np.arange(train_range[0],train_range[1])
+    train_ds                = dr.LazyDatasetTorch(h5_path  = dataset_train_full_name,
+                                                  list_ids = t_list_ids,
+                                                  x_dtype  = torch.float32,
+                                                  y_dtype  = torch.float32,
+                                                  fraction= train_fraction)
+print(f"  - {len(train_ds)} samples considered.")
 
 
-print("Loading Trainning Data ... ")
-train_ds = dr.LazyDatasetTorch(h5_path=dataset_train_full_name, 
-                               list_ids= None if train_range is None else np.arange(train_range[0],train_range[1]), 
-                               x_dtype=torch.float32,
-                               y_dtype=torch.float32)
+print("Loading Validation Data ... ")
+# Prepares dataset names for MultiLazy class (that receives a list of '.h5' files)
+if isinstance(dataset_valid_name, list):
+    dataset_valid_full_name = [os.path.join(NN_dataset_folder, item) for item in dataset_valid_name]
+    valid_ds                = dr.MultiLazyDatasetTorch(h5_paths = dataset_valid_full_name,
+                                                       x_dtype = torch.float32,
+                                                       y_dtype = torch.float32,
+                                                       fraction= valid_fraction)
+    if valid_range is not None: raise Exception("Setting the index interval is not possible if a list of datasets is provided.")
+    
+# Prepares dataset name for single Lazy class (that receives one '.h5' file)
+else:
+    dataset_valid_full_name = os.path.join(NN_dataset_folder, dataset_valid_name)
+    v_list_ids              = None if valid_range is None else np.arange(valid_range[0],valid_range[1]), 
+    valid_ds                = dr.LazyDatasetTorch(h5_path = dataset_valid_full_name, 
+                                                  list_ids= v_list_ids,
+                                                  x_dtype = torch.float32,
+                                                  y_dtype = torch.float32,
+                                                  fraction= valid_fraction)
+print(f"  - {len(valid_ds)} samples considered.")
 
-valid_ds = dr.LazyDatasetTorch(h5_path=dataset_valid_full_name, 
-                               list_ids= None if valid_range is None else np.arange(valid_range[0],valid_range[1]), 
-                               x_dtype=torch.float32,
-                               y_dtype=torch.float32)
 
 
 #######################################################
@@ -175,39 +214,87 @@ if model_name=="javier_zyxp":
     
     # Loading pre-trained sub-models
     model_full_name = "./Trained_Models/None.pth"
-    model.z_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    model.z_model.load_state_dict(torch.load(model_full_name, map_location=torch.device(device_set), weights_only=True))
     
     model_full_name = "./Trained_Models/None.pth"
-    model.y_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    model.y_model.load_state_dict(torch.load(model_full_name, map_location=torch.device(device_set), weights_only=True))
     
     model_full_name = "./Trained_Models/None.pth"
-    model.x_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    model.x_model.load_state_dict(torch.load(model_full_name, map_location=torch.device(device_set), weights_only=True))
     
     model_full_name = "./Trained_Models/None.pth"
-    model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device(device_set), weights_only=True))
     
     # Freeze sub-models    
     nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
 
 elif model_name=="danny_zyxp":
     
+    model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+    model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+    model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
+    
     model = Unet.Extended_DannyKo()
     # Loading pre-trained sub-models
-    model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-    model.z_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_03-14PM_Job16195/model_LowerValidationLoss.pth"
-    model.y_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
-    model.x_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-    
-    model_full_name = "./Trained_Models/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
-    model.p_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
+    model.z_model.load_state_dict(torch.load(model_full_z_name, map_location=torch.device(device_set), weights_only=True))
+    model.x_model.load_state_dict(torch.load(model_full_x_name, map_location=torch.device(device_set), weights_only=True))
+    model.p_model.load_state_dict(torch.load(model_full_p_name, map_location=torch.device(device_set), weights_only=True))
     
     # Freeze sub-models
     nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
-            
+    
+elif model_name=="silveira_zyxp_1":
+    
+    model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+    model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+    model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
+    
+    model = PINN_Model.MY_PIMODEL()
+    model.z_model.load_state_dict(torch.load(model_full_z_name, map_location=torch.device(device_set), weights_only=True))
+    model.x_model.load_state_dict(torch.load(model_full_x_name, map_location=torch.device(device_set), weights_only=True))
+    model.p_model.load_state_dict(torch.load(model_full_p_name, map_location=torch.device(device_set), weights_only=True))
+    # Freeze sub-models
+    nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
+    
+elif model_name=="silveira_zyxp_2":
+    
+    model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+    model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+    model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
+    
+    model = PINN_Model.MY_PIMODEL_2()
+    model.z_model.load_state_dict(torch.load(model_full_z_name, map_location=torch.device(device_set), weights_only=True))
+    model.x_model.load_state_dict(torch.load(model_full_x_name, map_location=torch.device(device_set), weights_only=True))
+    model.p_model.load_state_dict(torch.load(model_full_p_name, map_location=torch.device(device_set), weights_only=True))
+    # Freeze sub-models
+    nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
+    
+elif model_name=="silveira_zyxp_3":
+    
+    model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+    model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+    model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
+    
+    model = PINN_Model.MY_PIMODEL_3()
+    model.z_model.load_state_dict(torch.load(model_full_z_name, map_location=torch.device(device_set), weights_only=True))
+    model.x_model.load_state_dict(torch.load(model_full_x_name, map_location=torch.device(device_set), weights_only=True))
+    model.p_model.load_state_dict(torch.load(model_full_p_name, map_location=torch.device(device_set), weights_only=True))
+    # Freeze sub-models
+    nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
+    
+elif model_name=="silveira_zyxp_4":
+    
+    model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+    model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+    model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
+    
+    model = PINN_Model.MY_PIMODEL_4()
+    model.z_model.load_state_dict(torch.load(model_full_z_name, map_location=torch.device(device_set), weights_only=True))
+    model.x_model.load_state_dict(torch.load(model_full_x_name, map_location=torch.device(device_set), weights_only=True))
+    model.p_model.load_state_dict(torch.load(model_full_p_name, map_location=torch.device(device_set), weights_only=True))
+    # Freeze sub-models
+    nnt.freeze_on_training([model.z_model, model.y_model, model.x_model, model.p_model])
+
 else:
     raise Exception(f"Specified model {model_name} is not defined.")
 
@@ -241,10 +328,6 @@ print('Model size: {} total parameters'.format(mh.get_total_params(model)))
 print('Model size: {} trainable parameters'.format(mh.get_n_trainable_params(model)))
 print('Model size: {} frozen parameters'.format(mh.get_n_non_trainable_params(model)))
 print()
-
-
-
-
 
 #######################################################
 #************ CREATE DATALOADER         **************#

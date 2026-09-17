@@ -496,6 +496,25 @@ def init_weights_normal(m):
             
     return init_weights_normal
 
+def disable_all_biases(model):
+    """
+    Iterates through a PyTorch model and completely removes the bias 
+    parameter from all Convolutional and Linear layers.
+    """
+    for name, module in model.named_modules():
+        
+        # Target Conv and Linear layers (the usual suspects for biases)
+        if isinstance(module, (nn.Conv1d, nn.Conv2d, nn.Conv3d,
+                               nn.ConvTranspose1d, nn.ConvTranspose2d, nn.ConvTranspose3d,
+                               nn.Linear)):
+            
+            # Check if the layer currently has a bias
+            if hasattr(module, 'bias') and module.bias is not None:
+                # Properly remove the bias from the computation graph and parameter list
+                module.register_parameter('bias', None)
+                
+    return model
+
 #######################################################
 #****************** AUXILIARY FUNCTIONS **************#
 #######################################################

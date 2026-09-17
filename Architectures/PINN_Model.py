@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
-from .Functional import pad_same, crop_same, Channel_Concat
+from .Functional import pad_same, crop_same, Channel_Concat, ChannelWiseMult
 import matplotlib.pyplot as plt
 from Unet import Base_Unet    
 from Utilities import velocity_usage as vu
@@ -350,16 +350,62 @@ class MY_PIMODEL_2(nn.Module):
         
         self.concat = Channel_Concat()
 
-        # Helper function to generate blocks cleanly
         def make_corr_block(in_c):
-            return nn.Sequential( 
-                nn.Conv3d(in_channels=in_c, out_channels=1, kernel_size=7, stride=1, padding=3),
-                nn.Tanh(), 
-                nn.Conv3d(in_channels=1, out_channels=1, kernel_size=5, stride=1, padding=2),
-                nn.Tanh(), 
-                nn.Conv3d(in_channels=1, out_channels=1, kernel_size=3, stride=1, padding=1),
-                nn.Tanh(), 
-                nn.Conv3d(in_channels=1, out_channels=1, kernel_size=1, stride=1, padding=0)  
+            return nn.Sequential(
+                nn.Conv3d(
+                    in_channels=in_c, out_channels=1,
+                    kernel_size=3, stride=1,
+                    padding=7, dilation=7
+                ),
+                nn.Tanh(),
+        
+                nn.Conv3d(
+                    in_channels=1, out_channels=1,
+                    kernel_size=3, stride=1,
+                    padding=6, dilation=6
+                ),
+                nn.Tanh(),
+        
+                nn.Conv3d(
+                    in_channels=1, out_channels=1,
+                    kernel_size=3, stride=1,
+                    padding=5, dilation=5
+                ),
+                nn.Tanh(),
+        
+                nn.Conv3d(
+                    in_channels=1, out_channels=1,
+                    kernel_size=3, stride=1,
+                    padding=4, dilation=4
+                ),
+                nn.Tanh(),
+        
+                nn.Conv3d(
+                    in_channels=1, out_channels=1,
+                    kernel_size=3, stride=1,
+                    padding=3, dilation=3
+                ),
+                nn.Tanh(),
+        
+                nn.Conv3d(
+                    in_channels=1, out_channels=1,
+                    kernel_size=3, stride=1,
+                    padding=2, dilation=2
+                ),
+                nn.Tanh(),
+        
+                nn.Conv3d(
+                    in_channels=1, out_channels=1,
+                    kernel_size=3, stride=1,
+                    padding=1, dilation=1
+                ),
+                nn.Tanh(),
+        
+                nn.Conv3d(
+                    in_channels=1, out_channels=1,
+                    kernel_size=1, stride=1,
+                    padding=0
+                )
             )
 
         # Initialize blocks dynamically

@@ -6,35 +6,61 @@ import pyvista as pv
 import matplotlib.pyplot as plt
 import re
 import subprocess
-from Utilities import velocity_usage as vu
 import os
+import math
+import torch.nn.functional as F
+import torch
+
+from Utilities import velocity_usage as vu
 
 def write_start_raw(
-    filename: str,
+    dirpath: str,
     ux: np.ndarray,
     uy: np.ndarray,
     uz: np.ndarray,
     pr: np.ndarray,
+    nproc: Tuple[int, int, int] = (1, 1, 1)
 ):
     """
     Writes Start.00000.raw as a DENSE 3D buffer.
     Input arrays must be (Nz, Ny, Nx) including Halos.
     Layout: [Ux(0,0,0), Uy(0,0,0), Uz(0,0,0), Pr(0,0,0), Ux(0,0,1)...]
     """
-    Nz, Ny, Nx = ux.shape
-    N = Nz * Ny * Nx
-        
-    full_path = filename if filename.endswith(".raw") else f"{filename}.raw"
-    output_dir = os.path.dirname(full_path)
     
-    if output_dir: os.makedirs(output_dir, exist_ok=True)
+    if dirpath: os.makedirs(dirpath, exist_ok=True)
+    
+    nprocx, nprocy, nprocz  = nproc
+    Nz, Ny, Nx              = ux.shape
+    N                       = Nz * Ny * Nx
+    nranks                  = nprocx * nprocy * nprocz
+    local_nx                = Nx // nprocx
+    local_ny                = Ny // nprocy
+    local_nz                = Nz // nprocz
+    
+    for rank in range(nranks):
+        rank_x = rank % nprocx
+        rank_y = (rank // nprocx) % nprocy
+        rank_z = rank // (nprocx * nprocy)
         
-    dense_grid = np.stack((ux, uy, uz, pr), axis=-1) 
+        x0 = rank_x * local_nx
+        x1 = (rank_x + 1) * local_nx
+        y0 = rank_y * local_ny
+        y1 = (rank_y + 1) * local_ny
+        z0 = rank_z * local_nz
+        z1 = (rank_z + 1) * local_nz
+        
+        ux_local = ux[z0:z1, y0:y1, x0:x1]
+        uy_local = uy[z0:z1, y0:y1, x0:x1]
+        uz_local = uz[z0:z1, y0:y1, x0:x1]
+        pr_local = pr[z0:z1, y0:y1, x0:x1]
+                
+        dense_grid = np.stack((ux_local, uy_local, uz_local, pr_local), axis=-1) 
+        buffer     = dense_grid.astype(np.float64) 
+        
+        filename = os.path.join(dirpath, f"Start.{rank:05d}.raw")        
+        with open(filename, "wb") as f:
+            buffer.tofile(f)
 
-    buffer = dense_grid.astype(np.float64) 
-
-    with open(filename+".raw", "wb") as f:
-        buffer.tofile(f)
 
 def write_lbpm_db(
     path: str,
@@ -134,3 +160,51 @@ Analysis {{
 
     p.write_text(text, encoding="utf-8")
     return text
+
+
+
+# Shape must be (Z,Y,X). No channel or batch dimension
+def pad_geometry(np_array, shape=None):
+
+    # Input is always a NumPy array with shape (Z, Y, X)
+    current_z, current_y, current_x = np_array.shape
+
+    # Calculate desired shape
+    if shape is None:
+        target_z = 2 ** math.ceil(math.log2(current_z))
+        target_y = 2 ** math.ceil(math.log2(current_y))
+        target_x = 2 ** math.ceil(math.log2(current_x))
+    else:
+        target_z, target_y, target_x = shape
+
+    # Calculate padding at the end of each dimension
+    pad_z = target_z - current_z
+    pad_y = target_y - current_y
+    pad_x = target_x - current_x
+
+    tensor = torch.from_numpy(np_array)
+    tensor = tensor.unsqueeze(0).unsqueeze(0) # Add batch and dimensions channels
+
+    # Z: reflect padding on the back
+    if pad_z > 0:
+        tensor = F.pad(
+            tensor,
+            (0, 0, 0, 0, 0, pad_z),
+            mode='reflect'
+        )
+
+    # Y/X: zero padding on bottom/right
+    if pad_y > 0 or pad_x > 0:
+        tensor = F.pad(
+            tensor,
+            (0, pad_x, 0, pad_y, 0, 0),
+            mode='constant',
+            value=0.0
+        )
+
+    # Convert back to NumPy
+    return tensor.squeeze(0).squeeze(0).numpy()
+
+
+def unpad_geometry(tensor, original_shape):
+    return tensor[..., :original_shape[0], :original_shape[1], :original_shape[2]]

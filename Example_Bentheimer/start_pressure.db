@@ -11,8 +11,8 @@ Domain {
    Filename = "domain.raw"
    ReadType = "8bit"      // data type
 
-   nproc = 1, 1, 1
-   n     = 120, 120, 120
+   nproc = 1, 1, 2
+   n     = 120, 120, 60
    N     = 120, 120, 120
 
    offset         = 0, 0, 0 // offset to read sub-domain
@@ -24,7 +24,7 @@ Domain {
    OutletLayers   = 0, 0, 0  // specify layers along the outlet
 }
 Visualization {
-   format            = "silo"
+   format            = "vtk"
    write_silo        = true     // SILO databases with assigned variables
    save_8bit_raw     = true  // labeled 8-bit binary files with phase assignments
    save_phase_field  = true  // phase field within SILO database

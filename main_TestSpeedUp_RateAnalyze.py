@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import seaborn as sns
 from scipy.stats import gaussian_kde
 
@@ -11,6 +12,7 @@ from scipy.stats import gaussian_kde
 # 1. CONFIGURATION & HELPERS
 # ==============================================================================
 """
+file = "SpeedUp_tolerance"
 main_folders = {
     "Tol 1%":                   "../TestSpeedUp_Simulations_1e2/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
     "Tol 0.01%":                "../TestSpeedUp_Simulations_1e4/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
@@ -19,6 +21,7 @@ main_folders = {
 """
 
 """
+file = "SpeedUp_crossDataset"
 main_folders = {
     "Spherical Pores":          "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/",
     "Spherical Grains":         "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphGrain_SAug_DNorm/",
@@ -31,11 +34,27 @@ main_folders = {
     "Bentheimer":               "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm/",
 }
 """
-
+"""
+file = "SpeedUp_256"
 main_folders = {
-    "256 cubic":                   "../TestSpeedUp_Simulations_BiggerCrops/DRP247_256_256_256/",
-    "512 cubic":                   "../TestSpeedUp_Simulations_BiggerCrops/DRP247_512_512_512/",
-    }
+    "256³ Sandstone":                  "../TestSpeedUp_Simulations_BiggerCrops/DRP247_256_256_256/",
+    "256³ Pre-salt":                   "../TestSpeedUp_Simulations_BiggerCrops/DRP503_256_256_256_sw02/",
+    "256³ I.C Doddington":             "../TestSpeedUp_Simulations_BiggerCrops/IC_Doddington_256_256_256/",
+    "256³ I.C Estaillades":            "../TestSpeedUp_Simulations_BiggerCrops/IC_Estaillades_256_256_256/",
+    "256³ I.C Ketton":                 "../TestSpeedUp_Simulations_BiggerCrops/IC_Ketton_256_256_256/",
+}  
+"""
+#"""
+file = "SpeedUp_512"
+main_folders = {  
+    "512³ Sandstone":                  "../TestSpeedUp_Simulations_BiggerCrops/DRP247_512_512_512/",
+    "512³ Pre-salt":                   "../TestSpeedUp_Simulations_BiggerCrops/DRP503_512_512_512_sw02/",
+    "500³ I.C Doddington":             "../TestSpeedUp_Simulations_BiggerCrops/IC_Doddington_500_500_500/",
+    "500³ I.C Estaillades":            "../TestSpeedUp_Simulations_BiggerCrops/IC_Estaillades_500_500_500/",
+    "500³ I.C Ketton":                 "../TestSpeedUp_Simulations_BiggerCrops/IC_Ketton_500_500_500/",
+}
+#"""
+
 remove_outliers = False
 logscale        = True
 dataset_colors = {}
@@ -43,7 +62,6 @@ for key in main_folders.keys():
     if key not in dataset_colors:
         dataset_colors[key] = "black"
         
-
 def get_max_timestep_from_vis(folder_path):
     p = Path(folder_path)
     if not p.exists():
@@ -64,6 +82,28 @@ def get_max_timestep_from_vis(folder_path):
                     
     return max_ts if found_vis else None
 
+def get_last_permeability(folder_path):
+    """
+    Reads the Permeability.csv file from the simulation folder and 
+    returns the last value in the 'absperm(mDa)' column.
+    """
+    p = Path(folder_path)
+    if not p.exists():
+        return np.nan
+        
+    perm_file = p / "Permeability.csv"
+    
+    if perm_file.exists():
+        try:
+            # The CSV data is whitespace-separated
+            df_perm = pd.read_csv(perm_file, sep=r'\s+')
+            if 'absperm(mDa)' in df_perm.columns:
+                return float(df_perm['absperm(mDa)'].iloc[-1])
+        except Exception as e:
+            print(f"Warning: Could not read {perm_file} due to {e}")
+            
+    return np.nan
+
 # ==============================================================================
 # 2. DATA EXTRACTION
 # ==============================================================================
@@ -83,11 +123,16 @@ for dataset_name, dataset_path in main_folders.items():
         ts_standard = get_max_timestep_from_vis(run_dir)
         ts_started = get_max_timestep_from_vis(started_dir)
         
+        k_standard = get_last_permeability(run_dir)
+        k_started = get_last_permeability(started_dir)
+        
         results.append({
             "Dataset": dataset_name,
             "Sample": sample_name,
             "Standard_Timesteps": ts_standard,
-            "NN_Started_Timesteps": ts_started
+            "NN_Started_Timesteps": ts_started,
+            "Standard_Permeability": k_standard,
+            "NN_Permeability": k_started
         })
 
 df = pd.DataFrame(results)
@@ -96,15 +141,16 @@ df = pd.DataFrame(results)
 df = df.dropna(subset=["Standard_Timesteps", "NN_Started_Timesteps"])
 df = df[df["NN_Started_Timesteps"] > 0]
 
-# Calculate Speedup Ratio
+# Calculate Speedup Ratio & Permeability Relative Error
 df['Speedup_Ratio'] = df['Standard_Timesteps'] / df['NN_Started_Timesteps']
+df['Perm_Error [%]'] = 100*np.abs(df['NN_Permeability'] - df['Standard_Permeability']) / np.abs(df['Standard_Permeability'])
 
 print("\nConvergence Timesteps & Speedup Comparison:")
 print("-" * 75)
-print(df.to_string(index=False))
+print(df[['Dataset', 'Sample', 'Speedup_Ratio', 'Perm_Error [%]']].to_string(index=False))
 print("-" * 75)
 
-df.to_csv("timesteps_comparison.csv", index=False)
+df.to_csv("./Tables/"+file+".csv", index=False)
 print("\nResults saved to timesteps_comparison.csv")
 
 # ==============================================================================
@@ -123,21 +169,14 @@ plt.rcParams.update(
     }
 )
 
-# ==============================================================================
-# 4. PLOT GENERATION FUNCTION (Density-Proportional Scatter Boxplot)
-# ==============================================================================
-def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dataset_colors: dict, remove_outliers: bool = False, logscale = False):
-    """
-    Generates box plots overlaid with density-calculated data points.
-    Synchronizes the scatter points precisely with the mathematical bounds of the boxplot whiskers.
-    """
+def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffix:str, dataset_colors: dict, remove_outliers: bool = False, logscale = False):
     print(f"\n--- Starting Speedup Boxplots (Outliers Removed from Scatter: {remove_outliers}) ---")
     os.makedirs(output_dir, exist_ok=True)
     
     datasets = df['Dataset'].unique()
 
-    for error_metric in error_cols:
-        print(f"  Plotting boxplot for {error_metric}...")
+    for prop in prop_cols:
+        print(f"  Plotting boxplot for {prop}...")
         
         fig, ax = plt.subplots(figsize=(9, 6), dpi=300)
 
@@ -145,10 +184,10 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
         sns.boxplot(
             data=df,
             x='Dataset',
-            y=error_metric,
+            y=prop,
             palette=dataset_colors,
             width=0.45,
-            showfliers=False, # Hides seaborn's native outliers so we can draw our own density scatter
+            showfliers=False,
             zorder=4,
             boxprops=dict(linewidth=1.5, edgecolor='black', alpha=0.35, zorder=4),
             medianprops=dict(linewidth=2.0, color='black', zorder=5),
@@ -160,7 +199,10 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
 
         # 2. Density-Proportional Scatter & Annotations
         for i, dataset in enumerate(datasets):
-            y_vals = df[df['Dataset'] == dataset][error_metric].dropna().values
+            subset = df[df['Dataset'] == dataset].dropna(subset=[prop, 'Perm_Error [%]'])
+            y_vals = subset[prop].values
+            perm_errors = subset['Perm_Error [%]'].values
+            
             base_color = dataset_colors.get(dataset, '#4c72b0')
             
             if len(y_vals) == 0:
@@ -184,6 +226,7 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
                 
                 mask = (y_vals >= lower_bound) & (y_vals <= upper_bound)
                 y_vals = y_vals[mask]
+                perm_errors = perm_errors[mask] # Mask perm_errors concurrently to keep synced
                 
                 if len(y_vals) == 0:
                     continue
@@ -204,21 +247,70 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
                 density_norm = np.ones_like(y_vals)
 
             # --- Apply Horizontal Jitter ---
-            max_jitter = 0.25 # slightly reduced to accommodate text labels on the right
+            max_jitter = 0.25 
             jitter = np.random.uniform(-1, 1, size=len(y_vals)) * max_jitter * density_norm
             x_vals = i + jitter
             
-            # Plot the scatter behind the boxplot (zorder=2)
-            ax.scatter(
-                x_vals, 
-                y_vals, 
-                color=base_color, 
-                s=20, 
-                alpha=0.75, 
-                edgecolor='black', 
-                linewidths=0.4, 
-                zorder=2
-            )
+            # --- Split data by Permeability Error for styling ---
+            mask_red = perm_errors > 50
+            mask_yellow = (perm_errors > 10) & (perm_errors <= 50)
+            mask_green = (perm_errors > 5) & (perm_errors <= 10)
+            mask_normal = perm_errors <= 5
+            
+            # Plot normal items (<= 5% diff)
+            if np.any(mask_normal):
+                ax.scatter(
+                    x_vals[mask_normal], 
+                    y_vals[mask_normal], 
+                    color=base_color, 
+                    s=20, 
+                    alpha=0.75, 
+                    edgecolor='black', 
+                    linewidths=0.4, 
+                    zorder=2
+                )
+                
+            # Plot Green stars (5% < diff <= 10%)
+            if np.any(mask_green):
+                ax.scatter(
+                    x_vals[mask_green], 
+                    y_vals[mask_green], 
+                    color='green', 
+                    marker='s', 
+                    s=80, 
+                    alpha=1.0, 
+                    edgecolor='black', 
+                    linewidths=0.3, 
+                    zorder=3
+                )
+                
+            # Plot Yellow stars (10% < diff <= 50%) - Using 'gold' for better contrast
+            if np.any(mask_yellow):
+                ax.scatter(
+                    x_vals[mask_yellow], 
+                    y_vals[mask_yellow], 
+                    color='gold', 
+                    marker='^', 
+                    s=80, 
+                    alpha=1.0, 
+                    edgecolor='black', 
+                    linewidths=0.3, 
+                    zorder=3
+                )
+
+            # Plot Red stars (> 50% diff)
+            if np.any(mask_red):
+                ax.scatter(
+                    x_vals[mask_red], 
+                    y_vals[mask_red], 
+                    color='red', 
+                    marker='*', 
+                    s=80, 
+                    alpha=1.0, 
+                    edgecolor='black', 
+                    linewidths=0.3, 
+                    zorder=4
+                )
 
         # 3. Formatting and Scientific Frame
         ax.set_ylabel("Speed-up Ratio", fontweight="bold")
@@ -226,7 +318,7 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
         
         if logscale: ax.set_yscale('log')
 
-        # Add a horizontal reference line at Speedup = 1.0 (baseline comparison)
+        # Add horizontal reference line
         ax.axhline(1.0, color="gray", linestyle="--", linewidth=1.0, alpha=0.7, label="No Speedup (1.0x)", zorder=1)
 
         ax.set_xticks(range(len(datasets)))
@@ -242,21 +334,30 @@ def plot_error_boxplots(df: pd.DataFrame, error_cols: list, output_dir: str, dat
         ax.grid(True, alpha=0.3, which="both", ls="--", axis="y", zorder=1)
         ax.set_axisbelow(True)
 
+        # Add custom Legend for Reference Line and Stars
+        handles, labels = ax.get_legend_handles_labels()
+        
+        # Add the stars to legend to clarify what they mean
+        handles.append(Line2D([0], [0], marker='*', color='w', markerfacecolor='red', markersize=12, label='Perm. Diff > 50%'))
+        handles.append(Line2D([0], [0], marker='^', color='w', markerfacecolor='gold', markersize=12, label='10% < Perm. Diff $\leq$ 50%'))
+        handles.append(Line2D([0], [0], marker='s', color='w', markerfacecolor='green', markersize=12, label='5% < Perm. Diff $\leq$ 10%'))
+        
+        ax.legend(handles=handles, loc='upper left', frameon=True, edgecolor='black', framealpha=0.9, fancybox=False)
+
         plt.tight_layout()
         
-        safe_name = error_metric.replace('/', '').replace('\\', '')
-        suffix = "_NoOutliers" if remove_outliers else ""
         
-        plt.savefig(os.path.join(output_dir, f"Boxplot_{safe_name}{suffix}.pdf"), bbox_inches='tight')
-        plt.savefig(os.path.join(output_dir, f"Boxplot_{safe_name}{suffix}.png"), dpi=300, bbox_inches='tight')
+        plt.savefig(os.path.join(output_dir, f"Boxplot_{suffix}.pdf"), bbox_inches='tight')
+        plt.savefig(os.path.join(output_dir, f"Boxplot_{suffix}.png"), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  Saved Boxplot_{safe_name}{suffix}.pdf/.png to {output_dir}")
+        print(f"  Saved Boxplot_{suffix}.pdf/.png to {output_dir}")
 
-# Execute the plotting function for Speedup_Ratio
-plot_error_boxplots(
+# Execute the plotting function
+plot_prop_boxplots(
     df=df,
-    error_cols=["Speedup_Ratio"],
+    prop_cols=["Speedup_Ratio"],
     output_dir="./Plots/",
+    suffix=file,
     dataset_colors=dataset_colors,
     remove_outliers=remove_outliers,
     logscale=logscale

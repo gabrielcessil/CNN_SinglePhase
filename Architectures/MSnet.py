@@ -341,7 +341,7 @@ class JavierSantos(nn.Module):
 
 
 # Javier Santo's model extended to include pressure 
-class JavierSantos_Extended(nn.Module):
+class Extended_JavierSantos(nn.Module):
     def __init__(self, bin_input=True):
         super().__init__() 
         

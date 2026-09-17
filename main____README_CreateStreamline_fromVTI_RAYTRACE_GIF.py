@@ -32,7 +32,7 @@ def cuda_available():
         return True
     except Exception:
         return False
-    
+
 class ParaViewRenderer:
     def __init__(self, config):
         self.config = config
@@ -98,7 +98,7 @@ class ParaViewRenderer:
         objects_to_delete = [reader]
         
         # ----------------------------------------------------------------------
-        # SOLID (Crystal Glass Shell)
+        # SOLID
         # ----------------------------------------------------------------------
         thresh = Threshold(Input=reader)
         thresh.Scalars = ['POINTS', self.config['scalar_name']]
@@ -125,31 +125,33 @@ class ParaViewRenderer:
         
         solid_displays = []
         for clip_obj in [clip1, clip2, clip3]:
-            # CRITICAL FIX: Extract only the outer surface to prevent interior 
-            # opacity stacking. This creates the hollow crystal glass look.
-            surf = ExtractSurface(Input=clip_obj)
-            objects_to_delete.append(surf)
-            
-            disp_solid = Show(surf, self.view)
-            disp_solid.Representation = 'Volume'
-            disp_solid.ColorArrayName = ["POINTS", ""]
-            
-            # Very pale, icy bluish tint
-            disp_solid.DiffuseColor = [0.85, 0.92, 1.0] 
-            disp_solid.AmbientColor = [0.85, 0.92, 1.0]
-            
-            # Almost transparent crystal glass
-            #disp_solid.Opacity = 0.3
-            
-            # Extreme gloss for sharp light reflections on the edges
-            disp_solid.Specular = 0.5
-            disp_solid.SpecularPower = 100
-            
-            disp_solid.OSPRayMaterial = "Water"
-            #disp_solid.ScalarOpacityUnitDistance =  3.0
+            # DO NOT use ExtractSurface here! We need the 3D internal cells for Volume rendering.
+            disp_solid = Show(clip_obj, self.view)
             solid_displays.append(disp_solid)
             
+        # Create the custom green color map for the solid volume        
+        solid_lut = GetColorTransferFunction(self.config['scalar_name'])
         
+        # Dark emerald green
+        solid_lut.RGBPoints = [
+            -1e10, 0.015, 0.12, 0.045,
+             0.0,  0.020, 0.30, 0.090,
+             1e10, 0.030, 0.42, 0.120
+        ]
+        solid_lut.ColorSpace = 'RGB'
+        
+        
+        solid_pwf = GetOpacityTransferFunction(self.config['scalar_name'])
+        
+        # IMPORTANT:
+        # Density <= 0  -> transparent
+        # Density > 0   -> significant volumetric opacity
+        solid_pwf.Points = [
+            -1e10, 0.00, 0.5, 0.0,
+             0.0,  0.00, 0.5, 0.0,
+             1e10, 0.80, 0.5, 0.0
+        ]
+                    
         # ----------------------------------------------------------------------
         # WIREFRAME (Dynamic adaptive bounds)
         # ----------------------------------------------------------------------
@@ -172,7 +174,7 @@ class ParaViewRenderer:
         stream.MaximumStreamlineLength = 1000.0
         stream.SeedType.Center = center
         stream.SeedType.Radius = (bounds[1]-bounds[0]) # Auto-scale radius
-        stream.SeedType.NumberOfPoints = 4000
+        stream.SeedType.NumberOfPoints = 14000
         objects_to_delete.append(stream)
 
         disp_stream = Show(stream, self.view)
@@ -228,25 +230,60 @@ class ParaViewRenderer:
         temp_3 = os.path.join(out_dir, f"temp_{frame_idx}_3.png")
         final_out = os.path.join(out_dir, output_filename)
         
-        # 1. Solid Only
-        for d in solid_displays: d.Visibility = 1
+        # 1. Solid Only (Matte Rubber Toy Style)
+        for d in solid_displays: 
+            d.Visibility = 1
+            d.Representation = 'Surface'
+            ColorBy(d, None) # Drops the scalar mapping so DiffuseColor works for Surface
+            
+            d.DiffuseColor = [0.28, 0.38, 0.32]  
+            d.AmbientColor = [0.0, 0.0, 0.0]
+            d.Opacity = 1.0
+            
+            d.Specular = 0.05
+            d.SpecularPower = 2
+            d.OSPRayMaterial = "None"
+            
         disp_wire.Visibility = 1
         disp_stream.Visibility, disp_vol.Visibility = 0, 0
         disp_stream.SetScalarBarVisibility(self.view, False)
         SaveScreenshot(temp_1, self.view, ImageResolution=self.config['resolution'], TransparentBackground=0, OverrideColorPalette='WhiteBackground')
         
-        # 2. Solid + Streamlines
-        for d in solid_displays: d.Visibility = 1
+        for d in solid_displays:
+            d.Visibility = 1
+            d.Representation = 'Surface'
+        
+            ColorBy(d, None)
+        
+            # Controls how quickly opacity accumulates through the rock
+            d.ScalarOpacityUnitDistance = (bounds[1] - bounds[0]) / 4.0
+        
+            d.DiffuseColor = [0.28, 0.38, 0.32]  
+            d.AmbientColor = [0.0, 0.0, 0.0]
+            d.Opacity = 0.2
+            
+            d.Specular = 0.1
+            d.SpecularPower = 10
+            d.OSPRayMaterial = "None"
+            
         disp_wire.Visibility = 1
         disp_stream.Visibility, disp_vol.Visibility = 1, 0
-        disp_stream.SetScalarBarVisibility(self.view, True)
+        disp_stream.SetScalarBarVisibility(self.view, False)
+        SaveScreenshot(temp_2, self.view, ImageResolution=self.config['resolution'], TransparentBackground=0, OverrideColorPalette='WhiteBackground')
+            
+            
+                        
+            
+        disp_wire.Visibility = 1
+        disp_stream.Visibility, disp_vol.Visibility = 1, 0
+        disp_stream.SetScalarBarVisibility(self.view, False)
         SaveScreenshot(temp_2, self.view, ImageResolution=self.config['resolution'], TransparentBackground=0, OverrideColorPalette='WhiteBackground')
         
         # 3. Volume + Streamlines
         for d in solid_displays: d.Visibility = 0
         disp_wire.Visibility = 0
         disp_stream.Visibility, disp_vol.Visibility = 1, 1
-        disp_stream.SetScalarBarVisibility(self.view, True)
+        disp_stream.SetScalarBarVisibility(self.view, False)
         SaveScreenshot(temp_3, self.view, ImageResolution=self.config['resolution'], TransparentBackground=0, OverrideColorPalette='WhiteBackground')
 
         # Combine with Matplotlib
@@ -287,6 +324,7 @@ class ParaViewRenderer:
         Disconnect()
         gc.collect()
 
+
 # ==============================================================================
 # 3. MODULAR CAMERA SYSTEM
 # ==============================================================================
@@ -294,15 +332,52 @@ def path_static(config, total_frames):
     return [config['camera_pos']] * total_frames, [config['camera_view_up']] * total_frames
 
 def path_circular(config, total_frames):
-    start_pos, focal_point, start_up = np.array(config['camera_pos']), np.array(config['focal_point']), np.array(config['camera_view_up'])
+    start_pos = np.array(config['camera_pos'])
+    focal_point = np.array(config['focal_point'])
+    start_up = np.array(config['camera_view_up'])
+    
     r = start_pos - focal_point
     angles = np.linspace(0, np.deg2rad(config.get('rotation_angle', 360)), total_frames, endpoint=False)
+    axis = config.get('rotation_axis', 'z').lower()
+    
     positions, up_vectors = [], []
     for theta in angles:
-        rx, ry = r[0] * np.cos(theta) - r[1] * np.sin(theta), r[0] * np.sin(theta) + r[1] * np.cos(theta)
-        positions.append((focal_point + np.array([rx, ry, r[2]])).tolist())
-        ux, uy = start_up[0] * np.cos(theta) - start_up[1] * np.sin(theta), start_up[0] * np.sin(theta) + start_up[1] * np.cos(theta)
-        up_vectors.append(np.array([ux, uy, start_up[2]]).tolist())
+        cos_t = np.cos(theta)
+        sin_t = np.sin(theta)
+        
+        if axis == 'z':
+            rx = r[0] * cos_t - r[1] * sin_t
+            ry = r[0] * sin_t + r[1] * cos_t
+            rz = r[2]
+            
+            ux = start_up[0] * cos_t - start_up[1] * sin_t
+            uy = start_up[0] * sin_t + start_up[1] * cos_t
+            uz = start_up[2]
+            
+        elif axis == 'y':
+            rx = r[0] * cos_t + r[2] * sin_t
+            ry = r[1]
+            rz = -r[0] * sin_t + r[2] * cos_t
+            
+            ux = start_up[0] * cos_t + start_up[2] * sin_t
+            uy = start_up[1]
+            uz = -start_up[0] * sin_t + start_up[2] * cos_t
+            
+        elif axis == 'x':
+            rx = r[0]
+            ry = r[1] * cos_t - r[2] * sin_t
+            rz = r[1] * sin_t + r[2] * cos_t
+            
+            ux = start_up[0]
+            uy = start_up[1] * cos_t - start_up[2] * sin_t
+            uz = start_up[1] * sin_t + start_up[2] * cos_t
+            
+        else:
+            raise ValueError("rotation_axis in config must be 'x', 'y', or 'z'")
+            
+        positions.append((focal_point + np.array([rx, ry, rz])).tolist())
+        up_vectors.append(np.array([ux, uy, uz]).tolist())
+        
     return positions, up_vectors
 
 def generate_camera_trajectory(config, total_frames):
@@ -311,13 +386,14 @@ def generate_camera_trajectory(config, total_frames):
     if path_type == 'circular': return path_circular(config, total_frames)
     raise ValueError("Unknown path type.")
 
+
 # ==============================================================================
 # 4. CONFIGURATION
 # ==============================================================================
 config = {
     'preview_only':     False,
     
-    # Render Quality (Keep low for fast testing, raise for final render)
+    
     'samples':          5,
     'ambient_samples':  5,
     
@@ -328,9 +404,10 @@ config = {
     'scalar_name':      'Density',     # Field for Rock/Fluid distinction
     'vector_name':      'Velocity',    # Field for Streamlines
     
-    'frames':           120, 
+    'frames':           360, 
     'camera_path_type': 'circular', 
     'rotation_angle':   360, 
+    'rotation_axis':    'y',           
     
     'camera_pos':       [-145.62, 258.12, 337.27],
     'focal_point':      [54.23, 49.59, 63.19],
@@ -338,7 +415,7 @@ config = {
     'camera_view_angle': 30,
     'camera_parallel_scale': 103.05,
     
-    'threads': 4,
+    'threads': 10,
 }
 
 # ==============================================================================

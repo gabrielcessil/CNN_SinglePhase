@@ -16,14 +16,14 @@ from Utilities import velocity_usage as vu
 # ==============================================================================
 # CONFIGURATION
 # ==============================================================================
-ROOT_DATASET_FOLDER = "../LBPMSimulations_BiggerCrops/DRP-247/Samples_1024_1024_1024/"
-shape               = (1024, 1024, 1024)
-
-n_samples           = None
-shuffle             = False
+ROOT_DATASET_FOLDER     = "../GradSimulations_BiggerCrops/IC_Doddington/Samples_500_500_500/"
+RESULTS_DIR             = "../TestSpeedUp_Simulations_BiggerCrops/IC_Doddington_500_500_500/"
+shape                   = (500, 500, 500)
+nproc                   = (1,1,1)
+n_samples               = None
+shuffle                 = False
 
 # Base Output Directory
-RESULTS_DIR             = "../TestSpeedUp_Simulations_BiggerCrops/DRP247_1024_1024_1024/"
 visualization_interval  = 1000000000
 tolerance               = 1e-2
 
@@ -31,8 +31,8 @@ raw_file        = "domain.raw"
 device          = "cpu"
 
 # SLURM & Job Settings
-jobs_running = 64
-NTASKS       = 1
+jobs_running = 45
+NTASKS       = nproc[0]*nproc[1]*nproc[2]
 mem          = 30 * 8 * shape[0]**3 // (1024**3) # GB
 
 LBPM_VERSION = "lbpm/cpu/lbpm_init_07f0eef"
@@ -143,7 +143,7 @@ for chunk_idx in range(jobs_running):
         current_results_dir = os.path.join(RESULTS_DIR, dataset_name)
         os.makedirs(current_results_dir, exist_ok=True)
         
-        print(f"  -> Setting up sample: {dataset_name} (Chunk {chunk_str_id})")
+        print(f"-> Setting up sample: {dataset_name} (Chunk {chunk_str_id})")
         
         raw_files = glob.glob(os.path.join(sample_path, "*.raw"))
         if not raw_files:
@@ -164,6 +164,7 @@ for chunk_idx in range(jobs_running):
         source_raw = os.path.join(current_results_dir, raw_file)
         geometry_uint8.tofile(source_raw)
         
+        print(f"  -> Calculating pressure drop")
         p_drop = vu.pressure_calculation(geometry_bool, tau=1.5, Re=0.1, Dens=1.0)
         
         # 1. Gradient Setup
@@ -180,33 +181,51 @@ for chunk_idx in range(jobs_running):
         uy_null[~geometry_bool] = 0.0
         ux_null[~geometry_bool] = 0.0
         pr_grad[~geometry_bool] = 0.0
-
-        sh.write_start_raw(filename=os.path.join(grad_dir, "Start.00000"), ux=ux_null, uy=uy_null, uz=uz_null, pr=pr_grad)
+        
+        sh.write_start_raw(dirpath=grad_dir, 
+                           ux=ux_null, uy=uy_null, uz=uz_null, pr=pr_grad,
+                           nproc=nproc)
+        
+        
         sh.write_lbpm_db(
             path=grad_dir, db_name="lbpm.db", domain_filename=f"../{raw_file}",
             Start=True, tau=1.5, bc=3, din=1.0, dout=1.0 - 3*p_drop,
-            nproc=(1, 1, NTASKS), n=(shape[2]//NTASKS, shape[1]//NTASKS, shape[0]//NTASKS), N=shape, 
+            nproc=nproc, 
+            n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
+            N=shape, 
             analysis_interval=analysis_interval, visualization_interval=visualization_interval,
             tolerance=tolerance, out_format="vtk"
         )
         
+        print(f"  -> Creating prediction")
         # 2. Neural Network Setup
-        geometry_edt = edt(geometry_uint8).astype("float32")
-        geometry_edt = torch.from_numpy(geometry_edt).unsqueeze(0).unsqueeze(0)
+        original_shape = geometry_uint8.shape
+        print("    -> Original geometry shape: ",original_shape)
+        
+        geometry_uint8_padded   = sh.pad_geometry(geometry_uint8) # Decoder path must not handle with odd sizes
+        print("    -> Padded geometry shape:   ",geometry_uint8_padded.shape)
+        
+        geometry_edt            = edt(geometry_uint8_padded).astype("float32")
+        geometry_edt            = torch.from_numpy(geometry_edt).unsqueeze(0).unsqueeze(0) # (B=1, C=1, Z,Y,X)
+        print("    -> EDT shape:               ",geometry_edt.shape)
         
         pred = model.predict(geometry_edt)
         pred = vu.tensor_denorm(out=pred, inp=geometry_edt)
+        pred = sh.unpad_geometry(pred, original_shape)
+        print("    -> Final prediction shape:  ",pred.shape)
         
-        uz_nn = pred[0,0].numpy().astype(np.float64)
-        uy_nn = pred[0,1].numpy().astype(np.float64)
-        ux_nn = pred[0,2].numpy().astype(np.float64)
-        pr_nn = pred[0,3].numpy().astype(np.float64)
+        uz_nn = pred[0,0].detach().cpu().numpy().astype(np.float64)
+        uy_nn = pred[0,1].detach().cpu().numpy().astype(np.float64)
+        ux_nn = pred[0,2].detach().cpu().numpy().astype(np.float64)
+        pr_nn = pred[0,3].detach().cpu().numpy().astype(np.float64)
 
-        sh.write_start_raw(filename=os.path.join(nn_dir, "Start.00000"), ux=ux_nn, uy=uy_nn, uz=uz_nn, pr=pr_nn)
+        sh.write_start_raw(dirpath=nn_dir, ux=ux_nn, uy=uy_nn, uz=uz_nn, pr=pr_nn, nproc=nproc)
         sh.write_lbpm_db(
             path=nn_dir, db_name="lbpm.db", domain_filename=f"../{raw_file}",
             Start=True, tau=1.5, bc=3, din=1.0, dout=1.0 - 3*p_drop,
-            nproc=(1, 1, NTASKS), n=(shape[2]//NTASKS, shape[1]//NTASKS, shape[0]//NTASKS), N=shape, 
+            nproc=nproc, 
+            n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
+            N=shape, 
             analysis_interval=analysis_interval, visualization_interval=visualization_interval,
             tolerance=tolerance, out_format="vtk"
         )

@@ -47,23 +47,30 @@ binary_input            = config["binary_input"]
 NN_dataset_folder       = config["NN_dataset_folder"]
 dataset_train_name      = config["dataset_train_name"]
 dataset_valid_name      = config["dataset_valid_name"]
-train_range             = None if config["train_range"] is None else tuple(config["train_range"]) 
-valid_range             = None if config["train_range"] is None else tuple(config["valid_range"])
-batch_size              = config["batch_size"]
+t_range                 = config.get("train_range", None)
+v_range                 = config.get("valid_range", None)
+train_range             = tuple(t_range) if t_range is not None else None
+valid_range             = tuple(v_range) if v_range is not None else None
+train_fraction          = config.get("train_fraction", 1) if train_range is None else 1
+valid_fraction          = config.get("valid_fraction", 1) if valid_range is None else 1
+
+# Hardware aspects
 num_workers             = config["num_workers"]
-num_threads             = config["num_threads"]
+num_threads             = config.get("num_threads", None)
+
 # Learning aspects
+batch_size              = config["batch_size"]
 N_epochs                = config["N_epochs"]
 partial_epochs          = config["partial_epochs"]
-patience                = config["patience"]
+patience                = config.get("patience", N_epochs//10)
 tolerance               = config["tolerance"]
 learning_rate           = config["learning_rate"]
-earlyStopping_loss      = config["earlyStopping_loss"]
 backPropagation_loss    = config["backPropagation_loss"]
+earlyStopping_loss      = config.get("earlyStopping_loss", backPropagation_loss)
 optimizer               = config["optimizer"]
 weight_init             = config["weight_init"]
-seed                    = config["seed"]
-train_comment           = config["train_comment"]
+seed                    = config.get("seed", 42)
+train_comment           = config.get("train_comment", "No comments included.")
 device_set              = config["device"]
 
 # Set seed to random initializations
@@ -91,7 +98,7 @@ else:
 nnt.set_logger_output_folder(NN_results_folder)
 
 #######################################################
-#************ HANDLE RESULTS FOLDER:       ***********#
+#************ HANDLE DEVICE CHOICE:       ***********#
 #######################################################
 
 if isinstance(device_set, int):
@@ -145,34 +152,41 @@ if isinstance(dataset_train_name, list):
     dataset_train_full_name = [os.path.join(NN_dataset_folder, item) for item in dataset_train_name]
     train_ds                = dr.MultiLazyDatasetTorch(h5_paths = dataset_train_full_name,
                                                        x_dtype = torch.float32,
-                                                       y_dtype = torch.float32)
+                                                       y_dtype = torch.float32,
+                                                       fraction= train_fraction)
     if train_range is not None: raise Exception("Setting the index interval is not possible if a list of datasets is provided.")
 
+# Prepares dataset name for single Lazy class (that receives one '.h5' file)
 else:
-    dataset_train_full_name = [os.path.join(NN_dataset_folder, dataset_train_name)]
+    dataset_train_full_name = os.path.join(NN_dataset_folder, dataset_train_name)
     t_list_ids              = None if train_range is None else np.arange(train_range[0],train_range[1])
     train_ds                = dr.LazyDatasetTorch(h5_path  = dataset_train_full_name,
                                                   list_ids = t_list_ids,
                                                   x_dtype  = torch.float32,
-                                                  y_dtype  = torch.float32)
+                                                  y_dtype  = torch.float32,
+                                                  fraction= train_fraction)
 print(f"  - {len(train_ds)} samples considered.")
 
 
 print("Loading Validation Data ... ")
+# Prepares dataset names for MultiLazy class (that receives a list of '.h5' files)
 if isinstance(dataset_valid_name, list):
     dataset_valid_full_name = [os.path.join(NN_dataset_folder, item) for item in dataset_valid_name]
     valid_ds                = dr.MultiLazyDatasetTorch(h5_paths = dataset_valid_full_name,
                                                        x_dtype = torch.float32,
-                                                       y_dtype = torch.float32)
+                                                       y_dtype = torch.float32,
+                                                       fraction= valid_fraction)
     if valid_range is not None: raise Exception("Setting the index interval is not possible if a list of datasets is provided.")
-        
+    
+# Prepares dataset name for single Lazy class (that receives one '.h5' file)
 else:
-    dataset_valid_full_name = [os.path.join(NN_dataset_folder, dataset_valid_name)]
+    dataset_valid_full_name = os.path.join(NN_dataset_folder, dataset_valid_name)
     v_list_ids              = None if valid_range is None else np.arange(valid_range[0],valid_range[1]), 
     valid_ds                = dr.LazyDatasetTorch(h5_path = dataset_valid_full_name, 
                                                   list_ids= v_list_ids,
                                                   x_dtype = torch.float32,
-                                                  y_dtype = torch.float32)
+                                                  y_dtype = torch.float32,
+                                                  fraction= valid_fraction)
 print(f"  - {len(valid_ds)} samples considered.")
 
 #######################################################
