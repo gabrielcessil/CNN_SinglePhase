@@ -1,0 +1,447 @@
+[*] Loading configs from standard config file: exp/SampNumber_Etapa_3_DM_SA_DN_silveira1.json
+Global seed set to 42
+Current device:      cuda
+
+
+Configurations:
+{
+    "model_name": "silveira_zyxp_1",
+    "binary_input": true,
+    "NN_dataset_folder": "../NN_Datasets_Grad_Dist_40_5_55/",
+    "dataset_train_name": [
+        "Train_Silveira_SphPore_SAug_DNorm.h5",
+        "Train_Silveira_SphGrain_SAug_DNorm.h5",
+        "Train_Oliveira_Leopard_SAug_DNorm.h5",
+        "Train_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Train_Oliveira_Berea_SAug_DNorm.h5",
+        "Train_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "dataset_valid_name": [
+        "Valid_Silveira_SphPore_SAug_DNorm.h5",
+        "Valid_Silveira_SphGrain_SAug_DNorm.h5",
+        "Valid_Oliveira_Leopard_SAug_DNorm.h5",
+        "Valid_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Valid_Oliveira_Berea_SAug_DNorm.h5",
+        "Valid_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "train_fraction": 0.125,
+    "valid_fraction": 1.0,
+    "batch_size": 8,
+    "num_workers": 4,
+    "num_threads": null,
+    "device": "cuda",
+    "N_epochs": 2000,
+    "partial_epochs": 2000,
+    "patience": 200,
+    "tolerance": null,
+    "learning_rate": 0.0001,
+    "earlyStopping_loss": "PI-MSE",
+    "backPropagation_loss": "PI-MSE",
+    "optimizer": "ADAMW",
+    "weight_init": null,
+    "seed": 42,
+    "train_comment": "Training refinement model",
+    "NN_results_folder": "/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_21_September_2026_07-01PM_Job29841/"
+}
+
+
+/home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_21_September_2026_07-01PM_Job29841/
+Metadata saved at: /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_21_September_2026_07-01PM_Job29841/metadata.json
+Loading Training Data ... 
+Considering 80 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Silveira_SphPore_SAug_DNorm.h5.
+Considering 80 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Silveira_SphGrain_SAug_DNorm.h5.
+Considering 25 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Leopard_SAug_DNorm.h5.
+Considering 25 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_CastleGate_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+Considering 17 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+Considering 19 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaBuff_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Berea_SAug_DNorm.h5.
+Considering 38 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Bentheimer_SAug_DNorm.h5.
+  - 324 samples considered.
+Loading Validation Data ... 
+Considering 64 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphPore_SAug_DNorm.h5.
+Considering 64 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphGrain_SAug_DNorm.h5.
+Considering 24 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Leopard_SAug_DNorm.h5.
+Considering 24 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_CastleGate_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+Considering 16 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaBuff_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Berea_SAug_DNorm.h5.
+Considering 36 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Bentheimer_SAug_DNorm.h5.
+  - 288 samples considered.
+Loading Model ... 
+Model size: 19.771MB
+Model size: 5179193 total parameters
+Model size: 69 trainable parameters
+Model size: 5179124 frozen parameters
+
+Starting Train on cuda... 
+
+No previous checkpoints found in /home/gabriel.silveira/dissertacao/NN_Results/NN_Trainning_21_September_2026_07-01PM_Job29841/
+
+
+Trainning session has started.
+
+--> New best solution for Validation dataset achieved at 0 / 2000: 1.2409362130694919 (100.000000% better)
+
+Executing epoch 0 / 2000 (0.0%)
+--> Average epoch processing time (seconds):  237.963416
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                1.253277   | 1.240936  
+Divergent             0.051022   | 0.050938  
+MSE in Void Space     0.414887   | 0.409602  
+Bias Error            41321.506383 | 29210.882494
+Pearson Correlation   0.656732   | 0.634562  
+--> New best solution for Validation dataset achieved at 1 / 2000: 1.1966254611810048 (3.570752% better)
+--> New best solution for Validation dataset achieved at 2 / 2000: 1.156152566274007 (3.382253% better)
+--> New best solution for Validation dataset achieved at 3 / 2000: 1.1153300835026636 (3.530891% better)
+--> New best solution for Validation dataset achieved at 4 / 2000: 1.076686441898346 (3.464772% better)
+--> New best solution for Validation dataset achieved at 5 / 2000: 1.0398789842923482 (3.418587% better)
+--> New best solution for Validation dataset achieved at 6 / 2000: 1.004554096195433 (3.397019% better)
+--> New best solution for Validation dataset achieved at 7 / 2000: 0.970771946840816 (3.362900% better)
+--> New best solution for Validation dataset achieved at 8 / 2000: 0.9380847215652466 (3.367137% better)
+--> New best solution for Validation dataset achieved at 9 / 2000: 0.907223618692822 (3.289799% better)
+--> New best solution for Validation dataset achieved at 10 / 2000: 0.8777148624261221 (3.252644% better)
+--> New best solution for Validation dataset achieved at 11 / 2000: 0.8486292792691125 (3.313785% better)
+--> New best solution for Validation dataset achieved at 12 / 2000: 0.8208685053719414 (3.271249% better)
+--> New best solution for Validation dataset achieved at 13 / 2000: 0.7952214678128561 (3.124378% better)
+--> New best solution for Validation dataset achieved at 14 / 2000: 0.7710569318797853 (3.038718% better)
+--> New best solution for Validation dataset achieved at 15 / 2000: 0.7473641998238034 (3.072760% better)
+--> New best solution for Validation dataset achieved at 16 / 2000: 0.7236086577177048 (3.178576% better)
+--> New best solution for Validation dataset achieved at 17 / 2000: 0.7018773886892531 (3.003180% better)
+--> New best solution for Validation dataset achieved at 18 / 2000: 0.6809199684196048 (2.985909% better)
+--> New best solution for Validation dataset achieved at 19 / 2000: 0.6616455316543579 (2.830646% better)
+--> New best solution for Validation dataset achieved at 20 / 2000: 0.6414901382393308 (3.046252% better)
+
+Executing epoch 20 / 2000 (1.0%)
+--> Average epoch processing time (seconds):  239.192088
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.654473   | 0.641490  
+Divergent             0.045251   | 0.044696  
+MSE in Void Space     0.306865   | 0.300754  
+Bias Error            29142.845271 | 7996.107052
+Pearson Correlation   0.667348   | 0.640956  
+--> New best solution for Validation dataset achieved at 21 / 2000: 0.6241776314046648 (2.698795% better)
+--> New best solution for Validation dataset achieved at 22 / 2000: 0.6063293632533815 (2.859485% better)
+--> New best solution for Validation dataset achieved at 23 / 2000: 0.5895836899677912 (2.761811% better)
+--> New best solution for Validation dataset achieved at 24 / 2000: 0.5721688916285833 (2.953745% better)
+--> New best solution for Validation dataset achieved at 25 / 2000: 0.5576853785249922 (2.531335% better)
+--> New best solution for Validation dataset achieved at 26 / 2000: 0.5417214184999466 (2.862539% better)
+--> New best solution for Validation dataset achieved at 27 / 2000: 0.5297515839338303 (2.209592% better)
+--> New best solution for Validation dataset achieved at 28 / 2000: 0.5147067863080237 (2.839972% better)
+--> New best solution for Validation dataset achieved at 29 / 2000: 0.5013866052031517 (2.587916% better)
+--> New best solution for Validation dataset achieved at 30 / 2000: 0.4886370019780265 (2.542869% better)
+--> New best solution for Validation dataset achieved at 31 / 2000: 0.47698960453271866 (2.383650% better)
+--> New best solution for Validation dataset achieved at 32 / 2000: 0.4643593322899606 (2.647914% better)
+--> New best solution for Validation dataset achieved at 33 / 2000: 0.45394722123940784 (2.242253% better)
+--> New best solution for Validation dataset achieved at 34 / 2000: 0.4427979663014412 (2.456069% better)
+--> New best solution for Validation dataset achieved at 35 / 2000: 0.4324181659354104 (2.344139% better)
+--> New best solution for Validation dataset achieved at 36 / 2000: 0.4223398466904958 (2.330688% better)
+--> New best solution for Validation dataset achieved at 37 / 2000: 0.41209826949569917 (2.424961% better)
+--> New best solution for Validation dataset achieved at 38 / 2000: 0.4034602906968858 (2.096097% better)
+--> New best solution for Validation dataset achieved at 39 / 2000: 0.39489523818095523 (2.122899% better)
+--> New best solution for Validation dataset achieved at 40 / 2000: 0.3860826657878028 (2.231623% better)
+
+Executing epoch 40 / 2000 (2.0%)
+--> Average epoch processing time (seconds):  239.111843
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.394946   | 0.386083  
+Divergent             0.040082   | 0.039931  
+MSE in Void Space     0.275183   | 0.273067  
+Bias Error            20061.753132 | 6081.761654
+Pearson Correlation   0.671922   | 0.650403  
+--> New best solution for Validation dataset achieved at 41 / 2000: 0.37718773633241653 (2.303892% better)
+--> New best solution for Validation dataset achieved at 42 / 2000: 0.36932742678456837 (2.083925% better)
+--> New best solution for Validation dataset achieved at 43 / 2000: 0.36189034581184387 (2.013682% better)
+--> New best solution for Validation dataset achieved at 44 / 2000: 0.353981602523062 (2.185398% better)
+--> New best solution for Validation dataset achieved at 45 / 2000: 0.3464556278453933 (2.126092% better)
+--> New best solution for Validation dataset achieved at 46 / 2000: 0.34001311742597157 (1.859548% better)
+--> New best solution for Validation dataset achieved at 47 / 2000: 0.333373555706607 (1.952737% better)
+--> New best solution for Validation dataset achieved at 48 / 2000: 0.3257932708495193 (2.273811% better)
+--> New best solution for Validation dataset achieved at 49 / 2000: 0.31907589609424275 (2.061852% better)
+--> New best solution for Validation dataset achieved at 50 / 2000: 0.31385116693046355 (1.637457% better)
+--> New best solution for Validation dataset achieved at 51 / 2000: 0.3075312202175458 (2.013676% better)
+--> New best solution for Validation dataset achieved at 52 / 2000: 0.30114320334461 (2.077193% better)
+--> New best solution for Validation dataset achieved at 53 / 2000: 0.2960415217611525 (1.694105% better)
+--> New best solution for Validation dataset achieved at 54 / 2000: 0.29083208905325997 (1.759697% better)
+--> New best solution for Validation dataset achieved at 55 / 2000: 0.285893273850282 (1.698167% better)
+--> New best solution for Validation dataset achieved at 56 / 2000: 0.2793071609404352 (2.303696% better)
+--> New best solution for Validation dataset achieved at 57 / 2000: 0.27640776212016743 (1.038068% better)
+--> New best solution for Validation dataset achieved at 58 / 2000: 0.27082108789020115 (2.021171% better)
+--> New best solution for Validation dataset achieved at 59 / 2000: 0.26608369996150333 (1.749268% better)
+--> New best solution for Validation dataset achieved at 60 / 2000: 0.2612117462688022 (1.830985% better)
+
+Executing epoch 60 / 2000 (3.0%)
+--> Average epoch processing time (seconds):  239.106108
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.269954   | 0.261212  
+Divergent             0.036140   | 0.035756  
+MSE in Void Space     0.245505   | 0.244200  
+Bias Error            9298.116236 | 6787.103505
+Pearson Correlation   0.669673   | 0.646178  
+--> New best solution for Validation dataset achieved at 61 / 2000: 0.2568003965748681 (1.688802% better)
+--> New best solution for Validation dataset achieved at 62 / 2000: 0.2525169828699695 (1.667993% better)
+--> New best solution for Validation dataset achieved at 63 / 2000: 0.24868472831116784 (1.517623% better)
+--> New best solution for Validation dataset achieved at 64 / 2000: 0.24485854183634123 (1.538569% better)
+--> New best solution for Validation dataset achieved at 65 / 2000: 0.24122025362319416 (1.485874% better)
+--> New best solution for Validation dataset achieved at 66 / 2000: 0.23672248547275862 (1.864590% better)
+--> New best solution for Validation dataset achieved at 67 / 2000: 0.23337797654999626 (1.412840% better)
+--> New best solution for Validation dataset achieved at 68 / 2000: 0.23045316918028724 (1.253249% better)
+--> New best solution for Validation dataset achieved at 69 / 2000: 0.22606376599934366 (1.904683% better)
+--> New best solution for Validation dataset achieved at 70 / 2000: 0.2226173641781012 (1.524526% better)
+--> New best solution for Validation dataset achieved at 71 / 2000: 0.21931028821402127 (1.485543% better)
+--> New best solution for Validation dataset achieved at 72 / 2000: 0.21655234404736096 (1.257553% better)
+--> New best solution for Validation dataset achieved at 73 / 2000: 0.21414404528008568 (1.112109% better)
+--> New best solution for Validation dataset achieved at 74 / 2000: 0.21058648245202172 (1.661294% better)
+--> New best solution for Validation dataset achieved at 75 / 2000: 0.20748741014136207 (1.471639% better)
+--> New best solution for Validation dataset achieved at 76 / 2000: 0.2045535051988231 (1.414016% better)
+--> New best solution for Validation dataset achieved at 77 / 2000: 0.20191378684507477 (1.290478% better)
+--> New best solution for Validation dataset achieved at 78 / 2000: 0.19958149476183784 (1.155093% better)
+--> New best solution for Validation dataset achieved at 79 / 2000: 0.19658447843458918 (1.501650% better)
+--> New best solution for Validation dataset achieved at 80 / 2000: 0.19461718284421498 (1.000738% better)
+
+Executing epoch 80 / 2000 (4.0%)
+--> Average epoch processing time (seconds):  239.087421
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.199406   | 0.194617  
+Divergent             0.033289   | 0.032798  
+MSE in Void Space     0.211494   | 0.211162  
+Bias Error            7323.106965 | 37286.322864
+Pearson Correlation   0.664833   | 0.642482  
+--> New best solution for Validation dataset achieved at 81 / 2000: 0.19182469074924788 (1.434864% better)
+--> New best solution for Validation dataset achieved at 82 / 2000: 0.18998985985914865 (0.956514% better)
+--> New best solution for Validation dataset achieved at 83 / 2000: 0.18752448053823578 (1.297637% better)
+--> New best solution for Validation dataset achieved at 84 / 2000: 0.18533018976449966 (1.170136% better)
+--> New best solution for Validation dataset achieved at 85 / 2000: 0.182576398882601 (1.485884% better)
+--> New best solution for Validation dataset achieved at 86 / 2000: 0.18084599698583284 (0.947769% better)
+--> New best solution for Validation dataset achieved at 87 / 2000: 0.17897398562894928 (1.035141% better)
+--> New best solution for Validation dataset achieved at 88 / 2000: 0.1766883180373245 (1.277095% better)
+--> New best solution for Validation dataset achieved at 89 / 2000: 0.17428970771531263 (1.357538% better)
+--> New best solution for Validation dataset achieved at 90 / 2000: 0.17296604398224089 (0.759462% better)
+--> New best solution for Validation dataset achieved at 91 / 2000: 0.1706599166823758 (1.333283% better)
+--> New best solution for Validation dataset achieved at 92 / 2000: 0.17015161158310044 (0.297847% better)
+--> New best solution for Validation dataset achieved at 93 / 2000: 0.1676757780628072 (1.455075% better)
+--> New best solution for Validation dataset achieved at 94 / 2000: 0.16568489000201225 (1.187344% better)
+--> New best solution for Validation dataset achieved at 95 / 2000: 0.1645819317135546 (0.665696% better)
+--> New best solution for Validation dataset achieved at 96 / 2000: 0.1622685194015503 (1.405630% better)
+--> New best solution for Validation dataset achieved at 97 / 2000: 0.16104507653249633 (0.753962% better)
+--> New best solution for Validation dataset achieved at 98 / 2000: 0.15939732640981674 (1.023161% better)
+--> New best solution for Validation dataset achieved at 99 / 2000: 0.15850153461926514 (0.561987% better)
+--> New best solution for Validation dataset achieved at 100 / 2000: 0.15656945067975256 (1.218969% better)
+
+Executing epoch 100 / 2000 (5.0%)
+--> Average epoch processing time (seconds):  239.122253
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.158948   | 0.156569  
+Divergent             0.030379   | 0.030020  
+MSE in Void Space     0.181031   | 0.181347  
+Bias Error            8105.078706 | 3397.680857
+Pearson Correlation   0.653843   | 0.630181  
+--> New best solution for Validation dataset achieved at 101 / 2000: 0.155662028118968 (0.579566% better)
+--> New best solution for Validation dataset achieved at 102 / 2000: 0.15391946977211368 (1.119450% better)
+--> New best solution for Validation dataset achieved at 103 / 2000: 0.15284297346240944 (0.699389% better)
+--> New best solution for Validation dataset achieved at 104 / 2000: 0.1515109089927541 (0.871525% better)
+--> New best solution for Validation dataset achieved at 105 / 2000: 0.1504403038157357 (0.706619% better)
+--> New best solution for Validation dataset achieved at 106 / 2000: 0.14862392842769623 (1.207373% better)
+--> New best solution for Validation dataset achieved at 107 / 2000: 0.14834868390527037 (0.185195% better)
+--> New best solution for Validation dataset achieved at 108 / 2000: 0.14621322767602074 (1.439484% better)
+--> New best solution for Validation dataset achieved at 109 / 2000: 0.145631840866473 (0.397629% better)
+--> New best solution for Validation dataset achieved at 110 / 2000: 0.14457390560872024 (0.726445% better)
+--> New best solution for Validation dataset achieved at 111 / 2000: 0.143018396364318 (1.075927% better)
+--> New best solution for Validation dataset achieved at 112 / 2000: 0.1420437219656176 (0.681503% better)
+--> New best solution for Validation dataset achieved at 113 / 2000: 0.14140824062956703 (0.447384% better)
+--> New best solution for Validation dataset achieved at 114 / 2000: 0.13912859993676344 (1.612099% better)
+--> New best solution for Validation dataset achieved at 116 / 2000: 0.13814976211223337 (0.703549% better)
+--> New best solution for Validation dataset achieved at 117 / 2000: 0.13691500325997671 (0.893783% better)
+--> New best solution for Validation dataset achieved at 118 / 2000: 0.13593233480221695 (0.717722% better)
+--> New best solution for Validation dataset achieved at 119 / 2000: 0.13439219175941414 (1.133022% better)
+--> New best solution for Validation dataset achieved at 120 / 2000: 0.13374047954049376 (0.484933% better)
+
+Executing epoch 120 / 2000 (6.0%)
+--> Average epoch processing time (seconds):  239.171244
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.134305   | 0.133740  
+Divergent             0.027741   | 0.027664  
+MSE in Void Space     0.159703   | 0.160783  
+Bias Error            4606.766903 | 3014.733134
+Pearson Correlation   0.645220   | 0.627377  
+--> New best solution for Validation dataset achieved at 121 / 2000: 0.13213413581252098 (1.201090% better)
+--> New best solution for Validation dataset achieved at 122 / 2000: 0.13167220768001345 (0.349590% better)
+--> New best solution for Validation dataset achieved at 123 / 2000: 0.13083192913068664 (0.638159% better)
+--> New best solution for Validation dataset achieved at 124 / 2000: 0.12953759895430672 (0.989308% better)
+--> New best solution for Validation dataset achieved at 125 / 2000: 0.12873226445582178 (0.621699% better)
+--> New best solution for Validation dataset achieved at 126 / 2000: 0.12791249507831204 (0.636802% better)
+--> New best solution for Validation dataset achieved at 127 / 2000: 0.1270439639273617 (0.679004% better)
+--> New best solution for Validation dataset achieved at 128 / 2000: 0.12646643569072089 (0.454589% better)
+--> New best solution for Validation dataset achieved at 129 / 2000: 0.12614026872648132 (0.257908% better)
+--> New best solution for Validation dataset achieved at 130 / 2000: 0.12423747012184726 (1.508478% better)
+--> New best solution for Validation dataset achieved at 131 / 2000: 0.12338454959293206 (0.686524% better)
+--> New best solution for Validation dataset achieved at 132 / 2000: 0.12299749855366018 (0.313695% better)
+--> New best solution for Validation dataset achieved at 133 / 2000: 0.12199781441854106 (0.812768% better)
+--> New best solution for Validation dataset achieved at 134 / 2000: 0.12079389434721735 (0.986837% better)
+--> New best solution for Validation dataset achieved at 135 / 2000: 0.12017833379407723 (0.509596% better)
+--> New best solution for Validation dataset achieved at 136 / 2000: 0.1194666259818607 (0.592210% better)
+--> New best solution for Validation dataset achieved at 137 / 2000: 0.11871667475336128 (0.627750% better)
+--> New best solution for Validation dataset achieved at 138 / 2000: 0.1178164171675841 (0.758324% better)
+--> New best solution for Validation dataset achieved at 139 / 2000: 0.11697336555355126 (0.715564% better)
+--> New best solution for Validation dataset achieved at 140 / 2000: 0.11612569250994259 (0.724672% better)
+
+Executing epoch 140 / 2000 (7.0%)
+--> Average epoch processing time (seconds):  239.191285
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.118244   | 0.116126  
+Divergent             0.025615   | 0.025189  
+MSE in Void Space     0.146653   | 0.147601  
+Bias Error            2724.553910 | 6528.851793
+Pearson Correlation   0.642963   | 0.624000  
+--> New best solution for Validation dataset achieved at 141 / 2000: 0.11545087479882771 (0.581110% better)
+--> New best solution for Validation dataset achieved at 142 / 2000: 0.11505473819043902 (0.343121% better)
+--> New best solution for Validation dataset achieved at 143 / 2000: 0.11397939858337243 (0.934633% better)
+--> New best solution for Validation dataset achieved at 144 / 2000: 0.11351302804218398 (0.409171% better)
+--> New best solution for Validation dataset achieved at 145 / 2000: 0.11195122657550706 (1.375879% better)
+--> New best solution for Validation dataset achieved at 146 / 2000: 0.1115202618141969 (0.384958% better)
+--> New best solution for Validation dataset achieved at 147 / 2000: 0.1105975177552965 (0.827423% better)
+--> New best solution for Validation dataset achieved at 148 / 2000: 0.1096666765709718 (0.841647% better)
+--> New best solution for Validation dataset achieved at 149 / 2000: 0.10901353591018254 (0.595569% better)
+--> New best solution for Validation dataset achieved at 150 / 2000: 0.10874957135981983 (0.242139% better)
+--> New best solution for Validation dataset achieved at 151 / 2000: 0.10822239600949818 (0.484761% better)
+--> New best solution for Validation dataset achieved at 152 / 2000: 0.10730605034364595 (0.846725% better)
+--> New best solution for Validation dataset achieved at 153 / 2000: 0.10634862217638227 (0.892241% better)
+--> New best solution for Validation dataset achieved at 154 / 2000: 0.10578500562243992 (0.529971% better)
+--> New best solution for Validation dataset achieved at 155 / 2000: 0.1050250900702344 (0.718358% better)
+--> New best solution for Validation dataset achieved at 156 / 2000: 0.1039355287535323 (1.037430% better)
+--> New best solution for Validation dataset achieved at 157 / 2000: 0.10373987754185994 (0.188243% better)
+--> New best solution for Validation dataset achieved at 158 / 2000: 0.10278223558432525 (0.923118% better)
+--> New best solution for Validation dataset achieved at 159 / 2000: 0.10194940244158109 (0.810289% better)
+--> New best solution for Validation dataset achieved at 160 / 2000: 0.10116027957863277 (0.774034% better)
+
+Executing epoch 160 / 2000 (8.0%)
+--> Average epoch processing time (seconds):  239.22215
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.101735   | 0.101160  
+Divergent             0.023219   | 0.022861  
+MSE in Void Space     0.137820   | 0.138849  
+Bias Error            3198.886017 | 2605.922311
+Pearson Correlation   0.643893   | 0.621351  
+--> New best solution for Validation dataset achieved at 161 / 2000: 0.10100765898823738 (0.150870% better)
+--> New best solution for Validation dataset achieved at 162 / 2000: 0.09952260408964422 (1.470240% better)
+--> New best solution for Validation dataset achieved at 163 / 2000: 0.09887588934765922 (0.649817% better)
+--> New best solution for Validation dataset achieved at 164 / 2000: 0.09840240308807956 (0.478869% better)
+--> New best solution for Validation dataset achieved at 165 / 2000: 0.09781000473433071 (0.602016% better)
+--> New best solution for Validation dataset achieved at 166 / 2000: 0.09744183181060685 (0.376416% better)
+--> New best solution for Validation dataset achieved at 167 / 2000: 0.09680284766687287 (0.655760% better)
+--> New best solution for Validation dataset achieved at 168 / 2000: 0.09610816525916259 (0.717626% better)
+--> New best solution for Validation dataset achieved at 169 / 2000: 0.0952887682037221 (0.852578% better)
+--> New best solution for Validation dataset achieved at 170 / 2000: 0.0943689313199785 (0.965315% better)
+--> New best solution for Validation dataset achieved at 171 / 2000: 0.09398485057883793 (0.406999% better)
+--> New best solution for Validation dataset achieved at 172 / 2000: 0.0934546800951163 (0.564102% better)
+--> New best solution for Validation dataset achieved at 173 / 2000: 0.09290163032710552 (0.591784% better)
+--> New best solution for Validation dataset achieved at 174 / 2000: 0.09205524105992582 (0.911060% better)
+--> New best solution for Validation dataset achieved at 175 / 2000: 0.09139232751395968 (0.720126% better)
+--> New best solution for Validation dataset achieved at 176 / 2000: 0.09087961663802464 (0.561000% better)
+--> New best solution for Validation dataset achieved at 177 / 2000: 0.09015549201932219 (0.796795% better)
+--> New best solution for Validation dataset achieved at 178 / 2000: 0.09007708811097676 (0.086965% better)
+--> New best solution for Validation dataset achieved at 179 / 2000: 0.08874594068361653 (1.477787% better)
+--> New best solution for Validation dataset achieved at 180 / 2000: 0.08760410805957185 (1.286631% better)
+
+Executing epoch 180 / 2000 (9.0%)
+--> Average epoch processing time (seconds):  239.246695
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.088709   | 0.087604  
+Divergent             0.021104   | 0.020556  
+MSE in Void Space     0.131068   | 0.132359  
+Bias Error            5143.596465 | 4142.267205
+Pearson Correlation   0.646406   | 0.620767  
+--> New best solution for Validation dataset achieved at 181 / 2000: 0.0874421735190683 (0.184848% better)
+--> New best solution for Validation dataset achieved at 182 / 2000: 0.08723385249161059 (0.238239% better)
+--> New best solution for Validation dataset achieved at 183 / 2000: 0.08669029838509029 (0.623100% better)
+--> New best solution for Validation dataset achieved at 184 / 2000: 0.08576346095651388 (1.069136% better)
+--> New best solution for Validation dataset achieved at 185 / 2000: 0.08534350173754825 (0.489671% better)
+--> New best solution for Validation dataset achieved at 186 / 2000: 0.08441895184417565 (1.083328% better)
+--> New best solution for Validation dataset achieved at 187 / 2000: 0.08395974793367916 (0.543958% better)
+--> New best solution for Validation dataset achieved at 188 / 2000: 0.08348638812700908 (0.563794% better)
+--> New best solution for Validation dataset achieved at 189 / 2000: 0.08299533805499475 (0.588180% better)
+--> New best solution for Validation dataset achieved at 190 / 2000: 0.08247387729999092 (0.628301% better)
+--> New best solution for Validation dataset achieved at 191 / 2000: 0.08171703118003076 (0.917680% better)
+--> New best solution for Validation dataset achieved at 192 / 2000: 0.0810182343961464 (0.855142% better)
+--> New best solution for Validation dataset achieved at 193 / 2000: 0.08037795861148173 (0.790286% better)
+--> New best solution for Validation dataset achieved at 194 / 2000: 0.07993616650087966 (0.549643% better)
+--> New best solution for Validation dataset achieved at 195 / 2000: 0.07902127938965957 (1.144522% better)
+--> New best solution for Validation dataset achieved at 196 / 2000: 0.07790662286182244 (1.410578% better)
+--> New best solution for Validation dataset achieved at 198 / 2000: 0.07751631302138169 (0.500997% better)
+--> New best solution for Validation dataset achieved at 199 / 2000: 0.07676723185512754 (0.966353% better)
+--> New best solution for Validation dataset achieved at 200 / 2000: 0.07669621633572711 (0.092508% better)
+
+Executing epoch 200 / 2000 (10.0%)
+--> Average epoch processing time (seconds):  239.269961
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.075779   | 0.076696  
+Divergent             0.018685   | 0.018730  
+MSE in Void Space     0.125770   | 0.127180  
+Bias Error            2074.016101 | 1393.370412
+Pearson Correlation   0.651193   | 0.630351  
+--> New best solution for Validation dataset achieved at 201 / 2000: 0.07599950726661417 (0.908401% better)
+--> New best solution for Validation dataset achieved at 202 / 2000: 0.07553080283105373 (0.616720% better)
+--> New best solution for Validation dataset achieved at 203 / 2000: 0.0743232559826639 (1.598748% better)
+--> New best solution for Validation dataset achieved at 204 / 2000: 0.07418220883442296 (0.189775% better)
+--> New best solution for Validation dataset achieved at 205 / 2000: 0.07377652917057276 (0.546869% better)
+--> New best solution for Validation dataset achieved at 206 / 2000: 0.0731073994603422 (0.906968% better)
+--> New best solution for Validation dataset achieved at 207 / 2000: 0.07240149047639635 (0.965578% better)
+--> New best solution for Validation dataset achieved at 208 / 2000: 0.07217359667023023 (0.314764% better)
+--> New best solution for Validation dataset achieved at 209 / 2000: 0.07174827706896597 (0.589301% better)
+--> New best solution for Validation dataset achieved at 210 / 2000: 0.07084658793691131 (1.256740% better)
+--> New best solution for Validation dataset achieved at 211 / 2000: 0.07038161572482851 (0.656309% better)
+--> New best solution for Validation dataset achieved at 212 / 2000: 0.06960660539981392 (1.101154% better)
+--> New best solution for Validation dataset achieved at 213 / 2000: 0.0695647532120347 (0.060127% better)
+--> New best solution for Validation dataset achieved at 214 / 2000: 0.06921069458540943 (0.508963% better)
+--> New best solution for Validation dataset achieved at 215 / 2000: 0.06866893420616786 (0.782770% better)
+--> New best solution for Validation dataset achieved at 216 / 2000: 0.06830678911258777 (0.527378% better)
+--> New best solution for Validation dataset achieved at 217 / 2000: 0.06708746165451077 (1.785075% better)
+--> New best solution for Validation dataset achieved at 218 / 2000: 0.06702369710223542 (0.095047% better)
+--> New best solution for Validation dataset achieved at 219 / 2000: 0.06675867798427741 (0.395411% better)
+--> New best solution for Validation dataset achieved at 220 / 2000: 0.06587530796726544 (1.323229% better)
+
+Executing epoch 220 / 2000 (11.0%)
+--> Average epoch processing time (seconds):  239.290457
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.065588   | 0.065875  
+Divergent             0.016690   | 0.016533  
+MSE in Void Space     0.122023   | 0.123374  
+Bias Error            1364.646271 | 1643.978009
+Pearson Correlation   0.651982   | 0.630796  
+--> New best solution for Validation dataset achieved at 221 / 2000: 0.06489484943449497 (1.488355% better)
+--> New best solution for Validation dataset achieved at 223 / 2000: 0.06418674139098988 (1.091162% better)
+--> New best solution for Validation dataset achieved at 224 / 2000: 0.06354173024495442 (1.004898% better)
+--> New best solution for Validation dataset achieved at 226 / 2000: 0.06330514047294855 (0.372338% better)
+--> New best solution for Validation dataset achieved at 227 / 2000: 0.06315011406938235 (0.244888% better)
+--> New best solution for Validation dataset achieved at 228 / 2000: 0.06243958758811156 (1.125139% better)

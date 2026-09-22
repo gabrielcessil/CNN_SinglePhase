@@ -12973,3 +12973,2065 @@ Mean: 44.7203%, Std: 3.6782%
 ------------------------------------------------------------------
   Processing Batch 3 (Size: 50)...
     Evaluating Ko et al (D3)
+Bias Error: using velocity magnitude
+Mean: 78.7139, Std: 113.2458
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=37.5369%; std=30.9608
+ -- Sample 1: mean=35.8057%; std=28.9310
+ -- Sample 2: mean=36.0902%; std=26.7971
+ -- Sample 3: mean=34.5553%; std=26.5450
+ -- Sample 4: mean=51.1763%; std=20.4897
+ -- Sample 5: mean=49.4110%; std=18.3223
+ -- Sample 6: mean=48.8884%; std=16.7385
+ -- Sample 7: mean=51.3549%; std=19.6235
+ -- Sample 8: mean=46.6708%; std=38.1715
+ -- Sample 9: mean=45.6746%; std=39.5599
+ -- Sample 10: mean=43.5989%; std=35.6456
+ -- Sample 11: mean=43.7065%; std=35.7752
+ -- Sample 12: mean=46.2915%; std=14.4691
+ -- Sample 13: mean=47.5626%; std=16.0877
+ -- Sample 14: mean=46.1807%; std=16.4459
+ -- Sample 15: mean=46.2827%; std=15.2494
+ -- Sample 16: mean=56.7222%; std=68.8458
+ -- Sample 17: mean=66.7775%; std=76.9448
+ -- Sample 18: mean=57.7064%; std=68.2762
+ -- Sample 19: mean=62.8113%; std=67.5017
+ -- Sample 20: mean=291.3575%; std=287.4509
+ -- Sample 21: mean=333.5197%; std=308.6412
+ -- Sample 22: mean=324.3792%; std=311.9000
+ -- Sample 23: mean=322.4044%; std=309.1946
+ -- Sample 24: mean=311.8947%; std=305.8651
+ -- Sample 25: mean=296.5514%; std=337.3411
+ -- Sample 26: mean=356.4511%; std=393.1299
+ -- Sample 27: mean=350.4127%; std=326.0522
+ -- Sample 28: mean=23.9926%; std=20.8551
+ -- Sample 29: mean=26.9016%; std=18.1362
+ -- Sample 30: mean=25.3460%; std=17.4951
+ -- Sample 31: mean=22.2197%; std=19.0518
+ -- Sample 32: mean=36.5907%; std=29.2730
+ -- Sample 33: mean=36.9549%; std=28.8424
+ -- Sample 34: mean=42.0855%; std=25.8319
+ -- Sample 35: mean=38.9902%; std=30.4256
+ -- Sample 36: mean=58.4379%; std=55.1851
+ -- Sample 37: mean=51.5351%; std=50.8605
+ -- Sample 38: mean=55.0696%; std=58.1724
+ -- Sample 39: mean=57.4276%; std=55.4740
+ -- Sample 40: mean=42.1417%; std=34.8614
+ -- Sample 41: mean=34.1507%; std=27.7811
+ -- Sample 42: mean=35.7873%; std=27.1060
+ -- Sample 43: mean=38.9262%; std=32.6285
+ -- Sample 44: mean=64.9035%; std=86.6305
+ -- Sample 45: mean=66.7303%; std=97.8526
+ -- Sample 46: mean=63.0914%; std=84.4407
+ -- Sample 47: mean=63.7240%; std=77.7113
+ -- Sample 48: mean=51.1672%; std=31.7014
+ -- Sample 49: mean=48.6250%; std=29.1539
+Mean: 90.5315%, Std: 102.5479%
+------------------------------------------------------------------
+Angular error:
+ -- Sample 0: mean=37.0070º; std=37.7833
+ -- Sample 1: mean=38.4312º; std=38.2855
+ -- Sample 2: mean=37.9972º; std=37.5987
+ -- Sample 3: mean=36.6056º; std=36.3630
+ -- Sample 4: mean=31.9420º; std=35.8462
+ -- Sample 5: mean=33.1473º; std=36.8236
+ -- Sample 6: mean=33.4250º; std=37.0016
+ -- Sample 7: mean=31.9866º; std=35.8979
+ -- Sample 8: mean=39.7771º; std=38.1329
+ -- Sample 9: mean=39.1021º; std=37.7293
+ -- Sample 10: mean=41.6767º; std=40.2745
+ -- Sample 11: mean=42.0109º; std=39.5713
+ -- Sample 12: mean=32.2453º; std=36.1717
+ -- Sample 13: mean=32.6383º; std=36.5442
+ -- Sample 14: mean=33.4300º; std=35.8850
+ -- Sample 15: mean=33.1262º; std=35.4573
+ -- Sample 16: mean=32.0761º; std=34.4367
+ -- Sample 17: mean=32.7267º; std=34.1192
+ -- Sample 18: mean=31.1740º; std=33.4373
+ -- Sample 19: mean=30.2183º; std=33.1439
+ -- Sample 20: mean=35.3139º; std=39.9929
+ -- Sample 21: mean=36.2063º; std=39.9510
+ -- Sample 22: mean=36.0179º; std=38.7102
+ -- Sample 23: mean=34.5006º; std=38.3630
+ -- Sample 24: mean=49.7419º; std=42.6657
+ -- Sample 25: mean=49.9119º; std=41.6490
+ -- Sample 26: mean=47.2888º; std=41.6492
+ -- Sample 27: mean=47.9168º; std=42.7480
+ -- Sample 28: mean=31.9151º; std=36.7759
+ -- Sample 29: mean=32.5659º; std=36.5109
+ -- Sample 30: mean=31.2693º; std=36.0447
+ -- Sample 31: mean=31.8316º; std=36.3771
+ -- Sample 32: mean=25.0713º; std=31.4144
+ -- Sample 33: mean=25.9344º; std=32.6658
+ -- Sample 34: mean=27.3591º; std=34.4231
+ -- Sample 35: mean=25.6885º; std=31.6898
+ -- Sample 36: mean=37.7756º; std=39.2682
+ -- Sample 37: mean=34.8024º; std=37.1339
+ -- Sample 38: mean=35.7468º; std=37.4622
+ -- Sample 39: mean=37.8629º; std=39.4509
+ -- Sample 40: mean=38.9540º; std=38.8747
+ -- Sample 41: mean=41.1099º; std=39.5882
+ -- Sample 42: mean=42.6591º; std=39.5141
+ -- Sample 43: mean=41.0585º; std=39.5942
+ -- Sample 44: mean=44.5998º; std=40.1073
+ -- Sample 45: mean=44.6134º; std=39.2993
+ -- Sample 46: mean=45.9059º; std=40.9314
+ -- Sample 47: mean=47.5438º; std=42.0554
+ -- Sample 48: mean=38.5024º; std=36.6838
+ -- Sample 49: mean=38.4842º; std=36.9707
+Mean: 36.7779º, Std: 6.1207º
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7817
+ -- Sample 1: 0.8155
+ -- Sample 2: 0.8389
+ -- Sample 3: 0.8182
+ -- Sample 4: 0.8655
+ -- Sample 5: 0.9124
+ -- Sample 6: 0.9257
+ -- Sample 7: 0.8701
+ -- Sample 8: 0.7984
+ -- Sample 9: 0.8020
+ -- Sample 10: 0.8241
+ -- Sample 11: 0.8129
+ -- Sample 12: 0.9615
+ -- Sample 13: 0.9517
+ -- Sample 14: 0.9495
+ -- Sample 15: 0.9589
+ -- Sample 16: 0.7205
+ -- Sample 17: 0.7244
+ -- Sample 18: 0.6916
+ -- Sample 19: 0.6809
+ -- Sample 20: 0.5920
+ -- Sample 21: 0.5924
+ -- Sample 22: 0.5802
+ -- Sample 23: 0.5967
+ -- Sample 24: 0.2553
+ -- Sample 25: 0.2522
+ -- Sample 26: 0.2524
+ -- Sample 27: 0.2866
+ -- Sample 28: 0.9415
+ -- Sample 29: 0.9349
+ -- Sample 30: 0.9425
+ -- Sample 31: 0.9474
+ -- Sample 32: 0.9440
+ -- Sample 33: 0.9541
+ -- Sample 34: 0.9645
+ -- Sample 35: 0.9536
+ -- Sample 36: 0.9250
+ -- Sample 37: 0.9055
+ -- Sample 38: 0.8992
+ -- Sample 39: 0.9171
+ -- Sample 40: 0.8550
+ -- Sample 41: 0.8775
+ -- Sample 42: 0.8725
+ -- Sample 43: 0.8698
+ -- Sample 44: 0.8057
+ -- Sample 45: 0.7713
+ -- Sample 46: 0.7966
+ -- Sample 47: 0.7996
+ -- Sample 48: 0.7672
+ -- Sample 49: 0.8047
+Mean=0.7912, Std=0.1873
+------------------------------------------------------------------
+Flux Error:
+ -- Sample 0: 0.5698
+ -- Sample 1: 0.5841
+ -- Sample 2: 0.5846
+ -- Sample 3: 0.6476
+ -- Sample 4: 0.5713
+ -- Sample 5: 0.5644
+ -- Sample 6: 0.5851
+ -- Sample 7: 0.5705
+ -- Sample 8: 0.8310
+ -- Sample 9: 1.2336
+ -- Sample 10: 0.8091
+ -- Sample 11: 1.0872
+ -- Sample 12: 0.6835
+ -- Sample 13: 0.5276
+ -- Sample 14: 0.6943
+ -- Sample 15: 0.5950
+ -- Sample 16: 0.9484
+ -- Sample 17: 1.1245
+ -- Sample 18: 1.1901
+ -- Sample 19: 0.9949
+ -- Sample 20: 3.5384
+ -- Sample 21: 4.4834
+ -- Sample 22: 3.8573
+ -- Sample 23: 4.2954
+ -- Sample 24: 3.4678
+ -- Sample 25: 3.2217
+ -- Sample 26: 4.2741
+ -- Sample 27: 3.8739
+ -- Sample 28: 0.8072
+ -- Sample 29: 0.8451
+ -- Sample 30: 0.8035
+ -- Sample 31: 0.8765
+ -- Sample 32: 1.0177
+ -- Sample 33: 1.1264
+ -- Sample 34: 1.1518
+ -- Sample 35: 1.1227
+ -- Sample 36: 1.4252
+ -- Sample 37: 0.8002
+ -- Sample 38: 1.3657
+ -- Sample 39: 0.8822
+ -- Sample 40: 0.6087
+ -- Sample 41: 0.7114
+ -- Sample 42: 0.5002
+ -- Sample 43: 0.7223
+ -- Sample 44: 0.9185
+ -- Sample 45: 0.5692
+ -- Sample 46: 0.8745
+ -- Sample 47: 0.4861
+ -- Sample 48: 0.6573
+ -- Sample 49: 0.8029
+Mean: 1.3097, Std: 1.1549
+------------------------------------------------------------------
+Tortuosity Comparison:
+ -- Sample 0: 16.7449%
+ -- Sample 1: 20.4914%
+ -- Sample 2: 15.9776%
+ -- Sample 3: 20.3001%
+ -- Sample 4: 3.6786%
+ -- Sample 5: 11.9973%
+ -- Sample 6: 11.0272%
+ -- Sample 7: 2.7699%
+ -- Sample 8: 6.0976%
+ -- Sample 9: 3.1615%
+ -- Sample 10: 6.1112%
+ -- Sample 11: 12.6420%
+ -- Sample 12: 12.1627%
+ -- Sample 13: 6.4074%
+ -- Sample 14: 6.3092%
+ -- Sample 15: 13.5811%
+ -- Sample 16: 10.1078%
+ -- Sample 17: 16.0309%
+ -- Sample 18: 13.4422%
+ -- Sample 19: 10.0659%
+ -- Sample 20: 5.1446%
+ -- Sample 21: 1.2614%
+ -- Sample 22: 0.6080%
+ -- Sample 23: 0.2918%
+ -- Sample 24: 7.9941%
+ -- Sample 25: 9.6121%
+ -- Sample 26: 16.9326%
+ -- Sample 27: 14.0123%
+ -- Sample 28: 4.3268%
+ -- Sample 29: 3.6474%
+ -- Sample 30: 2.5456%
+ -- Sample 31: 4.6387%
+ -- Sample 32: 0.6744%
+ -- Sample 33: 1.1756%
+ -- Sample 34: 1.4701%
+ -- Sample 35: 0.7972%
+ -- Sample 36: 2.5109%
+ -- Sample 37: 2.3152%
+ -- Sample 38: 2.6771%
+ -- Sample 39: 1.7818%
+ -- Sample 40: 3.9760%
+ -- Sample 41: 6.0918%
+ -- Sample 42: 10.6697%
+ -- Sample 43: 9.8983%
+ -- Sample 44: 5.9821%
+ -- Sample 45: 2.6553%
+ -- Sample 46: 0.8165%
+ -- Sample 47: 9.2087%
+ -- Sample 48: 26.8282%
+ -- Sample 49: 20.7301%
+Mean: 8.0076%, Std: 6.3939%
+------------------------------------------------------------------
+Evaluating Divergent:
+ -- Sample 0: 44.8519%
+ -- Sample 1: 44.1688%
+ -- Sample 2: 43.2783%
+ -- Sample 3: 43.8664%
+ -- Sample 4: 40.3215%
+ -- Sample 5: 41.1109%
+ -- Sample 6: 41.3479%
+ -- Sample 7: 40.4840%
+ -- Sample 8: 44.8892%
+ -- Sample 9: 45.8919%
+ -- Sample 10: 45.6627%
+ -- Sample 11: 45.7520%
+ -- Sample 12: 40.9569%
+ -- Sample 13: 40.1299%
+ -- Sample 14: 40.5199%
+ -- Sample 15: 40.6665%
+ -- Sample 16: 44.7416%
+ -- Sample 17: 46.0771%
+ -- Sample 18: 45.7030%
+ -- Sample 19: 44.2870%
+ -- Sample 20: 46.6012%
+ -- Sample 21: 47.3498%
+ -- Sample 22: 48.1305%
+ -- Sample 23: 47.0155%
+ -- Sample 24: 50.9039%
+ -- Sample 25: 50.4883%
+ -- Sample 26: 49.6450%
+ -- Sample 27: 49.8384%
+ -- Sample 28: 41.0205%
+ -- Sample 29: 42.1029%
+ -- Sample 30: 40.5972%
+ -- Sample 31: 41.3279%
+ -- Sample 32: 40.0196%
+ -- Sample 33: 40.6679%
+ -- Sample 34: 41.2637%
+ -- Sample 35: 39.9410%
+ -- Sample 36: 42.9882%
+ -- Sample 37: 42.5197%
+ -- Sample 38: 42.8778%
+ -- Sample 39: 42.7766%
+ -- Sample 40: 50.6106%
+ -- Sample 41: 50.8901%
+ -- Sample 42: 51.0396%
+ -- Sample 43: 51.3542%
+ -- Sample 44: 51.1197%
+ -- Sample 45: 51.6045%
+ -- Sample 46: 51.8514%
+ -- Sample 47: 51.6040%
+ -- Sample 48: 45.1208%
+ -- Sample 49: 44.6303%
+Mean: 45.0522%, Std: 3.9118%
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 42)...
+    Evaluating Ko et al (D3)
+Bias Error: using velocity magnitude
+Mean: 31.9468, Std: 27.0034
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=50.7205%; std=32.6873
+ -- Sample 1: mean=49.9195%; std=34.3337
+ -- Sample 2: mean=27.6828%; std=18.3892
+ -- Sample 3: mean=32.9761%; std=18.5221
+ -- Sample 4: mean=29.5424%; std=18.7395
+ -- Sample 5: mean=27.0401%; std=19.3152
+ -- Sample 6: mean=107.4268%; std=111.9333
+ -- Sample 7: mean=95.6501%; std=92.3551
+ -- Sample 8: mean=99.0656%; std=104.9105
+ -- Sample 9: mean=119.3001%; std=137.3749
+ -- Sample 10: mean=30.8730%; std=22.6523
+ -- Sample 11: mean=27.6768%; std=23.4827
+ -- Sample 12: mean=20.7675%; std=19.5256
+ -- Sample 13: mean=35.2183%; std=28.7084
+ -- Sample 14: mean=43.9092%; std=19.6906
+ -- Sample 15: mean=42.3486%; std=18.8561
+ -- Sample 16: mean=38.5734%; std=20.1609
+ -- Sample 17: mean=40.6448%; std=19.8401
+ -- Sample 18: mean=34.9620%; std=34.9901
+ -- Sample 19: mean=38.4519%; std=34.8069
+ -- Sample 20: mean=42.6858%; std=31.4181
+ -- Sample 21: mean=33.5579%; std=26.0614
+ -- Sample 22: mean=45.7191%; std=37.2365
+ -- Sample 23: mean=42.8284%; std=32.6463
+ -- Sample 24: mean=48.7149%; std=34.7424
+ -- Sample 25: mean=48.5138%; std=40.2723
+ -- Sample 26: mean=86.8808%; std=76.5255
+ -- Sample 27: mean=83.1624%; std=75.3303
+ -- Sample 28: mean=84.7009%; std=74.5839
+ -- Sample 29: mean=90.4769%; std=85.3148
+ -- Sample 30: mean=50.5137%; std=33.5003
+ -- Sample 31: mean=49.1413%; std=30.9270
+ -- Sample 32: mean=48.2727%; std=28.7913
+ -- Sample 33: mean=48.1283%; std=30.4267
+ -- Sample 34: mean=28.0709%; std=19.5248
+ -- Sample 35: mean=29.2461%; std=20.4423
+ -- Sample 36: mean=32.8304%; std=19.8104
+ -- Sample 37: mean=29.0596%; std=19.7551
+ -- Sample 38: mean=39.7128%; std=25.0273
+ -- Sample 39: mean=39.9980%; std=25.0356
+ -- Sample 40: mean=42.5955%; std=28.7790
+ -- Sample 41: mean=41.0361%; std=29.6247
+Mean: 49.4904%, Std: 24.2107%
+------------------------------------------------------------------
+Angular error:
+ -- Sample 0: mean=40.3088º; std=37.8580
+ -- Sample 1: mean=40.7116º; std=37.9445
+ -- Sample 2: mean=35.7638º; std=39.9213
+ -- Sample 3: mean=34.9423º; std=38.0787
+ -- Sample 4: mean=33.7211º; std=37.5260
+ -- Sample 5: mean=35.3711º; std=39.7520
+ -- Sample 6: mean=38.1552º; std=36.3077
+ -- Sample 7: mean=37.4057º; std=35.8945
+ -- Sample 8: mean=38.9665º; std=37.1586
+ -- Sample 9: mean=38.6950º; std=36.8545
+ -- Sample 10: mean=29.1168º; std=35.0410
+ -- Sample 11: mean=28.3057º; std=34.2305
+ -- Sample 12: mean=28.7486º; std=34.9217
+ -- Sample 13: mean=29.6198º; std=35.3035
+ -- Sample 14: mean=46.0889º; std=41.9112
+ -- Sample 15: mean=45.9653º; std=41.8900
+ -- Sample 16: mean=46.3309º; std=42.5781
+ -- Sample 17: mean=45.7074º; std=41.6978
+ -- Sample 18: mean=38.3725º; std=35.3928
+ -- Sample 19: mean=37.6093º; std=34.6782
+ -- Sample 20: mean=37.5900º; std=35.7537
+ -- Sample 21: mean=38.9762º; std=36.5030
+ -- Sample 22: mean=47.9284º; std=42.2872
+ -- Sample 23: mean=48.5408º; std=42.7435
+ -- Sample 24: mean=50.7198º; std=42.4216
+ -- Sample 25: mean=49.8990º; std=41.9113
+ -- Sample 26: mean=27.3992º; std=33.3648
+ -- Sample 27: mean=26.9944º; std=32.8457
+ -- Sample 28: mean=27.2601º; std=33.3122
+ -- Sample 29: mean=27.7871º; std=33.5475
+ -- Sample 30: mean=26.2181º; std=35.5609
+ -- Sample 31: mean=25.8171º; std=35.1601
+ -- Sample 32: mean=26.4903º; std=35.1730
+ -- Sample 33: mean=27.0297º; std=35.1236
+ -- Sample 34: mean=35.3823º; std=37.9932
+ -- Sample 35: mean=34.7730º; std=37.2841
+ -- Sample 36: mean=35.3985º; std=37.8992
+ -- Sample 37: mean=35.8039º; std=38.0352
+ -- Sample 38: mean=49.0184º; std=43.5114
+ -- Sample 39: mean=48.2444º; std=43.4579
+ -- Sample 40: mean=50.4904º; std=43.3344
+ -- Sample 41: mean=50.7496º; std=43.8525
+Mean: 37.5813º, Std: 8.0394º
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7961
+ -- Sample 1: 0.7921
+ -- Sample 2: 0.9369
+ -- Sample 3: 0.8993
+ -- Sample 4: 0.9231
+ -- Sample 5: 0.9311
+ -- Sample 6: 0.7900
+ -- Sample 7: 0.8383
+ -- Sample 8: 0.8210
+ -- Sample 9: 0.7558
+ -- Sample 10: 0.9579
+ -- Sample 11: 0.9270
+ -- Sample 12: 0.9482
+ -- Sample 13: 0.9510
+ -- Sample 14: 0.9477
+ -- Sample 15: 0.9420
+ -- Sample 16: 0.9495
+ -- Sample 17: 0.9502
+ -- Sample 18: 0.8415
+ -- Sample 19: 0.8263
+ -- Sample 20: 0.8208
+ -- Sample 21: 0.8646
+ -- Sample 22: 0.7942
+ -- Sample 23: 0.8072
+ -- Sample 24: 0.7619
+ -- Sample 25: 0.7476
+ -- Sample 26: 0.7863
+ -- Sample 27: 0.7975
+ -- Sample 28: 0.8029
+ -- Sample 29: 0.7759
+ -- Sample 30: 0.8577
+ -- Sample 31: 0.8441
+ -- Sample 32: 0.8372
+ -- Sample 33: 0.8417
+ -- Sample 34: 0.9444
+ -- Sample 35: 0.9353
+ -- Sample 36: 0.9270
+ -- Sample 37: 0.9431
+ -- Sample 38: 0.8557
+ -- Sample 39: 0.8363
+ -- Sample 40: 0.8342
+ -- Sample 41: 0.8669
+Mean=0.8621, Std=0.0659
+------------------------------------------------------------------
+Flux Error:
+ -- Sample 0: 0.6716
+ -- Sample 1: 0.7582
+ -- Sample 2: 0.9514
+ -- Sample 3: 1.1290
+ -- Sample 4: 1.0145
+ -- Sample 5: 1.0985
+ -- Sample 6: 1.5630
+ -- Sample 7: 1.1346
+ -- Sample 8: 1.5732
+ -- Sample 9: 1.2678
+ -- Sample 10: 1.0976
+ -- Sample 11: 1.1415
+ -- Sample 12: 0.9346
+ -- Sample 13: 1.2361
+ -- Sample 14: 0.7945
+ -- Sample 15: 0.6951
+ -- Sample 16: 0.8028
+ -- Sample 17: 0.7177
+ -- Sample 18: 0.5614
+ -- Sample 19: 0.4428
+ -- Sample 20: 0.6186
+ -- Sample 21: 0.3959
+ -- Sample 22: 0.7634
+ -- Sample 23: 0.5439
+ -- Sample 24: 0.7749
+ -- Sample 25: 0.5433
+ -- Sample 26: 0.7099
+ -- Sample 27: 0.6801
+ -- Sample 28: 0.7953
+ -- Sample 29: 0.6776
+ -- Sample 30: 1.0305
+ -- Sample 31: 1.0764
+ -- Sample 32: 0.9308
+ -- Sample 33: 1.0809
+ -- Sample 34: 0.6569
+ -- Sample 35: 0.8939
+ -- Sample 36: 0.6319
+ -- Sample 37: 0.8597
+ -- Sample 38: 0.4990
+ -- Sample 39: 0.8009
+ -- Sample 40: 0.4721
+ -- Sample 41: 0.8156
+Mean: 0.8533, Std: 0.2736
+------------------------------------------------------------------
+Tortuosity Comparison:
+ -- Sample 0: 25.3905%
+ -- Sample 1: 29.0033%
+ -- Sample 2: 1.2657%
+ -- Sample 3: 0.9198%
+ -- Sample 4: 1.4459%
+ -- Sample 5: 1.2386%
+ -- Sample 6: 5.5889%
+ -- Sample 7: 1.6811%
+ -- Sample 8: 1.9166%
+ -- Sample 9: 2.7140%
+ -- Sample 10: 1.2111%
+ -- Sample 11: 0.2239%
+ -- Sample 12: 2.0868%
+ -- Sample 13: 2.4831%
+ -- Sample 14: 13.2764%
+ -- Sample 15: 9.7482%
+ -- Sample 16: 9.6395%
+ -- Sample 17: 11.2565%
+ -- Sample 18: 5.9330%
+ -- Sample 19: 7.3745%
+ -- Sample 20: 3.1704%
+ -- Sample 21: 5.8820%
+ -- Sample 22: 43.1902%
+ -- Sample 23: 43.2485%
+ -- Sample 24: 44.1086%
+ -- Sample 25: 47.7357%
+ -- Sample 26: 13.3610%
+ -- Sample 27: 9.2237%
+ -- Sample 28: 13.6265%
+ -- Sample 29: 13.2494%
+ -- Sample 30: 5.3018%
+ -- Sample 31: 1.1629%
+ -- Sample 32: 3.1183%
+ -- Sample 33: 6.6884%
+ -- Sample 34: 5.9778%
+ -- Sample 35: 2.3129%
+ -- Sample 36: 2.6357%
+ -- Sample 37: 3.3967%
+ -- Sample 38: 27.7215%
+ -- Sample 39: 23.5952%
+ -- Sample 40: 41.7635%
+ -- Sample 41: 35.4811%
+Mean: 12.6274%, Std: 14.2545%
+------------------------------------------------------------------
+Evaluating Divergent:
+ -- Sample 0: 45.2469%
+ -- Sample 1: 45.1366%
+ -- Sample 2: 41.3171%
+ -- Sample 3: 41.2613%
+ -- Sample 4: 41.4479%
+ -- Sample 5: 41.1693%
+ -- Sample 6: 50.2105%
+ -- Sample 7: 48.1834%
+ -- Sample 8: 48.5064%
+ -- Sample 9: 50.1042%
+ -- Sample 10: 43.7395%
+ -- Sample 11: 43.9166%
+ -- Sample 12: 43.3996%
+ -- Sample 13: 43.6853%
+ -- Sample 14: 46.6835%
+ -- Sample 15: 46.7805%
+ -- Sample 16: 46.7910%
+ -- Sample 17: 46.7352%
+ -- Sample 18: 47.2788%
+ -- Sample 19: 46.4467%
+ -- Sample 20: 46.2272%
+ -- Sample 21: 46.8870%
+ -- Sample 22: 47.8934%
+ -- Sample 23: 47.1028%
+ -- Sample 24: 48.1555%
+ -- Sample 25: 48.7169%
+ -- Sample 26: 41.0306%
+ -- Sample 27: 40.8793%
+ -- Sample 28: 40.7221%
+ -- Sample 29: 41.3095%
+ -- Sample 30: 39.4502%
+ -- Sample 31: 39.5803%
+ -- Sample 32: 39.5174%
+ -- Sample 33: 39.8164%
+ -- Sample 34: 41.8001%
+ -- Sample 35: 42.5379%
+ -- Sample 36: 43.2133%
+ -- Sample 37: 43.0151%
+ -- Sample 38: 50.0816%
+ -- Sample 39: 49.1546%
+ -- Sample 40: 49.9023%
+ -- Sample 41: 50.3254%
+Mean: 44.8895%, Std: 3.4465%
+------------------------------------------------------------------
+
+Processing Dataset: Berea
+Considering 224 samples from ../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5.
+  Processing Batch 1 (Size: 50)...
+    Evaluating Ko et al (D3)
+Bias Error: using velocity magnitude
+Mean: 31.0284, Std: 23.5713
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=93.1431%; std=83.3832
+ -- Sample 1: mean=105.8924%; std=97.1705
+ -- Sample 2: mean=115.4951%; std=107.8980
+ -- Sample 3: mean=112.8542%; std=112.7814
+ -- Sample 4: mean=58.2188%; std=41.5542
+ -- Sample 5: mean=53.5293%; std=39.8099
+ -- Sample 6: mean=47.8340%; std=38.9042
+ -- Sample 7: mean=46.7747%; std=40.3333
+ -- Sample 8: mean=85.0227%; std=85.6572
+ -- Sample 9: mean=92.4582%; std=87.0981
+ -- Sample 10: mean=103.7558%; std=106.1209
+ -- Sample 11: mean=78.6421%; std=83.0073
+ -- Sample 12: mean=28.3618%; std=21.1681
+ -- Sample 13: mean=32.1262%; std=24.2735
+ -- Sample 14: mean=32.8230%; std=25.1434
+ -- Sample 15: mean=28.7846%; std=23.1979
+ -- Sample 16: mean=34.9384%; std=18.1131
+ -- Sample 17: mean=34.5466%; std=16.2835
+ -- Sample 18: mean=33.4097%; std=15.0458
+ -- Sample 19: mean=34.8333%; std=16.7421
+ -- Sample 20: mean=36.4484%; std=28.9224
+ -- Sample 21: mean=40.5337%; std=42.3425
+ -- Sample 22: mean=36.8381%; std=25.7906
+ -- Sample 23: mean=38.3071%; std=28.2608
+ -- Sample 24: mean=27.7637%; std=19.7713
+ -- Sample 25: mean=28.0964%; std=19.8394
+ -- Sample 26: mean=27.0598%; std=20.0890
+ -- Sample 27: mean=27.3343%; std=18.2884
+ -- Sample 28: mean=31.8139%; std=18.3371
+ -- Sample 29: mean=31.8092%; std=18.0354
+ -- Sample 30: mean=33.1154%; std=18.9712
+ -- Sample 31: mean=31.8023%; std=19.6943
+ -- Sample 32: mean=67.4407%; std=48.5733
+ -- Sample 33: mean=68.9474%; std=49.5741
+ -- Sample 34: mean=63.8914%; std=41.1661
+ -- Sample 35: mean=62.8419%; std=40.1799
+ -- Sample 36: mean=62.3145%; std=73.7378
+ -- Sample 37: mean=70.7692%; std=77.5632
+ -- Sample 38: mean=70.7487%; std=71.5525
+ -- Sample 39: mean=68.7987%; std=75.6751
+ -- Sample 40: mean=49.9972%; std=15.7953
+ -- Sample 41: mean=48.1251%; std=16.5313
+ -- Sample 42: mean=49.7572%; std=15.0914
+ -- Sample 43: mean=47.7541%; std=17.1592
+ -- Sample 44: mean=22.3575%; std=16.5928
+ -- Sample 45: mean=25.6490%; std=18.4761
+ -- Sample 46: mean=24.9804%; std=17.5661
+ -- Sample 47: mean=22.6374%; std=18.1632
+ -- Sample 48: mean=37.3299%; std=19.2985
+ -- Sample 49: mean=39.4811%; std=20.7535
+Mean: 50.9638%, Std: 25.2159%
+------------------------------------------------------------------
+Angular error:
+ -- Sample 0: mean=36.0852º; std=37.8918
+ -- Sample 1: mean=38.4788º; std=40.4157
+ -- Sample 2: mean=38.5080º; std=39.9028
+ -- Sample 3: mean=37.3365º; std=37.4774
+ -- Sample 4: mean=37.0184º; std=36.8097
+ -- Sample 5: mean=37.1584º; std=36.6070
+ -- Sample 6: mean=37.4108º; std=36.8001
+ -- Sample 7: mean=36.9544º; std=37.2667
+ -- Sample 8: mean=37.5357º; std=40.9363
+ -- Sample 9: mean=37.6665º; std=40.7769
+ -- Sample 10: mean=37.3214º; std=40.8575
+ -- Sample 11: mean=37.1445º; std=40.4121
+ -- Sample 12: mean=42.3246º; std=39.7289
+ -- Sample 13: mean=43.7431º; std=39.5392
+ -- Sample 14: mean=42.3572º; std=39.0068
+ -- Sample 15: mean=40.2972º; std=38.6599
+ -- Sample 16: mean=25.9140º; std=32.8766
+ -- Sample 17: mean=26.3461º; std=33.4519
+ -- Sample 18: mean=25.5119º; std=32.2126
+ -- Sample 19: mean=25.7072º; std=32.2572
+ -- Sample 20: mean=46.3788º; std=43.6596
+ -- Sample 21: mean=43.9992º; std=42.8108
+ -- Sample 22: mean=46.0488º; std=42.8220
+ -- Sample 23: mean=49.0255º; std=44.7703
+ -- Sample 24: mean=29.1911º; std=34.9324
+ -- Sample 25: mean=29.8070º; std=34.5210
+ -- Sample 26: mean=29.4608º; std=34.2687
+ -- Sample 27: mean=28.4793º; std=32.9328
+ -- Sample 28: mean=26.5355º; std=31.9564
+ -- Sample 29: mean=27.2979º; std=32.5047
+ -- Sample 30: mean=29.0531º; std=33.2588
+ -- Sample 31: mean=27.1150º; std=32.0556
+ -- Sample 32: mean=48.9708º; std=40.8575
+ -- Sample 33: mean=50.6320º; std=41.2682
+ -- Sample 34: mean=48.2800º; std=39.6074
+ -- Sample 35: mean=46.8742º; std=39.6788
+ -- Sample 36: mean=37.3431º; std=39.6491
+ -- Sample 37: mean=36.4549º; std=38.5817
+ -- Sample 38: mean=36.7011º; std=39.7514
+ -- Sample 39: mean=37.9371º; std=39.9948
+ -- Sample 40: mean=37.0361º; std=37.7671
+ -- Sample 41: mean=35.8112º; std=37.3788
+ -- Sample 42: mean=35.7190º; std=38.1264
+ -- Sample 43: mean=36.4512º; std=38.3080
+ -- Sample 44: mean=30.6420º; std=34.4716
+ -- Sample 45: mean=32.7481º; std=36.3650
+ -- Sample 46: mean=33.6528º; std=37.4031
+ -- Sample 47: mean=31.7633º; std=35.8085
+ -- Sample 48: mean=36.6815º; std=39.4739
+ -- Sample 49: mean=36.4657º; std=39.0095
+Mean: 36.4675º, Std: 6.6751º
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.7281
+ -- Sample 1: 0.6644
+ -- Sample 2: 0.6244
+ -- Sample 3: 0.6462
+ -- Sample 4: 0.8093
+ -- Sample 5: 0.8195
+ -- Sample 6: 0.8577
+ -- Sample 7: 0.8588
+ -- Sample 8: 0.7924
+ -- Sample 9: 0.7833
+ -- Sample 10: 0.7525
+ -- Sample 11: 0.8189
+ -- Sample 12: 0.9332
+ -- Sample 13: 0.9161
+ -- Sample 14: 0.9121
+ -- Sample 15: 0.9329
+ -- Sample 16: 0.9200
+ -- Sample 17: 0.9427
+ -- Sample 18: 0.9539
+ -- Sample 19: 0.9380
+ -- Sample 20: 0.8311
+ -- Sample 21: 0.7983
+ -- Sample 22: 0.8674
+ -- Sample 23: 0.8443
+ -- Sample 24: 0.9138
+ -- Sample 25: 0.9339
+ -- Sample 26: 0.9350
+ -- Sample 27: 0.9339
+ -- Sample 28: 0.9076
+ -- Sample 29: 0.9135
+ -- Sample 30: 0.9107
+ -- Sample 31: 0.9107
+ -- Sample 32: 0.7385
+ -- Sample 33: 0.7476
+ -- Sample 34: 0.7702
+ -- Sample 35: 0.7641
+ -- Sample 36: 0.7912
+ -- Sample 37: 0.7642
+ -- Sample 38: 0.7905
+ -- Sample 39: 0.7840
+ -- Sample 40: 0.9546
+ -- Sample 41: 0.9510
+ -- Sample 42: 0.9589
+ -- Sample 43: 0.9506
+ -- Sample 44: 0.9628
+ -- Sample 45: 0.9499
+ -- Sample 46: 0.9618
+ -- Sample 47: 0.9617
+ -- Sample 48: 0.9454
+ -- Sample 49: 0.9288
+Mean=0.8596, Std=0.0913
+------------------------------------------------------------------
+Flux Error:
+ -- Sample 0: 1.1819
+ -- Sample 1: 1.1039
+ -- Sample 2: 1.2229
+ -- Sample 3: 1.0326
+ -- Sample 4: 0.6384
+ -- Sample 5: 0.7588
+ -- Sample 6: 0.6840
+ -- Sample 7: 0.7623
+ -- Sample 8: 1.3855
+ -- Sample 9: 1.0943
+ -- Sample 10: 1.4161
+ -- Sample 11: 1.0531
+ -- Sample 12: 0.5815
+ -- Sample 13: 0.6878
+ -- Sample 14: 0.6171
+ -- Sample 15: 0.6443
+ -- Sample 16: 0.5795
+ -- Sample 17: 0.5815
+ -- Sample 18: 0.5946
+ -- Sample 19: 0.5750
+ -- Sample 20: 0.5189
+ -- Sample 21: 0.4995
+ -- Sample 22: 0.4778
+ -- Sample 23: 0.4772
+ -- Sample 24: 0.7569
+ -- Sample 25: 0.5852
+ -- Sample 26: 0.7895
+ -- Sample 27: 0.5514
+ -- Sample 28: 0.4736
+ -- Sample 29: 0.6791
+ -- Sample 30: 0.4731
+ -- Sample 31: 0.6383
+ -- Sample 32: 0.7812
+ -- Sample 33: 0.7786
+ -- Sample 34: 0.7660
+ -- Sample 35: 0.8522
+ -- Sample 36: 1.1115
+ -- Sample 37: 1.2239
+ -- Sample 38: 1.1431
+ -- Sample 39: 1.1825
+ -- Sample 40: 0.5363
+ -- Sample 41: 0.6695
+ -- Sample 42: 0.5287
+ -- Sample 43: 0.6341
+ -- Sample 44: 0.4613
+ -- Sample 45: 0.5884
+ -- Sample 46: 0.4596
+ -- Sample 47: 0.6304
+ -- Sample 48: 0.6086
+ -- Sample 49: 0.8163
+Mean: 0.7578, Std: 0.2615
+------------------------------------------------------------------
+Tortuosity Comparison:
+ -- Sample 0: 2.4066%
+ -- Sample 1: 2.5611%
+ -- Sample 2: 1.8210%
+ -- Sample 3: 6.4702%
+ -- Sample 4: 2.6908%
+ -- Sample 5: 4.3326%
+ -- Sample 6: 2.8908%
+ -- Sample 7: 4.2289%
+ -- Sample 8: 2.1850%
+ -- Sample 9: 3.2973%
+ -- Sample 10: 2.6408%
+ -- Sample 11: 0.5291%
+ -- Sample 12: 13.6433%
+ -- Sample 13: 12.3582%
+ -- Sample 14: 16.7561%
+ -- Sample 15: 12.1998%
+ -- Sample 16: 6.9063%
+ -- Sample 17: 6.7321%
+ -- Sample 18: 4.7567%
+ -- Sample 19: 6.1645%
+ -- Sample 20: 3.1419%
+ -- Sample 21: 5.8329%
+ -- Sample 22: 10.2499%
+ -- Sample 23: 5.1437%
+ -- Sample 24: 2.6189%
+ -- Sample 25: 1.7647%
+ -- Sample 26: 0.0280%
+ -- Sample 27: 0.2857%
+ -- Sample 28: 7.0822%
+ -- Sample 29: 4.3488%
+ -- Sample 30: 6.1326%
+ -- Sample 31: 7.5484%
+ -- Sample 32: 18.7245%
+ -- Sample 33: 24.4052%
+ -- Sample 34: 14.4910%
+ -- Sample 35: 11.0580%
+ -- Sample 36: 4.4923%
+ -- Sample 37: 3.9930%
+ -- Sample 38: 2.9367%
+ -- Sample 39: 3.6477%
+ -- Sample 40: 5.9852%
+ -- Sample 41: 0.5227%
+ -- Sample 42: 2.4610%
+ -- Sample 43: 2.7930%
+ -- Sample 44: 6.2104%
+ -- Sample 45: 9.7999%
+ -- Sample 46: 5.2335%
+ -- Sample 47: 7.0145%
+ -- Sample 48: 4.8853%
+ -- Sample 49: 3.7351%
+Mean: 6.0428%, Std: 4.9268%
+------------------------------------------------------------------
+Evaluating Divergent:
+ -- Sample 0: 43.1726%
+ -- Sample 1: 43.7054%
+ -- Sample 2: 44.1526%
+ -- Sample 3: 44.5522%
+ -- Sample 4: 47.5387%
+ -- Sample 5: 47.9924%
+ -- Sample 6: 47.7280%
+ -- Sample 7: 46.6650%
+ -- Sample 8: 47.3418%
+ -- Sample 9: 47.9100%
+ -- Sample 10: 48.0411%
+ -- Sample 11: 46.8597%
+ -- Sample 12: 46.9329%
+ -- Sample 13: 48.0697%
+ -- Sample 14: 48.2482%
+ -- Sample 15: 47.2089%
+ -- Sample 16: 37.0004%
+ -- Sample 17: 37.1338%
+ -- Sample 18: 36.6977%
+ -- Sample 19: 37.2440%
+ -- Sample 20: 47.1302%
+ -- Sample 21: 47.9937%
+ -- Sample 22: 48.7447%
+ -- Sample 23: 47.4990%
+ -- Sample 24: 40.4278%
+ -- Sample 25: 40.6055%
+ -- Sample 26: 40.5485%
+ -- Sample 27: 40.7420%
+ -- Sample 28: 39.0258%
+ -- Sample 29: 38.3050%
+ -- Sample 30: 38.9191%
+ -- Sample 31: 38.1522%
+ -- Sample 32: 49.8070%
+ -- Sample 33: 49.3944%
+ -- Sample 34: 49.7085%
+ -- Sample 35: 50.2765%
+ -- Sample 36: 46.0823%
+ -- Sample 37: 45.3219%
+ -- Sample 38: 45.2640%
+ -- Sample 39: 46.5036%
+ -- Sample 40: 42.2299%
+ -- Sample 41: 42.4207%
+ -- Sample 42: 42.4994%
+ -- Sample 43: 42.4884%
+ -- Sample 44: 42.0219%
+ -- Sample 45: 42.9569%
+ -- Sample 46: 42.7393%
+ -- Sample 47: 42.1134%
+ -- Sample 48: 43.1249%
+ -- Sample 49: 43.9626%
+Mean: 44.2241%, Std: 3.8522%
+------------------------------------------------------------------
+  Processing Batch 2 (Size: 50)...
+    Evaluating Ko et al (D3)
+Bias Error: using velocity magnitude
+Mean: 30.6850, Std: 27.6042
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=38.0814%; std=19.3849
+ -- Sample 1: mean=39.7637%; std=20.0326
+ -- Sample 2: mean=87.9507%; std=89.3679
+ -- Sample 3: mean=85.5620%; std=87.6684
+ -- Sample 4: mean=83.2264%; std=83.5392
+ -- Sample 5: mean=87.4345%; std=89.5782
+ -- Sample 6: mean=44.1792%; std=28.5042
+ -- Sample 7: mean=45.2484%; std=29.7324
+ -- Sample 8: mean=46.5198%; std=27.3378
+ -- Sample 9: mean=46.2418%; std=28.1578
+ -- Sample 10: mean=36.5508%; std=15.5999
+ -- Sample 11: mean=37.3063%; std=14.9893
+ -- Sample 12: mean=38.6560%; std=13.9304
+ -- Sample 13: mean=37.0360%; std=15.6737
+ -- Sample 14: mean=31.1446%; std=21.1592
+ -- Sample 15: mean=29.4449%; std=21.9672
+ -- Sample 16: mean=26.8269%; std=19.7834
+ -- Sample 17: mean=28.4851%; std=18.8601
+ -- Sample 18: mean=47.8775%; std=34.2508
+ -- Sample 19: mean=42.8194%; std=27.4131
+ -- Sample 20: mean=45.2160%; std=31.4259
+ -- Sample 21: mean=46.3209%; std=28.0556
+ -- Sample 22: mean=35.7042%; std=25.8183
+ -- Sample 23: mean=35.1648%; std=26.5578
+ -- Sample 24: mean=29.4649%; std=21.6035
+ -- Sample 25: mean=33.4508%; std=24.1189
+ -- Sample 26: mean=30.7266%; std=17.5506
+ -- Sample 27: mean=29.6048%; std=18.1896
+ -- Sample 28: mean=30.9585%; std=17.3351
+ -- Sample 29: mean=31.4951%; std=18.7396
+ -- Sample 30: mean=29.2477%; std=20.6474
+ -- Sample 31: mean=23.6382%; std=18.2110
+ -- Sample 32: mean=28.4524%; std=21.3313
+ -- Sample 33: mean=26.0570%; std=19.4735
+ -- Sample 34: mean=37.0077%; std=17.8236
+ -- Sample 35: mean=34.2711%; std=18.5875
+ -- Sample 36: mean=34.3138%; std=19.6513
+ -- Sample 37: mean=37.8748%; std=20.5510
+ -- Sample 38: mean=103.4590%; std=99.0128
+ -- Sample 39: mean=88.2559%; std=102.7019
+ -- Sample 40: mean=102.4628%; std=117.9740
+ -- Sample 41: mean=111.3003%; std=116.7381
+ -- Sample 42: mean=104.1021%; std=158.8576
+ -- Sample 43: mean=99.0516%; std=115.4108
+ -- Sample 44: mean=95.7576%; std=121.6309
+ -- Sample 45: mean=104.5357%; std=167.7693
+ -- Sample 46: mean=32.3093%; std=17.0867
+ -- Sample 47: mean=32.7609%; std=18.0474
+ -- Sample 48: mean=36.6596%; std=15.8228
+ -- Sample 49: mean=37.4099%; std=18.0668
+Mean: 50.1478%, Std: 26.7626%
+------------------------------------------------------------------
+Angular error:
+ -- Sample 0: mean=35.1927º; std=38.9509
+ -- Sample 1: mean=35.9744º; std=39.3552
+ -- Sample 2: mean=39.5089º; std=40.6241
+ -- Sample 3: mean=37.8312º; std=38.2991
+ -- Sample 4: mean=38.2312º; std=37.9919
+ -- Sample 5: mean=39.5935º; std=40.3178
+ -- Sample 6: mean=47.3884º; std=40.7233
+ -- Sample 7: mean=46.3022º; std=39.4153
+ -- Sample 8: mean=46.3873º; std=40.1308
+ -- Sample 9: mean=47.7016º; std=42.0996
+ -- Sample 10: mean=30.7731º; std=35.3123
+ -- Sample 11: mean=31.8935º; std=35.6703
+ -- Sample 12: mean=31.2024º; std=34.9141
+ -- Sample 13: mean=30.4960º; std=34.4378
+ -- Sample 14: mean=34.3167º; std=35.0855
+ -- Sample 15: mean=32.8502º; std=34.7876
+ -- Sample 16: mean=33.4664º; std=35.7253
+ -- Sample 17: mean=34.7076º; std=35.7457
+ -- Sample 18: mean=40.8575º; std=38.8841
+ -- Sample 19: mean=40.5137º; std=39.1511
+ -- Sample 20: mean=42.0583º; std=40.8323
+ -- Sample 21: mean=42.7148º; std=39.7519
+ -- Sample 22: mean=50.6323º; std=44.3076
+ -- Sample 23: mean=50.7862º; std=44.0102
+ -- Sample 24: mean=50.5449º; std=45.4264
+ -- Sample 25: mean=50.8379º; std=44.7671
+ -- Sample 26: mean=26.9323º; std=32.4176
+ -- Sample 27: mean=26.3765º; std=32.1533
+ -- Sample 28: mean=27.0973º; std=33.2709
+ -- Sample 29: mean=27.5537º; std=32.9978
+ -- Sample 30: mean=31.7883º; std=36.5905
+ -- Sample 31: mean=33.1774º; std=37.7579
+ -- Sample 32: mean=33.6526º; std=36.8128
+ -- Sample 33: mean=32.1383º; std=36.3198
+ -- Sample 34: mean=26.4666º; std=32.0836
+ -- Sample 35: mean=25.0172º; std=31.6998
+ -- Sample 36: mean=25.9468º; std=32.4526
+ -- Sample 37: mean=27.6759º; std=32.9647
+ -- Sample 38: mean=35.9244º; std=36.6592
+ -- Sample 39: mean=36.7694º; std=36.1964
+ -- Sample 40: mean=36.9290º; std=35.4084
+ -- Sample 41: mean=35.5911º; std=35.5174
+ -- Sample 42: mean=45.4753º; std=40.9324
+ -- Sample 43: mean=44.3387º; std=41.5506
+ -- Sample 44: mean=44.1896º; std=41.3610
+ -- Sample 45: mean=44.2102º; std=41.4544
+ -- Sample 46: mean=44.0377º; std=43.0986
+ -- Sample 47: mean=42.7011º; std=42.5529
+ -- Sample 48: mean=44.2373º; std=43.2811
+ -- Sample 49: mean=45.1787º; std=44.0465
+Mean: 37.7234º, Std: 7.4638º
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9377
+ -- Sample 1: 0.9379
+ -- Sample 2: 0.7645
+ -- Sample 3: 0.7643
+ -- Sample 4: 0.7732
+ -- Sample 5: 0.7681
+ -- Sample 6: 0.7451
+ -- Sample 7: 0.7339
+ -- Sample 8: 0.7319
+ -- Sample 9: 0.7427
+ -- Sample 10: 0.9562
+ -- Sample 11: 0.9656
+ -- Sample 12: 0.9630
+ -- Sample 13: 0.9584
+ -- Sample 14: 0.9064
+ -- Sample 15: 0.9182
+ -- Sample 16: 0.9350
+ -- Sample 17: 0.9355
+ -- Sample 18: 0.8243
+ -- Sample 19: 0.8467
+ -- Sample 20: 0.8353
+ -- Sample 21: 0.8432
+ -- Sample 22: 0.8632
+ -- Sample 23: 0.8689
+ -- Sample 24: 0.8959
+ -- Sample 25: 0.8860
+ -- Sample 26: 0.9507
+ -- Sample 27: 0.9460
+ -- Sample 28: 0.9522
+ -- Sample 29: 0.9448
+ -- Sample 30: 0.9291
+ -- Sample 31: 0.9503
+ -- Sample 32: 0.9372
+ -- Sample 33: 0.9411
+ -- Sample 34: 0.8407
+ -- Sample 35: 0.8479
+ -- Sample 36: 0.8561
+ -- Sample 37: 0.8436
+ -- Sample 38: 0.6393
+ -- Sample 39: 0.6598
+ -- Sample 40: 0.6194
+ -- Sample 41: 0.6043
+ -- Sample 42: 0.5136
+ -- Sample 43: 0.6045
+ -- Sample 44: 0.6256
+ -- Sample 45: 0.5602
+ -- Sample 46: 0.9427
+ -- Sample 47: 0.9341
+ -- Sample 48: 0.9349
+ -- Sample 49: 0.9190
+Mean=0.8360, Std=0.1233
+------------------------------------------------------------------
+Flux Error:
+ -- Sample 0: 0.6093
+ -- Sample 1: 0.7472
+ -- Sample 2: 1.4137
+ -- Sample 3: 1.3814
+ -- Sample 4: 1.3986
+ -- Sample 5: 1.4484
+ -- Sample 6: 0.6872
+ -- Sample 7: 0.7395
+ -- Sample 8: 0.7864
+ -- Sample 9: 0.7360
+ -- Sample 10: 0.4486
+ -- Sample 11: 0.7178
+ -- Sample 12: 0.4593
+ -- Sample 13: 0.6821
+ -- Sample 14: 0.4153
+ -- Sample 15: 0.7318
+ -- Sample 16: 0.3720
+ -- Sample 17: 0.6993
+ -- Sample 18: 0.5054
+ -- Sample 19: 0.3768
+ -- Sample 20: 0.4856
+ -- Sample 21: 0.3851
+ -- Sample 22: 0.4146
+ -- Sample 23: 0.6697
+ -- Sample 24: 0.4468
+ -- Sample 25: 0.5787
+ -- Sample 26: 0.7142
+ -- Sample 27: 0.5169
+ -- Sample 28: 0.7292
+ -- Sample 29: 0.5369
+ -- Sample 30: 0.7810
+ -- Sample 31: 0.6022
+ -- Sample 32: 0.7252
+ -- Sample 33: 0.5595
+ -- Sample 34: 0.6746
+ -- Sample 35: 0.5597
+ -- Sample 36: 0.6850
+ -- Sample 37: 0.5007
+ -- Sample 38: 0.7999
+ -- Sample 39: 0.7485
+ -- Sample 40: 0.8514
+ -- Sample 41: 0.9103
+ -- Sample 42: 1.0887
+ -- Sample 43: 0.8757
+ -- Sample 44: 0.9452
+ -- Sample 45: 0.9446
+ -- Sample 46: 1.1193
+ -- Sample 47: 0.8416
+ -- Sample 48: 1.0638
+ -- Sample 49: 0.8451
+Mean: 0.7391, Std: 0.2689
+------------------------------------------------------------------
+Tortuosity Comparison:
+ -- Sample 0: 1.6549%
+ -- Sample 1: 6.1959%
+ -- Sample 2: 4.1883%
+ -- Sample 3: 6.1675%
+ -- Sample 4: 5.2577%
+ -- Sample 5: 5.2892%
+ -- Sample 6: 9.9942%
+ -- Sample 7: 15.9119%
+ -- Sample 8: 10.8606%
+ -- Sample 9: 3.6493%
+ -- Sample 10: 10.3281%
+ -- Sample 11: 8.0594%
+ -- Sample 12: 8.0617%
+ -- Sample 13: 12.0275%
+ -- Sample 14: 14.4838%
+ -- Sample 15: 12.9484%
+ -- Sample 16: 12.4859%
+ -- Sample 17: 8.3874%
+ -- Sample 18: 0.0273%
+ -- Sample 19: 0.3468%
+ -- Sample 20: 3.3682%
+ -- Sample 21: 2.4051%
+ -- Sample 22: 35.9335%
+ -- Sample 23: 25.2934%
+ -- Sample 24: 12.9924%
+ -- Sample 25: 29.3813%
+ -- Sample 26: 3.4305%
+ -- Sample 27: 4.5760%
+ -- Sample 28: 1.5907%
+ -- Sample 29: 1.2414%
+ -- Sample 30: 1.4987%
+ -- Sample 31: 7.3062%
+ -- Sample 32: 13.2133%
+ -- Sample 33: 9.6051%
+ -- Sample 34: 0.3582%
+ -- Sample 35: 0.8825%
+ -- Sample 36: 0.0822%
+ -- Sample 37: 0.7727%
+ -- Sample 38: 8.1745%
+ -- Sample 39: 10.1989%
+ -- Sample 40: 9.6104%
+ -- Sample 41: 9.9415%
+ -- Sample 42: 11.5952%
+ -- Sample 43: 12.6533%
+ -- Sample 44: 11.7481%
+ -- Sample 45: 9.9252%
+ -- Sample 46: 8.6664%
+ -- Sample 47: 7.7785%
+ -- Sample 48: 8.5229%
+ -- Sample 49: 5.9855%
+Mean: 8.5012%, Std: 7.0518%
+------------------------------------------------------------------
+Evaluating Divergent:
+ -- Sample 0: 42.5410%
+ -- Sample 1: 42.6591%
+ -- Sample 2: 44.8568%
+ -- Sample 3: 43.4760%
+ -- Sample 4: 43.7574%
+ -- Sample 5: 44.7693%
+ -- Sample 6: 48.6967%
+ -- Sample 7: 48.9080%
+ -- Sample 8: 48.9774%
+ -- Sample 9: 48.1600%
+ -- Sample 10: 39.8205%
+ -- Sample 11: 40.3254%
+ -- Sample 12: 40.2513%
+ -- Sample 13: 40.2121%
+ -- Sample 14: 41.9375%
+ -- Sample 15: 41.8502%
+ -- Sample 16: 40.7763%
+ -- Sample 17: 41.2972%
+ -- Sample 18: 46.0334%
+ -- Sample 19: 45.3108%
+ -- Sample 20: 45.3590%
+ -- Sample 21: 45.4503%
+ -- Sample 22: 50.8643%
+ -- Sample 23: 50.6800%
+ -- Sample 24: 49.3352%
+ -- Sample 25: 50.2017%
+ -- Sample 26: 36.0737%
+ -- Sample 27: 35.4172%
+ -- Sample 28: 35.5405%
+ -- Sample 29: 36.4764%
+ -- Sample 30: 41.0169%
+ -- Sample 31: 41.6198%
+ -- Sample 32: 41.7274%
+ -- Sample 33: 41.5899%
+ -- Sample 34: 36.7465%
+ -- Sample 35: 36.3659%
+ -- Sample 36: 37.3191%
+ -- Sample 37: 38.0211%
+ -- Sample 38: 45.6862%
+ -- Sample 39: 46.6970%
+ -- Sample 40: 46.6599%
+ -- Sample 41: 45.7868%
+ -- Sample 42: 51.7980%
+ -- Sample 43: 51.1234%
+ -- Sample 44: 51.2748%
+ -- Sample 45: 51.4380%
+ -- Sample 46: 48.4806%
+ -- Sample 47: 48.8027%
+ -- Sample 48: 49.0803%
+ -- Sample 49: 48.8472%
+Mean: 44.2019%, Std: 4.8172%
+------------------------------------------------------------------
+  Processing Batch 3 (Size: 50)...
+    Evaluating Ko et al (D3)
+Bias Error: using velocity magnitude
+Mean: 32.0570, Std: 22.3120
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=39.9843%; std=17.6099
+ -- Sample 1: mean=37.2937%; std=19.8040
+ -- Sample 2: mean=34.6875%; std=21.4981
+ -- Sample 3: mean=35.5039%; std=19.2316
+ -- Sample 4: mean=98.7976%; std=69.4656
+ -- Sample 5: mean=93.8019%; std=69.4091
+ -- Sample 6: mean=83.3469%; std=64.3006
+ -- Sample 7: mean=82.6992%; std=63.8046
+ -- Sample 8: mean=34.4783%; std=22.0986
+ -- Sample 9: mean=38.2636%; std=21.2419
+ -- Sample 10: mean=35.9992%; std=19.2984
+ -- Sample 11: mean=34.2736%; std=20.5624
+ -- Sample 12: mean=31.7931%; std=16.0351
+ -- Sample 13: mean=27.7166%; std=17.9849
+ -- Sample 14: mean=28.8798%; std=18.8958
+ -- Sample 15: mean=32.4359%; std=16.5698
+ -- Sample 16: mean=49.8770%; std=34.8406
+ -- Sample 17: mean=44.4232%; std=33.3511
+ -- Sample 18: mean=41.8002%; std=28.0072
+ -- Sample 19: mean=47.2308%; std=34.3696
+ -- Sample 20: mean=35.4397%; std=18.5310
+ -- Sample 21: mean=35.2258%; std=20.3018
+ -- Sample 22: mean=37.3520%; std=18.8644
+ -- Sample 23: mean=34.8853%; std=18.8172
+ -- Sample 24: mean=33.4094%; std=27.9405
+ -- Sample 25: mean=33.5394%; std=25.8191
+ -- Sample 26: mean=31.0067%; std=24.8301
+ -- Sample 27: mean=35.0226%; std=29.1503
+ -- Sample 28: mean=21.3987%; std=14.8119
+ -- Sample 29: mean=20.4358%; std=15.0530
+ -- Sample 30: mean=25.2634%; std=15.5037
+ -- Sample 31: mean=24.7419%; std=15.5672
+ -- Sample 32: mean=28.1729%; std=20.3348
+ -- Sample 33: mean=26.7017%; std=20.4412
+ -- Sample 34: mean=26.3984%; std=18.2455
+ -- Sample 35: mean=25.5822%; std=17.6020
+ -- Sample 36: mean=27.0286%; std=22.7875
+ -- Sample 37: mean=24.8839%; std=22.7602
+ -- Sample 38: mean=26.2092%; std=22.0584
+ -- Sample 39: mean=29.8211%; std=22.6227
+ -- Sample 40: mean=133.9609%; std=145.8985
+ -- Sample 41: mean=132.6635%; std=145.9828
+ -- Sample 42: mean=124.2667%; std=135.4804
+ -- Sample 43: mean=125.5669%; std=136.6720
+ -- Sample 44: mean=56.7084%; std=16.5377
+ -- Sample 45: mean=56.0080%; std=15.5423
+ -- Sample 46: mean=59.3741%; std=17.7544
+ -- Sample 47: mean=60.9014%; std=15.2334
+ -- Sample 48: mean=38.7741%; std=18.7313
+ -- Sample 49: mean=42.0181%; std=16.8120
+Mean: 47.3209%, Std: 29.7057%
+------------------------------------------------------------------
+Angular error:
+ -- Sample 0: mean=30.9381º; std=34.3499
+ -- Sample 1: mean=31.6536º; std=34.3080
+ -- Sample 2: mean=31.9496º; std=34.4540
+ -- Sample 3: mean=30.8390º; std=33.7437
+ -- Sample 4: mean=47.0979º; std=43.5763
+ -- Sample 5: mean=45.6208º; std=43.9200
+ -- Sample 6: mean=46.8403º; std=44.3627
+ -- Sample 7: mean=48.1246º; std=43.2641
+ -- Sample 8: mean=34.6874º; std=39.2962
+ -- Sample 9: mean=34.9650º; std=38.6417
+ -- Sample 10: mean=35.1178º; std=38.9660
+ -- Sample 11: mean=35.0266º; std=39.9582
+ -- Sample 12: mean=27.1277º; std=34.2637
+ -- Sample 13: mean=27.5709º; std=34.5197
+ -- Sample 14: mean=27.2287º; std=33.5232
+ -- Sample 15: mean=27.1122º; std=34.0011
+ -- Sample 16: mean=37.0669º; std=40.7979
+ -- Sample 17: mean=38.8538º; std=41.0110
+ -- Sample 18: mean=36.8916º; std=39.7321
+ -- Sample 19: mean=35.3889º; std=39.3432
+ -- Sample 20: mean=32.2264º; std=35.1632
+ -- Sample 21: mean=31.5322º; std=34.8285
+ -- Sample 22: mean=31.5003º; std=33.9133
+ -- Sample 23: mean=31.4570º; std=34.0260
+ -- Sample 24: mean=31.1310º; std=34.4430
+ -- Sample 25: mean=30.5191º; std=34.0540
+ -- Sample 26: mean=30.2648º; std=32.7356
+ -- Sample 27: mean=30.6959º; std=33.4894
+ -- Sample 28: mean=35.0396º; std=42.0720
+ -- Sample 29: mean=34.6097º; std=41.9708
+ -- Sample 30: mean=34.1539º; std=40.8737
+ -- Sample 31: mean=34.7321º; std=40.6248
+ -- Sample 32: mean=32.5854º; std=36.5968
+ -- Sample 33: mean=32.9122º; std=37.0517
+ -- Sample 34: mean=32.6190º; std=36.9701
+ -- Sample 35: mean=32.2619º; std=36.9954
+ -- Sample 36: mean=32.6941º; std=36.5674
+ -- Sample 37: mean=33.1132º; std=36.9441
+ -- Sample 38: mean=31.4567º; std=35.9651
+ -- Sample 39: mean=31.6341º; std=36.0738
+ -- Sample 40: mean=45.8864º; std=44.9358
+ -- Sample 41: mean=44.4762º; std=45.1035
+ -- Sample 42: mean=44.1986º; std=44.8899
+ -- Sample 43: mean=45.2116º; std=44.9255
+ -- Sample 44: mean=36.1364º; std=37.8652
+ -- Sample 45: mean=34.4792º; std=36.7606
+ -- Sample 46: mean=36.8108º; std=37.2650
+ -- Sample 47: mean=37.2667º; std=38.2754
+ -- Sample 48: mean=39.3397º; std=40.9080
+ -- Sample 49: mean=39.7630º; std=40.9654
+Mean: 35.2162º, Std: 5.5002º
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9337
+ -- Sample 1: 0.9226
+ -- Sample 2: 0.9260
+ -- Sample 3: 0.9322
+ -- Sample 4: 0.7210
+ -- Sample 5: 0.7121
+ -- Sample 6: 0.7264
+ -- Sample 7: 0.7151
+ -- Sample 8: 0.9020
+ -- Sample 9: 0.8988
+ -- Sample 10: 0.9161
+ -- Sample 11: 0.9073
+ -- Sample 12: 0.9599
+ -- Sample 13: 0.9607
+ -- Sample 14: 0.9545
+ -- Sample 15: 0.9525
+ -- Sample 16: 0.8570
+ -- Sample 17: 0.8531
+ -- Sample 18: 0.8824
+ -- Sample 19: 0.8727
+ -- Sample 20: 0.9143
+ -- Sample 21: 0.8926
+ -- Sample 22: 0.8936
+ -- Sample 23: 0.9099
+ -- Sample 24: 0.9466
+ -- Sample 25: 0.9556
+ -- Sample 26: 0.9585
+ -- Sample 27: 0.9479
+ -- Sample 28: 0.9662
+ -- Sample 29: 0.9635
+ -- Sample 30: 0.9525
+ -- Sample 31: 0.9587
+ -- Sample 32: 0.9648
+ -- Sample 33: 0.9666
+ -- Sample 34: 0.9650
+ -- Sample 35: 0.9715
+ -- Sample 36: 0.9530
+ -- Sample 37: 0.9384
+ -- Sample 38: 0.9482
+ -- Sample 39: 0.9524
+ -- Sample 40: 0.5571
+ -- Sample 41: 0.5579
+ -- Sample 42: 0.5656
+ -- Sample 43: 0.5555
+ -- Sample 44: 0.9240
+ -- Sample 45: 0.9271
+ -- Sample 46: 0.8945
+ -- Sample 47: 0.9180
+ -- Sample 48: 0.9395
+ -- Sample 49: 0.9431
+Mean=0.8842, Std=0.1153
+------------------------------------------------------------------
+Flux Error:
+ -- Sample 0: 0.6859
+ -- Sample 1: 0.5970
+ -- Sample 2: 0.7411
+ -- Sample 3: 0.6138
+ -- Sample 4: 1.5306
+ -- Sample 5: 1.0748
+ -- Sample 6: 1.2538
+ -- Sample 7: 0.9110
+ -- Sample 8: 0.5371
+ -- Sample 9: 0.6904
+ -- Sample 10: 0.5301
+ -- Sample 11: 0.7640
+ -- Sample 12: 0.6344
+ -- Sample 13: 0.6357
+ -- Sample 14: 0.6657
+ -- Sample 15: 0.6163
+ -- Sample 16: 0.9856
+ -- Sample 17: 0.8138
+ -- Sample 18: 0.8078
+ -- Sample 19: 1.0738
+ -- Sample 20: 0.5935
+ -- Sample 21: 0.6007
+ -- Sample 22: 0.5716
+ -- Sample 23: 0.6581
+ -- Sample 24: 0.7340
+ -- Sample 25: 0.4997
+ -- Sample 26: 0.7080
+ -- Sample 27: 0.5225
+ -- Sample 28: 0.9602
+ -- Sample 29: 0.5899
+ -- Sample 30: 0.9308
+ -- Sample 31: 0.5937
+ -- Sample 32: 0.6247
+ -- Sample 33: 0.7605
+ -- Sample 34: 0.5967
+ -- Sample 35: 0.7659
+ -- Sample 36: 0.8767
+ -- Sample 37: 0.5339
+ -- Sample 38: 0.8246
+ -- Sample 39: 0.5625
+ -- Sample 40: 1.3545
+ -- Sample 41: 1.4859
+ -- Sample 42: 1.2996
+ -- Sample 43: 1.3527
+ -- Sample 44: 0.7093
+ -- Sample 45: 0.5961
+ -- Sample 46: 0.7071
+ -- Sample 47: 0.6477
+ -- Sample 48: 0.4601
+ -- Sample 49: 0.6881
+Mean: 0.7794, Std: 0.2640
+------------------------------------------------------------------
+Tortuosity Comparison:
+ -- Sample 0: 14.4087%
+ -- Sample 1: 11.3936%
+ -- Sample 2: 12.8977%
+ -- Sample 3: 12.3588%
+ -- Sample 4: 6.3451%
+ -- Sample 5: 8.5960%
+ -- Sample 6: 12.6779%
+ -- Sample 7: 16.0324%
+ -- Sample 8: 12.5230%
+ -- Sample 9: 12.2087%
+ -- Sample 10: 10.2212%
+ -- Sample 11: 10.2523%
+ -- Sample 12: 0.2528%
+ -- Sample 13: 1.3037%
+ -- Sample 14: 0.3113%
+ -- Sample 15: 0.8417%
+ -- Sample 16: 6.3435%
+ -- Sample 17: 2.9762%
+ -- Sample 18: 0.9982%
+ -- Sample 19: 7.5983%
+ -- Sample 20: 1.5409%
+ -- Sample 21: 4.6623%
+ -- Sample 22: 13.8096%
+ -- Sample 23: 0.5001%
+ -- Sample 24: 0.7288%
+ -- Sample 25: 0.2215%
+ -- Sample 26: 2.9618%
+ -- Sample 27: 1.3810%
+ -- Sample 28: 5.2877%
+ -- Sample 29: 2.4873%
+ -- Sample 30: 1.8604%
+ -- Sample 31: 5.0842%
+ -- Sample 32: 1.3014%
+ -- Sample 33: 5.2807%
+ -- Sample 34: 9.2179%
+ -- Sample 35: 3.5224%
+ -- Sample 36: 7.6750%
+ -- Sample 37: 9.7151%
+ -- Sample 38: 10.9288%
+ -- Sample 39: 9.9856%
+ -- Sample 40: 2.6039%
+ -- Sample 41: 4.3422%
+ -- Sample 42: 1.7129%
+ -- Sample 43: 2.0454%
+ -- Sample 44: 15.0695%
+ -- Sample 45: 14.0267%
+ -- Sample 46: 23.0071%
+ -- Sample 47: 20.9863%
+ -- Sample 48: 10.1206%
+ -- Sample 49: 14.4144%
+Mean: 7.3404%, Std: 5.7374%
+------------------------------------------------------------------
+Evaluating Divergent:
+ -- Sample 0: 39.6164%
+ -- Sample 1: 40.5537%
+ -- Sample 2: 39.8394%
+ -- Sample 3: 39.1137%
+ -- Sample 4: 48.6195%
+ -- Sample 5: 47.9824%
+ -- Sample 6: 48.4597%
+ -- Sample 7: 49.9669%
+ -- Sample 8: 43.7451%
+ -- Sample 9: 44.9957%
+ -- Sample 10: 44.7480%
+ -- Sample 11: 43.9022%
+ -- Sample 12: 39.7123%
+ -- Sample 13: 39.1744%
+ -- Sample 14: 39.8379%
+ -- Sample 15: 40.0041%
+ -- Sample 16: 40.8622%
+ -- Sample 17: 42.3465%
+ -- Sample 18: 41.9605%
+ -- Sample 19: 41.6143%
+ -- Sample 20: 42.9090%
+ -- Sample 21: 42.5832%
+ -- Sample 22: 42.6695%
+ -- Sample 23: 42.3082%
+ -- Sample 24: 42.4344%
+ -- Sample 25: 42.8366%
+ -- Sample 26: 42.3540%
+ -- Sample 27: 42.2538%
+ -- Sample 28: 39.1060%
+ -- Sample 29: 38.4316%
+ -- Sample 30: 39.5080%
+ -- Sample 31: 39.7262%
+ -- Sample 32: 43.0774%
+ -- Sample 33: 42.7850%
+ -- Sample 34: 43.2225%
+ -- Sample 35: 43.1757%
+ -- Sample 36: 41.8018%
+ -- Sample 37: 42.6891%
+ -- Sample 38: 41.9246%
+ -- Sample 39: 42.3385%
+ -- Sample 40: 48.7422%
+ -- Sample 41: 47.9499%
+ -- Sample 42: 48.4846%
+ -- Sample 43: 48.8748%
+ -- Sample 44: 43.6920%
+ -- Sample 45: 42.9217%
+ -- Sample 46: 44.7937%
+ -- Sample 47: 44.5013%
+ -- Sample 48: 42.5478%
+ -- Sample 49: 43.1804%
+Mean: 43.0176%, Std: 2.9348%
+------------------------------------------------------------------
+  Processing Batch 4 (Size: 50)...
+    Evaluating Ko et al (D3)
+Bias Error: using velocity magnitude
+Mean: 35.4361, Std: 23.2407
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=42.2569%; std=18.6614
+ -- Sample 1: mean=39.0587%; std=19.8954
+ -- Sample 2: mean=36.2063%; std=18.7644
+ -- Sample 3: mean=36.9839%; std=17.1438
+ -- Sample 4: mean=38.0749%; std=18.2036
+ -- Sample 5: mean=38.4060%; std=17.5636
+ -- Sample 6: mean=101.6209%; std=114.7852
+ -- Sample 7: mean=89.4255%; std=101.8439
+ -- Sample 8: mean=87.3556%; std=104.2676
+ -- Sample 9: mean=105.8204%; std=118.3903
+ -- Sample 10: mean=86.1472%; std=71.2488
+ -- Sample 11: mean=76.4705%; std=69.9916
+ -- Sample 12: mean=81.7295%; std=69.0499
+ -- Sample 13: mean=91.7306%; std=68.6130
+ -- Sample 14: mean=108.0171%; std=97.3192
+ -- Sample 15: mean=103.0726%; std=95.1862
+ -- Sample 16: mean=87.0047%; std=78.8914
+ -- Sample 17: mean=92.1897%; std=86.9585
+ -- Sample 18: mean=33.6425%; std=21.9783
+ -- Sample 19: mean=36.0773%; std=23.7248
+ -- Sample 20: mean=38.9904%; std=22.5582
+ -- Sample 21: mean=37.5009%; std=23.8172
+ -- Sample 22: mean=36.6322%; std=18.6599
+ -- Sample 23: mean=35.7688%; std=18.8688
+ -- Sample 24: mean=37.9268%; std=17.7763
+ -- Sample 25: mean=36.8835%; std=18.0008
+ -- Sample 26: mean=30.6884%; std=14.1382
+ -- Sample 27: mean=31.7897%; std=12.5979
+ -- Sample 28: mean=28.4548%; std=14.0472
+ -- Sample 29: mean=28.8995%; std=15.3030
+ -- Sample 30: mean=23.4443%; std=16.2338
+ -- Sample 31: mean=27.1308%; std=17.1615
+ -- Sample 32: mean=24.6952%; std=19.0514
+ -- Sample 33: mean=23.8421%; std=17.1182
+ -- Sample 34: mean=29.9331%; std=25.4852
+ -- Sample 35: mean=31.2683%; std=21.2607
+ -- Sample 36: mean=28.1445%; std=19.6391
+ -- Sample 37: mean=27.6566%; std=20.5608
+ -- Sample 38: mean=27.7481%; std=20.3549
+ -- Sample 39: mean=27.0890%; std=19.4090
+ -- Sample 40: mean=22.7619%; std=18.3592
+ -- Sample 41: mean=26.9969%; std=19.1050
+ -- Sample 42: mean=73.1346%; std=84.7983
+ -- Sample 43: mean=73.6835%; std=85.0443
+ -- Sample 44: mean=76.6398%; std=79.9770
+ -- Sample 45: mean=72.6466%; std=75.6329
+ -- Sample 46: mean=39.7853%; std=20.7893
+ -- Sample 47: mean=36.8460%; std=20.4812
+ -- Sample 48: mean=37.1704%; std=19.4628
+ -- Sample 49: mean=37.2916%; std=19.7784
+Mean: 50.4547%, Std: 26.8968%
+------------------------------------------------------------------
+Angular error:
+ -- Sample 0: mean=39.9086º; std=40.1655
+ -- Sample 1: mean=39.9468º; std=40.8403
+ -- Sample 2: mean=29.9907º; std=36.7464
+ -- Sample 3: mean=29.6982º; std=36.3540
+ -- Sample 4: mean=30.0758º; std=37.1120
+ -- Sample 5: mean=30.4182º; std=36.8501
+ -- Sample 6: mean=34.7238º; std=36.9331
+ -- Sample 7: mean=37.4330º; std=38.6577
+ -- Sample 8: mean=34.1601º; std=35.8135
+ -- Sample 9: mean=31.9876º; std=34.7914
+ -- Sample 10: mean=36.7761º; std=38.4778
+ -- Sample 11: mean=34.6219º; std=37.0571
+ -- Sample 12: mean=33.8024º; std=35.8572
+ -- Sample 13: mean=36.5084º; std=38.1775
+ -- Sample 14: mean=42.5958º; std=38.3013
+ -- Sample 15: mean=45.0991º; std=40.0859
+ -- Sample 16: mean=46.0571º; std=41.4882
+ -- Sample 17: mean=44.0416º; std=39.9517
+ -- Sample 18: mean=31.5655º; std=34.5832
+ -- Sample 19: mean=32.0617º; std=34.7464
+ -- Sample 20: mean=33.5934º; std=35.8253
+ -- Sample 21: mean=32.9991º; std=35.9237
+ -- Sample 22: mean=30.7857º; std=33.3574
+ -- Sample 23: mean=29.7520º; std=32.3151
+ -- Sample 24: mean=29.3998º; std=32.4534
+ -- Sample 25: mean=30.7519º; std=33.9876
+ -- Sample 26: mean=34.2354º; std=38.5349
+ -- Sample 27: mean=34.9250º; std=39.2794
+ -- Sample 28: mean=33.8672º; std=38.7988
+ -- Sample 29: mean=33.4567º; std=38.1653
+ -- Sample 30: mean=22.7983º; std=29.3812
+ -- Sample 31: mean=24.1502º; std=30.6875
+ -- Sample 32: mean=23.7812º; std=31.1982
+ -- Sample 33: mean=22.8622º; std=30.2665
+ -- Sample 34: mean=34.1496º; std=36.3043
+ -- Sample 35: mean=34.7576º; std=36.6216
+ -- Sample 36: mean=34.7759º; std=36.2914
+ -- Sample 37: mean=34.5137º; std=36.2201
+ -- Sample 38: mean=38.2758º; std=38.8628
+ -- Sample 39: mean=38.0094º; std=38.5531
+ -- Sample 40: mean=36.4311º; std=37.4017
+ -- Sample 41: mean=37.1981º; std=37.8228
+ -- Sample 42: mean=40.5992º; std=43.8091
+ -- Sample 43: mean=40.2217º; std=43.3407
+ -- Sample 44: mean=38.7191º; std=40.3009
+ -- Sample 45: mean=38.9511º; std=40.6325
+ -- Sample 46: mean=34.1910º; std=37.5477
+ -- Sample 47: mean=34.8309º; std=37.6817
+ -- Sample 48: mean=34.1693º; std=37.7789
+ -- Sample 49: mean=34.8214º; std=38.3340
+Mean: 34.4689º, Std: 5.1024º
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9370
+ -- Sample 1: 0.9380
+ -- Sample 2: 0.9451
+ -- Sample 3: 0.9491
+ -- Sample 4: 0.9421
+ -- Sample 5: 0.9375
+ -- Sample 6: 0.6007
+ -- Sample 7: 0.6442
+ -- Sample 8: 0.6331
+ -- Sample 9: 0.5717
+ -- Sample 10: 0.7967
+ -- Sample 11: 0.8361
+ -- Sample 12: 0.8425
+ -- Sample 13: 0.8155
+ -- Sample 14: 0.7394
+ -- Sample 15: 0.7232
+ -- Sample 16: 0.7421
+ -- Sample 17: 0.7334
+ -- Sample 18: 0.8912
+ -- Sample 19: 0.8642
+ -- Sample 20: 0.8592
+ -- Sample 21: 0.8643
+ -- Sample 22: 0.9353
+ -- Sample 23: 0.9319
+ -- Sample 24: 0.9351
+ -- Sample 25: 0.9372
+ -- Sample 26: 0.9652
+ -- Sample 27: 0.9603
+ -- Sample 28: 0.9653
+ -- Sample 29: 0.9592
+ -- Sample 30: 0.9346
+ -- Sample 31: 0.9207
+ -- Sample 32: 0.9202
+ -- Sample 33: 0.9394
+ -- Sample 34: 0.9020
+ -- Sample 35: 0.9102
+ -- Sample 36: 0.9374
+ -- Sample 37: 0.9347
+ -- Sample 38: 0.9432
+ -- Sample 39: 0.9444
+ -- Sample 40: 0.9557
+ -- Sample 41: 0.9557
+ -- Sample 42: 0.6975
+ -- Sample 43: 0.7206
+ -- Sample 44: 0.7182
+ -- Sample 45: 0.7267
+ -- Sample 46: 0.9399
+ -- Sample 47: 0.9339
+ -- Sample 48: 0.9432
+ -- Sample 49: 0.9412
+Mean=0.8643, Std=0.1095
+------------------------------------------------------------------
+Flux Error:
+ -- Sample 0: 0.5309
+ -- Sample 1: 0.7186
+ -- Sample 2: 0.4074
+ -- Sample 3: 0.4053
+ -- Sample 4: 0.3968
+ -- Sample 5: 0.4313
+ -- Sample 6: 0.7888
+ -- Sample 7: 0.8847
+ -- Sample 8: 0.7622
+ -- Sample 9: 1.0112
+ -- Sample 10: 1.2317
+ -- Sample 11: 0.9037
+ -- Sample 12: 1.2839
+ -- Sample 13: 1.0047
+ -- Sample 14: 1.1657
+ -- Sample 15: 0.8657
+ -- Sample 16: 0.9746
+ -- Sample 17: 0.7937
+ -- Sample 18: 0.4885
+ -- Sample 19: 0.3309
+ -- Sample 20: 0.5150
+ -- Sample 21: 0.3513
+ -- Sample 22: 0.4593
+ -- Sample 23: 0.4759
+ -- Sample 24: 0.4568
+ -- Sample 25: 0.4527
+ -- Sample 26: 0.5475
+ -- Sample 27: 0.7784
+ -- Sample 28: 0.5717
+ -- Sample 29: 0.7775
+ -- Sample 30: 0.3912
+ -- Sample 31: 0.6477
+ -- Sample 32: 0.4203
+ -- Sample 33: 0.6461
+ -- Sample 34: 0.6601
+ -- Sample 35: 0.8038
+ -- Sample 36: 0.7099
+ -- Sample 37: 0.8534
+ -- Sample 38: 0.5851
+ -- Sample 39: 0.8389
+ -- Sample 40: 0.6132
+ -- Sample 41: 0.7953
+ -- Sample 42: 1.1429
+ -- Sample 43: 0.9560
+ -- Sample 44: 1.1373
+ -- Sample 45: 0.9033
+ -- Sample 46: 0.4935
+ -- Sample 47: 0.7246
+ -- Sample 48: 0.4773
+ -- Sample 49: 0.7385
+Mean: 0.7061, Std: 0.2475
+------------------------------------------------------------------
+Tortuosity Comparison:
+ -- Sample 0: 16.5562%
+ -- Sample 1: 11.7296%
+ -- Sample 2: 4.4009%
+ -- Sample 3: 5.0673%
+ -- Sample 4: 5.2065%
+ -- Sample 5: 5.4982%
+ -- Sample 6: 5.4407%
+ -- Sample 7: 7.2498%
+ -- Sample 8: 5.1606%
+ -- Sample 9: 1.6823%
+ -- Sample 10: 3.6986%
+ -- Sample 11: 1.8075%
+ -- Sample 12: 2.6389%
+ -- Sample 13: 4.2687%
+ -- Sample 14: 4.9089%
+ -- Sample 15: 8.2750%
+ -- Sample 16: 8.4734%
+ -- Sample 17: 7.6184%
+ -- Sample 18: 9.5167%
+ -- Sample 19: 8.7603%
+ -- Sample 20: 9.0815%
+ -- Sample 21: 7.3208%
+ -- Sample 22: 10.3186%
+ -- Sample 23: 8.6263%
+ -- Sample 24: 10.1148%
+ -- Sample 25: 10.5144%
+ -- Sample 26: 7.0917%
+ -- Sample 27: 8.1732%
+ -- Sample 28: 9.0917%
+ -- Sample 29: 8.1895%
+ -- Sample 30: 3.0829%
+ -- Sample 31: 6.0880%
+ -- Sample 32: 1.5360%
+ -- Sample 33: 0.7794%
+ -- Sample 34: 6.2679%
+ -- Sample 35: 9.3659%
+ -- Sample 36: 10.9132%
+ -- Sample 37: 11.3016%
+ -- Sample 38: 4.0698%
+ -- Sample 39: 5.9636%
+ -- Sample 40: 7.2781%
+ -- Sample 41: 9.7857%
+ -- Sample 42: 2.7107%
+ -- Sample 43: 2.6165%
+ -- Sample 44: 2.7899%
+ -- Sample 45: 3.5313%
+ -- Sample 46: 6.8728%
+ -- Sample 47: 4.7480%
+ -- Sample 48: 8.9550%
+ -- Sample 49: 7.3407%
+Mean: 6.6496%, Std: 3.1808%
+------------------------------------------------------------------
+Evaluating Divergent:
+ -- Sample 0: 43.6844%
+ -- Sample 1: 42.9509%
+ -- Sample 2: 40.4869%
+ -- Sample 3: 39.9279%
+ -- Sample 4: 39.3069%
+ -- Sample 5: 39.9993%
+ -- Sample 6: 41.9749%
+ -- Sample 7: 42.3347%
+ -- Sample 8: 42.1183%
+ -- Sample 9: 41.5515%
+ -- Sample 10: 47.4908%
+ -- Sample 11: 46.6654%
+ -- Sample 12: 46.8184%
+ -- Sample 13: 47.1295%
+ -- Sample 14: 48.4125%
+ -- Sample 15: 49.2084%
+ -- Sample 16: 48.2960%
+ -- Sample 17: 48.3864%
+ -- Sample 18: 44.2791%
+ -- Sample 19: 44.3771%
+ -- Sample 20: 45.1637%
+ -- Sample 21: 44.3425%
+ -- Sample 22: 39.3655%
+ -- Sample 23: 39.6539%
+ -- Sample 24: 39.7308%
+ -- Sample 25: 39.0833%
+ -- Sample 26: 40.3322%
+ -- Sample 27: 40.4732%
+ -- Sample 28: 39.8450%
+ -- Sample 29: 39.5601%
+ -- Sample 30: 35.8288%
+ -- Sample 31: 36.7739%
+ -- Sample 32: 36.4794%
+ -- Sample 33: 35.3134%
+ -- Sample 34: 42.2218%
+ -- Sample 35: 42.9775%
+ -- Sample 36: 43.2382%
+ -- Sample 37: 41.8374%
+ -- Sample 38: 43.8988%
+ -- Sample 39: 44.4942%
+ -- Sample 40: 42.6107%
+ -- Sample 41: 43.1619%
+ -- Sample 42: 48.0930%
+ -- Sample 43: 48.6064%
+ -- Sample 44: 49.3388%
+ -- Sample 45: 48.2119%
+ -- Sample 46: 40.6321%
+ -- Sample 47: 41.1366%
+ -- Sample 48: 41.4498%
+ -- Sample 49: 41.1300%
+Mean: 42.8077%, Std: 3.6441%
+------------------------------------------------------------------
+  Processing Batch 5 (Size: 24)...
+    Evaluating Ko et al (D3)
+Bias Error: using velocity magnitude
+Mean: 17.0387, Std: 10.7191
+------------------------------------------------------------------
+Magnitude Error: 
+ -- Sample 0: mean=36.9573%; std=25.3014
+ -- Sample 1: mean=37.5501%; std=24.6380
+ -- Sample 2: mean=38.1027%; std=26.4845
+ -- Sample 3: mean=36.9358%; std=26.4248
+ -- Sample 4: mean=28.5695%; std=20.3034
+ -- Sample 5: mean=30.7498%; std=22.7661
+ -- Sample 6: mean=29.4346%; std=20.7650
+ -- Sample 7: mean=30.3727%; std=21.7345
+ -- Sample 8: mean=51.1583%; std=35.6664
+ -- Sample 9: mean=57.1816%; std=35.8459
+ -- Sample 10: mean=61.6724%; std=36.8407
+ -- Sample 11: mean=62.5279%; std=44.7352
+ -- Sample 12: mean=45.1711%; std=55.4871
+ -- Sample 13: mean=58.7838%; std=68.7894
+ -- Sample 14: mean=46.4093%; std=58.1694
+ -- Sample 15: mean=42.8352%; std=48.1577
+ -- Sample 16: mean=50.9095%; std=28.7339
+ -- Sample 17: mean=49.8839%; std=31.5258
+ -- Sample 18: mean=49.8008%; std=32.7531
+ -- Sample 19: mean=49.2228%; std=28.3426
+ -- Sample 20: mean=38.0983%; std=21.6936
+ -- Sample 21: mean=36.3894%; std=21.9640
+ -- Sample 22: mean=35.7058%; std=22.2569
+ -- Sample 23: mean=37.0226%; std=21.9225
+Mean: 43.3935%, Std: 10.0825%
+------------------------------------------------------------------
+Angular error:
+ -- Sample 0: mean=42.7366º; std=38.7275
+ -- Sample 1: mean=41.8359º; std=39.2783
+ -- Sample 2: mean=40.7768º; std=38.3244
+ -- Sample 3: mean=41.4326º; std=38.9733
+ -- Sample 4: mean=29.4194º; std=32.5468
+ -- Sample 5: mean=30.1179º; std=32.8148
+ -- Sample 6: mean=31.7211º; std=33.4917
+ -- Sample 7: mean=29.8618º; std=33.0364
+ -- Sample 8: mean=34.1949º; std=37.1441
+ -- Sample 9: mean=35.5207º; std=37.7394
+ -- Sample 10: mean=35.7717º; std=38.1264
+ -- Sample 11: mean=33.8874º; std=37.4975
+ -- Sample 12: mean=26.7623º; std=30.8282
+ -- Sample 13: mean=26.4798º; std=30.6446
+ -- Sample 14: mean=25.5985º; std=30.9936
+ -- Sample 15: mean=25.6329º; std=31.1048
+ -- Sample 16: mean=43.4300º; std=39.4201
+ -- Sample 17: mean=44.2859º; std=40.5880
+ -- Sample 18: mean=43.6860º; std=40.0808
+ -- Sample 19: mean=44.0285º; std=39.7178
+ -- Sample 20: mean=41.7545º; std=41.7218
+ -- Sample 21: mean=41.1976º; std=41.6303
+ -- Sample 22: mean=41.7060º; std=41.7231
+ -- Sample 23: mean=41.5333º; std=42.2056
+Mean: 36.3905º, Std: 6.5585º
+------------------------------------------------------------------
+Correlation comparison:
+ -- Sample 0: 0.9024
+ -- Sample 1: 0.9016
+ -- Sample 2: 0.9027
+ -- Sample 3: 0.9049
+ -- Sample 4: 0.9326
+ -- Sample 5: 0.9145
+ -- Sample 6: 0.9290
+ -- Sample 7: 0.9200
+ -- Sample 8: 0.7135
+ -- Sample 9: 0.6964
+ -- Sample 10: 0.6792
+ -- Sample 11: 0.6640
+ -- Sample 12: 0.8539
+ -- Sample 13: 0.8136
+ -- Sample 14: 0.8567
+ -- Sample 15: 0.8716
+ -- Sample 16: 0.7765
+ -- Sample 17: 0.7773
+ -- Sample 18: 0.8085
+ -- Sample 19: 0.7729
+ -- Sample 20: 0.8713
+ -- Sample 21: 0.8641
+ -- Sample 22: 0.8703
+ -- Sample 23: 0.8733
+Mean=0.8363, Std=0.0808
+------------------------------------------------------------------
+Flux Error:
+ -- Sample 0: 0.4992
+ -- Sample 1: 0.6519
+ -- Sample 2: 0.5290
+ -- Sample 3: 0.6646
+ -- Sample 4: 0.5845
+ -- Sample 5: 0.4144
+ -- Sample 6: 0.5629
+ -- Sample 7: 0.4303
+ -- Sample 8: 1.0922
+ -- Sample 9: 0.6381
+ -- Sample 10: 1.0818
+ -- Sample 11: 0.6989
+ -- Sample 12: 0.8138
+ -- Sample 13: 0.7627
+ -- Sample 14: 0.8581
+ -- Sample 15: 0.6431
+ -- Sample 16: 0.5061
+ -- Sample 17: 0.6902
+ -- Sample 18: 0.5381
+ -- Sample 19: 0.6953
+ -- Sample 20: 0.4377
+ -- Sample 21: 0.5711
+ -- Sample 22: 0.3996
+ -- Sample 23: 0.5863
+Mean: 0.6396, Std: 0.1795
+------------------------------------------------------------------
+Tortuosity Comparison:
+ -- Sample 0: 38.2430%
+ -- Sample 1: 25.5517%
+ -- Sample 2: 23.0498%
+ -- Sample 3: 32.1379%
+ -- Sample 4: 8.5461%
+ -- Sample 5: 9.6608%
+ -- Sample 6: 15.9915%
+ -- Sample 7: 10.3864%
+ -- Sample 8: 10.2685%
+ -- Sample 9: 15.3797%
+ -- Sample 10: 14.3748%
+ -- Sample 11: 6.3229%
+ -- Sample 12: 1.1376%
+ -- Sample 13: 1.9373%
+ -- Sample 14: 2.6348%
+ -- Sample 15: 3.4831%
+ -- Sample 16: 5.7601%
+ -- Sample 17: 5.4918%
+ -- Sample 18: 6.9571%
+ -- Sample 19: 9.5196%
+ -- Sample 20: 9.0189%
+ -- Sample 21: 6.1742%
+ -- Sample 22: 9.1863%
+ -- Sample 23: 9.3185%
+Mean: 11.6888%, Std: 9.2109%
+------------------------------------------------------------------
+Evaluating Divergent:
+ -- Sample 0: 47.1656%
+ -- Sample 1: 45.7772%
+ -- Sample 2: 45.8347%
+ -- Sample 3: 46.3150%
+ -- Sample 4: 39.7023%
+ -- Sample 5: 39.8725%
+ -- Sample 6: 41.0381%
+ -- Sample 7: 40.1479%
+ -- Sample 8: 40.7235%
+ -- Sample 9: 42.1074%
+ -- Sample 10: 41.5364%
+ -- Sample 11: 40.4421%
+ -- Sample 12: 43.3176%
+ -- Sample 13: 42.4022%
+ -- Sample 14: 42.2746%
+ -- Sample 15: 42.6123%
+ -- Sample 16: 48.4318%
+ -- Sample 17: 47.7310%
+ -- Sample 18: 47.9880%
+ -- Sample 19: 48.0604%
+ -- Sample 20: 43.3543%
+ -- Sample 21: 41.7268%
+ -- Sample 22: 42.2733%
+ -- Sample 23: 42.5475%
+Mean: 43.4743%, Std: 2.8283%
+------------------------------------------------------------------
+Saved metrics for 'Ko et al (D3)' to ./Tables/ErrorMetrics_Comp5_Ko_et_al_D3.csv
+
+Extraction complete! Generated files:
+- Ko et al (D3): ./Tables/ErrorMetrics_Comp5_Ko_et_al_D3.csv

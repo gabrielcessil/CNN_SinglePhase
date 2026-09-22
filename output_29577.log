@@ -1,0 +1,227 @@
+[*] Resuming/Loading configs from results folder: ../NN_Results/../NN_Results/NN_Trainning_17_September_2026_03-19PM_Job28987/metadata.json
+Global seed set to 42
+Current device:      cuda
+
+
+Configurations:
+{
+    "model_name": "silveira_zyxp_1",
+    "binary_input": true,
+    "NN_dataset_folder": "../NN_Datasets_Grad_Dist_40_5_55/",
+    "dataset_train_name": [
+        "Train_Silveira_SphPore_SAug_DNorm.h5",
+        "Train_Silveira_SphGrain_SAug_DNorm.h5",
+        "Train_Oliveira_Leopard_SAug_DNorm.h5",
+        "Train_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Train_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Train_Oliveira_Berea_SAug_DNorm.h5",
+        "Train_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "dataset_valid_name": [
+        "Valid_Silveira_SphPore_SAug_DNorm.h5",
+        "Valid_Silveira_SphGrain_SAug_DNorm.h5",
+        "Valid_Oliveira_Leopard_SAug_DNorm.h5",
+        "Valid_Oliveira_CastleGate_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+        "Valid_Oliveira_BereaBuff_SAug_DNorm.h5",
+        "Valid_Oliveira_Berea_SAug_DNorm.h5",
+        "Valid_Oliveira_Bentheimer_SAug_DNorm.h5"
+    ],
+    "train_fraction": 0.125,
+    "valid_fraction": 1.0,
+    "batch_size": 8,
+    "num_workers": 4,
+    "num_threads": null,
+    "device": "cuda",
+    "N_epochs": 2000,
+    "partial_epochs": 2000,
+    "patience": 200,
+    "tolerance": null,
+    "learning_rate": 0.001,
+    "earlyStopping_loss": "PI-MSE",
+    "backPropagation_loss": "PI-MSE",
+    "optimizer": "ADAM",
+    "weight_init": null,
+    "seed": 42,
+    "train_comment": "Training refinement model",
+    "NN_results_folder": "../NN_Results/NN_Trainning_17_September_2026_03-19PM_Job28987/",
+    "loss_functions": {
+        "PI-MSE": {
+            "Thresholded": false,
+            "obj": "MSE_Divergent(\n  (div): Divergent()\n  (mse): MSELoss()\n)"
+        },
+        "Divergent": {
+            "Thresholded": true,
+            "obj": "Divergent()"
+        },
+        "MSE in Void Space": {
+            "Thresholded": true,
+            "obj": "Mask_LossFunction(\n  (lossFunction): MSELoss()\n)"
+        },
+        "Bias Error": {
+            "Thresholded": true,
+            "obj": "Mask_LossFunction(\n  (lossFunction): MeanBiasError()\n)"
+        },
+        "Pearson Correlation": {
+            "Thresholded": true,
+            "obj": "Mask_LossFunction(\n  (lossFunction): PearsonCorr()\n)"
+        }
+    }
+}
+
+
+../NN_Results/NN_Trainning_17_September_2026_03-19PM_Job28987/
+Metadata saved at: ../NN_Results/NN_Trainning_17_September_2026_03-19PM_Job28987/metadata.json
+Loading Training Data ... 
+Considering 80 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Silveira_SphPore_SAug_DNorm.h5.
+Considering 80 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Silveira_SphGrain_SAug_DNorm.h5.
+Considering 25 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Leopard_SAug_DNorm.h5.
+Considering 25 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_CastleGate_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+Considering 17 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+Considering 19 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_BereaBuff_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Berea_SAug_DNorm.h5.
+Considering 38 samples from ../NN_Datasets_Grad_Dist_40_5_55/Train_Oliveira_Bentheimer_SAug_DNorm.h5.
+  - 324 samples considered.
+Loading Validation Data ... 
+Considering 64 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphPore_SAug_DNorm.h5.
+Considering 64 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphGrain_SAug_DNorm.h5.
+Considering 24 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Leopard_SAug_DNorm.h5.
+Considering 24 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_CastleGate_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5.
+Considering 16 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaBuff_SAug_DNorm.h5.
+Considering 20 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Berea_SAug_DNorm.h5.
+Considering 36 samples from ../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Bentheimer_SAug_DNorm.h5.
+  - 288 samples considered.
+Loading Model ... 
+Model size: 19.771MB
+Model size: 5179193 total parameters
+Model size: 69 trainable parameters
+Model size: 5179124 frozen parameters
+
+Starting Train on cuda... 
+
+Loading Checkpoint from ../NN_Results/NN_Trainning_17_September_2026_03-19PM_Job28987/train_checkpoint_260...
+Resuming from Epoch 261
+
+
+Trainning session has started.
+
+--> New best solution for Validation dataset achieved at 277 / 2000: 0.033876346682922706 (0.047934% better)
+
+Executing epoch 280 / 2000 (14.0%)
+--> Average epoch processing time (seconds):  17.122707
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.035832   | 0.034309  
+Divergent             0.006913   | 0.006845  
+MSE in Void Space     0.112496   | 0.111998  
+Bias Error            716.314029 | 6628.272737
+Pearson Correlation   0.664317   | 0.639734  
+
+Executing epoch 300 / 2000 (15.0%)
+--> Average epoch processing time (seconds):  32.005916
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.036078   | 0.034682  
+Divergent             0.007095   | 0.007078  
+MSE in Void Space     0.111377   | 0.111163  
+Bias Error            623.980671 | 783.002184
+Pearson Correlation   0.663662   | 0.639925  
+
+Executing epoch 320 / 2000 (16.0%)
+--> Average epoch processing time (seconds):  45.037917
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.036438   | 0.034318  
+Divergent             0.007036   | 0.006907  
+MSE in Void Space     0.111023   | 0.110378  
+Bias Error            548.624928 | 478.197822
+Pearson Correlation   0.664550   | 0.636760  
+
+Executing epoch 340 / 2000 (17.0%)
+--> Average epoch processing time (seconds):  56.547823
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.036137   | 0.034225  
+Divergent             0.006974   | 0.006859  
+MSE in Void Space     0.110001   | 0.109468  
+Bias Error            393.302074 | 276.077772
+Pearson Correlation   0.665010   | 0.637426  
+
+Executing epoch 360 / 2000 (18.0%)
+--> Average epoch processing time (seconds):  66.784543
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.035990   | 0.034311  
+Divergent             0.007041   | 0.006938  
+MSE in Void Space     0.110300   | 0.109771  
+Bias Error            23562.187578 | 272.646798
+Pearson Correlation   0.665699   | 0.640318  
+
+Executing epoch 380 / 2000 (19.0%)
+--> Average epoch processing time (seconds):  75.945788
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.035754   | 0.034432  
+Divergent             0.006936   | 0.006959  
+MSE in Void Space     0.110828   | 0.110606  
+Bias Error            612.903768 | 678.381055
+Pearson Correlation   0.661630   | 0.640474  
+
+Executing epoch 400 / 2000 (20.0%)
+--> Average epoch processing time (seconds):  84.194641
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.036434   | 0.034267  
+Divergent             0.007033   | 0.006870  
+MSE in Void Space     0.109861   | 0.109048  
+Bias Error            591.559676 | 248.778411
+Pearson Correlation   0.665116   | 0.636124  
+
+Executing epoch 420 / 2000 (21.0%)
+--> Average epoch processing time (seconds):  91.665665
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.036206   | 0.034314  
+Divergent             0.007027   | 0.006908  
+MSE in Void Space     0.109904   | 0.109337  
+Bias Error            387.649585 | 415.327473
+Pearson Correlation   0.663323   | 0.639413  
+
+Executing epoch 440 / 2000 (22.0%)
+--> Average epoch processing time (seconds):  98.457281
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.035929   | 0.034745  
+Divergent             0.006993   | 0.006997  
+MSE in Void Space     0.113376   | 0.113087  
+Bias Error            1567.507006 | 496.689740
+Pearson Correlation   0.663317   | 0.642151  
+
+Executing epoch 460 / 2000 (23.0%)
+--> Average epoch processing time (seconds):  104.656571
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.035868   | 0.034403  
+Divergent             0.007033   | 0.006982  
+MSE in Void Space     0.111881   | 0.111346  
+Bias Error            300.146271 | 470.625363
+Pearson Correlation   0.664462   | 0.641006  
+Patience of 200 achieved (last update in epoch 277). Resuming training...
+Ending Train ... 
+Modelo PyTorch e memória associada liberados.

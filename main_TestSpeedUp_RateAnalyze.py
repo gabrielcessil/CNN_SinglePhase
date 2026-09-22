@@ -20,7 +20,7 @@ main_folders = {
 }
 """
 
-"""
+#"""
 file = "SpeedUp_crossDataset"
 main_folders = {
     "Spherical Pores":          "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/",
@@ -33,7 +33,7 @@ main_folders = {
     "Berea":                    "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Berea_SAug_DNorm/",
     "Bentheimer":               "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm/",
 }
-"""
+#"""
 """
 file = "SpeedUp_256"
 main_folders = {
@@ -44,7 +44,7 @@ main_folders = {
     "256³ I.C Ketton":                 "../TestSpeedUp_Simulations_BiggerCrops/IC_Ketton_256_256_256/",
 }  
 """
-#"""
+"""
 file = "SpeedUp_512"
 main_folders = {  
     "512³ Sandstone":                  "../TestSpeedUp_Simulations_BiggerCrops/DRP247_512_512_512/",
@@ -53,7 +53,7 @@ main_folders = {
     "500³ I.C Estaillades":            "../TestSpeedUp_Simulations_BiggerCrops/IC_Estaillades_500_500_500/",
     "500³ I.C Ketton":                 "../TestSpeedUp_Simulations_BiggerCrops/IC_Ketton_500_500_500/",
 }
-#"""
+"""
 
 remove_outliers = False
 logscale        = True

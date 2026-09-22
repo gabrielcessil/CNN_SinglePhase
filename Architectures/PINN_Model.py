@@ -4,7 +4,7 @@ import numpy as np
 import torch.nn.functional as F
 from .Functional import pad_same, crop_same, Channel_Concat, ChannelWiseMult
 import matplotlib.pyplot as plt
-from Unet import Base_Unet    
+from Architectures.Unet import Base_Unet    
 from Utilities import velocity_usage as vu
 
 
@@ -606,11 +606,11 @@ class MY_PIMODEL_3(nn.Module):
         w_2, v_2, u_2, p_2 = self.res_conv_2(x_bin, w_1,v_1,u_1,p_1)
         w_3, v_3, u_3, p_3 = self.res_conv_3(x_bin, w_2,v_2,u_2,p_2)
 
-        print("--")
-        print("  ResConv 1: ", self.res_conv_1.track_mean)
-        print("  ResConv 2: ", self.res_conv_2.track_mean)
-        print("  ResConv 3: ", self.res_conv_3.track_mean)
-        print("--")
+        #print("--")
+        #print("  ResConv 1: ", self.res_conv_1.track_mean)
+        #print("  ResConv 2: ", self.res_conv_2.track_mean)
+        #print("  ResConv 3: ", self.res_conv_3.track_mean)
+        #print("--")
         
         return self.concat(w_3, v_3, u_3, p_3)
     
