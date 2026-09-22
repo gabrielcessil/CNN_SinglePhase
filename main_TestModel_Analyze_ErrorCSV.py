@@ -1,82 +1,98 @@
+import os
 import pandas as pd
-from pathlib import Path
 
-# Path to your CSV
-csv_path = "./Tables/ErrorMetrics_Comp3_Ko_et_al_Etapa_3.csv"
+def generate_metric_summaries(group_name, file_list, input_dir="./Tables", output_dir="./Tables_Summary"):
+    """
+    Reads a list of model CSVs, groups by Dataset, calculates the mean for each metric, 
+    rounds to 3 decimal places, and exports a separate CSV for every metric.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Dictionary to store a DataFrame for each unique metric
+    metric_dfs = {}
+    
+    for file in file_list:
+        filepath = os.path.join(input_dir, file)
+        
+        if not os.path.exists(filepath):
+            print(f"Warning: File not found -> {filepath}")
+            continue
+            
+        # Extract model name for the column header (removes 'ErrorMetrics_' and '.csv')
+        model_col_name = file.replace("ErrorMetrics_", "").replace(".csv", "")
+        
+        df = pd.read_csv(filepath)
+        
+        # Drop the sample index to aggregate purely by dataset
+        if "Sample_Index" in df.columns:
+            df = df.drop(columns=["Sample_Index"])
+            
+        # Group by Dataset, calculate the mean, and round to 3 decimal places
+        summary = df.groupby("Dataset").mean().round(3)
+        
+        # Pivot the data into the metric_dfs dictionary
+        for metric in summary.columns:
+            if metric not in metric_dfs:
+                metric_dfs[metric] = pd.DataFrame()
+            
+            # Assign the model's mean values for this metric as a new column
+            metric_dfs[metric][model_col_name] = summary[metric]
 
-# Read CSV
-df = pd.read_csv(csv_path)
-
-# Metrics to average
-metrics = [
-    "Bias_Error_",
-    "Magnitude_Error_",
-    "Correlation"
-]
-
-# Calculate average for each dataset
-summary = (
-    df.groupby("Dataset")[metrics]
-      .mean()
-      .reset_index()
-)
-
-# Calculate median across datasets
-median_row = pd.DataFrame([{
-    "Dataset": "Median",
-    "Bias_Error_": summary["Bias_Error_"].median(),
-    "Magnitude_Error_": summary["Magnitude_Error_"].median(),
-    "Correlation": summary["Correlation"].median()
-}])
-
-# Add median as the bottom row
-summary = pd.concat([summary, median_row], ignore_index=True)
-
-# Round values
-summary[metrics] = summary[metrics].round(3)
-
-# Display
-print(summary.to_string(index=False))
-
-# Save using original filename + "_summary"
-input_path = Path(csv_path)
-output_path = input_path.parent / f"{input_path.stem}_summary.csv"
-
-summary.to_csv(output_path, index=False)
-print(f"\nSummary CSV saved to: {output_path}")
+    # Export each metric as a separate table
+    for metric, metric_df in metric_dfs.items():
+        # Clean metric name for the filename
+        safe_metric_name = metric.replace(" ", "_").replace("/", "")
+        output_filename = os.path.join(output_dir, f"{group_name}_{safe_metric_name}.csv")
+        
+        metric_df.to_csv(output_filename)
+        print(f"Exported: {output_filename}")
 
 
-# ==========================================
-# CREATE LATEX TABLE
-# ==========================================
-latex_path = input_path.parent / f"{input_path.stem}_summary.tex"
+if __name__ == "__main__":
+    
+    INPUT_DIRECTORY = "./Tables"
+    OUTPUT_DIRECTORY = "./Tables/ErrorSummaries/"
 
-# Clean up headers for the LaTeX table (remove trailing underscores, replace with spaces)
-latex_df = summary.copy()
-latex_df.columns = latex_df.columns.str.replace('_', ' ').str.strip()
+    # 1) Compare Ko et al (Component 0) with increasing N samples
+    group_1_files = [
+        "ErrorMetrics_Comp0_Ko_et_al_D3_N0.csv",
+        "ErrorMetrics_Comp0_Ko_et_al_D3_N1.csv",
+        "ErrorMetrics_Comp0_Ko_et_al_D3_N2.csv",
+        "ErrorMetrics_Comp0_Ko_et_al_D3_N3.csv",
+        "ErrorMetrics_Comp0_Ko_et_al_D3_N4.csv"
+    ]
+    print("\nProcessing Group 1: Ko et al (Increasing N)")
+    generate_metric_summaries("Group1_Ko_IncreasingN", group_1_files, INPUT_DIRECTORY, OUTPUT_DIRECTORY)
 
-# Generate the core LaTeX table string
-latex_body = latex_df.to_latex(
-    index=False,
-    column_format="l" + "c" * len(metrics),
-    float_format="%.3f"
-)
+    # 2) Compare Ko et al (Component 0) with decreasing Diversity (D)
+    group_2_files = [
+        "ErrorMetrics_Comp0_Ko_et_al_D3_N4.csv",
+        "ErrorMetrics_Comp0_Ko_et_al_D2_N4.csv",
+        "ErrorMetrics_Comp0_Ko_et_al_D1_N4.csv",
+        "ErrorMetrics_Comp0_Ko_et_al_D0_N4.csv"
+    ]
+    print("\nProcessing Group 2: Ko et al (Decreasing Diversity)")
+    generate_metric_summaries("Group2_Ko_DecreasingD", group_2_files, INPUT_DIRECTORY, OUTPUT_DIRECTORY)
 
-# Insert a horizontal line before the Median row for visual separation
-latex_body = latex_body.replace("Median", "\\hline\nMedian")
+    # 3) Compare Javier Santos (Component 0) with increasing Diversity (D)
+    group_3_files = [
+        "ErrorMetrics_Comp0_Javier_Santos_D0_N4.csv",
+        "ErrorMetrics_Comp0_Javier_Santos_D1_N4.csv",
+        "ErrorMetrics_Comp0_Javier_Santos_D2_N4.csv",
+        "ErrorMetrics_Comp0_Javier_Santos_D3_N4.csv"
+    ]
+    print("\nProcessing Group 3: Javier Santos (Increasing Diversity)")
+    generate_metric_summaries("Group3_Santos_IncreasingD", group_3_files, INPUT_DIRECTORY, OUTPUT_DIRECTORY)
 
-# Wrap in standard table environment
-wrapped_latex = (
-    "\\begin{table}[h!]\n"
-    "    \\centering\n"
-    "    \\caption{Summary of Error Metrics}\n"
-    "    \\label{tab:metrics_summary}\n"
-    + latex_body +
-    "\\end{table}\n"
-)
+    # 4) Separate tables for individual models across different components
+    group_4_files = [
+        "ErrorMetrics_Comp2_Ko_et_al_D3.csv",
+        "ErrorMetrics_Comp3_Ko_et_al_D3.csv",
+        "ErrorMetrics_Comp5_Ko_et_al_D3.csv"
+    ]
+    print("\nProcessing Group 4: Separate Components")
+    for file in group_4_files:
+        comp_name = file.split("_")[1]
+        generate_metric_summaries(f"Group4_Isolated_{comp_name}", [file], INPUT_DIRECTORY, OUTPUT_DIRECTORY)
 
-# Save to .tex file
-with open(latex_path, "w") as f:
-    f.write(wrapped_latex)
-
-print(f"LaTeX table saved to: {latex_path}")
+    print("\nAll summary tables generated successfully!")

@@ -235,3 +235,36 @@ Divergent             0.001869   | 0.001976
 MSE in Void Space     0.454807   | 0.459469  
 Bias Error            281.951618 | 1840.898892
 Pearson Correlation   0.707755   | 0.678238  
+
+Executing epoch 1340 / 2000 (67.0%)
+--> Average epoch processing time (seconds):  47.163626
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.014931   | 0.015012  
+Divergent             0.001870   | 0.001975  
+MSE in Void Space     0.477046   | 0.478927  
+Bias Error            155.219313 | 108.359564
+Pearson Correlation   0.716903   | 0.687608  
+
+Executing epoch 1360 / 2000 (68.0%)
+--> Average epoch processing time (seconds):  50.342032
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.011150   | 0.012569  
+Divergent             0.001861   | 0.002017  
+MSE in Void Space     0.443616   | 0.445665  
+Bias Error            186.272663 | 139.744321
+Pearson Correlation   0.712899   | 0.682580  
+
+Executing epoch 1380 / 2000 (69.0%)
+--> Average epoch processing time (seconds):  53.431919
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.011568   | 0.012633  
+Divergent             0.001773   | 0.001922  
+MSE in Void Space     0.465309   | 0.467835  
+Bias Error            272.157282 | 193.865245
+Pearson Correlation   0.716325   | 0.685961  

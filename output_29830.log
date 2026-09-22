@@ -174,3 +174,15 @@ MSE in Void Space     0.003422   | 0.004295
 Bias Error            147.315340 | 291.239159
 Pearson Correlation   0.918264   | 0.880934  
 --> New best solution for Validation dataset achieved at 504 / 2000: 0.016498105445255835 (0.072309% better)
+
+Executing epoch 520 / 2000 (26.0%)
+--> Average epoch processing time (seconds):  128.58436
+--> Back-Propagated Loss for trainning vs validation data:
+Loss Name             Train      | Valid     
+----------------------------------------------
+PI-MSE                0.015191   | 0.016586  
+Divergent             0.002930   | 0.003013  
+MSE in Void Space     0.003431   | 0.004379  
+Bias Error            273.183250 | 395.561638
+Pearson Correlation   0.917735   | 0.888460  
+--> New best solution for Validation dataset achieved at 526 / 2000: 0.016439236829885177 (0.356820% better)
