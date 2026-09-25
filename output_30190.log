@@ -1,0 +1,48 @@
+Initializing Neural Network Models...
+Total Samples: 15 | Dividing into 15 chunks (~1 samples/job).
+-> Setting up sample: Sample_00000 (Chunk 000)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00003 (Chunk 001)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00005 (Chunk 002)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00006 (Chunk 003)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00011 (Chunk 004)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00012 (Chunk 005)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00013 (Chunk 006)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00014 (Chunk 007)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00017 (Chunk 008)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00019 (Chunk 009)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00020 (Chunk 010)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00022 (Chunk 011)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00024 (Chunk 012)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00025 (Chunk 013)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00026 (Chunk 014)
+  -> Calculating pressure drop
+  -> Creating prediction
+Setup complete! Master submission script ready at: ../TestSpeedUp_Simulations_BiggerCrops/IC_Estaillades_256_256_256/submit_all_jobs.sh

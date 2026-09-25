@@ -16,32 +16,33 @@ from Utilities import velocity_usage as vu
 # ==============================================================================
 # CONFIGURATION
 # ==============================================================================
-ROOT_DATASET_FOLDER     = "../GradSimulations_BiggerCrops/IC_Doddington/Samples_500_500_500/"
-RESULTS_DIR             = "../TestSpeedUp_Simulations_BiggerCrops/IC_Doddington_500_500_500/"
-shape                   = (500, 500, 500)
-nproc                   = (1,1,1)
+ROOT_DATASET_FOLDER     = "../GradSimulations_BiggerCrops/IC_Ketton/Samples_256_256_256/"
+RESULTS_DIR             = "../TestSpeedUp_Simulations_BiggerCrops/IC_Ketton_256_256_256/"
+shape                   = (256, 256, 256)
+nproc                   = (1,1,4)
 n_samples               = None
 shuffle                 = False
 
 # Base Output Directory
 visualization_interval  = 1000000000
-tolerance               = 1e-2
-
+tolerance               = -1
+analysis_interval       = 200
+timestep_max            = 2000000
 raw_file        = "domain.raw"
 device          = "cpu"
 
 # SLURM & Job Settings
 jobs_running = 45
 NTASKS       = nproc[0]*nproc[1]*nproc[2]
-mem          = 30 * 8 * shape[0]**3 // (1024**3) # GB
+mem             = 20 #30 * 8 * shape[0]**3 / (1024**3) # GB
+cpus_per_task   = 6 #2
 
-LBPM_VERSION = "lbpm/cpu/lbpm_init_07f0eef"
-PARTITION = "close_cpu"
-GRES_STR = ""
+LBPM_VERSION    = "lbpm/gpu/lbpm_fork_parallelinitdebug_7c32db3" 
+PARTITION       = "all_gpu" 
+GRES_STR        = "gpu:a100:4" 
 
 MPI_PATH = "mpirun"
 LBPM_EXEC = "lbpm_permeability_simulator"
-analysis_interval = 200
 
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -129,8 +130,8 @@ for chunk_idx in range(jobs_running):
         c_f.write(f"#SBATCH -o perm_chunk_{chunk_str_id}_%j.out\n")
         c_f.write(f"#SBATCH -e perm_chunk_{chunk_str_id}_%j.err\n")
         c_f.write(f"#SBATCH --ntasks={NTASKS}\n")
-        c_f.write("#SBATCH --nodelist=node[008-020]\n")
-        c_f.write("#SBATCH --cpus-per-task=4\n\n")
+        if PARTITION=="close_cpu": c_f.write("#SBATCH --nodelist=node[008-020]\n") 
+        c_f.write(f"#SBATCH --cpus-per-task={cpus_per_task}\n\n")
         c_f.write(f"#SBATCH --mem={mem}G\n") 
         c_f.write("# ---------------- Environment Setup ----------------\n")
         c_f.write("module load $LBPM_VERSION\n\n")
@@ -194,41 +195,46 @@ for chunk_idx in range(jobs_running):
             n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
             N=shape, 
             analysis_interval=analysis_interval, visualization_interval=visualization_interval,
-            tolerance=tolerance, out_format="vtk"
+            tolerance=tolerance, out_format="vtk",timestep_max=timestep_max
         )
         
         print(f"  -> Creating prediction")
-        # 2. Neural Network Setup
-        original_shape = geometry_uint8.shape
-        print("    -> Original geometry shape: ",original_shape)
+        # ================================================================== 
+        # 2. NEURAL NETWORK INITIALIZATION SETUP 
+        # ================================================================== 
+        # Pad geometry before distance transform
+        geometry_padded = sh.pad_geometry(geometry_uint8)
+        geometry_edt = edt(geometry_padded > 0).astype("float32") 
+        geometry_edt = torch.from_numpy(geometry_edt).unsqueeze(0).unsqueeze(0) 
+         
+        pred_padded = model.predict(geometry_edt) 
+        pred_padded = vu.tensor_denorm(out=pred_padded, inp=geometry_edt) 
+         
+        # Unpad prediction back to original domain size
+        pred = sh.unpad_geometry(pred_padded, geometry_bool.shape)
         
-        geometry_uint8_padded   = sh.pad_geometry(geometry_uint8) # Decoder path must not handle with odd sizes
-        print("    -> Padded geometry shape:   ",geometry_uint8_padded.shape)
-        
-        geometry_edt            = edt(geometry_uint8_padded).astype("float32")
-        geometry_edt            = torch.from_numpy(geometry_edt).unsqueeze(0).unsqueeze(0) # (B=1, C=1, Z,Y,X)
-        print("    -> EDT shape:               ",geometry_edt.shape)
-        
-        pred = model.predict(geometry_edt)
-        pred = vu.tensor_denorm(out=pred, inp=geometry_edt)
-        pred = sh.unpad_geometry(pred, original_shape)
-        print("    -> Final prediction shape:  ",pred.shape)
-        
-        uz_nn = pred[0,0].detach().cpu().numpy().astype(np.float64)
-        uy_nn = pred[0,1].detach().cpu().numpy().astype(np.float64)
-        ux_nn = pred[0,2].detach().cpu().numpy().astype(np.float64)
+        uz_nn = pred[0,0].detach().cpu().numpy().astype(np.float64) 
+        uy_nn = pred[0,1].detach().cpu().numpy().astype(np.float64) 
+        ux_nn = pred[0,2].detach().cpu().numpy().astype(np.float64) 
         pr_nn = pred[0,3].detach().cpu().numpy().astype(np.float64)
 
-        sh.write_start_raw(dirpath=nn_dir, ux=ux_nn, uy=uy_nn, uz=uz_nn, pr=pr_nn, nproc=nproc)
-        sh.write_lbpm_db(
-            path=nn_dir, db_name="lbpm.db", domain_filename=f"../{raw_file}",
-            Start=True, tau=1.5, bc=3, din=1.0, dout=1.0 - 3*p_drop,
+        sh.write_start_raw( 
+            dirpath=nn_dir, 
+            ux=ux_nn, uy=uy_nn, uz=uz_nn, pr=pr_nn,
+            nproc=nproc
+        ) 
+         
+        sh.write_lbpm_db( 
+            path=nn_dir, 
+            db_name="lbpm.db", 
+            domain_filename=f"../{raw_file}", 
+            Start=True, tau=1.5, bc=3, din=1.0, dout=1.0 - 3*p_drop, 
             nproc=nproc, 
             n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
             N=shape, 
-            analysis_interval=analysis_interval, visualization_interval=visualization_interval,
-            tolerance=tolerance, out_format="vtk"
-        )
+            analysis_interval=analysis_interval, visualization_interval=visualization_interval, 
+            tolerance=tolerance, out_format="vtk",timestep_max=timestep_max
+        ) 
         
         # Append Execution Commands to Chunk Script using original path stepping
         with open(chunk_script_path, "a") as c_f:

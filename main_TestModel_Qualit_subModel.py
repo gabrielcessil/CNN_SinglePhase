@@ -250,25 +250,7 @@ datasets        = {
 shape               = (120,120,120)
 component           = 0 # Uz=0, Uy=1, Ux=2, P=3
 models          = {}
-# DEFINE DATASETS
-datasets        = {
-    
-    #"Ko et. al":            "../NN_Datasets_Grad/Test_Danny_SphPore_DAug_DNorm.h5",
-    
-    "Spherical Pores":      "../NN_Datasets_Grad/Test_Silveira_SphPore_SAug_DNorm.h5",
-    "Spherical Grains":     "../NN_Datasets_Grad/Test_Silveira_SphGrain_SAug_DNorm.h5",
-    "Cylindrical Pores":    "../NN_Datasets_Grad/Test_Silveira_CylinPore_SAug_DNorm.h5",
-    "Cylindrical Grains":   "../NN_Datasets_Grad/Test_Silveira_CylinGrain_SAug_DNorm.h5",
-     
-    "Bentheimer":           "../NN_Datasets_Grad/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
-    "Berea Buff":           "../NN_Datasets_Grad/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
-    "Leopard":              "../NN_Datasets_Grad/Test_Oliveira_Leopard_SAug_DNorm.h5",
-    "Castle Gate":          "../NN_Datasets_Grad/Test_Oliveira_CastleGate_SAug_DNorm.h5",
-    "Berea Upper Gray":     "../NN_Datasets_Grad/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
-    "Berea Sinter Gray":    "../NN_Datasets_Grad/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
-    "Berea":                "../NN_Datasets_Grad/Test_Oliveira_Berea_SAug_DNorm.h5",
-    
-    }
+
 
 
 # DEFINE MODELS
@@ -364,6 +346,6 @@ plt.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Computer Moder
 
 for dataname, datapath in datasets.items():
     for sample_idx in sample_idexes:
-        #Plot_Front_Comparison(models, datapath, component, sample_idx= sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag = save_tag)
+        Plot_Front_Comparison(models, datapath, component, sample_idx= sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag = save_tag)
         Plot_Side_Comparison (models, datapath, component, sample_idx= sample_idx, slice_idx=shape[2]//2, save_mode=save_mode, save_tag=dataname)
-        #Plot_Error_Comparison(models, datapath, slice_idx=60, save_mode=save_mode, save_tag = save_tag, axis='side')
+        Plot_Error_Comparison(models, datapath, slice_idx=60, save_mode=save_mode, save_tag = save_tag, axis='side')

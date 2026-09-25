@@ -67,6 +67,7 @@ class Ux2Uy(nn.Module):
             # Rotate output back to original space
             out = torch.rot90(out_rot, k=-1, dims=(3, 4))
             
+            
             # Create mask using un-rotated 'x'
             mask = (x > 0).to(torch.float32) 
             mask = mask.expand(-1, out.shape[1], -1, -1, -1)

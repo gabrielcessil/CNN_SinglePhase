@@ -20,7 +20,7 @@ main_folders = {
 }
 """
 
-#"""
+"""
 file = "SpeedUp_crossDataset"
 main_folders = {
     "Spherical Pores":          "../TestSpeedUp_Simulations_CrossDatasets/Test_Silveira_SphPore_SAug_DNorm/",
@@ -33,8 +33,9 @@ main_folders = {
     "Berea":                    "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Berea_SAug_DNorm/",
     "Bentheimer":               "../TestSpeedUp_Simulations_CrossDatasets/Test_Oliveira_Bentheimer_SAug_DNorm/",
 }
-#"""
 """
+
+#"""
 file = "SpeedUp_256"
 main_folders = {
     "256³ Sandstone":                  "../TestSpeedUp_Simulations_BiggerCrops/DRP247_256_256_256/",
@@ -43,7 +44,7 @@ main_folders = {
     "256³ I.C Estaillades":            "../TestSpeedUp_Simulations_BiggerCrops/IC_Estaillades_256_256_256/",
     "256³ I.C Ketton":                 "../TestSpeedUp_Simulations_BiggerCrops/IC_Ketton_256_256_256/",
 }  
-"""
+#"""
 """
 file = "SpeedUp_512"
 main_folders = {  
@@ -61,35 +62,22 @@ dataset_colors = {}
 for key in main_folders.keys():
     if key not in dataset_colors:
         dataset_colors[key] = "black"
-        
-def get_max_timestep_from_vis(folder_path):
+
+# ---------------------------------------------------------
+# NEW: Convergence Analysis Settings
+# ---------------------------------------------------------
+analysis_interval = 200  # The timestep interval between permeability records
+convergence_tolerance = 1.0  # X% difference allowed from the reference permeability
+
+
+def get_permeability_data(folder_path):
+    """
+    Reads the Permeability.csv file from the simulation folder and 
+    returns the entire DataFrame (useful for historical tracking).
+    """
     p = Path(folder_path)
     if not p.exists():
         return None
-
-    vis_pattern = re.compile(r'^vis(\d+)$')
-    max_ts = 0
-    found_vis = False
-    
-    for item in p.iterdir():
-        if item.is_dir():
-            match = vis_pattern.match(item.name)
-            if match:
-                found_vis = True
-                ts = int(match.group(1))
-                if ts > max_ts:
-                    max_ts = ts
-                    
-    return max_ts if found_vis else None
-
-def get_last_permeability(folder_path):
-    """
-    Reads the Permeability.csv file from the simulation folder and 
-    returns the last value in the 'absperm(mDa)' column.
-    """
-    p = Path(folder_path)
-    if not p.exists():
-        return np.nan
         
     perm_file = p / "Permeability.csv"
     
@@ -98,11 +86,48 @@ def get_last_permeability(folder_path):
             # The CSV data is whitespace-separated
             df_perm = pd.read_csv(perm_file, sep=r'\s+')
             if 'absperm(mDa)' in df_perm.columns:
-                return float(df_perm['absperm(mDa)'].iloc[-1])
+                return df_perm
         except Exception as e:
             print(f"Warning: Could not read {perm_file} due to {e}")
             
-    return np.nan
+    return None
+
+def get_convergence_step(df_sim, k_ref, tol=1.0, interval=200):
+    """
+    Calculates the first timestep of the final uninterrupted sequence 
+    where the simulation permeability stays within `tol` % of `k_ref`.
+    """
+    if df_sim is None or len(df_sim) == 0:
+        return np.nan
+        
+    k_array = df_sim['absperm(mDa)'].values
+    
+    # Safely infer the real timesteps based on the df columns
+    if 'Step' in df_sim.columns:
+        steps = df_sim['Step'].values
+        if np.max(steps) <= len(steps):
+            steps = steps * interval
+    elif 'Time(s)' in df_sim.columns:
+        steps = df_sim['Time(s)'].values
+    else:
+        steps = np.arange(1, len(k_array) + 1) * interval
+        
+    # Calculate percentage error relative to the reference value
+    errors = 100.0 * np.abs(k_array - k_ref) / (np.abs(k_ref) + 1e-15)
+    
+    conv_step = np.nan
+    
+    # Iterate backwards from the end of the simulation.
+    # As long as the error is <= tol, we keep moving back.
+    # The moment we hit an error > tol, we break. The last valid step 
+    # we saw is the "entering instant" of the final uninterrupted sequence.
+    for i in range(len(errors) - 1, -1, -1):
+        if errors[i] <= tol:
+            conv_step = steps[i]
+        else:
+            break
+            
+    return conv_step
 
 # ==============================================================================
 # 2. DATA EXTRACTION
@@ -120,11 +145,28 @@ for dataset_name, dataset_path in main_folders.items():
         run_dir = sample_folder / "lbpm_grad_run"
         started_dir = sample_folder / "lbpm_nn_run"
         
-        ts_standard = get_max_timestep_from_vis(run_dir)
-        ts_started = get_max_timestep_from_vis(started_dir)
+        df_grad = get_permeability_data(run_dir)
+        df_nn = get_permeability_data(started_dir)
         
-        k_standard = get_last_permeability(run_dir)
-        k_started = get_last_permeability(started_dir)
+        if df_grad is None or df_nn is None:
+            continue
+            
+        k_array_grad = df_grad['absperm(mDa)'].values
+        k_array_nn = df_nn['absperm(mDa)'].values
+        
+        if len(k_array_grad) == 0 or len(k_array_nn) == 0:
+            continue
+            
+        # 1. Establish the reference permeability (Final value of Grad run)
+        k_ref = k_array_grad[-1]
+        
+        # 2, 3, 4. Find the convergence entering instant for both runs based on the tolerance
+        ts_standard = get_convergence_step(df_grad, k_ref, tol=convergence_tolerance, interval=analysis_interval)
+        ts_started = get_convergence_step(df_nn, k_ref, tol=convergence_tolerance, interval=analysis_interval)
+        
+        # Keep final permeabilities to check if the end state had structural issues
+        k_standard = k_array_grad[-1]
+        k_started = k_array_nn[-1]
         
         results.append({
             "Dataset": dataset_name,
@@ -137,24 +179,29 @@ for dataset_name, dataset_path in main_folders.items():
 
 df = pd.DataFrame(results)
 
-# Clean up data: Drop rows where simulations failed (NaN) or took 0 timesteps
+# Clean up data: Drop rows where simulations didn't hit the convergence threshold before finishing
+dropped_unconverged = df['Standard_Timesteps'].isna() | df['NN_Started_Timesteps'].isna()
+if dropped_unconverged.any():
+    print(f"Warning: Dropped {dropped_unconverged.sum()} samples that failed to reach {convergence_tolerance}% convergence.")
+
 df = df.dropna(subset=["Standard_Timesteps", "NN_Started_Timesteps"])
 df = df[df["NN_Started_Timesteps"] > 0]
 
-# Calculate Speedup Ratio & Permeability Relative Error
+# Calculate Speedup Ratio (using the convergence steps) & Permeability Relative Error
 df['Speedup_Ratio'] = df['Standard_Timesteps'] / df['NN_Started_Timesteps']
-df['Perm_Error [%]'] = 100*np.abs(df['NN_Permeability'] - df['Standard_Permeability']) / np.abs(df['Standard_Permeability'])
+df['Perm_Error [%]'] = 100 * np.abs(df['NN_Permeability'] - df['Standard_Permeability']) / np.abs(df['Standard_Permeability'])
 
 print("\nConvergence Timesteps & Speedup Comparison:")
 print("-" * 75)
 print(df[['Dataset', 'Sample', 'Speedup_Ratio', 'Perm_Error [%]']].to_string(index=False))
 print("-" * 75)
 
+os.makedirs("./Tables", exist_ok=True)
 df.to_csv("./Tables/"+file+".csv", index=False)
-print("\nResults saved to timesteps_comparison.csv")
+print("\nResults saved to ./Tables/"+file+".csv")
 
 # ==============================================================================
-# 3. GLOBAL ACADEMIC STYLING CONFIGURATION
+# 3. GLOBAL ACADEMIC STYLING CONFIGURATION & PLOTTING
 # ==============================================================================
 plt.rcParams.update(
     {
@@ -196,6 +243,11 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
             ax=ax,
             legend=False
         )
+
+        # Boolean flags to track which highlights were actually plotted
+        has_red = False
+        has_yellow = False
+        has_green = False
 
         # 2. Density-Proportional Scatter & Annotations
         for i, dataset in enumerate(datasets):
@@ -251,13 +303,18 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
             jitter = np.random.uniform(-1, 1, size=len(y_vals)) * max_jitter * density_norm
             x_vals = i + jitter
             
-            # --- Split data by Permeability Error for styling ---
-            mask_red = perm_errors > 50
-            mask_yellow = (perm_errors > 10) & (perm_errors <= 50)
-            mask_green = (perm_errors > 5) & (perm_errors <= 10)
-            mask_normal = perm_errors <= 5
+            # --- Split data by FINAL Permeability Error for styling ---
+            mask_red = perm_errors > 5
+            mask_yellow = (perm_errors > 2) & (perm_errors <= 5)
+            mask_green = (perm_errors > 1) & (perm_errors <= 2)
+            mask_normal = perm_errors <= 1
             
-            # Plot normal items (<= 5% diff)
+            # Update global tracking flags
+            if np.any(mask_red): has_red = True
+            if np.any(mask_yellow): has_yellow = True
+            if np.any(mask_green): has_green = True
+            
+            # Plot normal items (<= 1% diff)
             if np.any(mask_normal):
                 ax.scatter(
                     x_vals[mask_normal], 
@@ -270,7 +327,7 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
                     zorder=2
                 )
                 
-            # Plot Green stars (5% < diff <= 10%)
+            # Plot Green squares (1% < diff <= 2%)
             if np.any(mask_green):
                 ax.scatter(
                     x_vals[mask_green], 
@@ -284,7 +341,7 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
                     zorder=3
                 )
                 
-            # Plot Yellow stars (10% < diff <= 50%) - Using 'gold' for better contrast
+            # Plot Yellow triangles (2% < diff <= 5%)
             if np.any(mask_yellow):
                 ax.scatter(
                     x_vals[mask_yellow], 
@@ -298,7 +355,7 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
                     zorder=3
                 )
 
-            # Plot Red stars (> 50% diff)
+            # Plot Red stars (> 5% diff)
             if np.any(mask_red):
                 ax.scatter(
                     x_vals[mask_red], 
@@ -334,18 +391,19 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
         ax.grid(True, alpha=0.3, which="both", ls="--", axis="y", zorder=1)
         ax.set_axisbelow(True)
 
-        # Add custom Legend for Reference Line and Stars
+        # Add custom Legend for Reference Line and Dynamic Highlighting Shapes
         handles, labels = ax.get_legend_handles_labels()
         
-        # Add the stars to legend to clarify what they mean
-        handles.append(Line2D([0], [0], marker='*', color='w', markerfacecolor='red', markersize=12, label='Perm. Diff > 50%'))
-        handles.append(Line2D([0], [0], marker='^', color='w', markerfacecolor='gold', markersize=12, label='10% < Perm. Diff $\leq$ 50%'))
-        handles.append(Line2D([0], [0], marker='s', color='w', markerfacecolor='green', markersize=12, label='5% < Perm. Diff $\leq$ 10%'))
+        if has_red:
+            handles.append(Line2D([0], [0], marker='*', color='w', markerfacecolor='red', markersize=12, label='Final Perm. Diff > 5%'))
+        if has_yellow:
+            handles.append(Line2D([0], [0], marker='^', color='w', markerfacecolor='gold', markersize=12, label='2% < Final Perm. Diff $\leq$ 5%'))
+        if has_green:
+            handles.append(Line2D([0], [0], marker='s', color='w', markerfacecolor='green', markersize=12, label='1% < Final Perm. Diff $\leq$ 2%'))
         
         ax.legend(handles=handles, loc='upper left', frameon=True, edgecolor='black', framealpha=0.9, fancybox=False)
 
         plt.tight_layout()
-        
         
         plt.savefig(os.path.join(output_dir, f"Boxplot_{suffix}.pdf"), bbox_inches='tight')
         plt.savefig(os.path.join(output_dir, f"Boxplot_{suffix}.png"), dpi=300, bbox_inches='tight')

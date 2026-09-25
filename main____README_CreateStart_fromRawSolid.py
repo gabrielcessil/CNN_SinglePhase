@@ -15,13 +15,13 @@ from Utilities import velocity_usage as vu
 # ==============================================================================
 
 paths = [
-    "./DEBUG_PARALLEL_INIT/2_2_2/"
+    "./Example_Bentheimer/"
 ]
 
 raw_file = "domain.raw"
 shape = (120, 120, 120)       # Geometry shape (Z,Y,X)
 device = "cpu"
-nproc = (2, 2, 2)             # LBPM parallelization
+nproc = (1, 1, 1)             # LBPM parallelization
 
 
 # ==============================================================================

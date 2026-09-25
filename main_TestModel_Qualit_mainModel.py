@@ -1,3 +1,4 @@
+import os
 import torch
 import numpy              as np
 import matplotlib.pyplot  as plt
@@ -7,45 +8,28 @@ from matplotlib.ticker    import LogLocator, LogFormatterSciNotation
 from torch.utils.data     import DataLoader
 
 from Architectures.Models import SubModels_Composition
-from Architectures.Unet   import Extended_DannyKo, MY_PIMODEL, DannyKo_Net_Original, MY_PIMODEL_2
-from Architectures.MSnet  import JavierSantos_Extended
+from Architectures.Unet   import Extended_DannyKo
+from Architectures.PINN_Model import MY_PIMODEL, MY_PIMODEL_2, MY_PIMODEL_3, MY_PIMODEL_4
+from Architectures.MSnet  import Extended_JavierSantos
 
 from Utilities            import dataset_reader as dr
-from Danny_Original.architecture import Danny_KerasModel
 
   
 #######################################################
 #************ UTILS:                       ***********#
 #######################################################
 
-def mean_normalize(inp, x): 
-    B, C, Z, Y, X = x.shape
-    mag     = torch.linalg.vector_norm(x, dim=1)  
-    mask    = (inp > 0)  
-    mask    = mask[:, 0] 
-
-    means = []
-    for b in range(B):
-        vals    = mag[b][mask[b]]
-        m       = vals.mean()
-        means.append(m.unsqueeze(0))
-
-    means = torch.stack(means, dim=0).view(B, 1, 1, 1, 1)
-
-    return x / (means + 1e-12)
-
 def print_n_params(model, pytorch=True):
     if pytorch:
         trainable       = sum(p.numel() for p in model.parameters() if p.requires_grad)
         non_trainable   = sum(p.numel() for p in model.parameters() if not p.requires_grad)
-
     else:
         trainable       = sum(tf.keras.backend.count_params(w) for w in model.trainable_weights)
         non_trainable   = sum(tf.keras.backend.count_params(w) for w in model.non_trainable_weights)
 
-    print("Trainable params:     ", trainable)
+    print("Trainable params:      ", trainable)
     print("Non-trainable params: ", non_trainable)
-    print("Total params:         ", trainable + non_trainable)
+    print("Total params:          ", trainable + non_trainable)
 
 def get_masked_slices(inp, tar, slice_idx, axis='front'):
     """Extracts and masks 2D slices from 3D volumes based on orientation."""
@@ -63,12 +47,11 @@ def get_masked_slices(inp, tar, slice_idx, axis='front'):
 
 
 #######################################################
-#************ COMPARISONS:                 ***********#
+#************ COMPARISONS (MAGNITUDE):     ***********#
 ####################################################### 
 
-import os
-def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
-    """Saves Target and Models to 'Plot_Front_Comparison/' folder."""
+def Plot_Front_Comparison(models, datapath, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
+    """Saves Target and Models Magnitude to 'Plot_Front_Comparison/' folder."""
     
     dataset    = dr.LazyDatasetTorch(h5_path=datapath, 
                                     list_ids=None, 
@@ -78,121 +61,124 @@ def Plot_Front_Comparison(models, datapath, component, sample_idx=0, slice_idx=6
     inp, tar    = dataset[sample_idx]
     inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32)
     
-    # Prepare target to plot
-    tar_z           = tar.squeeze(0)    # Remove batch dim,
-    tar_z           = tar_z[component]  # Get component channel: z=0, y=1, x=2, p=3
-    tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='front') # Put zeros on solid
+    # Prepare target to plot (Magnitude)
+    tar_sq          = tar.squeeze(0)    
+    tar_mag         = torch.sqrt(tar_sq[0]**2 + tar_sq[1]**2 + tar_sq[2]**2)
+    tar_mag_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), tar_mag, slice_idx, axis='front') 
     
-    # Prepare color range: fluid's range
-    vmin, vmax      = np.percentile(tar_z_masked.compressed(), [1, 99])
+    vmin, vmax      = np.percentile(tar_mag_masked.compressed(), [1, 99])
     
-    folder = "Plot_Front_Comparison_"+save_tag
+    folder = "./Plots/Plot_Front_Comparison"
     if save_mode and not os.path.exists(folder): os.makedirs(folder)
 
     if save_mode:
-        # Save Target
         plt.figure(figsize=(6, 6))
-        plt.imshow(tar_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+        plt.imshow(tar_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+        plt.title("Target Magnitude (Front)")
         plt.axis('off')
         plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-        plt.savefig(f"{folder}/{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"{folder}/{save_tag}_{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
         plt.close()
     else:
         num_plots = len(models) + 1
-        # Increased height from 5 to 6 to fit horizontal colorbars nicely
         fig, axes = plt.subplots(1, num_plots, figsize=(5 * num_plots, 6), constrained_layout=True)
-        im0 = axes[0].imshow(tar_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
-        axes[0].set_title("Target (Front View)")
+        im0 = axes[0].imshow(tar_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+        axes[0].set_title("Target Magnitude (Front)")
         axes[0].axis('off')
         plt.colorbar(im0, ax=axes[0], orientation='horizontal', fraction=0.046, pad=0.04)
 
     for i, (name, model) in enumerate(models.items(), 1):
         with torch.no_grad():
             out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
+            
+        out_sq      = out.squeeze(0)
+        out_mag     = torch.sqrt(out_sq[0]**2 + out_sq[1]**2 + out_sq[2]**2)
+        o_mag_masked= get_masked_slices(inp.squeeze(0).squeeze(0), out_mag, slice_idx, axis='front') 
         
-        out_z       = out.squeeze(0)[component]          # Remove batch dim, get component channel
-        o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='front') # Put zeros on solid
-        vmin, vmax      = np.percentile(o_z_masked.compressed(), [1, 99])
+        vmin, vmax  = np.percentile(o_mag_masked.compressed(), [1, 99])
+        
         if save_mode:
             plt.figure(figsize=(6, 6))
-            plt.imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+            plt.imshow(o_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+            plt.title(f"{name} Magnitude (Front)")
             plt.axis('off')
             plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-            plt.savefig(f"{folder}/{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
         else:
-            vmin, vmax      = np.percentile(o_z_masked.compressed(), [1, 99])
-            im = axes[i].imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
-            axes[i].set_title(f"{name} (Front)")
+            im = axes[i].imshow(o_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+            axes[i].set_title(f"{name} Mag (Front)")
             axes[i].axis('off')
             plt.colorbar(im, ax=axes[i], orientation='horizontal', fraction=0.046, pad=0.04)
             
     if not save_mode: plt.show()
 
 
-def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
-    """Saves Target and Models to 'Plot_Side_Comparison/' folder."""
+def Plot_Side_Comparison(models, datapath, sample_idx=0, slice_idx=60, save_mode=False, save_tag=""):
+    """Saves Target and Models Magnitude to 'Plot_Side_Comparison/' folder."""
     
     dataset    = dr.LazyDatasetTorch(h5_path=datapath, 
                                     list_ids=None, 
                                     x_dtype=torch.float32,
                                     y_dtype=torch.float32)
     
-    inp, tar    = dataset[sample_idx] # Shape (C,Z,Y,X)
-    inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32) # Add channel for prediction
+    inp, tar    = dataset[sample_idx]
+    inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32)
     
-    # Prepare target to plot
-    tar_z           = tar.squeeze(0)    # Remove batch dim,
-    tar_z           = tar_z[component]  # Get component channel: z=0, y=1, x=2, p=3
-    tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='side') # Put zeros on solid
+    tar_sq          = tar.squeeze(0)   
+    tar_mag         = torch.sqrt(tar_sq[0]**2 + tar_sq[1]**2 + tar_sq[2]**2)
+    tar_mag_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), tar_mag, slice_idx, axis='side') 
     
-    # Prepare color range
-    vmin, vmax      = np.percentile(tar_z_masked.compressed(), [1, 99])
+    vmin, vmax      = np.percentile(tar_mag_masked.compressed(), [1, 99])
     
-    folder = "Plot_Side_Comparison_"+save_tag
+    folder = "./Plots/Plot_Side_Comparison"
     if save_mode and not os.path.exists(folder): os.makedirs(folder)
 
     if save_mode:
-        # Save Target
         plt.figure(figsize=(6, 6))
-        plt.imshow(tar_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+        plt.imshow(tar_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+        plt.title("Target Magnitude (Side)")
         plt.axis('off')
         plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-        plt.savefig(f"{folder}/{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"{folder}/{save_tag}_{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
         plt.close()
     else:
         num_plots = len(models) + 1
-        # Increased height from 5 to 6
         fig, axes = plt.subplots(1, num_plots, figsize=(5 * num_plots, 6), constrained_layout=True)
-        im0 = axes[0].imshow(tar_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+        im0 = axes[0].imshow(tar_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
         axes[0].axis('off')
-        axes[0].set_title("Target (Side)")
+        axes[0].set_title("Target Magnitude (Side)")
         plt.colorbar(im0, ax=axes[0], orientation='horizontal', fraction=0.046, pad=0.04)
 
     for i, (name, model) in enumerate(models.items(), 1):
         with torch.no_grad():
             out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
         
-        out_z       = out.squeeze(0)[component]   
-        o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='side') # Put zeros on solid
-        vmin, vmax  = np.percentile(o_z_masked.compressed(), [1, 99])
+        out_sq      = out.squeeze(0)
+        out_mag     = torch.sqrt(out_sq[0]**2 + out_sq[1]**2 + out_sq[2]**2)
+        o_mag_masked= get_masked_slices(inp.squeeze(0).squeeze(0), out_mag, slice_idx, axis='side')
+        
+        vmin, vmax  = np.percentile(o_mag_masked.compressed(), [1, 99])
+        
         if save_mode:
             plt.figure(figsize=(6, 6))
-            plt.imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+            plt.imshow(o_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+            plt.title(f"{name} Magnitude (Side)")
             plt.axis('off')
             plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
-            plt.savefig(f"{folder}/{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
         else:
-            im = axes[i].imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
-            axes[i].set_title(f"{name} (Side)")
+            im = axes[i].imshow(o_mag_masked, cmap='plasma', vmin=vmin, vmax=vmax)
+            axes[i].set_title(f"{name} Mag (Side)")
             axes[i].axis('off')
             plt.colorbar(im, ax=axes[i], orientation='horizontal', fraction=0.046, pad=0.04)
             
     if not save_mode: plt.show()
+
 
 def Plot_Error_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='front', save_mode=False, save_tag=""):
-    """Saves Absolute Error maps to folder. (No target here as error is relative)."""
+    """Saves Absolute Error maps of the Magnitude to folder."""
     
     dataset    = dr.LazyDatasetTorch(h5_path=datapath, 
                                     list_ids=None, 
@@ -202,12 +188,11 @@ def Plot_Error_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='fr
     inp, tar    = dataset[sample_idx]
     inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32)
     
-    # Prepare target to plot
-    tar_z           = tar.squeeze(0)[0] # Remove batch dim, get first channel
-    tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='front') # Put zeros on solid
+    tar_sq          = tar.squeeze(0)
+    tar_mag         = torch.sqrt(tar_sq[0]**2 + tar_sq[1]**2 + tar_sq[2]**2)
+    tar_mag_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), tar_mag, slice_idx, axis=axis) 
     
-    
-    folder = f"Plot_Error_Comparison_{axis}_"+save_tag
+    folder = f"./Plots/Plot_Error_Comparison_{axis}"
     if save_mode and not os.path.exists(folder): os.makedirs(folder)
 
     if not save_mode:
@@ -216,18 +201,20 @@ def Plot_Error_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='fr
     for i, (name, model) in enumerate(models.items()):
         with torch.no_grad():
             out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
-        out_z         = out.squeeze(0)[0]          # Remove batch dim, get first channel
-        o_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='front') # Put zeros on solid
+            
+        out_sq        = out.squeeze(0)
+        out_mag       = torch.sqrt(out_sq[0]**2 + out_sq[1]**2 + out_sq[2]**2)
+        o_mag_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_mag, slice_idx, axis=axis) 
         
-        error_map = np.abs(tar_z_masked - o_z_masked)
+        error_map = np.abs(tar_mag_masked - o_mag_masked)
 
         if save_mode:
             plt.figure(figsize=(6, 6))
             plt.imshow(error_map, cmap='Reds')
-            plt.title(f"{name} Error ({axis})")
+            plt.title(f"{name} Mag Error ({axis})")
             plt.axis('off')
             plt.colorbar(fraction=0.046, pad=0.04)
-            plt.savefig(f"{folder}/{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
         else:
             im = axes[i].imshow(error_map, cmap='Reds')
@@ -235,253 +222,205 @@ def Plot_Error_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='fr
             axes[i].axis('off')
             plt.colorbar(im, ax=axes[i], fraction=0.046, pad=0.04)
     if not save_mode: plt.show()
-    
 
-def Plot_Mean_Velocity_Scatter(models, datapath, batch_size=4, npoints=5000, 
-                               xlabel="Target Mean Velocity", ylabel="Predicted Mean Velocity", 
-                               title="Mean Velocity Scale Accuracy", 
-                               save_tag="default", save_mode=False, log=True):
-    """
-    Computes mean velocities per sample in batches.
-    Matches the dataset loading and normalization logic of the other plotting functions.
-    """
-    # --- 1. Load Data (Updated to LazyDatasetTorch) ---
-    dataset = dr.LazyDatasetTorch(h5_path=datapath, 
-                                  list_ids=None, 
-                                  x_dtype=torch.float32,
-                                  y_dtype=torch.float32)
-    
-    # Dataloader automatically adds the Batch dimension (B, C, Z, Y, X)
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
-    
-    folder = "Plot_Mean_Velocity_" + save_tag
-    if save_mode and not os.path.exists(folder): 
-        os.makedirs(folder)
 
-    # --- 2. Better composite figure sizing ---
-    if not save_mode:
-        n_models = len(models)
-        # Adjust figure size based on number of models
-        fig_width = min(21, 7 * n_models)  # Cap maximum width
-        fig_height = 6  # Slightly reduced from 7 to give more breathing room
-        fig, axes = plt.subplots(1, n_models, figsize=(fig_width, fig_height), constrained_layout=True)
-        if n_models == 1: 
-            axes = [axes]
-        # Add more spacing for titles
-        fig.suptitle("", fontsize=16)  # Empty suptitle to trigger layout adjustment
+#######################################################
+#************ DIVERGENCE:                  ***********#
+####################################################### 
 
-    # --- 3. Iterate through Models ---
-    for i, (name, model) in enumerate(models.items()):
-        all_gt_means = []
-        all_pred_means = []
+def Plot_Divergence_Comparison(models, datapath, sample_idx=0, slice_idx=60, axis='side', save_mode=False, save_tag=""):
+    """Computes and plots the divergence of the velocity field."""
+    
+    dataset    = dr.LazyDatasetTorch(h5_path=datapath, 
+                                    list_ids=None, 
+                                    x_dtype=torch.float32,
+                                    y_dtype=torch.float32)
+    
+    inp, tar    = dataset[sample_idx]
+    inp, tar    = inp.unsqueeze(0).to(dtype=torch.float32), tar.unsqueeze(0).to(dtype=torch.float32)
+    
+    tar_sq = tar.squeeze(0) 
+    
+    # 1. Create a 3D mask for the entire void space
+    # Assuming solid is 0 and void is != 0 in the input geometry
+    void_mask_3d = (inp.squeeze(0).squeeze(0) != 0)
+    
+    # Divergence: dUz/dz + dUy/dy + dUx/dx
+    # dim=0 is Z, dim=1 is Y, dim=2 is X
+    dUz_dz = torch.gradient(tar_sq[0], dim=0)[0]
+    dUy_dy = torch.gradient(tar_sq[1], dim=1)[0]
+    dUx_dx = torch.gradient(tar_sq[2], dim=2)[0]
+    tar_div = dUz_dz + dUy_dy + dUx_dx
+    
+    # 2. Compute Mean Absolute Divergence over the entire 3D void space
+    tar_mean_abs_div = tar_div[void_mask_3d].abs().mean().item()
+    
+    tar_div_masked = get_masked_slices(inp.squeeze(0).squeeze(0), tar_div, slice_idx, axis=axis) 
+    
+    # Symmetric color range around 0 for divergence
+    vmax = np.percentile(np.abs(tar_div_masked.compressed()), 99)
+    vmin = -vmax
+    
+    folder = f"./Plots/Plot_Divergence_Comparison_{axis}"
+    if save_mode and not os.path.exists(folder): os.makedirs(folder)
+
+    if save_mode:
+        plt.figure(figsize=(6, 6))
+        ax = plt.gca()
+        plt.imshow(tar_div_masked, cmap='coolwarm', vmin=vmin, vmax=vmax)
+        plt.title(f"Target Divergence ({axis})")
+        plt.axis('off')
         
-        # --- 4. Process in Batches ---
-        with torch.no_grad():
-            for batch_inp, batch_tar in loader:
-                # Ensure float32 (safety measure)
-                batch_inp = batch_inp.to(dtype=torch.float32)
-                batch_tar = batch_tar.to(dtype=torch.float32)
-
-                # Normalize using the consistent util function
-                output      = model.predict(batch_inp) if hasattr(model, 'predict') else model(batch_inp)
+        # Add annotation box
+        ax.text(0.05, 0.95, f'Mean |∇·U|:\n{tar_mean_abs_div:.2e}', transform=ax.transAxes,
+                fontsize=11, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
                 
-                dims        = tuple(range(1, batch_tar.ndim))
-                all_gt_means.append(batch_tar.abs().mean(dim=dims).cpu().numpy())
-                all_pred_means.append(output.abs().mean(dim=dims).cpu().numpy())
-
-        x_data = np.concatenate(all_gt_means)
-        y_data = np.concatenate(all_pred_means)
-    
-        # --- 5. Sampling and Density Logic ---
-        np.random.seed(42)
-        total_points        = len(x_data)
-        indices             = np.random.choice(total_points, size=min(npoints, total_points), replace=False)
-        x_sample, y_sample  = x_data[indices], y_data[indices]
+        plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
+        plt.savefig(f"{folder}/{save_tag}_{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
+        plt.close()
+    else:
+        num_plots = len(models) + 1
+        fig, axes = plt.subplots(1, num_plots, figsize=(5 * num_plots, 6), constrained_layout=True)
+        im0 = axes[0].imshow(tar_div_masked, cmap='coolwarm', vmin=vmin, vmax=vmax)
+        axes[0].axis('off')
+        axes[0].set_title(f"Target Div ({axis})")
         
-        valid               = (x_sample > 0) & (y_sample > 0)
-        x_sample, y_sample  = x_sample[valid], y_sample[valid]
-    
-        data_points         = np.vstack([np.log10(x_sample), np.log10(y_sample)]) if log else np.vstack([x_sample, y_sample])
-        
-        # Handle case where too few points remain after filtering
-        if data_points.shape[1] < 2:
-            print(f"Warning: Not enough valid points for {name}. Skipping density plot.")
-            continue
-            
-        kde = gaussian_kde(data_points)
-        density = kde(data_points)
-        sort_idx = density.argsort()
+        axes[0].text(0.05, 0.95, f'Mean |∇·U|:\n{tar_mean_abs_div:.2e}', transform=axes[0].transAxes,
+                     fontsize=10, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+                     
+        plt.colorbar(im0, ax=axes[0], orientation='horizontal', fraction=0.046, pad=0.04)
 
-        # --- 6. Frame Setup ---
+    for i, (name, model) in enumerate(models.items(), 1):
+        with torch.no_grad():
+            out = model.predict(inp) if hasattr(model, 'predict') else model(inp)
+        
+        out_sq = out.squeeze(0)
+        dUz_dz = torch.gradient(out_sq[0], dim=0)[0]
+        dUy_dy = torch.gradient(out_sq[1], dim=1)[0]
+        dUx_dx = torch.gradient(out_sq[2], dim=2)[0]
+        out_div = dUz_dz + dUy_dy + dUx_dx
+        
+        # 3. Compute Mean Absolute Divergence for the prediction
+        out_mean_abs_div = out_div[void_mask_3d].abs().mean().item()
+        
+        o_div_masked = get_masked_slices(inp.squeeze(0).squeeze(0), out_div, slice_idx, axis=axis)
+        
+        # Calculate dynamic bounds per-plot to view numerical noise, or fix to target bounds
+        c_vmax = np.percentile(np.abs(o_div_masked.compressed()), 99)
+        c_vmin = -c_vmax
+
         if save_mode:
-            plt.figure(figsize=(8, 8))
+            plt.figure(figsize=(6, 6))
             ax = plt.gca()
-        else:
-            ax = axes[i]
-
-        # --- 7. Plotting Assets ---
-        sc = ax.scatter(x_sample[sort_idx], y_sample[sort_idx], 
-                        c=density[sort_idx], cmap='plasma', s=35, alpha=0.6)
-        
-        # Consistent Square Limits
-        combined = np.concatenate([x_sample, y_sample])
-        lo_lin, hi_lin = combined.min() * 0.8, combined.max() * 1.2
-        line_vals = np.logspace(np.log10(lo_lin), np.log10(hi_lin), 100) if log else np.linspace(lo_lin, hi_lin, 100)
-        
-        ax.plot(line_vals, line_vals, color='gray', linestyle='--', linewidth=2, label='y=x', zorder=3)
-        ax.set_xlim(lo_lin, hi_lin)
-        ax.set_ylim(lo_lin, hi_lin)
-
-        if log:
-            ax.set_xscale('log')
-            ax.set_yscale('log')
-            ax.xaxis.set_major_formatter(LogFormatterSciNotation(base=10))
-            ax.yaxis.set_major_formatter(LogFormatterSciNotation(base=10))
-            ax.xaxis.set_major_locator(LogLocator(base=10))
-            ax.yaxis.set_major_locator(LogLocator(base=10))
-
-        # Correlation and Labels - Make text smaller for composite view
-        corr = np.corrcoef(x_data, y_data)[0, 1]
-        fontsize_text = 12 if not save_mode else 16  # Smaller for composite
-        ax.text(0.05, 0.95, f'$R = {corr:.4f}$', transform=ax.transAxes, 
-                fontsize=fontsize_text, verticalalignment='top', 
-                bbox=dict(facecolor='white', alpha=0.8, pad=3))
-
-        # Adjust label sizes for composite view
-        label_fontsize = 12 if not save_mode else 16
-        title_fontsize = 11 if not save_mode else 15
-        
-        ax.set_xlabel(xlabel, fontsize=label_fontsize)
-        ax.set_ylabel(ylabel, fontsize=label_fontsize)
-        
-        # Handle title more carefully for composite view
-        if save_mode:
-            ax.set_title(f"{name}\n{title}", fontsize=title_fontsize, fontweight='bold')
-        else:
-            # Shorter title for composite view to prevent overlapping
-            ax.set_title(name, fontsize=title_fontsize, fontweight='bold')
-        
-        ax.set_aspect('equal')
-        ax.grid(True, which="major", linestyle="-", alpha=0.3)
-        
-        # --- 8. Colorbar handling ---
-        if save_mode:
-            plt.colorbar(sc, ax=ax, fraction=0.046, pad=0.04).set_label('Density', fontsize=12)
-        else:
-            # For composite view, make colorbar smaller and position it better
-            cbar = plt.colorbar(sc, ax=ax, fraction=0.08, pad=0.04, shrink=0.8)
-            cbar.set_label('Density', fontsize=10)
-            cbar.ax.tick_params(labelsize=8)
-
-        if save_mode:
-            plt.savefig(f"{folder}/{name.replace(' ', '_')}_scatter.png", 
-                       dpi=300, bbox_inches='tight', pad_inches=0.1)
+            plt.imshow(o_div_masked, cmap='coolwarm', vmin=c_vmin, vmax=c_vmax)
+            plt.title(f"{name} Divergence ({axis})")
+            plt.axis('off')
+            
+            # Add annotation box
+            ax.text(0.05, 0.95, f'Mean |∇·U|:\n{out_mean_abs_div:.2e}', transform=ax.transAxes,
+                    fontsize=11, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+                    
+            plt.colorbar(orientation='horizontal', fraction=0.046, pad=0.04)
+            plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
+        else:
+            im = axes[i].imshow(o_div_masked, cmap='coolwarm', vmin=c_vmin, vmax=c_vmax)
+            axes[i].set_title(f"{name} Div ({axis})")
+            axes[i].axis('off')
+            
+            axes[i].text(0.05, 0.95, f'Mean |∇·U|:\n{out_mean_abs_div:.2e}', transform=axes[i].transAxes,
+                         fontsize=10, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.85))
+                         
+            plt.colorbar(im, ax=axes[i], orientation='horizontal', fraction=0.046, pad=0.04)
+            
+    if not save_mode: plt.show()
 
-    if not save_mode:
-        # Adjust layout one more time before showing
-        plt.show()
+
 #######################################################
 #************ MAIN:                        ***********#
 #######################################################
 
 device              = 'cpu'
 batch_size          = 1
-save_mode           = False
-sample_idexes       = [0,1,2,3,4,5,6,7,8]
-#datapath            = "../NN_Datasets/ForceDriven/Test_Oliveira_Bentheimer_120_120_120.h5" 
-#datapath            = "../NN_Datasets/PressureDriven/Train_Danny_120_120_120_Pressure.h5"
-datapath            = "../NN_Datasets/ForceDriven/Test_SphPore_120_120_120.h5"
-save_tag            = "Danny"
+save_mode           = True
+sample_idexes       = [11, 45]
+
+datasets        = {
+    #"Spherical Pores":      "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphPore_SAug_DNorm.h5",
+    #"Spherical Grains":     "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5",
+    #"Cylindrical Pores":    "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_CylinPore_SAug_DNorm.h5",
+    #"Cylindrical Grains":   "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_CylinGrain_SAug_DNorm.h5",
+    "Bentheimer":           "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    #"Berea Buff":           "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "Leopard":              "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Leopard_SAug_DNorm.h5",
+    #"Castle Gate":          "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    #"Berea Upper Gray":     "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "Berea Sinter Gray":    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    #"Berea":                "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5",
+}
+
 shape               = (120,120,120)
-component           = 0 # Uz=0, Uy=1, Ux=2, P=3
-models              = {}
-# 1 Directional Flow Models
-    
-"""
-# Baseline model
-print("\nLoading Danny Ko (Baseline)...")
-baseline_model  = Danny_KerasModel()
-print_n_params(baseline_model.model, pytorch=False)
-models["Baseline Danny (Ke) - Danny Data"] = baseline_model
-"""
 
-model_aux       = DannyKo_Net_Original()
-danny_model     = model_aux.z_model
-model_full_name = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-danny_model.load_state_dict(torch.load(model_full_name, map_location=torch.device('cpu'), weights_only=True))
-danny_model.eval()
-danny_model.bin_input = True
-models["STA Danny"]= danny_model
+# --- 1. DEFINE FULL MODELS ---
+models          = {}
 
-"""
-danny_model         = Extended_DannyKo()
-danny_z_name        = "./Trained_Models/NN_Trainning_13_March_2026_02-16PM_Job16074/model_LowerValidationLoss.pth"
-danny_y_name        =  "./Trained_Models/NN_Trainning_14_March_2026_03-14PM_Job16195/model_LowerValidationLoss.pth"
-danny_x_name        = "./Trained_Models/NN_Trainning_14_March_2026_03-15PM_Job16196/model_LowerValidationLoss.pth"
-danny_p_name        = "./Trained_Models/NN_Trainning_24_March_2026_03-59PM_Job16921/model_LowerValidationLoss.pth"
-danny_sub_comp      = SubModels_Composition(danny_model, 
-                                    danny_z_name, 
-                                    danny_y_name, 
-                                    danny_x_name, 
-                                    danny_p_name, 
-                                    device='cpu', 
-                                    is_eval=True)
-danny_sub_comp.eval()
-models["Danny Sub-Models"]     = danny_sub_comp
+print("Loading Models predicting all components...")
 
-javier_model         = JavierSantos_Extended()
-javier_z_name        = "./Trained_Models/NN_Trainning_14_March_2026_10-52PM_Job16201/model_LowerValidationLoss.pth"
-javier_y_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-17PM_Job17461/model_LowerValidationLoss.pth"
-javier_x_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-15PM_Job17460/model_LowerValidationLoss.pth"
-javier_p_name        = "./Trained_Models/NN_Trainning_2_April_2026_06-18PM_Job17462/model_LowerValidationLoss.pth"
-javier_sub_comp      = SubModels_Composition(javier_model, 
-                                    javier_z_name, 
-                                    javier_y_name, 
-                                    javier_x_name, 
-                                    javier_p_name, 
-                                    device='cpu', 
-                                    is_eval=True)
-javier_sub_comp.eval()
-models["Javier Sub-Models"]     = javier_sub_comp
-"""
-
+# Load Full Danny Ko Model
 danny_f_model       = Extended_DannyKo()
-danny_f_name        = "./Trained_Models/NN_Trainning_10_April_2026_01-25PM/model_LowerValidationLoss.pth"
+danny_f_name        = "../NN_Results/NN_Trainning_17_September_2026_02-32PM_Job28985/model_LowerValidationLoss.pth"
 danny_f_model.load_state_dict(torch.load(danny_f_name, map_location=torch.device(device), weights_only=True))
 danny_f_model.eval()
-models["Danny Final"]= danny_f_model
+models["Danny"] = danny_f_model
 
-"""
+# Load Full MY_PIMODEL_1
 pinn_model          = MY_PIMODEL()
-pinn_name           = "./Trained_Models/NN_Trainning_11_April_2026_01-39PM/model_LowerValidationLoss.pth"
+pinn_name        = "../NN_Results/NN_Trainning_17_September_2026_03-19PM_Job28987/model_LowerValidationLoss.pth"
 pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
 pinn_model.eval()
-models["My Model"] = pinn_model
-"""
+models["Silveira 1"] = pinn_model
+
+pinn_model          = MY_PIMODEL()
+pinn_name        = "../NN_Results/NN_Trainning_21_September_2026_07-01PM_Job29841/model_LowerValidationLoss.pth"
+pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
+pinn_model.eval()
+models["Silveira 1(2)"] = pinn_model
+
+# Load Full MY_PIMODEL_2 
 pinn_model          = MY_PIMODEL_2()
-pinn_name           = "./Trained_Models/NN_Trainning_16_April_2026_02-26PM/model_LowerValidationLoss.pth"
+pinn_name        = "../NN_Results/NN_Trainning_17_September_2026_03-42PM_Job28989/model_LowerValidationLoss.pth"
 pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
 pinn_model.eval()
-models["My Model"] = pinn_model
+models["Silveira 2"] = pinn_model
 
+# Load Full MY_PIMODEL_3
+pinn_model          = MY_PIMODEL_3()
+pinn_name        = "../NN_Results/NN_Trainning_19_September_2026_09-23AM_Job29583/model_LowerValidationLoss.pth" #ok
+pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
+pinn_model.eval()
+models["Silveira 3"] = pinn_model
 
+# Load Full MY_PIMODEL_4
+pinn_model          = MY_PIMODEL_4()
+pinn_name        = "../NN_Results/NN_Trainning_18_September_2026_07-20PM_Job29580/model_LowerValidationLoss.pth"
+pinn_model.load_state_dict(torch.load(pinn_name, map_location=torch.device(device), weights_only=True))
+pinn_model.eval()
+models["Silveira 4"] = pinn_model
 
-
-# --- Execution Block ---
+# --- 2. EXECUTION BLOCK ---
 
 # Set the font to Times New Roman
 plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif']  = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman', 'Liberation Serif', 'Bitstream Vera Serif']
+plt.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Computer Modern Roman', 'Liberation Serif', 'Bitstream Vera Serif']
 
-# 3. Run Visualization
-#Plot_Mean_Velocity_Scatter(models, datapath, npoints=5000, xlabel="Target Mean Velocity", 
-#                                   ylabel="Predicted Mean Velocity", title="Mean Velocity Scale Accuracy", 
-#                                   save_tag="default", save_mode=False, log=False)
-
-
-for sample_idx in sample_idexes:
-    
-    Plot_Front_Comparison(models, datapath, component, sample_idx= sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag = save_tag)
-    Plot_Side_Comparison (models, datapath, component, sample_idx= sample_idx, slice_idx=shape[2]//2, save_mode=save_mode, save_tag = save_tag)
-    #Plot_Error_Comparison(models, datapath, slice_idx=60, save_mode=save_mode, save_tag = save_tag, axis='side')
+for dataname, datapath in datasets.items():
+    print(f"Generating plots for dataset: {dataname}")
+    for sample_idx in sample_idexes:
+        # Plot Magnitude
+        #Plot_Front_Comparison(models, datapath, sample_idx=sample_idx, slice_idx=shape[0]//2, save_mode=save_mode, save_tag=dataname)
+        #Plot_Side_Comparison(models, datapath, sample_idx=sample_idx, slice_idx=shape[2]//2, save_mode=save_mode, save_tag=dataname)
+        #Plot_Error_Comparison(models, datapath, sample_idx=sample_idx, slice_idx=shape[2]//2, axis='side', save_mode=save_mode, save_tag=dataname)
+        
+        # Plot Divergence
+        Plot_Divergence_Comparison(models, datapath, sample_idx=sample_idx, slice_idx=shape[2]//2, axis='side', save_mode=save_mode, save_tag=dataname)
+        #Plot_Divergence_Comparison(models, datapath, sample_idx=sample_idx, slice_idx=shape[0]//2, axis='front', save_mode=save_mode, save_tag=dataname)

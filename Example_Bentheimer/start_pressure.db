@@ -11,8 +11,8 @@ Domain {
    Filename = "domain.raw"
    ReadType = "8bit"      // data type
 
-   nproc = 1, 1, 2
-   n     = 120, 120, 60
+   nproc = 1, 1, 1
+   n     = 120, 120, 120
    N     = 120, 120, 120
 
    offset         = 0, 0, 0 // offset to read sub-domain

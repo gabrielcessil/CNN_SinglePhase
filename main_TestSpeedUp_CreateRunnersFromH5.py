@@ -19,10 +19,7 @@ from Utilities import dataset_reader as dr
 # ============================================================================== 
 # Input Datasets 
 dataset_paths = [ 
-    # Data for tolerance analysis (100 samples for tol 1e-2, 1e-4, 1e-6)
-    #"../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5" 
     
-    # Data for cross-dataset analysis (30 samples for tol 1e-2) and Shuffle
     "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Leopard_SAug_DNorm.h5",
     "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_CastleGate_SAug_DNorm.h5",
     "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
@@ -32,12 +29,12 @@ dataset_paths = [
     "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
     "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphPore_SAug_DNorm.h5",
     "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5",
-    
-] 
+]
+
 n_samples       = 30 
 shuffle         = True 
 # Base Output Directory 
-RESULTS_DIR     = "../TestSpeedUp_Simulations_CrossDatasets/" 
+RESULTS_DIR     = "../TestSpeedUp_Simulations_120/" 
 os.makedirs(RESULTS_DIR, exist_ok=True) 
 
 raw_file        = "domain.raw" 
@@ -49,23 +46,24 @@ device          = "cpu"
 jobs_running    = 15 
 CHUNK_SIZE      = max(n_samples//jobs_running,1) 
 NTASKS          = nproc[0]*nproc[1]*nproc[2]
-mem             = 30 * 8 * shape[0]**3 / (1024**3) # GB
+mem             = 20 #30 * 8 * shape[0]**3 / (1024**3) # GB
+cpus_per_task   = 6 #2
 
-#LBPM_VERSION    = "lbpm/gpu/lbpm_fork_965bd0d" 
-#PARTITION       = "all_gpu" 
-#GRES_STR        = "gpu:k40m:1" 
-#mem             = 30 * 8 * shape[0]**3 / (1024**3) # GB
+LBPM_VERSION    = "lbpm/gpu/lbpm_fork_parallelinitdebug_7c32db3" 
+PARTITION       = "all_gpu" 
+GRES_STR        = "gpu:a100:1"
 
-LBPM_VERSION    = "lbpm/cpu/lbpm_init_07f0eef" 
-PARTITION       = "close_cpu" 
-GRES_STR        = "" 
+#LBPM_VERSION    = "lbpm/cpu/lbpm_init_07f0eef" 
+#PARTITION       = "close_cpu" 
+#GRES_STR        = "" 
 
 MPI_PATH        = "mpirun" 
 LBPM_EXEC       = "lbpm_permeability_simulator" 
 
-analysis_interval       = 200 
-visualization_interval  = 1000000000 
-tolerance               = 1e-2
+visualization_interval  = 1000000000
+tolerance               = -1
+analysis_interval       = 200
+timestep_max            = 500000
 
 # ============================================================================== 
 # MODEL INITIALIZATION (Done once for all datasets) 
@@ -159,8 +157,8 @@ for dataset_path in dataset_paths:
             c_f.write(f"#SBATCH -o perm_chunk_{chunk_str_id}_%j.out\n") 
             c_f.write(f"#SBATCH -e perm_chunk_{chunk_str_id}_%j.err\n") 
             c_f.write(f"#SBATCH --ntasks={NTASKS}\n") 
-            c_f.write("#SBATCH --nodelist=node[008-020]\n") 
-            c_f.write("#SBATCH --cpus-per-task=1\n") 
+            if PARTITION=="close_cpu": c_f.write("#SBATCH --nodelist=node[008-020]\n") 
+            c_f.write(f"#SBATCH --cpus-per-task={cpus_per_task}\n") 
             c_f.write(f"#SBATCH --mem={mem}G\n")  
              
              
@@ -231,22 +229,27 @@ for dataset_path in dataset_paths:
                 n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
                 N=shape, 
                 analysis_interval=analysis_interval, visualization_interval=visualization_interval, 
-                tolerance=tolerance, out_format="vtk" 
+                tolerance=tolerance, out_format="vtk",timestep_max=timestep_max
             ) 
              
             # ================================================================== 
             # 2. NEURAL NETWORK INITIALIZATION SETUP 
             # ================================================================== 
-            geometry_edt = edt(geometry_uint8).astype("float32") 
+            # Pad geometry before distance transform
+            geometry_padded = sh.pad_geometry(geometry_uint8)
+            geometry_edt = edt(geometry_padded > 0).astype("float32") 
             geometry_edt = torch.from_numpy(geometry_edt).unsqueeze(0).unsqueeze(0) 
              
-            pred = model.predict(geometry_edt) 
-            pred = vu.tensor_denorm(out=pred, inp=geometry_edt) 
+            pred_padded = model.predict(geometry_edt) 
+            pred_padded = vu.tensor_denorm(out=pred_padded, inp=geometry_edt) 
              
-            uz_nn = pred[0,0].numpy().astype(np.float64) 
-            uy_nn = pred[0,1].numpy().astype(np.float64) 
-            ux_nn = pred[0,2].numpy().astype(np.float64) 
-            pr_nn = pred[0,3].numpy().astype(np.float64) 
+            # Unpad prediction back to original domain size
+            pred = sh.unpad_geometry(pred_padded, geometry_bool.shape)
+            
+            uz_nn = pred[0,0].detach().cpu().numpy().astype(np.float64) 
+            uy_nn = pred[0,1].detach().cpu().numpy().astype(np.float64) 
+            ux_nn = pred[0,2].detach().cpu().numpy().astype(np.float64) 
+            pr_nn = pred[0,3].detach().cpu().numpy().astype(np.float64)
 
             sh.write_start_raw( 
                 dirpath=nn_dir, 
@@ -263,7 +266,7 @@ for dataset_path in dataset_paths:
                 n=(int(shape[2]/nproc[0]), int(shape[1]/nproc[1]), int(shape[0]/nproc[2])), 
                 N=shape, 
                 analysis_interval=analysis_interval, visualization_interval=visualization_interval, 
-                tolerance=tolerance, out_format="vtk" 
+                tolerance=tolerance, out_format="vtk" ,timestep_max=timestep_max
             ) 
              
             # ================================================================== 
@@ -274,14 +277,14 @@ for dataset_path in dataset_paths:
                 c_f.write(f"echo \"--- Launching simulation for {sample_name} (Gradient-Initiated Run) ---\"\n") 
                 c_f.write(f"cd {sample_name}/lbpm_grad_run\n") 
                 c_f.write("echo \"Current Simulation: \" ${PWD##*/}\n") 
-                c_f.write(f"{MPI_PATH} --oversubscribe -np {NTASKS} {LBPM_EXEC} lbpm.db\n") 
+                c_f.write(f"{MPI_PATH} {LBPM_EXEC} lbpm.db\n") 
                 c_f.write("cd ../../\n\n")  # Step back out to the dataset root folder 
                  
                 # Execution 2: NN-Started Run 
                 c_f.write(f"echo \"--- Launching simulation for {sample_name} (NN-Initiated Run) ---\"\n") 
                 c_f.write(f"cd {sample_name}/lbpm_nn_run\n") 
                 c_f.write("echo \"Current Simulation: \" ${PWD##*/}\n") 
-                c_f.write(f"{MPI_PATH} --oversubscribe -np {NTASKS} {LBPM_EXEC} lbpm.db\n") 
+                c_f.write(f"{MPI_PATH} {LBPM_EXEC} lbpm.db\n") 
                 c_f.write("cd ../../\n\n")  # Step back out to the dataset root folder 
                  
         # Close out the chunk script 
