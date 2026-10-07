@@ -2,42 +2,45 @@ import os
 import torch
 import numpy as np
 import pandas as pd
-import porespy as ps
 from torch.utils.data import DataLoader, Subset
-import quantimpy.minkowski as mk
 
 # Import local architectures
-from Architectures.Unet   import Extended_DannyKo
+from Architectures.Unet import Extended_DannyKo
+from Architectures.MSnet import Extended_JavierSantos
+
 from Architectures.Models import SubModels_Composition
 
 # Import local utilities
-from Utilities            import dataset_reader as dr
-from Utilities            import error_metrics as em 
-from Utilities            import velocity_usage as vu
-from Utilities            import model_handler as mh
+from Utilities import dataset_reader as dr
+from Utilities import error_metrics as em 
+from Utilities import velocity_usage as vu
+from Utilities import model_handler as mh
 
 
-def generate_comprehensive_sample_metrics(
+def generate_metrics_per_model(
     datasets_dict: dict, 
-    models_dict: dict,    # <-- Now accepts a dictionary of models
+    models_dict: dict, 
     component: int = 5, 
     batch_size: int = 4, 
     N_samples: int = None,
-    save_csv_path: str = None
+    output_dir: str = "./Model_Error_Outputs"
 ):
     """
-    Extracts geometric properties (Porosity, Permeability, Local Thickness, Minkowski Functionals)
-    and maps them to error metrics (Bias, Magnitude, Correlation, etc.) sample by sample 
-    for MULTIPLE models.
+    Runs model predictions and error metrics batch-by-batch, saving only 
+    the Dataset Name, Sample Index, and error metrics into a separate CSV for each model.
     """
-    records = []
-    
-    print("--- Starting Sample-by-Sample Extraction ---")
-    
     # Ensure all models are in evaluation mode
     for model_name, model in models_dict.items():
         if hasattr(model, 'eval'):
             model.eval()
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Dictionary to store records per model
+    model_records = {model_name: [] for model_name in models_dict.keys()}
+    
+    # Global sample tracker across batches per dataset
+    global_sample_indices = {dataset_name: 0 for dataset_name in datasets_dict.keys()}
 
     for dataset_name, datapath in datasets_dict.items():
         print(f"\nProcessing Dataset: {dataset_name}")
@@ -66,54 +69,9 @@ def generate_comprehensive_sample_metrics(
                 batch_inputs  = batch_inputs.clone().detach().to(dtype=torch.float32)
                 batch_targets = batch_targets.clone().detach().to(dtype=torch.float32)
 
-                # ---------------------------------------------------------
-                # 1. GEOMETRICAL PROPERTIES (Model-Independent)
-                # Compute this only ONCE per batch to save time
-                # ---------------------------------------------------------
-                batch_geom_props = []
-                for b in range(B):
-                    mask_np = (batch_inputs[b, 0] > 0).cpu().numpy()
-                    
-                    # 1a. Porosity
-                    porosity = np.mean(mask_np)
-                    
-                    # 1b. Permeability
-                    denorm_tar = vu.tensor_denorm(batch_targets[b:b+1], batch_inputs[b:b+1])
-                    perm = vu.permeability_calculation(
-                        denorm_tar, batch_inputs[b:b+1], tau=1.5, Re=0.1, dens=1.0, denorm=False
-                    ).item()
-                    
-                    # 1c. Local Thickness
-                    thick = ps.filters.local_thickness(mask_np)
-                    valid_thick = thick[mask_np]
-                    if valid_thick.size > 0:
-                        min_thick  = valid_thick.min()
-                        mean_thick = valid_thick.mean()
-                        max_thick  = valid_thick.max()
-                    else:
-                        min_thick = mean_thick = max_thick = np.nan
-                        
-                    # 1d. Topology / Pseudo-Minkowski
-                    mink = mk.functionals(mask_np)
-                    m_vol, m_sa, m_curv, m_euler = mink[0], mink[1], mink[2], mink[3]
-                    
-                    batch_geom_props.append({
-                        "Porosity":                        porosity,
-                        "Permeability":                    perm,
-                        "Min_Local_Thickness":             min_thick,
-                        "Mean_Local_Thickness":            mean_thick,
-                        "Max_Local_Thickness":             max_thick,
-                        "Minkowski_Volume":                m_vol,
-                        "Minkowski_Surface_Area":          m_sa,
-                        "Minkowski_Mean_Curvature":        m_curv,
-                        "Minkowski_Euler_Characteristic":  m_euler,
-                    })
-
-                # ---------------------------------------------------------
-                # 2. MODEL PREDICTIONS & ERROR METRICS
-                # Loop through all provided models for the same batch
-                # ---------------------------------------------------------
+                # Loop through each model for the current batch
                 for model_name, model in models_dict.items():
+                    print(f"    Evaluating {model_name}")
                     batch_outputs = model.predict(batch_inputs)
                     batch_outputs = batch_outputs.clone().detach().to(dtype=torch.float32)
 
@@ -141,56 +99,61 @@ def generate_comprehensive_sample_metrics(
                             
                         c_metrics = em.Correlation_Comparison(batch_inputs, batch_outputs, batch_targets)
 
-                    # ---------------------------------------------------------
-                    # 3. RECORD ASSEMBLY
-                    # ---------------------------------------------------------
+                    # Assemble records storing only dataset name, sample index, and error metrics
                     for b in range(B):
+                        current_sample_idx = global_sample_indices[dataset_name] + b
+
                         record = {
-                            "Model": model_name,  # <-- Added Model column
                             "Dataset": dataset_name,
-                            **batch_geom_props[b], # Unpack the precalculated geometry
+                            "Sample_Index": current_sample_idx,
                         }
                         
-                        # Safely append general metrics
+                        # Safely append error metrics
                         if b < len(b_metrics): record["Bias Error [%]"] = b_metrics[b]
                         if b < len(m_metrics): record["Magnitude Error [%]"] = m_metrics[b]
                         if b < len(c_metrics): record["Correlation"] = c_metrics[b]
                         
-                        # Safely append physics metrics (if applicable)
                         if component is None or component == 5:
                             if b < len(a_metrics): record["Angular Error [Deg]"] = a_metrics[b]
                             if b < len(f_metrics): record["Flux Error"] = f_metrics[b]
                             if b < len(t_metrics): record["Tortuosity Error [%]"] = t_metrics[b]
                             if b < len(d_metrics): record["Divergent Residual [%]"] = d_metrics[b]
 
-                        records.append(record)
+                        model_records[model_name].append(record)
+
+                # Increment global sample tracker for this dataset after processing all models for the batch
+                global_sample_indices[dataset_name] += B
 
     # ==========================================
-    # 4. CLEANUP LABELS & EXPORT RESULTS
+    # EXPORT RESULTS SEPARATELY PER MODEL
     # ==========================================
-    df_samples = pd.DataFrame(records)
-    
-    # Clean headers
-    df_samples.columns = df_samples.columns.str.replace(' ', '_')
-    df_samples.columns = df_samples.columns.str.replace(r'[\[\]\%]', '', regex=True)
-    
-    if save_csv_path:
-        os.makedirs(os.path.dirname(save_csv_path) or ".", exist_ok=True)
-        df_samples.to_csv(save_csv_path, index=False)
-        print(f"\nTable saved to {save_csv_path}")
+    saved_files = {}
+    for model_name, recs in model_records.items():
+        df_model = pd.DataFrame(recs)
+        
+        # Clean headers
+        df_model.columns = df_model.columns.str.replace(' ', '_')
+        df_model.columns = df_model.columns.str.replace(r'[\[\]\%]', '', regex=True)
+        
+        safe_model_name = model_name.replace(" ", "_").replace("(", "").replace(")", "").replace(".", "")
+        csv_filename = os.path.join(output_dir, f"ErrorMetrics_Comp{component}_{safe_model_name}.csv")
+        
+        df_model.to_csv(csv_filename, index=False)
+        saved_files[model_name] = csv_filename
+        print(f"Saved metrics for '{model_name}' to {csv_filename}")
 
-    return df_samples
+    return saved_files
 
 
 # =======================================================
 # MAIN SETUP
 # =======================================================
-component   = 0
-batch_size  = 10
+component   = 5 # Uz =0, Ux=2, P=3, (Uz,Uy,Ux)=5
+batch_size  = 50
 N_samples   = None 
-device      = 'cpu'
+device      = 'cuda'
 
-csv_out_dir = f"./Error_vs_Geometry_bySample_{component}.csv"
+output_results_dir = "./Tables/"
 
 # Define Datasets
 datasets = {
@@ -209,48 +172,138 @@ datasets = {
 
 print("Initializing models...")
 
-models = {}
+models_dict = {}
 
 if component == 0:
-    # Example setup mapping multiple versions of the model (Etapa 0, Etapa 1, etc.)
-    danny_model_base1 = Extended_DannyKo()
-    model_z_1 = danny_model_base1.z_model
-    model_z_1.load_state_dict(torch.load("./Trained_Models/NN_Trainning_6_July_2026_01-12PM_Job26188/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
-    model_z_1.bin_input = True
-    models_dict["Ko et. al (Etapa 0)"] = model_z_1
-
-    danny_model_base2 = Extended_DannyKo()
-    model_z_2 = danny_model_base2.z_model
-    model_z_2.load_state_dict(torch.load("./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
-    model_z_2.bin_input = True
-    models_dict["Ko et. al (Etapa 3)"] = model_z_2
-
+    #==========================================================================
+    # Increasing Diversity - Javier Santos
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_06-38PM_Job28309/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D0 N4)"] = model_z_3
+    
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_01-53PM_Job28306/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D1 N4)"] = model_z_3
+    
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_10_September_2026_12-32PM_Job28376/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D2 N4)"] = model_z_3
+    
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_10_September_2026_12-33PM_Job28377/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D3 N4)"] = model_z_3
+    #==========================================================================
+    
+    
+    #==========================================================================
+    # Increasing Diversity - Danny Ko
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_02-04PM_Job28308/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D0 N4)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_01-49PM_Job28304/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D1 N4)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_01-51PM_Job28305/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D2 N4)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N4)"] = model_z_3
+    #==========================================================================
+    
+    
+    #==========================================================================
+    # Increasing number of samples but keeping diversity - Danny Ko
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-56PM_Job28438/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N0)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo() # 0.125
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-55PM_Job28437/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N1)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-53PM_Job28436/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N2)"] = model_z_3
+    
+    danny_model_base3 = Extended_DannyKo()
+    model_z_3 = danny_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_11_September_2026_03-53PM_Job28435/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = True
+    models_dict["Ko et al (D3 N3)"] = model_z_3
+    #==========================================================================
+    
+elif component == 2:
+    danny_model_base3 = Extended_DannyKo()
+    model_x_3 = danny_model_base3.x_model
+    model_x_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_x_3.bin_input = True
+    models_dict["Ko et al (D3)"] = model_x_3
+   
+elif component == 3:
+    danny_model_base3 = Extended_DannyKo()
+    model_p_3 = danny_model_base3.p_model
+    model_p_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_p_3.bin_input = True
+    models_dict["Ko et al (D3)"] = model_p_3
+    
 elif component == 5:
-    danny_model = Extended_DannyKo()
-    concat_model = SubModels_Composition(
-        main_model=danny_model, 
-        z_name="./Trained_Models/NN_Trainning_13_July_2026_06-02PM_Job26267/model_LowerValidationLoss.pth",
-        x_name="./Trained_Models/NN_Trainning_15_July_2026_03-59PM_Job26381/model_LowerValidationLoss.pth", 
-        p_name="./Trained_Models/NN_Trainning_21_July_2026_05-22PM_Job26505/model_LowerValidationLoss.pth", 
-        device=device, 
-        is_eval=True
-    )
-    models_dict["Ko et. al (Etapas 3)"] = concat_model
+    print("Initializing Neural Network Models...")
+    danny_model = Extended_DannyKo() 
+    model_full_z_name = "./Trained_Models/NN_Trainning_26_August_2026_03-45PM_Job27376/model_LowerValidationLoss.pth"
+    model_full_x_name = "./Trained_Models/NN_Trainning_26_August_2026_06-21PM_Job27380/model_LowerValidationLoss.pth"
+    model_full_p_name = "./Trained_Models/NN_Trainning_26_August_2026_03-47PM_Job27377/model_LowerValidationLoss.pth"
+
+    model = SubModels_Composition( 
+        main_model=danny_model,  
+        z_name=model_full_z_name, 
+        x_name=model_full_x_name,  
+        p_name=model_full_p_name,  
+        device=device,  
+        is_eval=True 
+    ) 
+    models_dict["Ko et al (D3)"] = model
     
 else:
     raise ValueError(f"Component {component} is not configured in the main block.")
 
 print("Models initialized successfully. Starting evaluation...")
 
-# Run the comprehensive metrics extraction passing the dictionary
-df = generate_comprehensive_sample_metrics(
+# Run evaluation directly saving Dataset name and Sample Index + metrics
+output_files = generate_metrics_per_model(
     datasets_dict=datasets,
-    models_dict=models, # <-- Passed the dictionary here
+    models_dict=models_dict,
     component=component,
     batch_size=batch_size,
     N_samples=N_samples,
-    save_csv_path=csv_out_dir
+    output_dir=output_results_dir
 )
 
-print("\nExtraction complete! Data sample:")
-print(df.head())
+print("\nExtraction complete! Generated files:")
+for m_name, path in output_files.items():
+    print(f"- {m_name}: {path}")

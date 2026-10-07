@@ -1,0 +1,2 @@
+/home/gabriel.silveira/.conda/envs/env_cuda/lib/python3.9/site-packages/torch/nn/modules/conv.py:720: UserWarning: cuDNN cannot be used for large non-batch-splittable convolutions if the V8 API is not enabled or before cuDNN version 9.3+. Consider upgrading cuDNN and/or enabling the V8 API for better efficiency. (Triggered internally at /pytorch/aten/src/ATen/native/Convolution.cpp:430.)
+  return F.conv3d(

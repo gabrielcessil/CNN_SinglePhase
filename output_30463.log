@@ -1,0 +1,279 @@
+Initializing Neural Network Models...
+Total Samples: 92 | Dividing into 45 chunks (~3 samples/job).
+-> Setting up sample: Sample_00000 (Chunk 000)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00001 (Chunk 000)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00002 (Chunk 000)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00003 (Chunk 001)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00005 (Chunk 001)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00006 (Chunk 001)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00007 (Chunk 002)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00008 (Chunk 002)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00009 (Chunk 002)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00010 (Chunk 003)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00011 (Chunk 003)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00012 (Chunk 003)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00013 (Chunk 004)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00014 (Chunk 004)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00015 (Chunk 004)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00016 (Chunk 005)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00017 (Chunk 005)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00018 (Chunk 005)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00019 (Chunk 006)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00020 (Chunk 006)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00021 (Chunk 006)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00022 (Chunk 007)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00023 (Chunk 007)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00024 (Chunk 007)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00025 (Chunk 008)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00026 (Chunk 008)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00027 (Chunk 008)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00028 (Chunk 009)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00029 (Chunk 009)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00030 (Chunk 009)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00031 (Chunk 010)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00032 (Chunk 010)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00033 (Chunk 010)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00034 (Chunk 011)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00035 (Chunk 011)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00036 (Chunk 011)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00037 (Chunk 012)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00038 (Chunk 012)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00039 (Chunk 012)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00040 (Chunk 013)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00041 (Chunk 013)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00042 (Chunk 013)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00043 (Chunk 014)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00044 (Chunk 014)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00045 (Chunk 014)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00046 (Chunk 015)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00047 (Chunk 015)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00048 (Chunk 015)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00049 (Chunk 016)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00051 (Chunk 016)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00052 (Chunk 016)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00056 (Chunk 017)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00059 (Chunk 017)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00060 (Chunk 017)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00061 (Chunk 018)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00063 (Chunk 018)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00064 (Chunk 018)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00065 (Chunk 019)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00066 (Chunk 019)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00067 (Chunk 019)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00068 (Chunk 020)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00069 (Chunk 020)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00070 (Chunk 020)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00075 (Chunk 021)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00077 (Chunk 021)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00079 (Chunk 021)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00080 (Chunk 022)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00081 (Chunk 022)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00082 (Chunk 022)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00083 (Chunk 023)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00084 (Chunk 023)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00085 (Chunk 023)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00086 (Chunk 024)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00088 (Chunk 024)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00089 (Chunk 024)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00090 (Chunk 025)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00092 (Chunk 025)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00095 (Chunk 025)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00099 (Chunk 026)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00100 (Chunk 026)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00101 (Chunk 026)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00103 (Chunk 027)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00104 (Chunk 027)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00105 (Chunk 027)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00106 (Chunk 028)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00110 (Chunk 028)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00111 (Chunk 028)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00112 (Chunk 029)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00114 (Chunk 029)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00115 (Chunk 029)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00116 (Chunk 030)
+  -> Calculating pressure drop
+  -> Creating prediction
+-> Setting up sample: Sample_00117 (Chunk 030)
+  -> Calculating pressure drop
+  -> Creating prediction
+Setup complete! Master submission script ready at: ../TestSpeedUp_Simulations_BiggerCrops/PS_256_256_256/submit_all_jobs.sh

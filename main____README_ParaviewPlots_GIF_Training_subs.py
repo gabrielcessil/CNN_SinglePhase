@@ -491,8 +491,8 @@ if __name__ == '__main__':
         # DATASET SETUP
         # ======================================================================
         device = 'cpu'
-        dataset_path = "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5"
-        sample_index = 15
+        dataset_path = "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Bentheimer_SAug_DNorm.h5"
+        sample_index = 23
 
         dataset = dr.LazyDatasetTorch(h5_path=dataset_path, list_ids=None, x_dtype=torch.float32, y_dtype=torch.float32)
         if sample_index >= len(dataset):
@@ -511,10 +511,19 @@ if __name__ == '__main__':
             nz, ny, nx = geom_np.shape
             
             grid = pv.ImageData(dimensions=(nx, ny, nz))
+            
+            # Map geometry: Solid (-1.0) and Pore (1.0)
             density = np.where(geom_np > 0, 1.0, -1.0).astype(np.float32)
-            grid["Density"] = density.flatten()
-            vel = np.stack((ux, uy, uz), axis=-1).astype(np.float32)
-            grid["Velocity"] = vel.reshape(-1, 3)
+            grid["Density"] = density.flatten(order="C")
+            
+            # CRITICAL FIX: Use column_stack with C-order flattening for VTK compatibility
+            vel = np.column_stack((
+                ux.flatten(order="C"), 
+                uy.flatten(order="C"), 
+                uz.flatten(order="C")
+            )).astype(np.float32)
+            
+            grid["Velocity"] = vel
             grid.set_active_scalars("Density")
             grid.set_active_vectors("Velocity")
             grid.save(filepath)
@@ -539,7 +548,7 @@ if __name__ == '__main__':
         files_x = safe_get_epochs(x_dir)
         files_p = safe_get_epochs(p_dir)
         
-        all_epochs = set(files_z.keys()) | set(files_x.keys()) | set(files_p.keys())
+        all_epochs = set(files_z.keys()) | set(files_x.keys())
         if not all_epochs:
             print("[FATAL ERROR] No checkpoints found in any of the specified directories.", flush=True)
             sys.exit(1)
@@ -549,7 +558,6 @@ if __name__ == '__main__':
         
         z_epochs = sorted(list(files_z.keys()))
         x_epochs = sorted(list(files_x.keys()))
-        p_epochs = sorted(list(files_p.keys()))
 
         if config.get('is_rotating', False):
             pos_list, up_list = path_circular(config, total_frames)
