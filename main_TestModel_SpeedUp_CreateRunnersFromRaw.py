@@ -16,10 +16,10 @@ from Utilities import velocity_usage as vu
 # ==============================================================================
 # CONFIGURATION
 # ==============================================================================
-ROOT_DATASET_FOLDER     = "../GradSimulations_BiggerCrops/DRP-503/Samples_256_256_256_sw02/"
-RESULTS_DIR             = "../TestSpeedUp_Simulations_BiggerCrops/PS_256_256_256/"
+ROOT_DATASET_FOLDER     = "../GradSimulations_TestSpeedUp_OOD/Test_SphGrain_256_256_256/"
+RESULTS_DIR             = "../TestSpeedUp_Simulations_OOD/SphGrain_256_256_256/"
 shape                   = (256, 256, 256)
-nproc                   = (1,1,4)
+nproc                   = (1,1,1)
 n_samples               = None
 shuffle                 = False
 
@@ -32,15 +32,27 @@ raw_file        = "domain.raw"
 device          = "cpu" # Prediction device
 
 # SLURM & Job Settings
-jobs_running = 45
-NTASKS       = nproc[0]*nproc[1]*nproc[2]
-mem             = 20 #30 * 8 * shape[0]**3 / (1024**3) # GB
-cpus_per_task   = 6 #2
+jobs_running    = 45
+NTASKS          = nproc[0]*nproc[1]*nproc[2]
 
+
+# A100 usage: the runnes will be created to use gpu node for simulations
+#"""
+mem             = 20 # GB 
+cpus_per_task   = 6  
 LBPM_VERSION    = "lbpm/gpu/lbpm_fork_parallelinitdebug_7c32db3" 
 PARTITION       = "all_gpu" 
 GRES_STR        = f"gpu:a100:{NTASKS}" 
+#"""
 
+# CPU nodes usage: the runnes will be created to use cpu node for simulations
+"""
+mem             = 30 * 8 * shape[0]**3 / (1024**3) # GB 
+cpus_per_task   = 2 
+LBPM_VERSION    = "lbpm/cpu/lbpm_fork_parallelinitdebug_7c32db3" 
+PARTITION       = "close_cpu" 
+GRES_STR        = f"" 
+"""
 MPI_PATH = "mpirun"
 LBPM_EXEC = "lbpm_permeability_simulator"
 

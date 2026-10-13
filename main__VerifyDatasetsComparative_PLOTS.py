@@ -11,11 +11,26 @@ from   scipy.ndimage      import distance_transform_edt
 from Utilities import dataset_reader as dr
 from Utilities import velocity_usage as vu
 
+
 """
 This code compares datasets visually with:
     - Slide plots
     - Histogram plots
 """
+
+plt.rcParams.update({
+    'font.family': 'serif',
+    'font.serif': ['Times New Roman', 'DejaVu Serif', 'Bitstream Vera Serif'],
+    'axes.labelsize': 16,
+    'axes.titlesize': 18,
+    'xtick.labelsize': 11,
+    'ytick.labelsize': 14,
+    'legend.fontsize': 14,
+    'figure.titlesize': 20,
+    'axes.grid': True,
+    'grid.alpha': 0.3,
+    'grid.linestyle': '--'
+})
 
 def Plot_Velocity_Front_Comparison(datasets, sample_idx=0, slice_idx=60, component=0, save_mode=False, save_tag=""):
     """
@@ -261,7 +276,7 @@ def Compare_Histograms(
             ax.set_ylim(config["ylim"])
 
         # Save logic (bbox_inches='tight' prevents external legend from being cut off)
-        filename = f"{base_filename}_{var}.png"
+        filename = f"{base_filename}_{var}.pdf"
         full_save_path = os.path.join(save_folder, filename)
         plt.savefig(full_save_path, dpi=300, bbox_inches="tight")
         print(f"{var} Histogram saved to: {full_save_path}")

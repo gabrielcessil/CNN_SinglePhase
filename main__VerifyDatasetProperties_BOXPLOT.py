@@ -119,9 +119,9 @@ def analyze_and_plot_from_csv(csv_path: str, base_save_plot_path: str = None):
 # ==========================================
 if __name__ == "__main__":
     # Point this to your actual properties CSV
-    csv_input_file = "./Tables/Dataset_Properties_Table_Test.csv" 
+    csv_input_file = "./Tables/DatasetProperties/Dataset_Properties_Table_Test.csv" 
     
     analyze_and_plot_from_csv(
         csv_path=csv_input_file, 
-        base_save_plot_path="./Plots/Dataset_Properties_Boxplot.png"
+        base_save_plot_path="./Plots/Properties_Boxplot/Dataset_Properties_Boxplot.pdf"
     )

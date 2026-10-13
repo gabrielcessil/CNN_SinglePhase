@@ -44,29 +44,30 @@ include_allocation  = False
 lbpm_version        = "lbpm/gpu/lbpm_fork_965bd0d"
 
 # --- Domains Parameters ---
-DIM             = 120
+DIM             = 256
 SHAPE           = [DIM, DIM, DIM] # Shape must be a List for the function signature you provided
 AXIS_OF_FLOW    = 0 
 include_walls   = True
 remove_isolated = False
 
-dataset_type    = 'train' # 'train', 'valid', 'test'
+dataset_type    = 'test' # 'train', 'valid', 'test'
 
+min_similarity = 65
 
 ##########################
 # CREATE SPHERICAL PORES #
 ##########################
 
 if dataset_type =='test':
-    output_root = "../../Simulations/Test_SphGrain_120_120_120"
+    output_root = f"../../GradSimulations_TestSpeedUp_OOD/Test_SphGrain_{SHAPE[2]}_{SHAPE[1]}_{SHAPE[0]}"
     N_SAMPLES       = 2
 
 if dataset_type =='valid':
-    output_root = "../../Simulations/Valid_SphGrain_120_120_120"
+    output_root = f"../../GradSimulations_TestSpeedUp_OOD/Valid_SphGrain_{SHAPE[2]}_{SHAPE[1]}_{SHAPE[0]}"
     N_SAMPLES       = 1 
     
 if dataset_type =='train':
-    output_root = "../../Simulations/Train_SphGrain_120_120_120"
+    output_root = f"../../GradSimulations_TestSpeedUp_OOD/Train_SphGrain_{SHAPE[2]}_{SHAPE[1]}_{SHAPE[0]}"
     N_SAMPLES       = 10 
     
 # Spheres fill, radii
@@ -122,7 +123,7 @@ for SPHERES_FILL, MEAN_RADIUS in config_pairs:    # Porosities large enough so t
             # Sanity checks
             if not utils.is_percolating(vol, axis=0):
                 print(f"-->Sample do not percolate and got removed.")
-            elif not utils.check_local_thickness(vol, min_radius=5, max_radius=17, target_percentage=70):
+            elif not utils.check_local_thickness(vol, min_radius=5, max_radius=17, target_percentage=min_similarity):
                 print(f"-->Sample has geometry out of scope and got removed.")
             else:        
                 print(f"-->Sample {total_created} got included.")

@@ -20,4 +20,6 @@ conda activate env_cuda
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH # Makes the paths from conda environment visible
 # ---------------- Job Execution --------------------
 
-python main_CreateCroppedVolume_fromRaw.py
+#python main_CreateVolumes_SphGrain.py
+
+python main__VerifyDiscretizationMetric.py

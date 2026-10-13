@@ -134,22 +134,22 @@ def analyze_and_save_properties(datasets_dict: dict, batch_size: int = 4, save_c
 
 
 
-table_name      = "Dataset_Properties_Table_Test.csv"
+table_name      = "Dataset_Properties_Table_Test_MISSING.csv"
 
 # Define datasets mapping
 dataset_folder  = "../NN_Datasets_Grad_Dist_40_5_55/"
 datasets        = {
-    "Spherical Pores":   dataset_folder+"Test_Silveira_SphPore_SAug_DNorm.h5",
-    "Spherical Grains":  dataset_folder+"Test_Silveira_SphGrain_SAug_DNorm.h5",
-    #"Cylindrical Pores": dataset_folder+"Train_Silveira_CylinPore_SAug_DNorm.h5",
-    #"Cylindrical Grains":dataset_folder+"Train_Silveira_CylinGrain_SAug_DNorm.h5",
-    "Leopard":           dataset_folder+"Test_Oliveira_Leopard_SAug_DNorm.h5",
-    "Castle Gate":       dataset_folder+"Test_Oliveira_CastleGate_SAug_DNorm.h5",
-    "Berea Upper Gray":  dataset_folder+"Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
-    "Berea Sinter Gray": dataset_folder+"Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
-    "Berea Buff":        dataset_folder+"Test_Oliveira_BereaBuff_SAug_DNorm.h5",
-    "Berea":             dataset_folder+"Test_Oliveira_Berea_SAug_DNorm.h5",
-    "Bentheimer":        dataset_folder+"Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    ##"Spherical Pores":   dataset_folder+"Test_Silveira_SphPore_SAug_DNorm.h5",
+    #"Spherical Grains":  dataset_folder+"Test_Silveira_SphGrain_SAug_DNorm.h5",
+    "Cylindrical Pores": dataset_folder+"Test_Silveira_CylinPore_SAug_DNorm.h5",
+    "Cylindrical Grains":dataset_folder+"Test_Silveira_CylinGrain_SAug_DNorm.h5",
+    #"Leopard":           dataset_folder+"Test_Oliveira_Leopard_SAug_DNorm.h5",
+    #"Castle Gate":       dataset_folder+"Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    #"Berea Upper Gray":  dataset_folder+"Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    #"Berea Sinter Gray": dataset_folder+"Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    #"Berea Buff":        dataset_folder+"Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    #"Berea":             dataset_folder+"Test_Oliveira_Berea_SAug_DNorm.h5",
+    #"Bentheimer":        dataset_folder+"Test_Oliveira_Bentheimer_SAug_DNorm.h5",
 }
 
 # Run execution

@@ -206,22 +206,41 @@ repositories = [
 # Image used as ODD test for bigger geometries than those trained with . Used to increase the 512³ statistics
 # Link: https://www.imperial.ac.uk/earth-science/research/research-groups/pore-scale-modelling/micro-ct-images-and-networks/
 # Author: 		Imperial College London
+#original_shape  = (1000,1000,1000)
+#solid_value     = 1
+#crop_shape      = (256,256,256)
+#repositories    = [
+#("../../LBPMSimulations_BiggerCrops/IC_Estaillades/",
+#"Estaillades_1000c_3p31136um.raw",
+#55),
+#
+#("../../LBPMSimulations_BiggerCrops/IC_Ketton/",
+#"Ketton_1000c_3p00006um.raw",
+#55),
+#
+#("../../LBPMSimulations_BiggerCrops/IC_Doddington/",
+#"Doddington_1000c_2p6929um.raw",
+#55),
+#]
+
 original_shape  = (1000,1000,1000)
 solid_value     = 1
-crop_shape      = (256,256,256)
+crop_shape      = (120,120,120)
 repositories    = [
-("../../LBPMSimulations_BiggerCrops/IC_Estaillades/",
+("../../GradSimulations_TestSpeedUp_OOD/IC_Estaillades/",
 "Estaillades_1000c_3p31136um.raw",
 55),
 
-("../../LBPMSimulations_BiggerCrops/IC_Ketton/",
+("../../GradSimulations_TestSpeedUp_OOD/IC_Ketton/",
 "Ketton_1000c_3p00006um.raw",
 55),
 
-("../../LBPMSimulations_BiggerCrops/IC_Doddington/",
+("../../GradSimulations_TestSpeedUp_OOD/IC_Doddington/",
 "Doddington_1000c_2p6929um.raw",
 55),
 ]
+
+create_N_samples = 30 # 'None' to use all samples
 
 for base_dir, rock_name, target_percentage  in repositories:
         
@@ -285,6 +304,8 @@ for base_dir, rock_name, target_percentage  in repositories:
             created+=1
             created_indices.append(sample_i)
             print(f"Sample {sample_i} got included.")
+            
+        if create_N_samples is not None and created >= create_N_samples: break
             
     
     
