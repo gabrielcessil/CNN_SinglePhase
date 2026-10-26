@@ -1,0 +1,11 @@
+domain
+   type: VolumeMesh
+   meshClass: DomainMesh
+   format: vtk
+   domain: domain_00000; ./vis500000/00000.vti; 18446744073709551615
+   variables: SignDist|cell|1; Velocity_x|cell|1; Velocity_y|cell|1; Velocity_z|cell|1; Pressure|cell|1; 
+   variable(domain_00000,Pressure): Pressure; ./vis500000/00000.vti; 18446744073709551615
+   variable(domain_00000,SignDist): SignDist; ./vis500000/00000.vti; 18446744073709551615
+   variable(domain_00000,Velocity_x): Velocity_x; ./vis500000/00000.vti; 18446744073709551615
+   variable(domain_00000,Velocity_y): Velocity_y; ./vis500000/00000.vti; 18446744073709551615
+   variable(domain_00000,Velocity_z): Velocity_z; ./vis500000/00000.vti; 18446744073709551615
