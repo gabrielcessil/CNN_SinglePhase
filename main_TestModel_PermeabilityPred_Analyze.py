@@ -8,6 +8,20 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 from sklearn.metrics import r2_score
+import matplotlib.ticker as ticker
+
+plt.rcParams.update(
+    {
+        "font.family": "serif",
+        "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
+        "mathtext.fontset": "stix",
+        "font.size": 18,
+        "axes.labelsize": 16,
+        "xtick.labelsize": 18,
+        "ytick.labelsize": 18,
+        "axes.linewidth": 1.0,
+    }
+)
 
 # ---------------------------------------------------------
 # CONFIGURATION
@@ -19,6 +33,7 @@ N_samples_plotted   = 20        # Limit plotting points per dataset (None for al
 random_seed         = 42        # Seed for reproducible random sampling/shuffling of plotted points
 use_log_plot        = True      # True: Plot on log10 axes | False: Plot on linear axes
 use_log_metrics     = False     # True: Calculate Pearson/R² in log10 space | False: Linear space
+show_metrics        = False
 
 # Optional: List dataset patterns to exclude
 datasets_to_exclude = []
@@ -160,7 +175,9 @@ for i, (model_name, df_plot) in enumerate(plot_dfs.items()):
 
     # Plot 1:1 Parity Line
     ax.plot([axis_min, axis_max], [axis_min, axis_max], color='gray', linestyle='--', linewidth=1.2, label='1:1')
-
+    
+    ax.set_aspect('equal', adjustable='box')
+    
     # Scatter plot per dataset (sampled subset)
     sns.scatterplot(
         data=df_plot,
@@ -182,25 +199,36 @@ for i, (model_name, df_plot) in enumerate(plot_dfs.items()):
     if use_log_plot:
         ax.set_xscale('log')
         ax.set_yscale('log')
+        
+        # Force ticks to use LaTeX math formatting for powers of 10 (10^1, 10^2, etc.)
+        ax.xaxis.set_major_formatter(ticker.LogFormatterMathtext())
+        ax.yaxis.set_major_formatter(ticker.LogFormatterMathtext())
+        
+        # Optional: If you want to force specific major tick locations (e.g., from 10^1 to 10^4)
+        ax.xaxis.set_major_locator(ticker.LogLocator(base=10.0, subs=(1.0,), numticks=6))
+        ax.yaxis.set_major_locator(ticker.LogLocator(base=10.0, subs=(1.0,), numticks=6))
+    
 
     ax.set_xlim(axis_min, axis_max)
     ax.set_ylim(axis_min, axis_max)
 
     # Annotate metric box
-    stats_text = f"$Pearson{metric_label_suffix} = {r_pearson:.3f}$\n$R²{metric_label_suffix} = {r2:.3f}$"
-    ax.text(
-        0.05, 0.93, stats_text,
-        transform=ax.transAxes,
-        fontsize=9.5,
-        verticalalignment='top',
-        bbox=dict(boxstyle='round,pad=0.4', facecolor='white', alpha=0.85, edgecolor='gray')
-    )
+    if show_metrics:
+        stats_text = f"$Pearson{metric_label_suffix} = {r_pearson:.3f}$\n$R^2{metric_label_suffix} = {r2:.3f}$"
+        ax.text(
+            0.05, 0.93, stats_text,
+            transform=ax.transAxes,
+            fontsize=9.5,
+            verticalalignment='top',
+            bbox=dict(boxstyle='round,pad=0.4', facecolor='white', alpha=0.85, edgecolor='gray')
+        )
+    
 
-    ax.set_xlabel("True Permeability", fontsize=11)
+    ax.set_xlabel("Permeabilidade LBM (mDa)", fontsize=16)
     if i == 0:
-        ax.set_ylabel("Predicted Permeability", fontsize=11)
+        ax.set_ylabel("Permeabilidade prevista (mDa)", fontsize=16)
 
-    ax.set_title(model_name, fontsize=12, pad=8)
+    ax.set_title(model_name, fontsize=20, pad=8)
 
     # Single unified external legend handling
     if i < num_models - 1:
@@ -210,18 +238,16 @@ for i, (model_name, df_plot) in enumerate(plot_dfs.items()):
         ax.legend(
             bbox_to_anchor=(1.03, 1),
             loc='upper left',
-            fontsize=9,
-            title_fontsize=10,
+            fontsize=12,
+            title_fontsize=18,
             ncol=1,
-            markerscale=0.85,
+            markerscale=1.8,
             labelspacing=0.35,
             borderpad=0.4,
             frameon=True,
             framealpha=0.9
         )
 
-scale_title = "Log Scale" if use_log_plot else "Linear Scale"
-fig.suptitle(f"True Permeability vs. Predicted Permeability ({scale_title})", fontsize=13, y=0.98)
 plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 # Save output image

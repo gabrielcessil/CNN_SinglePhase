@@ -7,7 +7,7 @@
 #SBATCH --nodes=1                           # Number of nodes
 #SBATCH --nodelist=node[003-020]
 
-#SBATCH -t 4-0:00                           # Max wall time: 4 days
+#SBATCH -t 10-0:00                           # Max wall time: 4 days
 #SBATCH --output=output_%j.log
 #SBATCH --error=error_%j.log
 
@@ -20,6 +20,4 @@ conda activate env_cuda
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH # Makes the paths from conda environment visible
 # ---------------- Job Execution --------------------
 
-python main_TestModel_SpeedUp_CreateRunnersFromRaw.py
-#python main_TestModel_PermeabilityPred_CreateCSV.py
-#python main_TestModel_Create_ErrorCSV_sepModel.py
+python main_TestModel_Error_CreateCSV.py

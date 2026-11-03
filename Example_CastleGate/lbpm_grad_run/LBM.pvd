@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1">
+  <Collection>
+	<DataSet timestep="500000" part="0" file="vis500000/summary.pvti"/>
+  </Collection>
+</VTKFile>

@@ -67,11 +67,14 @@ def read_raw_volume(raw_path: str, shape: Tuple[int, int, int], dtype: np.dtype,
     return flat.reshape(shape, order=order)
 
 
+
 def read_latest_vti_path(sample_dir: str) -> pv.DataSet:
+
     """
     Scans the sample directory for files matching 'output_XXXXXXX.vti'
-    and returns the mesh with the highest integer index.
+    and returns the path of the file with the highest integer index.
     """
+
     vti_pattern = re.compile(r"^output_(\d+)\.vti$")
     candidates: List[Tuple[int, str]] = []
 
@@ -84,20 +87,15 @@ def read_latest_vti_path(sample_dir: str) -> pv.DataSet:
     if not candidates: 
         raise RuntimeError(f"No 'output_XXXXXXX.vti' files found in: {sample_dir}")
 
+        
+    # Sort by the extracted integer and grab the largest one
     candidates.sort(key=lambda t: t[0])
     summary_path = os.path.join(sample_dir, candidates[-1][1])
     return pv.read(summary_path)
 
 
+
 def read_lbpm_summary_pvti(sample_dir: str) -> pv.DataSet:
-    """
-    Enters sample_dir/lbpm_grad_run, searches for the 'vis*' folder 
-    (e.g., vis100200), and reads 'summary.pvti'.
-    """
-    lbpm_run_dir = os.path.join(sample_dir, "lbpm_grad_run")
-    if not os.path.exists(lbpm_run_dir):
-        # Fallback in case sample_dir is already lbpm_grad_run
-        lbpm_run_dir = sample_dir
 
     vis_pattern = re.compile(r"^vis(\d+)$")
     candidates: List[Tuple[int, str]] = []
@@ -114,7 +112,6 @@ def read_lbpm_summary_pvti(sample_dir: str) -> pv.DataSet:
     if not candidates:
         raise RuntimeError(f"No 'vis*' folder found inside: {lbpm_run_dir}")
 
-    # Pick the vis directory with the highest timestep index
     candidates.sort(key=lambda t: t[0])
     latest_vis_dir = candidates[-1][1]
 
@@ -122,7 +119,11 @@ def read_lbpm_summary_pvti(sample_dir: str) -> pv.DataSet:
     if not os.path.exists(pvti_path):
         raise RuntimeError(f"'summary.pvti' not found at expected path: {pvti_path}")
 
-    return pv.read(pvti_path)
+    mesh = pv.read(pvti_path)
+    if isinstance(mesh, pv.MultiBlock):
+        mesh = mesh.combine()
+        
+    return mesh
 
 
 def find_directional_local_maxima(dist_transform):
@@ -167,20 +168,33 @@ infos = {
     "../../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Doddington_256_256_256_SAug_DNorm.h5",   
 }
 
-saved_fraction      = 1.0
-source              = "lbpm" # One of "gradlbm", "lbpm"
 raw_shape           = (256, 256, 256)
-sample_dir_pattern  = r"^Sample[_-]?(\d+)"  # Matches 'Sample_1', 'sample_1', 'Sample1', etc.
+ 
+
+"""
+infos = {  
+    "../../TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120/":
+    "../../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Ketton_120_120_120_SAug_DNorm.h5",
+
+    "../../TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/":
+    "../../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Estaillades_120_120_120_SAug_DNorm.h5",
+
+    "../../TestSpeedUp_Simulations_OOD/IC_Doddington_120_120_120/":
+    "../../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Doddington_120_120_120_SAug_DNorm.h5",   
+}
+raw_shape           = (120, 120, 120)
+"""
+
+saved_fraction      = 0.5
+sample_dir_pattern  = r"^Sample[_-]?(\d+)"
 raw_name            = "domain.raw"
 raw_dtype           = np.uint8
-
 
 for simulations_folder, output_path in infos.items():
 
     print("\n" + "="*80)
     print("CREATING: ", output_path)
     
-    # Normalize paths to fix trailing slashes or relative pathing quirks
     base_dir = os.path.normpath(os.path.join(os.getcwd(), simulations_folder))
     print(f"Scanning base directory: {base_dir}")
     
@@ -240,38 +254,26 @@ for simulations_folder, output_path in infos.items():
                 vol_orig    = read_raw_volume(raw_path, raw_shape, raw_dtype)
                 porous_mask = (vol_orig == 1) 
 
-                if source == "lbpm":
-                    mesh = read_lbpm_summary_pvti(sample_dir)
+               
+                # Join the simulation folder
+                lbpm_run_dir = os.path.join(sample_dir, "lbpm_grad_run")
+                
+                
+                # Read .pvti                
+                mesh    = read_lbpm_summary_pvti(lbpm_run_dir)
+                vx_orig = mesh["Velocity_x"].reshape(raw_shape, order="C")
+                vy_orig = mesh["Velocity_y"].reshape(raw_shape, order="C")
+                vz_orig = mesh["Velocity_z"].reshape(raw_shape, order="C")
 
-                    if "Velocity_x" in mesh.array_names:
-                        vx_orig = mesh["Velocity_x"].reshape(raw_shape, order="C")
-                        vy_orig = mesh["Velocity_y"].reshape(raw_shape, order="C")
-                        vz_orig = mesh["Velocity_z"].reshape(raw_shape, order="C")
-                    elif "Velocity" in mesh.array_names:
-                        vel_data = mesh["Velocity"]
-                        vx_orig = vel_data[:, 0].reshape(raw_shape, order="C")
-                        vy_orig = vel_data[:, 1].reshape(raw_shape, order="C")
-                        vz_orig = vel_data[:, 2].reshape(raw_shape, order="C")
-                    else:
-                        raise KeyError(f"No velocity arrays ('Velocity_x' or 'Velocity') found in {sample_name}")
+                if "Pressure" in mesh.array_names:
+                    print("Mesh contains pressure data.")
+                    pr_orig = mesh["Pressure"].reshape(raw_shape, order="C")
 
-                    if "Pressure" in mesh.array_names:
-                        pr_orig = mesh["Pressure"].reshape(raw_shape, order="C")
-                    else:
-                        pr_orig = np.zeros_like(vz_orig)
+                else:
+                    print("Pressure data not found.")
+                    pr_orig        = np.zeros_like(vz_orig)
 
-                elif source == "gradlbm":
-                    mesh = read_latest_vti_path(sample_dir)
-
-                    velocity_data = mesh["Velocity"]
-                    vx_orig = velocity_data[:, 0].reshape(raw_shape, order="C")
-                    vy_orig = velocity_data[:, 1].reshape(raw_shape, order="C")
-                    vz_orig = velocity_data[:, 2].reshape(raw_shape, order="C")
-
-                    if "Density" in mesh.array_names:
-                        pr_orig = mesh["Density"].reshape(raw_shape, order="C") / 3.0
-                    else:
-                        pr_orig = np.zeros_like(vz_orig)
+                        
 
                 # Normalization
                 vx_norm = utils.danny_normalization_vel(vx_orig, porous_mask)

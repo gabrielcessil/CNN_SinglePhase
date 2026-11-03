@@ -15,7 +15,7 @@ from Utilities import velocity_usage as vu
 # ==============================================================================
 
 paths = [
-    "./Example_Bentheimer/"
+    "./Example_Leopard/"
 ]
 
 raw_file = "domain.raw"
@@ -132,18 +132,9 @@ for path in paths:
     # 2. PAD GEOMETRY
     # --------------------------------------------------------------------------
 
-    geometry_padded = sh.pad_geometry(geometry_uint8)
+    geometry_padded = geometry_uint8 #sh.pad_geometry(geometry_uint8)
 
     print(f"   -> Padded geometry shape:   {geometry_padded.shape}")
-
-    # Debug: save exactly the geometry given to the NN
-    #padded_raw = os.path.join(
-    #    path,
-    #    "geometry_padded.raw"
-    #)
-    #
-    #geometry_padded.astype(np.uint8).tofile(padded_raw)
-    #print(f"   -> Saved padded geometry:   {padded_raw}")
 
 
     # --------------------------------------------------------------------------

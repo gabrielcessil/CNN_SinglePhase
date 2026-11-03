@@ -32,6 +32,20 @@ def format_median_q1_q3(series):
 
     return f"{median_val:.2f} ({Q1:.2f}-{Q3:.2f})"
 
+def format_median_p5_p95(series):
+    """Calcula a Mediana e os percentis 5% e 95%,
+
+    retornando uma string formatada: "Mediana (Percentil5 - Percentil95)"
+    """
+    s = series.dropna()
+    if len(s) == 0:
+        return pd.NA
+
+    median_val = s.median()
+    p5 = s.quantile(0.05)   # 95% dos dados estão acima deste valor
+    p95 = s.quantile(0.95)  # 5% dos dados estão acima deste valor
+
+    return f"{median_val:.2f} ({p5:.2f}-{p95:.2f})"
 
 def format_median_whiskers(series):
     """Calculates the Median and the actual Box Plot Whiskers (excluding outliers),
@@ -177,22 +191,34 @@ def generate_combined_model_metric_summary(
     print(f"Exported Combined Table: {csv_filename} & .tex")
 
 
-INPUT_DIRECTORY = "./Tables/ErrorByModel/"
-OUTPUT_DIRECTORY = "./Tables/ErrorSummaries/"
+INPUT_DIRECTORY = "./Tables/ErrorPerSample/"
+OUTPUT_DIRECTORY = "./Tables/ErrorStatistics/"
 
 DATASET_CATEGORY_MAPPING = {
-    "Bentheimer 120³": "Rocks 120³ (ID)",
-    "Berea 120³": "Rocks 120³ (ID)",
-    "Berea Buff 120³": "Rocks 120³ (ID)",
-    "Berea Sinter Gray 120³": "Rocks 120³ (ID)",
-    "Berea Upper Gray 120³": "Rocks 120³ (ID)",
-    "Castle Gate 120³": "Rocks 120³ (ID)",
-    "Leopard 120³": "Rocks 120³ (ID)",
-    "Ketton 256³": "Rocks 256³ (OOD T-S)",
-    "Estaillades 256³": "Rocks 256³ (OOD T-S)",
-    "Doddington 256³": "Rocks 256³ (OOD T-S)",
+    "Bentheimer 120³":          "Rocks 120³ (ID)",
+    "Berea 120³":               "Rocks 120³ (ID)",
+    "Berea Buff 120³":          "Rocks 120³ (ID)",
+    "Berea Sinter Gray 120³":   "Rocks 120³ (ID)",
+    "Berea Upper Gray 120³":    "Rocks 120³ (ID)",
+    "Castle Gate 120³":         "Rocks 120³ (ID)",
+    "Leopard 120³":             "Rocks 120³ (ID)",
+    
+    "Sph Pore (Ko et al)":      "Ko et al. 120³",
+    
+    "Cylindrical Grains 120³":  "Cylindrical Grains 120³ (OOD T)",
+    "Cylindrical Pores 120³":   "Cylindrical Pores 120³ (OOD T)",
+    
+    
+    "Ketton 120³":              "Rocks 120³ (OOD S)", # OOD Size
+    "Estaillades 120³":         "Rocks 120³ (OOD S)", # OOD Size
+    "Doddington 120³":          "Rocks 120³ (OOD S)", # OOD Size
+    
+    "Ketton 256³":              "Rocks 256³ (OOD T-S)", # OOD Type and Size
+    "Estaillades 256³":         "Rocks 256³ (OOD T-S)", # OOD Type and Size
+    "Doddington 256³":          "Rocks 256³ (OOD T-S)", # OOD Type and Size
 }
 
+#"""
 # 1) Compare Ko et al (Component 0) with increasing N samples
 group_1_files = [
     "ErrorMetrics_Comp0_Ko_et_al_D3_N0.csv",
@@ -247,6 +273,7 @@ generate_metric_summaries(
     OUTPUT_DIRECTORY,
     dataset_mapping=DATASET_CATEGORY_MAPPING,
 )
+#"""
 
 # 4) Combined table for models across different components
 group_4_files = [
@@ -255,13 +282,36 @@ group_4_files = [
 ]
 print("\nProcessing Group 4: Separate Components (Combined Table)")
 generate_combined_model_metric_summary(
-    "Group4_Ko_Components", group_4_files, INPUT_DIRECTORY, OUTPUT_DIRECTORY
+    "Group4_Ko_Components", 
+    group_4_files, 
+    INPUT_DIRECTORY, 
+    OUTPUT_DIRECTORY,
 )
+generate_combined_model_metric_summary(
+    "Group4_Ko_Components_Summarized",
+    group_4_files, 
+    INPUT_DIRECTORY, 
+    OUTPUT_DIRECTORY,
+    dataset_mapping=DATASET_CATEGORY_MAPPING,
+)
+
+
 
 group_5_files = ["ErrorMetrics_Comp5_Ko_et_al_D3.csv"]
 print("\nProcessing Group 5: Main model")
 generate_combined_model_metric_summary(
-    "Group5_Ko_Main", group_5_files, INPUT_DIRECTORY, OUTPUT_DIRECTORY
+    "Group5_Ko_Main", 
+    group_5_files, 
+    INPUT_DIRECTORY, 
+    OUTPUT_DIRECTORY
 )
+generate_combined_model_metric_summary(
+    "Group5_Ko_Main_Summarized", 
+    group_5_files, 
+    INPUT_DIRECTORY, 
+    OUTPUT_DIRECTORY,
+    dataset_mapping=DATASET_CATEGORY_MAPPING,
+)
+
 
 print("\nAll summary tables generated successfully!")

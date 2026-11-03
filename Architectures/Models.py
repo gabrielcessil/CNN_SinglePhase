@@ -34,8 +34,13 @@ class SubModels_Composition(nn.Module):
         
         self.concat = Channel_Concat()
         
-        if is_eval: self.eval()
-        
+        if is_eval: 
+            self.eval()
+            self.z_model.eval()
+            self.x_model.eval()
+            self.y_model.eval()
+            self.p_model.eval()
+            
         
     def forward(self, x):
         

@@ -21,9 +21,12 @@ def calculate_local_reynols(porous_mask, vel_mag, mu, dens):
 # -------------------------------------------------------------------
 # 1) Boxplot with Jitter for Multiple Datasets
 # -------------------------------------------------------------------
+# -------------------------------------------------------------------
+# 1) Boxplot with Jitter for Multiple Datasets (Saved Separately)
+# -------------------------------------------------------------------
 def plot_reynolds_boxplot(datasets_dict: dict, 
-                                   batch_size: int = 4, 
-                                   save_path: str = None):
+                            batch_size: int = 4, 
+                            save_path: str = None):
     
     # --- Configuration for Academic Style ---
     plt.rcParams.update({
@@ -49,9 +52,8 @@ def plot_reynolds_boxplot(datasets_dict: dict,
     
     for dataset_name, datapath in datasets_dict.items():
         print(f"Processing: {dataset_name}")
-        # Note: Replace dr.LazyDatasetTorch and vu.tensor_denorm with your actual imports
         dataset = dr.LazyDatasetTorch(h5_path=datapath, list_ids=None, 
-                                      x_dtype=torch.float32, y_dtype=torch.float32)
+                                    x_dtype=torch.float32, y_dtype=torch.float32)
         loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
         
         sample_means, sample_maxs, sample_pcts = [], [], []
@@ -76,21 +78,20 @@ def plot_reynolds_boxplot(datasets_dict: dict,
             all_pcts.append(np.array(sample_pcts))
             labels.append(dataset_name)
 
-    # Plot Setup: 3 rows, 1 column
-    fig, axes = plt.subplots(3, 1, figsize=(10, 15), constrained_layout=True)
-    
     titles = [
         "Mean local Reynolds Number\nper sample", 
-        "75th Percentile of local Reynolds\nNumber per sample", # Updated title
+        "75th Percentile of local Reynolds\nNumber per sample", 
         "Maximum local Reynolds Number\nper sample",
     ]
-    data_list   = [all_means, all_maxs, all_pcts]
-    colors      = ['#1f77b4', '#d62728', '#2ca02c'] 
+    data_list = [all_means, all_maxs, all_pcts]
+    colors = ['#1f77b4', '#d62728', '#2ca02c'] 
+    suffixes = ['_mean', '_p75', '_max']
 
     formatted_labels = [str(label).replace(" ", "\n") for label in labels]
     
-    for i, ax in enumerate(axes):
-        # Create boxplot with academic styling
+    # Loop to create and save each plot individually
+    for i in range(3):
+        fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
         
         bplot = ax.boxplot(data_list[i], tick_labels=formatted_labels, patch_artist=True, 
                            showfliers=False, widths=0.5, zorder=2)
@@ -123,28 +124,33 @@ def plot_reynolds_boxplot(datasets_dict: dict,
             formatter.set_powerlimits((-3, 3))
             ax.yaxis.set_major_formatter(formatter)
 
-    if save_path:
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        print(f"Academic figure saved to {save_path}")
-    else:
-        plt.show()
+        if save_path:
+            base, ext = os.path.splitext(save_path)
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            current_save_path = f"{base}{suffixes[i]}{ext}"
+            fig.savefig(current_save_path, dpi=300, bbox_inches='tight')
+            print(f"Academic figure saved to {current_save_path}")
+        else:
+            plt.show()
+            
+        plt.close(fig) # Free up memory
 
 # ==========================================
 # Exemplo de Execução
 # ==========================================
  
 datasets = {
-    "Spherical Pores":   "../NN_Datasets_Grad/Train_Silveira_SphPore_SAug_DNorm.h5",
-    "Spherical Grains":  "../NN_Datasets_Grad/Train_Silveira_SphGrain_SAug_DNorm.h5",
-    "Leopard":           "../NN_Datasets_Grad/Train_Oliveira_Leopard_SAug_DNorm.h5",
-    "Castle Gate":       "../NN_Datasets_Grad/Train_Oliveira_CastleGate_SAug_DNorm.h5",
-    "Berea Upper Gray":  "../NN_Datasets_Grad/Train_Oliveira_BereaUpperGray_SAug_DNorm.h5",
-    "Berea Sinter Gray": "../NN_Datasets_Grad/Train_Oliveira_BereaSinterGray_SAug_DNorm.h5",
-    "Berea Buff":        "../NN_Datasets_Grad/Train_Oliveira_BereaBuff_SAug_DNorm.h5",
-    "Berea":             "../NN_Datasets_Grad/Train_Oliveira_Berea_SAug_DNorm.h5",
-    "Bentheimer":        "../NN_Datasets_Grad/Train_Oliveira_Bentheimer_SAug_DNorm.h5",
+    "Spherical Pores":   "../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphPore_SAug_DNorm.h5",
+    "Spherical Grains":  "../NN_Datasets_Grad_Dist_40_5_55/Valid_Silveira_SphGrain_SAug_DNorm.h5",
+    "Leopard":           "../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Leopard_SAug_DNorm.h5",
+    "Castle Gate":       "../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_CastleGate_SAug_DNorm.h5",
+    "Berea Upper Gray":  "../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    "Berea Sinter Gray": "../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    "Berea Buff":        "../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_BereaBuff_SAug_DNorm.h5",
+    "Berea":             "../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Berea_SAug_DNorm.h5",
+    "Bentheimer":        "../NN_Datasets_Grad_Dist_40_5_55/Valid_Oliveira_Bentheimer_SAug_DNorm.h5",
 }
 
 plot_reynolds_boxplot(datasets_dict=datasets, 
                       batch_size=12, 
-                      save_path="Local_Reynolds.png")
+                      save_path="./Plots/DatasetReynolds/Local_Reynolds.pdf")

@@ -148,12 +148,12 @@ def generate_metrics_per_model(
 # =======================================================
 # MAIN SETUP
 # =======================================================
-component   = 0 # Uz =0, Ux=2, P=3, (Uz,Uy,Ux)=5
-batch_size  = 5
+component   = 5 # Uz =0, Ux=2, P=3, (Uz,Uy,Ux)=5
+batch_size  = 10
 N_samples   = None 
 device      = 'cpu'
 
-output_results_dir = "./Tables/Error_AGAIN/"
+output_results_dir = "./Tables/Error_OOD/"
 
 # Define Datasets
 """
@@ -180,17 +180,25 @@ datasets = {
 """
 datasets = {
     # ID
-    "Spherical Pores":      "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphPore_SAug_DNorm.h5",
-    "Spherical Grains":     "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5",
-    "Cylindrical Pores":    "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_CylinPore_SAug_DNorm.h5",
-    "Cylindrical Grains":   "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_CylinGrain_SAug_DNorm.h5",
-    "Bentheimer":           "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
-    "Berea Buff":           "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
-    "Leopard":              "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Leopard_SAug_DNorm.h5",
-    "Castle Gate":          "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_CastleGate_SAug_DNorm.h5",
-    "Berea Upper Gray":     "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
-    "Berea Sinter Gray":    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
-    "Berea":                "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5",
+    #"Spherical Pores":      "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphPore_SAug_DNorm.h5",
+    #"Spherical Grains":     "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_SphGrain_SAug_DNorm.h5",
+    #"Cylindrical Pores":    "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_CylinPore_SAug_DNorm.h5",
+    #"Cylindrical Grains":   "../NN_Datasets_Grad_Dist_40_5_55/Test_Silveira_CylinGrain_SAug_DNorm.h5",
+    #"Bentheimer":           "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Bentheimer_SAug_DNorm.h5",
+    #"Berea Buff":           "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaBuff_SAug_DNorm.h5",
+    #"Leopard":              "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Leopard_SAug_DNorm.h5",
+    #"Castle Gate":          "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_CastleGate_SAug_DNorm.h5",
+    #"Berea Upper Gray":     "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaUpperGray_SAug_DNorm.h5",
+    #"Berea Sinter Gray":    "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_BereaSinterGray_SAug_DNorm.h5",
+    #"Berea":                "../NN_Datasets_Grad_Dist_40_5_55/Test_Oliveira_Berea_SAug_DNorm.h5",
+    
+    # Previous
+    "Sph Pore (Ko et al)":  "../NN_Datasets_Grad_Dist_40_5_55/Test_Danny_SphPore_DAug_DNorm.h5",
+    
+    # OOD (Type)
+    "Ketton 120³":          "../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Ketton_120_120_120_SAug_DNorm.h5",
+    "Estaillades 120³":     "../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Estaillades_120_120_120_SAug_DNorm.h5",
+    "Doddington 120³":      "../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Doddington_120_120_120_SAug_DNorm.h5",
     
     # OOD (Size and Type)
     "Ketton 256³":          "../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Ketton_256_256_256_SAug_DNorm.h5",

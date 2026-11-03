@@ -16,53 +16,56 @@ from scipy.stats import gaussian_kde
 # ==============================================================================
 # 1. CONFIGURATION & HELPERS
 # ==============================================================================
-OUTPUT_CSV_DIR  = "./Tables/SpeedUp/"
-file            = "SpeedUp_120"
+OUTPUT_CSV_DIR  = "./Tables/SpeedUp_RefTol/"
+output_dir      = "./Plots/SpeedUp_RefTol/"
+
+
+
+#"""
+file            = "SpeedUp_ID"
+main_folders = {
+    "Poros esféricos": "../TestSpeedUp_Simulations_ID/Test_Silveira_SphPore_SAug_DNorm/",
+    "Grãos esféricos": "../TestSpeedUp_Simulations_ID/Test_Silveira_SphGrain_SAug_DNorm/",
+    "Leopard": "../TestSpeedUp_Simulations_ID/Test_Oliveira_Leopard_SAug_DNorm/",
+    "CastleGate": "../TestSpeedUp_Simulations_ID/Test_Oliveira_CastleGate_SAug_DNorm/",
+    "BereaUpperGray": "../TestSpeedUp_Simulations_ID/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
+    "BereaSinterGray": "../TestSpeedUp_Simulations_ID/Test_Oliveira_BereaSinterGray_SAug_DNorm/",
+    "BereaBuff": "../TestSpeedUp_Simulations_ID/Test_Oliveira_BereaBuff_SAug_DNorm/",
+    "Berea": "../TestSpeedUp_Simulations_ID/Test_Oliveira_Berea_SAug_DNorm/",
+    "Bentheimer": "../TestSpeedUp_Simulations_ID/Test_Oliveira_Bentheimer_SAug_DNorm/",
+}
+#"""
 
 """
+file            = "SpeedUp_OOD_T"
 main_folders = {
-    "Premature Convergence": "../TestSpeedUp_Simulations_PrematureConvergence/",
+    "Doddington 120³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Doddington_120_120_120/",
+    "Ketton 120³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120/",
+    "Estaillades 120³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/",
 }
 """
 
-#"""
+"""
+file            = "SpeedUp_OOD_TD"
 main_folders = {
-    "SphPore 120": "../TestSpeedUp_Simulations_120/Test_Silveira_SphPore_SAug_DNorm/",
-    "SphGrain 120": "../TestSpeedUp_Simulations_120/Test_Silveira_SphGrain_SAug_DNorm/",
-    "Leopard 120": "../TestSpeedUp_Simulations_120/Test_Oliveira_Leopard_SAug_DNorm/",
-    "CastleGate 120": "../TestSpeedUp_Simulations_120/Test_Oliveira_CastleGate_SAug_DNorm/",
-    "BereaUpperGray 120": "../TestSpeedUp_Simulations_120/Test_Oliveira_BereaUpperGray_SAug_DNorm/",
-    "BereaSinterGray 120": "../TestSpeedUp_Simulations_120/Test_Oliveira_BereaSinterGray_SAug_DNorm/",
-    "BereaBuff 120": "../TestSpeedUp_Simulations_120/Test_Oliveira_BereaBuff_SAug_DNorm/",
-    "Berea 120": "../TestSpeedUp_Simulations_120/Test_Oliveira_Berea_SAug_DNorm/",
-    "Bentheimer 120": "../TestSpeedUp_Simulations_120/Test_Oliveira_Bentheimer_SAug_DNorm/",
+    "Doddington 256³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Doddington_256_256_256/",
+    "Ketton 256³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Ketton_256_256_256/",
+    "Estaillades 256³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Estaillades_256_256_256/",
 }
-#"""
 """
-main_folders = {
-    "Doddington 256³": "../TestSpeedUp_Simulations_BiggerCrops/IC_Doddington_256_256_256/",
-    "Ketton 256³": "../TestSpeedUp_Simulations_BiggerCrops/IC_Ketton_256_256_256/",
-    "Estaillades 256³": "../TestSpeedUp_Simulations_BiggerCrops/IC_Estaillades_256_256_256/"
-
-    }
-"""
-
-
-
 
 # ---------------------------------------------------------
 # Convergence Analysis Settings
 # ---------------------------------------------------------
 
 remove_outliers = False
-logscale        = True
+logscale        = False
 dataset_colors  = {}
 
-analysis_interval       = 2000        
-totaL_timesteps         = 1000000
+
 self_convergence_tail   = 0.25   # Evaluate the last 25% of the simulation steps
 self_convergence_tol    = 10.0   # Must stay within 10% of its OWN final value
-ref_convergence_tol     = 2.0    # Must reach within 2.5% of the GRAD final value
+ref_convergence_tol     = 0.2    # Must reach within 2.5% of the GRAD final value
 
 # ---------------------------------------------------------
 # AUXILIARY FUNCTIONS
@@ -71,6 +74,30 @@ ref_convergence_tol     = 2.0    # Must reach within 2.5% of the GRAD final valu
 for key in main_folders.keys():
     if key not in dataset_colors:
         dataset_colors[key] = "black"
+
+def parse_db_config(folder_path):
+
+    p = Path(folder_path)
+    if not p.exists():
+        raise FileNotFoundError(f"Simulation folder does not exist: {folder_path}")
+        
+    db_files = list(p.glob("*.db"))
+    if not db_files:
+        raise FileNotFoundError(f"No .db configuration file found in {folder_path}")
+        
+    content = db_files[0].read_text()
+    
+    match_interval = re.search(r'analysis_interval\s*=\s*([0-9]+)', content)
+    if not match_interval:
+        raise ValueError(f"Could not find 'analysis_interval' in {db_files[0]}")
+    analysis_interval = int(match_interval.group(1))
+        
+    match_steps = re.search(r'timestepMax\s*=\s*([0-9]+)', content)
+    if not match_steps:
+        raise ValueError(f"Could not find 'timestepMax' in {db_files[0]}")
+    totaL_timesteps = int(match_steps.group(1))
+        
+    return analysis_interval, totaL_timesteps
 
 def get_permeability_data(folder_path):
     p = Path(folder_path)
@@ -166,7 +193,9 @@ for dataset_name, dataset_path in main_folders.items():
         
         if df_grad is None or df_nn is None:
             continue
-            
+        
+        analysis_interval, totaL_timesteps = parse_db_config(run_dir)
+        
         k_array_grad = df_grad['absperm(mDa)'].values
         k_array_nn = df_nn['absperm(mDa)'].values
         
@@ -188,7 +217,7 @@ for dataset_name, dataset_path in main_folders.items():
         k_started = k_array_nn[-1]
         
         expected_total_steps = totaL_timesteps/analysis_interval - 1
-
+        
         results.append({
             "Dataset": dataset_name,
             "Sample": sample_name,
@@ -203,7 +232,9 @@ for dataset_name, dataset_path in main_folders.items():
             "NN_Tail_Max_Error": nn_max_err,
             "Is_Complete": (len(k_array_grad) >= expected_total_steps) and (len(k_array_nn) >= expected_total_steps)
         })
-
+        
+        if not ( (len(k_array_grad) >= expected_total_steps) and (len(k_array_nn) >= expected_total_steps)):
+            print(len(k_array_grad), len(k_array_nn), totaL_timesteps,analysis_interval, expected_total_steps)
 df = pd.DataFrame(results)
 
 if df.empty:
@@ -270,7 +301,6 @@ print(f"\n Speed-up evaluation saved to: {csv_output_path}")
 # ==============================================================================
 # 3. GLOBAL ACADEMIC STYLING CONFIGURATION & PLOTTING
 # ==============================================================================
-# [The plotting functionality remains exactly the same below]
 plt.rcParams.update(
     {
         "font.family": "serif",
@@ -312,7 +342,6 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
             legend=False
         )
 
-       
         # 2. Density-Proportional Scatter & Annotations
         for i, dataset in enumerate(datasets):
             subset = df[df['Dataset'] == dataset].dropna(subset=[prop, 'Perm_Error [%]'])
@@ -364,22 +393,27 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
                 x_vals, 
                 y_vals, 
                 color=base_color, 
-                s=25,          # Dot size
+                s=25,         # Dot size
                 alpha=0.75,    # Transparency
                 edgecolor='white', 
                 linewidths=0.4, 
                 zorder=2
             )
             
-        ax.set_ylabel("Speed-up Ratio", fontweight="bold")
-        ax.set_xlabel("Tolerance Configuration", fontweight="bold")
+        ax.set_ylabel("Speed-up", fontweight="bold")
+        ax.set_xlabel("", fontweight="bold")
         
         if logscale: ax.set_yscale('log')
 
-        ax.axhline(1.0, color="gray", linestyle="--", linewidth=1.0, alpha=0.7, label="No Speedup (1.0x)", zorder=1)
+        ax.axhline(1.0, color="blue", linestyle="-", linewidth=3.0, alpha=0.55, label="Não há ganho", zorder=1)
 
         ax.set_xticks(range(len(datasets)))
         ax.set_xticklabels(datasets, rotation=30, ha='right', rotation_mode='anchor')
+        
+        for label in ax.get_xticklabels():
+            if label.get_text() == 'Todas as amostras':
+                label.set_fontweight('bold')
+                
 
         ax.tick_params(axis='both', which='major', direction='in', top=True, right=True, length=6, width=1.5)
         ax.tick_params(axis='y', which='minor', direction='in', right=True, length=3, width=1.0)
@@ -392,8 +426,6 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
         ax.set_axisbelow(True)
 
         handles, labels = ax.get_legend_handles_labels()
-        
-       
         ax.legend(handles=handles, loc='upper left', frameon=True, edgecolor='black', framealpha=0.9, fancybox=False)
 
         plt.tight_layout()
@@ -401,13 +433,20 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
         plt.savefig(os.path.join(output_dir, f"Boxplot_{suffix}.pdf"), bbox_inches='tight')
         plt.savefig(os.path.join(output_dir, f"Boxplot_{suffix}.png"), dpi=300, bbox_inches='tight')
         plt.close()
-        print(f"  Saved Boxplot_{suffix}.pdf/.png to {output_dir}")
+        print(f"  Saved Boxplot_{suffix}.pdf to {output_dir}")
 
+df_plot = df.copy()
+df_all = df.copy()
+df_all['Dataset'] = 'Todas as amostras'
+df_plot = pd.concat([df_plot, df_all], ignore_index=True)
+
+# Define uma cor padrão para a nova categoria "All"
+dataset_colors['Todas as amostras'] = 'dimgray'
 
 plot_prop_boxplots(
-    df=df,
+    df=df_plot,
     prop_cols=["Speedup_Ratio"],
-    output_dir="./Plots/",
+    output_dir=output_dir,
     suffix=file,
     dataset_colors=dataset_colors,
     remove_outliers=remove_outliers,

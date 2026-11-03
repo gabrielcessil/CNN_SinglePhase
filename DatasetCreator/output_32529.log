@@ -1,0 +1,110 @@
+[13:09:04] WARNING  PARDISO solver not installed on this        _workspace.py:56
+                    platform. Simulations will be slow.                         
+
+================================================================================
+CREATING:  ../../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Ketton_120_120_120_SAug_DNorm.h5
+Scanning base directory: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120
+Found 30 sample directories to process.
+[FAIL] Sample_00000: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00019: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120/Sample_00019/lbpm_grad_run
+[FAIL] Sample_00058: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00092: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00104: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00111: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00123: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120/Sample_00123/lbpm_grad_run
+[FAIL] Sample_00145: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00200: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00220: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00242: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00248: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00249: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00255: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00299: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00301: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00313: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00340: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120/Sample_00340/lbpm_grad_run
+[FAIL] Sample_00344: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00350: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00360: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00364: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00391: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00397: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00400: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00405: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00422: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00452: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120/Sample_00452/lbpm_grad_run
+[FAIL] Sample_00492: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00509: 'ImageData' object has no attribute '_active_scalars_info'
+Finished. Total augmented samples written: 0
+
+================================================================================
+CREATING:  ../../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Estaillades_120_120_120_SAug_DNorm.h5
+Scanning base directory: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120
+Found 30 sample directories to process.
+[FAIL] Sample_00000: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00002: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00009: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00012: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00022: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00027: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/Sample_00027/lbpm_grad_run
+[FAIL] Sample_00033: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00035: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00057: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00058: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00082: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00111: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00123: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/Sample_00123/lbpm_grad_run
+[FAIL] Sample_00132: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00149: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/Sample_00149/lbpm_grad_run
+[FAIL] Sample_00173: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00197: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00204: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00235: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00252: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00259: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/Sample_00259/lbpm_grad_run
+[FAIL] Sample_00270: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00296: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00328: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00347: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00398: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00414: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/Sample_00414/lbpm_grad_run
+[FAIL] Sample_00475: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/Sample_00475/lbpm_grad_run
+[FAIL] Sample_00484: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00505: 'ImageData' object has no attribute '_active_scalars_info'
+Finished. Total augmented samples written: 0
+
+================================================================================
+CREATING:  ../../NN_Datasets_LBPM_SpeedUp/Test_ImpCol_Doddington_120_120_120_SAug_DNorm.h5
+Scanning base directory: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Doddington_120_120_120
+Found 30 sample directories to process.
+[FAIL] Sample_00008: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00023: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00027: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00052: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00066: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00068: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00075: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00113: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00114: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00131: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Doddington_120_120_120/Sample_00131/lbpm_grad_run
+[FAIL] Sample_00184: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00200: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00203: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Doddington_120_120_120/Sample_00203/lbpm_grad_run
+[FAIL] Sample_00208: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00216: No 'vis*' folder found inside: /home/gabriel.silveira/dissertacao/TestSpeedUp_Simulations_OOD/IC_Doddington_120_120_120/Sample_00216/lbpm_grad_run
+[FAIL] Sample_00251: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00254: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00262: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00267: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00290: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00292: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00316: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00377: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00382: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00435: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00454: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00475: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00484: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00489: 'ImageData' object has no attribute '_active_scalars_info'
+[FAIL] Sample_00496: 'ImageData' object has no attribute '_active_scalars_info'
+Finished. Total augmented samples written: 0

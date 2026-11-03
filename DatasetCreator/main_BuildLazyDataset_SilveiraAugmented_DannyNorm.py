@@ -54,30 +54,37 @@ def read_raw_volume(raw_path: str, shape: Tuple[int, int, int], dtype: np.dtype,
 
 
 
-def read_latest_vti_path(sample_dir: str) -> pv.DataSet:
 
+def read_lbpm_summary_pvti(lbpm_run_dir: str) -> pv.DataSet:
     """
-    Scans the sample directory for files matching 'output_XXXXXXX.vti'
-    and returns the path of the file with the highest integer index.
+    Enters sample_dir/lbpm_grad_run, searches for the 'vis*' folder 
+    (e.g., vis100200), and reads 'summary.pvti'.
     """
 
-    vti_pattern = re.compile(r"^output_(\d+)\.vti$")
+    vis_pattern = re.compile(r"^vis(\d+)$")
     candidates: List[Tuple[int, str]] = []
 
-    for name in os.listdir(sample_dir):
-        if os.path.isfile(os.path.join(sample_dir, name)):
-            m = vti_pattern.match(name)
+    for name in os.listdir(lbpm_run_dir):
+        full_path = os.path.join(lbpm_run_dir, name)
+        if os.path.isdir(full_path):
+            m = vis_pattern.match(name)
             if m:
-                candidates.append((int(m.group(1)), name))
+                candidates.append((int(m.group(1)), full_path))
+            elif name.startswith("vis"):
+                candidates.append((0, full_path))
 
-    if not candidates: 
-        raise RuntimeError(f"No 'output_XXXXXXX.vti' files found in: {sample_dir}")
+    if not candidates:
+        raise RuntimeError(f"No 'vis*' folder found inside: {lbpm_run_dir}")
 
-        
-    # Sort by the extracted integer and grab the largest one
+    # Pick the vis directory with the highest timestep index
     candidates.sort(key=lambda t: t[0])
-    summary_path = os.path.join(sample_dir, candidates[-1][1])
-    return pv.read(summary_path)
+    latest_vis_dir = candidates[-1][1]
+
+    pvti_path = os.path.join(latest_vis_dir, "summary.pvti")
+    if not os.path.exists(pvti_path):
+        raise RuntimeError(f"'summary.pvti' not found at expected path: {pvti_path}")
+
+    return pv.read(pvti_path)
 
 
 
@@ -428,7 +435,7 @@ for simulations_folder, output_path in infos.items():
                 
 
                 if source == "lbpm":
-                    mesh            = read_latest_vti_path(sample_dir)
+                    mesh            = read_lbpm_summary_pvti(sample_dir)
                     vx_orig = mesh["Velocity_x"].reshape(raw_shape, order="C")
                     vy_orig = mesh["Velocity_y"].reshape(raw_shape, order="C")
                     vz_orig = mesh["Velocity_z"].reshape(raw_shape, order="C")
