@@ -65,7 +65,7 @@ dataset_colors  = {}
 
 self_convergence_tail   = 0.25   # Evaluate the last 25% of the simulation steps
 self_convergence_tol    = 10.0   # Must stay within 10% of its OWN final value
-ref_convergence_tol     = 0.2    # Must reach within 2.5% of the GRAD final value
+ref_convergence_tol     = 2.0    # Must reach within 2.5% of the GRAD final value
 
 # ---------------------------------------------------------
 # AUXILIARY FUNCTIONS

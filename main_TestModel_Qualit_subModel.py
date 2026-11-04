@@ -5,6 +5,7 @@ import tensorflow         as tf
 from scipy.stats          import gaussian_kde
 from matplotlib.ticker    import LogLocator, LogFormatterSciNotation
 from torch.utils.data     import DataLoader
+from matplotlib.ticker    import ScalarFormatter
 
 from Architectures.Unet   import Extended_DannyKo
 from Architectures.MSnet  import Extended_JavierSantos
@@ -43,7 +44,25 @@ def get_masked_slices(inp, tar, slice_idx, axis='front'):
     mask = (i_slc == 0)
     return np.ma.array(t_slc, mask=mask)
 
+def apply_scientific_colorbar(cbar, orientation='horizontal'):
+    """Force scientific notation on colorbar ticks."""
 
+    formatter = ScalarFormatter(useMathText=True)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((0, 0))
+
+    # Set formatter through the Colorbar object itself
+    cbar.formatter = formatter
+
+    # Update ticks after assigning the formatter
+    cbar.update_ticks()
+
+    # Ensure scientific notation offset is visible
+    if orientation == 'horizontal':
+        cbar.ax.xaxis.get_offset_text().set_visible(True)
+    else:
+        cbar.ax.yaxis.get_offset_text().set_visible(True)
+  
 #######################################################
 #************ COMPARISONS:                 ***********#
 ####################################################### 
@@ -129,8 +148,9 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
     tar_z_masked    = get_masked_slices(inp.squeeze(0).squeeze(0), tar_z, slice_idx, axis='side') # Put zeros on solid
     
     # Prepare color range
-    vmin, vmax      = round(tar_z_masked.mean()-tar_z_masked.std()*3,1), round(tar_z_masked.mean()+tar_z_masked.std()*3,1)
-    
+    vmin, vmax      = tar_z_masked.mean()-tar_z_masked.std()*3, tar_z_masked.mean()+tar_z_masked.std()*3
+    vmin, vmax      = max(vmin, tar_z_masked.min()), min(vmax, tar_z_masked.max())
+    vmin, vmax      = round(vmin,3), round(vmax,3)
     folder = "./Plots/Plot_Side_Comparison"
     if save_mode and not os.path.exists(folder): os.makedirs(folder)
 
@@ -141,6 +161,7 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
         plt.axis('off')
         cbar_t = plt.colorbar(im_t, orientation='horizontal', fraction=0.046, pad=0.04)
         cbar_t.set_ticks(np.linspace(vmin, vmax, 5))
+        apply_scientific_colorbar(cbar_t)
         plt.savefig(f"{folder}/{save_tag}_{sample_idx}_Target.png", dpi=300, bbox_inches='tight')
         plt.close()
     else:
@@ -152,6 +173,7 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
         axes[0].set_title("Target (Side)")
         cbar0 = plt.colorbar(im0, ax=axes[0], orientation='horizontal', fraction=0.046, pad=0.04)
         cbar0.set_ticks(np.linspace(vmin, vmax, 5))
+        apply_scientific_colorbar(cbar0)
 
     for i, (name, model) in enumerate(models.items(), 1):
         with torch.no_grad():
@@ -159,13 +181,17 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
         
         out_z       = out.squeeze(0)[0]    
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='side') # Put zeros on solid
-        vmin, vmax      = round(o_z_masked.mean()-o_z_masked.std()*3,1), round(o_z_masked.mean()+o_z_masked.std()*3,1)
+        vmin, vmax  = o_z_masked.mean()-o_z_masked.std()*3, o_z_masked.mean()+o_z_masked.std()*3
+        vmin, vmax      = max(vmin, o_z_masked.min()), min(vmax, o_z_masked.max())
+        vmin, vmax      = round(vmin,3), round(vmax,3)
+        
         if save_mode:
             plt.figure(figsize=(6, 6))
             im_m = plt.imshow(o_z_masked, cmap='plasma', vmin=vmin, vmax=vmax)
             plt.axis('off')
             cbar_m = plt.colorbar(im_m, orientation='horizontal', fraction=0.046, pad=0.04)
             cbar_m.set_ticks(np.linspace(vmin, vmax, 5))
+            apply_scientific_colorbar(cbar_m)
             plt.savefig(f"{folder}/{save_tag}_{sample_idx}_{name.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
             plt.close()
         else:
@@ -174,6 +200,7 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
             axes[i].axis('off')
             cbar = plt.colorbar(im, ax=axes[i], orientation='horizontal', fraction=0.046, pad=0.04)
             cbar.set_ticks(np.linspace(vmin, vmax, 5))
+            apply_scientific_colorbar(cbar)
             
     if not save_mode: plt.show()
 
@@ -269,7 +296,7 @@ shape               = (120,120,120)
 #    }
 #shape               = (256,256,256)
 
-component           = 2 # Uz=0, Uy=1, Ux=2, P=3
+component           = 0 # Uz=0, Uy=1, Ux=2, P=3
 
 
 # DEFINE MODELS
@@ -277,6 +304,8 @@ models_dict          = {}
 
 # Z-Component models
 if component==0:
+    #==========================================================================
+    """
     danny_model_base3 = Extended_DannyKo()
     model_z_3 = danny_model_base3.z_model
     model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_02-04PM_Job28308/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
@@ -304,6 +333,25 @@ if component==0:
     model_z_3.bin_input = True
     model_z_3.eval()
     models_dict["Ko et al (D3 N4)"] = model_z_3
+    """
+    #==========================================================================
+    
+    
+    #==========================================================================
+    # Increasing Diversity - Javier Santos
+
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_9_September_2026_01-53PM_Job28306/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D1 N4)"] = model_z_3
+    
+    javier_model_base3 = Extended_JavierSantos()
+    model_z_3 = javier_model_base3.z_model
+    model_z_3.load_state_dict(torch.load("./Trained_Models/NN_Trainning_10_September_2026_12-33PM_Job28377/model_LowerValidationLoss.pth", map_location=torch.device(device), weights_only=True))
+    model_z_3.bin_input = False
+    models_dict["Javier Santos (D3 N4)"] = model_z_3
+    #==========================================================================
 
 # X-Component models
 elif component==2:
