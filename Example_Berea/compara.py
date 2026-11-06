@@ -54,7 +54,7 @@ def comparar_arquivos_raw_4_componentes(dir1, dir2, filename, grid_shape=(120, 1
     return arr1, arr2, diff
 
 # Exemplo de uso:
-dir_A = "./"
-dir_B = "./lbpm_nn_run"
+dir_A = "./Desktop_cpu"
+dir_B = "./Cluster_cpu"
 campo = "Start.00000.raw"
 arr1, arr2, diff = comparar_arquivos_raw_4_componentes(dir_A, dir_B, campo)

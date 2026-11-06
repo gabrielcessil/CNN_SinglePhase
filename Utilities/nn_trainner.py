@@ -2,7 +2,6 @@ import torch
 import numpy             as np
 from   datetime          import datetime
 import matplotlib.pyplot as plt
-import pandas            as pd
 import os.path
 import json
 import time
@@ -13,6 +12,8 @@ import os
 from   Utilities         import usage_metrics as um
 import sys
 from   typing            import Optional
+import re
+from   matplotlib.ticker import FixedLocator, FuncFormatter
 
 def full_train(model, 
                train_batch_loader,
@@ -46,6 +47,20 @@ def full_train(model,
     progress_points     = set(int(N_epochs * i / 100) for i in range(0, 101, 1))  
     best_model          = None
 
+    
+
+    # Tracking performance of initial model (random noise or pre-trained models)
+    print("Validating initial model")
+    train_avg_loss, valid_avg_loss = validate_one_epoch(
+                                          model         = model, 
+                                          train_loader  = train_batch_loader,
+                                          valid_loader  = valid_loader,
+                                          loss_functions= loss_functions,
+                                          device        = device,
+                                          dtype         = dtype
+                                    )
+    train_costs_h.append(train_avg_loss)
+    val_costs_h.append(valid_avg_loss)
     
     print("\n\nTrainning session has started.\n")
     # Trainning process
@@ -756,106 +771,388 @@ def save_metadata(config,
 #********************* PLOTTERS **********************#
 #######################################################
 
-def Plot_LossHistory(train_cost_h, val_cost_h, normalize=False, output_path='loss_history.svg'):
-    
-    
-    # 1. Configure Matplotlib for a Professional/Scientific Look
+
+
+def Plot_LossHistory(
+    train_cost_h,
+    val_cost_h,
+    checkpoint_path=None,
+    output_path='loss_history.pdf',
+    save_mode=False
+):
+
+    # ==============================================================================
+    # 1. MATPLOTLIB CONFIGURATION
+    # ==============================================================================
+
     plt.rcParams.update({
-        'font.family': 'serif',       
-        'font.size': 12,              
-        'axes.labelsize': 14,         
-        'axes.titlesize': 16,         
-        'xtick.labelsize': 12,
-        'ytick.labelsize': 12,
-        'legend.fontsize': 12,
-        'axes.linewidth': 1.2,        
-        'lines.linewidth': 2.0        
+        'font.family': 'serif',
+        'font.size': 12,
+        'axes.labelsize': 14,
+        'axes.titlesize': 16,
+        'xtick.labelsize': 20,
+        'ytick.labelsize': 20,
+        'legend.fontsize': 16,
+        'axes.linewidth': 1.2,
+        'lines.linewidth': 2.0
     })
-    # Updated Color Palette (Solid Blue, Black, Grey)
-    c_train = '#005b96'  # A rich, professional solid blue
-    c_valid = '#000000'  # Solid black
-    c_diff  = '#757575'  # Solid medium grey
-    
-    # Extract training history
-    train_h_dicts = {loss_name: [] for loss_name in train_cost_h[0]}
+
+    c_train = '#005b96'
+    c_valid = '#000000'
+    c_diff  = '#757575'
+    c_best  = 'red'
+
+    # ==============================================================================
+    # 2. RETRIEVE BEST MODEL EPOCH
+    # ==============================================================================
+
+    best_epoch = None
+
+    if checkpoint_path is not None:
+
+        checkpoint = torch.load(
+            checkpoint_path,
+            map_location='cpu',
+            weights_only=False
+        )
+
+        best_epoch = checkpoint.get('last_update')
+
+        if best_epoch is not None:
+            best_epoch = int(best_epoch)
+            print(f"Best model epoch: {best_epoch}")
+        else:
+            print("Warning: 'last_update' is None in the checkpoint.")
+
+        if best_epoch is not None and best_epoch >= len(train_cost_h):
+            raise ValueError(
+                f"Best epoch ({best_epoch}) exceeds training history "
+                f"({len(train_cost_h)} epochs)."
+            )
+
+    # ==============================================================================
+    # 3. EXTRACT TRAINING AND VALIDATION HISTORIES
+    # ==============================================================================
+
+    train_h_dicts = {
+        loss_name: []
+        for loss_name in train_cost_h[0]
+    }
+
     for epoch_dict in train_cost_h:
-        for loss_name in epoch_dict:
+        for loss_name in train_h_dicts:
             train_h_dicts[loss_name].append(epoch_dict[loss_name])
-            
-    # Extract validation history
-    valid_h_dicts = {loss_name: [] for loss_name in val_cost_h[0]}
+
+    valid_h_dicts = {
+        loss_name: []
+        for loss_name in val_cost_h[0]
+    }
+
     for epoch_dict in val_cost_h:
-        for loss_name in epoch_dict:
+        for loss_name in valid_h_dicts:
             valid_h_dicts[loss_name].append(epoch_dict[loss_name])
-            
+
+    if len(train_cost_h) != len(val_cost_h):
+        raise ValueError(
+            "Training and validation histories have different lengths."
+        )
+
+    if train_h_dicts.keys() != valid_h_dicts.keys():
+        raise ValueError(
+            "Training and validation loss components do not match."
+        )
+
+    # ==============================================================================
+    # 4. FIGURE CONFIGURATION
+    # ==============================================================================
+
     num_plots = len(train_h_dicts)
-    fig, axes = plt.subplots(num_plots, 3, figsize=(16, 4.5 * num_plots))
+
+    fig, axes = plt.subplots(
+        num_plots,
+        3,
+        figsize=(16, 4.5 * num_plots)
+    )
+
     if num_plots == 1:
         axes = np.array([axes])
-        
-    def scale(data):
-        max_val = np.max(data)
-        return data / max_val if max_val != 0 else data
 
     total_epochs = len(train_cost_h)
-    n_recent = max(1, int(0.2 * total_epochs))
-    
-    for idx, loss_name in enumerate(train_h_dicts.keys()):
-        train_loss_h = train_h_dicts[loss_name]
-        valid_loss_h = valid_h_dicts[loss_name]
-        
-        if normalize:
-            train_loss_h = scale(train_loss_h)
-            valid_loss_h = scale(valid_loss_h)
-            
-        loss_difference = np.array(valid_loss_h) - np.array(train_loss_h)
 
-        # Pre-calculate ranges
-        x_full = range(len(train_loss_h))
-        n_r = min(n_recent, len(train_loss_h))
-        x_recent = x_full[-n_r:]
-        
-        # Plot 1: Full cost history
+    n_recent = max(1, int(0.2 * total_epochs))
+
+    # Zero-based epoch indexing
+    x_full = np.arange(total_epochs)
+
+    n_r = min(n_recent, total_epochs)
+
+    x_recent = x_full[-n_r:]
+
+    # ==============================================================================
+    # 5. PLOT EACH LOSS COMPONENT
+    # ==============================================================================
+
+    for idx, loss_name in enumerate(train_h_dicts.keys()):
+
+        train_loss_h = np.asarray(train_h_dicts[loss_name])
+        valid_loss_h = np.asarray(valid_h_dicts[loss_name])
+
+        # Validation / Training ratio
+        loss_difference = valid_loss_h / (train_loss_h + 1e-15)
+
+        # --------------------------------------------------------------------------
+        # PLOT 1: FULL COST HISTORY
+        # --------------------------------------------------------------------------
+
         ax1 = axes[idx, 0]
-        ax1.plot(x_full, train_loss_h, label='Train', color=c_train)
-        ax1.plot(x_full, valid_loss_h, label='Validation', color=c_valid)
+
+        ax1.plot(
+            x_full,
+            train_loss_h,
+            label='Train',
+            color=c_train
+        )
+
+        ax1.plot(
+            x_full,
+            valid_loss_h,
+            label='Validation',
+            color=c_valid
+        )
+
+        if best_epoch is not None:
+            ax1.axvline(
+                x=best_epoch,
+                color=c_best,
+                linestyle='--',
+                linewidth=2.0,
+                alpha=0.85,
+                label='Best model',
+                zorder=10
+            )
+
         ax1.set_xlabel('Epochs')
         ax1.set_ylabel('Loss')
-        ax1.set_title(f'Cost History\n({loss_name})')
-        ax1.set_ylim(bottom= min(0.0, np.min(train_loss_h), np.min(valid_loss_h)))
-        #ax1.set_yscale('log')
 
-        # Plot 2: Recent history
+        if not save_mode:
+            ax1.set_title(f'Cost History\n({loss_name})')
+
+        ax1.set_xlim(0, max(1, total_epochs - 1))
+
+        # --------------------------------------------------------------------------
+        # PLOT 2: RECENT COST HISTORY
+        # --------------------------------------------------------------------------
+
         ax2 = axes[idx, 1]
-        ax2.plot(x_recent, train_loss_h[-n_r:], label='Train', color=c_train)
-        ax2.plot(x_recent, valid_loss_h[-n_r:], label='Validation', color=c_valid)
+
+        ax2.plot(
+            x_recent,
+            train_loss_h[-n_r:],
+            label='Train',
+            color=c_train
+        )
+
+        ax2.plot(
+            x_recent,
+            valid_loss_h[-n_r:],
+            label='Validation',
+            color=c_valid
+        )
+
+        if best_epoch is not None and x_recent[0] <= best_epoch <= x_recent[-1]:
+            ax2.axvline(
+                x=best_epoch,
+                color=c_best,
+                linestyle='--',
+                linewidth=2.0,
+                alpha=0.85,
+                label='Best model',
+                zorder=10
+            )
+
         ax2.set_xlabel('Epochs')
-        ax2.set_title(f'Recent History (Last {n_r})\n({loss_name})')
-        ax2.set_ylim(bottom= min(0.0, np.min(train_loss_h[-n_r:]), np.min(valid_loss_h[-n_r:])))
 
-        # Plot 3: Loss Difference
+        if not save_mode:
+            ax2.set_title(f'Recent History (Last {n_r})\n({loss_name})')
+
+        ax2.set_ylim(
+            bottom=min(
+                0.0,
+                np.min(train_loss_h[-n_r:]),
+                np.min(valid_loss_h[-n_r:])
+            )
+        )
+
+        if n_r > 1:
+            ax2.set_xlim(np.min(x_recent), np.max(x_recent))
+
+        # --------------------------------------------------------------------------
+        # PLOT 3: VALIDATION / TRAINING LOSS RATIO
+        # --------------------------------------------------------------------------
+
         ax3 = axes[idx, 2]
-        ax3.plot(x_recent, loss_difference[-n_r:], label='Val - Train', color=c_diff)
-        ax3.axhline(0, color='black', linestyle='--', linewidth=1.2, alpha=0.5) 
-        ax3.set_xlabel('Epochs')
-        ax3.set_ylabel('Difference')
-        ax3.set_title(f'Loss Difference\n({loss_name})')
 
-        # Apply clean aesthetic to all subplots
+        ax3.plot(
+            x_full,
+            loss_difference,
+            label='Val / Train',
+            color=c_diff
+        )
+
+        ax3.axhline(
+            1.0,
+            color='black',
+            linestyle='--',
+            linewidth=1.2,
+            alpha=0.4
+        )
+
+        if best_epoch is not None:
+            ax3.axvline(
+                x=best_epoch,
+                color=c_best,
+                linestyle='--',
+                linewidth=2.0,
+                alpha=0.85,
+                label='Best model',
+                zorder=10
+            )
+
+        ax3.set_xlabel('Epochs')
+        ax3.set_ylabel('Loss Ratio')
+
+        if not save_mode:
+            ax3.set_title(f'Loss Ratio\n({loss_name})')
+
+        ax3.set_xlim(0, max(1, total_epochs - 1))
+
+        # --------------------------------------------------------------------------
+        # COMMON FORMATTING
+        # --------------------------------------------------------------------------
+
         for ax in [ax1, ax2, ax3]:
-            ax.grid(True, linestyle='--', alpha=0.4, color='gray')
+
+            ax.grid(
+                True,
+                linestyle='--',
+                alpha=0.4,
+                color='gray'
+            )
+
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
-            ax.legend(frameon=False, loc='best')
+
+            ax.legend(
+                frameon=False,
+                loc='best'
+            )
+
+            ax.figure.canvas.draw()
+
+            # ----------------------------------------------------------------------
+            # Y-AXIS: 5 EXACT TICKS, SCIENTIFIC NOTATION
+            # ----------------------------------------------------------------------
+
+            ymin, ymax = ax.get_ylim()
+
+            y_ticks = np.linspace(ymin, ymax, 5)
+
+            ax.yaxis.set_major_locator(
+                FixedLocator(y_ticks)
+            )
+
+            ax.set_ylim(ymin, ymax)
+
+            ax.yaxis.set_major_formatter(
+                FuncFormatter(lambda y, _: f"{y:.1e}")
+            )
+
+            # ----------------------------------------------------------------------
+            # X-AXIS: 4 EXACT TICKS
+            # ----------------------------------------------------------------------
+
+            xmin, xmax = ax.get_xlim()
+
+            x_ticks = np.linspace(xmin, xmax, 4)
+
+            ax.xaxis.set_major_locator(
+                FixedLocator(x_ticks)
+            )
+
+            ax.set_xlim(xmin, xmax)
+
+            ax.xaxis.set_major_formatter(
+                FuncFormatter(lambda x, _: f"{int(round(x))}")
+            )
+
+    # ==============================================================================
+    # 6. SAVE FIGURES
+    # ==============================================================================
 
     plt.tight_layout(pad=2.0)
-    
-    # Enforce SVG saving
+
     if output_path is not None:
-        if not output_path.lower().endswith('.svg'):
-            output_path += '.svg'
-        plt.savefig(output_path, format='svg', bbox_inches='tight')
-        plt.close(fig)
+
+        output_dir = os.path.dirname(output_path)
+
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+
+        base_name = os.path.splitext(os.path.basename(output_path))[0]
+
+        if save_mode:
+
+            # Update the renderer before obtaining individual subplot boundaries
+            fig.canvas.draw()
+
+            renderer = fig.canvas.get_renderer()
+
+            plot_types = [
+                'FullHistory',
+                'RecentHistory',
+                'LossRatio'
+            ]
+
+            for idx, loss_name in enumerate(train_h_dicts.keys()):
+
+                # Make the loss name safe for filenames
+                safe_loss_name = re.sub(
+                    r'[^\w\-]+',
+                    '_',
+                    str(loss_name)
+                )
+
+                for col, plot_type in enumerate(plot_types):
+
+                    ax = axes[idx, col]
+                    # Get the complete subplot bounding box, including labels
+                    bbox = ax.get_tightbbox(renderer)
+                    # Convert from display coordinates to inches
+                    bbox = bbox.transformed(fig.dpi_scale_trans.inverted())
+                    # Add a small margin around the subplot
+                    bbox = bbox.expanded(1.05, 1.10)
+
+                    filename = (f'{base_name}_{safe_loss_name}_{plot_type}.pdf')
+                    save_path = os.path.join( output_dir, filename)
+                    fig.savefig(save_path, format='pdf',bbox_inches=bbox)
+
+            plt.close(fig)
+
+        else:
+
+            if not output_path.lower().endswith('.pdf'):
+                output_path += '.pdf'
+
+            plt.savefig(
+                output_path,
+                format='pdf',
+                bbox_inches='tight'
+            )
+
+            plt.close(fig)
+
+
     else:
+
         plt.show()
-    
+        plt.show()

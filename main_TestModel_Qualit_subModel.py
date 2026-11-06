@@ -182,8 +182,8 @@ def Plot_Side_Comparison(models, datapath, component, sample_idx=0, slice_idx=60
         out_z       = out.squeeze(0)[0]    
         o_z_masked  = get_masked_slices(inp.squeeze(0).squeeze(0), out_z, slice_idx, axis='side') # Put zeros on solid
         vmin, vmax  = o_z_masked.mean()-o_z_masked.std()*3, o_z_masked.mean()+o_z_masked.std()*3
-        vmin, vmax      = max(vmin, o_z_masked.min()), min(vmax, o_z_masked.max())
-        vmin, vmax      = round(vmin,3), round(vmax,3)
+        vmin, vmax  = max(vmin, o_z_masked.min()), min(vmax, o_z_masked.max())
+        vmin, vmax  = round(vmin,3), round(vmax,3)
         
         if save_mode:
             plt.figure(figsize=(6, 6))

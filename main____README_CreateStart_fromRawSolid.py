@@ -15,7 +15,7 @@ from Utilities import velocity_usage as vu
 # ==============================================================================
 
 paths = [
-    "./Example_Leopard/"
+    "./Example_Berea/Cluster_cpu/"
 ]
 
 raw_file = "domain.raw"

@@ -132,6 +132,7 @@ loss_functions  = {
     "MSE in Void Space":       {"obj":  lf.Mask_LossFunction(nn.MSELoss()),          "Thresholded": True}, 
     "Bias Error":              {"obj":  lf.Mask_LossFunction(lf.MeanBiasError()),    "Thresholded": True},
     "Pearson Correlation":     {"obj":  lf.Mask_LossFunction(lf.PearsonCorr()),      "Thresholded": True},
+    "NavierStokesLoss":        {"obj":  lf.NavierStokesLoss(),                       "Thresholded": True}
 }
 
 

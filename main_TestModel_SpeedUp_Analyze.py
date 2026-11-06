@@ -1,17 +1,11 @@
 import os
 import re
-from pathlib import Path
-import numpy as np
-import pandas as pd
-import os
-import re
-from pathlib import Path
-import numpy as np
-import pandas as pd
+from   pathlib           import Path
+import numpy             as np
+import pandas            as pd
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
-import seaborn as sns
-from scipy.stats import gaussian_kde
+import seaborn           as sns
+from   scipy.stats       import gaussian_kde
 
 # ==============================================================================
 # 1. CONFIGURATION & HELPERS
@@ -21,7 +15,7 @@ output_dir      = "./Plots/SpeedUp_RefTol/"
 
 
 
-#"""
+"""
 file            = "SpeedUp_ID"
 main_folders = {
     "Poros esféricos": "../TestSpeedUp_Simulations_ID/Test_Silveira_SphPore_SAug_DNorm/",
@@ -34,16 +28,16 @@ main_folders = {
     "Berea": "../TestSpeedUp_Simulations_ID/Test_Oliveira_Berea_SAug_DNorm/",
     "Bentheimer": "../TestSpeedUp_Simulations_ID/Test_Oliveira_Bentheimer_SAug_DNorm/",
 }
-#"""
-
 """
+
+#"""
 file            = "SpeedUp_OOD_T"
 main_folders = {
     "Doddington 120³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Doddington_120_120_120/",
     "Ketton 120³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Ketton_120_120_120/",
     "Estaillades 120³\n(OOD)": "../TestSpeedUp_Simulations_OOD/IC_Estaillades_120_120_120/",
 }
-"""
+#"""
 
 """
 file            = "SpeedUp_OOD_TD"
@@ -66,10 +60,24 @@ dataset_colors  = {}
 self_convergence_tail   = 0.25   # Evaluate the last 25% of the simulation steps
 self_convergence_tol    = 10.0   # Must stay within 10% of its OWN final value
 ref_convergence_tol     = 2.0    # Must reach within 2.5% of the GRAD final value
+min_permeability_points = 10     # Must have at leat 10 measurements before accomodation
 
 # ---------------------------------------------------------
 # AUXILIARY FUNCTIONS
 # ---------------------------------------------------------
+
+plt.rcParams.update(
+    {
+        "font.family": "serif",
+        "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
+        "mathtext.fontset": "stix",
+        "font.size": 11,
+        "axes.labelsize": 13,
+        "xtick.labelsize": 11,
+        "ytick.labelsize": 11,
+        "axes.linewidth": 1.0,
+    }
+)
 
 for key in main_folders.keys():
     if key not in dataset_colors:
@@ -160,7 +168,6 @@ def get_convergence_step(df_sim, k_ref, tol=1.0, interval=200):
         
     errors = 100.0 * np.abs(k_array - k_ref) / (np.abs(k_ref) + 1e-15)
     
-    # NEW: Get the error at the exact final timestep of the simulation
     final_err = errors[-1] 
     
     conv_step = np.nan
@@ -172,147 +179,99 @@ def get_convergence_step(df_sim, k_ref, tol=1.0, interval=200):
             
     return conv_step, final_err
 
-# ==============================================================================
-# 2. DATA EXTRACTION
-# ==============================================================================
-results = []
-
-for dataset_name, dataset_path in main_folders.items():
-    dataset_p = Path(dataset_path)
-    if not dataset_p.exists():
-        continue
-        
-    for sample_folder in dataset_p.glob("*Sample_*"):
-        sample_name = sample_folder.name
-        
-        run_dir = sample_folder / "lbpm_grad_run"
-        started_dir = sample_folder / "lbpm_nn_run"
-        
-        df_grad = get_permeability_data(run_dir)
-        df_nn = get_permeability_data(started_dir)
-        
-        if df_grad is None or df_nn is None:
-            continue
-        
-        analysis_interval, totaL_timesteps = parse_db_config(run_dir)
-        
-        k_array_grad = df_grad['absperm(mDa)'].values
-        k_array_nn = df_nn['absperm(mDa)'].values
-        
-        if len(k_array_grad) == 0 or len(k_array_nn) == 0:
-            continue
-            
-        # 1. Evaluate self-convergence first (unpack the new max_err)
-        grad_self_conv, grad_max_err = check_self_convergence(df_grad, tol=self_convergence_tol, tail_frac=self_convergence_tail)
-        nn_self_conv, nn_max_err = check_self_convergence(df_nn, tol=self_convergence_tol, tail_frac=self_convergence_tail)
-        
-        # 2. Establish the target reference permeability (Final value of Grad run)
-        k_ref = k_array_grad[-1]
-        
-        # 3. Find the instant each curve reaches the reference tolerance zone without leaving
-        ts_reference, _ = get_convergence_step(df_grad, k_ref, tol=ref_convergence_tol, interval=analysis_interval)
-        ts_started, nn_min_ref_err = get_convergence_step(df_nn, k_ref, tol=ref_convergence_tol, interval=analysis_interval)
-        
-        k_reference = k_array_grad[-1]
-        k_started = k_array_nn[-1]
-        
-        expected_total_steps = totaL_timesteps/analysis_interval - 1
-        
-        results.append({
-            "Dataset": dataset_name,
-            "Sample": sample_name,
-            "Reference_Timesteps": ts_reference,
-            "NN_Started_Timesteps": ts_started,
-            "NN_Min_Ref_Error": nn_min_ref_err,              
-            "Reference_Permeability": k_reference,
-            "NN_Permeability": k_started,
-            "Grad_Self_Converged": grad_self_conv,
-            "Grad_Tail_Max_Error": grad_max_err,
-            "NN_Self_Converged": nn_self_conv,
-            "NN_Tail_Max_Error": nn_max_err,
-            "Is_Complete": (len(k_array_grad) >= expected_total_steps) and (len(k_array_nn) >= expected_total_steps)
-        })
-        
-        if not ( (len(k_array_grad) >= expected_total_steps) and (len(k_array_nn) >= expected_total_steps)):
-            print(len(k_array_grad), len(k_array_nn), totaL_timesteps,analysis_interval, expected_total_steps)
-df = pd.DataFrame(results)
-
-if df.empty:
-    print("Error: No data extracted.")
-    exit()
-
-# Clean up data: Drop rows that are incomplete (still running)
-incomplete_runs = ~df['Is_Complete']
-if incomplete_runs.any():
-    initial_total_samples = len(df)
-    print(f"Warning: Dropped {incomplete_runs.sum()}/{initial_total_samples} samples because they are still running (fewer than {expected_total_steps} timesteps).")
+def filter_incomplete_runs(df):
     
-    # Iterate through failing rows and print dataset and sample
-    for _, row in df[incomplete_runs].iterrows():
-        print(f"  -> [{row['Dataset']}] {row['Sample']}")
-    print("") # Formatting newline
-
-df = df[~incomplete_runs]
-
-# Clean up data: Drop rows that failed the self-convergence check
-failed_self_conv = ~(df['Grad_Self_Converged'] & df['NN_Self_Converged'])
-
-# Clean up data: Drop rows that failed the self-convergence check
-failed_self_conv = ~(df['Grad_Self_Converged'] & df['NN_Self_Converged'])
-if failed_self_conv.any():
-    initial_total_samples = len(df)
-    print(f"Warning: Dropped {failed_self_conv.sum()}/{initial_total_samples} samples because they failed the {self_convergence_tol}% self-convergence check over their last {self_convergence_tail*100}% steps.")
+    # Clean up data: Drop rows that are incomplete (simulationstill running)
+    incomplete_runs = ~df['Is_Complete']
+    if incomplete_runs.any():
+        initial_total_samples = len(df)
+        print(f"Warning: Dropped {incomplete_runs.sum()}/{initial_total_samples} samples because they are still running (fewer than {expected_total_steps} timesteps).")
+        
+        # Iterate through failing rows and print dataset and sample
+        for _, row in df[incomplete_runs].iterrows():
+            print(f"  -> [{row['Dataset']}] {row['Sample']}")
+        print("") # Formatting newline
     
-    # Iterate through failing rows and print the dataset, sample, and exact max differences
-    for _, row in df[failed_self_conv].iterrows():
-        print(f"  -> [{row['Dataset']}] {row['Sample']} (Max Tail Diff - Grad: {row['Grad_Tail_Max_Error']:.2f}%, NN: {row['NN_Tail_Max_Error']:.2f}%)")
-    print("") # Formatting newline
-
-df = df[~failed_self_conv]
-
-# Clean up data: Drop rows where simulations didn't hit the reference threshold
-dropped_unconverged = df['Reference_Timesteps'].isna() | df['NN_Started_Timesteps'].isna()
-if dropped_unconverged.any():
-    total_samples = len(df)
-    print(f"Warning: Dropped {dropped_unconverged.sum()}/{total_samples} samples that failed to reach within {ref_convergence_tol}% of the reference grad permeability.")
+    df = df[~incomplete_runs]
     
-    # Iterate through failing rows and print the dataset, sample, and minimum difference reached
-    for _, row in df[dropped_unconverged].iterrows():
-        print(f"  -> [{row['Dataset']}] {row['Sample']} (Closest Diff: {row['NN_Min_Ref_Error']:.2f}%)")
-    print("") # Formatting newline
+    return df
 
-df = df.dropna(subset=["Reference_Timesteps", "NN_Started_Timesteps"])
-df = df[df["NN_Started_Timesteps"] > 0]
-# Calculate Speedup Ratio (using the convergence entering instant) & Permeability Relative Error
-df['Speedup_Ratio'] = df['Reference_Timesteps'] / df['NN_Started_Timesteps']
-df['Perm_Error [%]'] = 100 * np.abs(df['NN_Permeability'] - df['Reference_Permeability']) / np.abs(df['Reference_Permeability'])
+def filter_unconverged(df):
+    
+    # Clean up data: Drop rows that failed the self-convergence check
+    failed_self_conv = ~(df['Grad_Self_Converged'] & df['NN_Self_Converged'])
+    
+    # Clean up data: Drop rows that failed the self-convergence check
+    failed_self_conv = ~(df['Grad_Self_Converged'] & df['NN_Self_Converged'])
+    if failed_self_conv.any():
+        initial_total_samples = len(df)
+        print(f"Warning: Dropped {failed_self_conv.sum()}/{initial_total_samples} samples because they failed the {self_convergence_tol}% self-convergence check over their last {self_convergence_tail*100}% steps.")
+        
+        # Iterate through failing rows and print the dataset, sample, and exact max differences
+        for _, row in df[failed_self_conv].iterrows():
+            print(f"  -> [{row['Dataset']}] {row['Sample']} (Max Tail Diff - Grad: {row['Grad_Tail_Max_Error']:.2f}%, NN: {row['NN_Tail_Max_Error']:.2f}%)")
+        print("") # Formatting newline
 
-print("\nConvergence Timesteps & Speedup Comparison:")
-print("-" * 75)
-print(df[['Dataset', 'Sample', 'Speedup_Ratio', 'Perm_Error [%]']].to_string(index=False))
-print("-" * 75)
+    df = df[~failed_self_conv]
+    
+    return df
 
-os.makedirs(OUTPUT_CSV_DIR, exist_ok=True)
-csv_output_path = os.path.join(OUTPUT_CSV_DIR, f"{file}.csv")
-df.to_csv(csv_output_path, index=False)
+def filter_final_different(df):
+    
+    # Clean up data: Drop rows where simulations didn't hit the reference threshold
+    dropped_unconverged = df['Reference_Timesteps'].isna() | df['NN_Started_Timesteps'].isna()
+    if dropped_unconverged.any():
+        total_samples = len(df)
+        print(f"Warning: Dropped {dropped_unconverged.sum()}/{total_samples} samples that failed to reach within {ref_convergence_tol}% of the reference grad permeability.")
+        
+        # Iterate through failing rows and print the dataset, sample, and minimum difference reached
+        for _, row in df[dropped_unconverged].iterrows():
+            print(f"  -> [{row['Dataset']}] {row['Sample']} (Closest Diff: {row['NN_Min_Ref_Error']:.2f}%)")
+        print("")
+    
+    df = df.dropna(subset=["Reference_Timesteps", "NN_Started_Timesteps"])
+    df = df[df["NN_Started_Timesteps"] > 0]
+    
+    return df
 
-print(f"\n Speed-up evaluation saved to: {csv_output_path}")
+def filter_short_simulations(df):
 
-# ==============================================================================
-# 3. GLOBAL ACADEMIC STYLING CONFIGURATION & PLOTTING
-# ==============================================================================
-plt.rcParams.update(
-    {
-        "font.family": "serif",
-        "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
-        "mathtext.fontset": "stix",
-        "font.size": 11,
-        "axes.labelsize": 13,
-        "xtick.labelsize": 11,
-        "ytick.labelsize": 11,
-        "axes.linewidth": 1.0,
-    }
-)
+    short_simulations = ~df['Is_Long_enough']
+
+    if short_simulations.any():
+        total_samples = len(df)
+
+        print(
+            f"Warning: Dropped {short_simulations.sum()}/{total_samples} "
+            f"samples because they converged within the first "
+            f"{min_permeability_points} permeability points."
+        )
+
+        for _, row in df[short_simulations].iterrows():
+            print(
+                f"  -> [{row['Dataset']}] {row['Sample']} "
+                f"(NN convergence: {row['NN_Started_Timesteps']})"
+            )
+
+        print("")
+
+    df = df[~short_simulations]
+
+    return df
+
+def calculate_speed_up(df):
+    
+    # Calculate Speedup Ratio (using the convergence entering instant) & Permeability Relative Error
+    df['Speedup_Ratio'] = df['Reference_Timesteps'] / df['NN_Started_Timesteps']
+    df['Perm_Error [%]'] = 100 * np.abs(df['NN_Permeability'] - df['Reference_Permeability']) / np.abs(df['Reference_Permeability'])
+    
+    print("\nConvergence Timesteps & Speedup Comparison:")
+    print("-" * 75)
+    print(df[['Dataset', 'Sample', 'Speedup_Ratio', 'Perm_Error [%]']].to_string(index=False))
+    print("-" * 75)
+    
+    return df
+
 
 def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffix:str, dataset_colors: dict, remove_outliers: bool = False, logscale = False):
     print(f"\n--- Starting Speedup Boxplots (Outliers Removed from Scatter: {remove_outliers}) ---")
@@ -434,15 +393,111 @@ def plot_prop_boxplots(df: pd.DataFrame, prop_cols: list, output_dir: str, suffi
         plt.savefig(os.path.join(output_dir, f"Boxplot_{suffix}.png"), dpi=300, bbox_inches='tight')
         plt.close()
         print(f"  Saved Boxplot_{suffix}.pdf to {output_dir}")
+# ==============================================================================
+# 2. DATA EXTRACTION
+# ==============================================================================
+results = []
+
+for dataset_name, dataset_path in main_folders.items():
+    dataset_p = Path(dataset_path)
+    if not dataset_p.exists():
+        continue
+        
+    for sample_folder in dataset_p.glob("*Sample_*"):
+        sample_name = sample_folder.name
+        
+        run_dir     = sample_folder / "lbpm_grad_run"
+        started_dir = sample_folder / "lbpm_nn_run"
+        
+        df_grad     = get_permeability_data(run_dir)
+        df_nn       = get_permeability_data(started_dir)
+        
+        if df_grad is None or df_nn is None:
+            continue
+        
+        analysis_interval, totaL_timesteps = parse_db_config(run_dir)
+        
+        k_array_grad    = df_grad['absperm(mDa)'].values
+        k_array_nn      = df_nn['absperm(mDa)'].values
+        
+        # Both must be simulated
+        if len(k_array_grad) == 0 or len(k_array_nn) == 0:
+            print(f"  At least one simulation in {sample_folder} was not started.")
+            continue
+        
+        # Final permeability
+        k_reference = k_array_grad[-1]
+        k_started   = k_array_nn[-1]
+        
+        # 1. Evaluate self-convergence
+        grad_self_conv, grad_max_err    = check_self_convergence(df_grad, tol=self_convergence_tol, tail_frac=self_convergence_tail)
+        nn_self_conv,   nn_max_err      = check_self_convergence(df_nn,   tol=self_convergence_tol, tail_frac=self_convergence_tail)
+    
+        
+        # 2. Find the instant each curve reaches the reference tolerance zone without leaving
+        ts_reference, _                         = get_convergence_step(df_grad, k_reference, tol=ref_convergence_tol, interval=analysis_interval)
+        ts_started, nn_min_ref_err              = get_convergence_step(df_nn,   k_reference, tol=ref_convergence_tol, interval=analysis_interval)
+        
+
+        
+        # 3. The reference simulation must be long enough to not be influenced by the time interval of analysis
+        is_long_enough              =  (ts_reference > min_permeability_points*analysis_interval) or (ts_started > min_permeability_points*analysis_interval) if pd.notna(ts_reference) else False
+        
+        expected_total_steps        = totaL_timesteps/analysis_interval - 1
+        is_complete                 = (len(k_array_grad) >= expected_total_steps) and (len(k_array_nn) >= expected_total_steps)
+        
+        results.append({
+            "Dataset":                  dataset_name,
+            "Sample":                   sample_name,
+            "Reference_Timesteps":      ts_reference,
+            "NN_Started_Timesteps":     ts_started,
+            "NN_Min_Ref_Error":         nn_min_ref_err,              
+            "Reference_Permeability":   k_reference,
+            "NN_Permeability":          k_started,
+            "Grad_Self_Converged":      grad_self_conv,
+            "Grad_Tail_Max_Error":      grad_max_err,
+            "NN_Self_Converged":        nn_self_conv,
+            "NN_Tail_Max_Error":        nn_max_err,
+            "Is_Complete":              is_complete,
+            "Is_Long_enough":           is_long_enough
+        })
+        
+            
+            
+            
+df = pd.DataFrame(results)
+
+# Check if there was any data extracted
+if df.empty:
+    print("Error: No data extracted.")
+    exit()
+
+df = filter_incomplete_runs(df)
+
+df = filter_unconverged(df)
+
+df = filter_final_different(df)
+
+df = filter_short_simulations(df)
+
+df = calculate_speed_up(df)
+
+
+# Save into .csv
+os.makedirs(OUTPUT_CSV_DIR, exist_ok=True)
+csv_output_path = os.path.join(OUTPUT_CSV_DIR, f"{file}.csv")
+df.to_csv(csv_output_path, index=False)
+print(f"\n Speed-up evaluation saved to: {csv_output_path}")
+
+
 
 df_plot = df.copy()
-df_all = df.copy()
-df_all['Dataset'] = 'Todas as amostras'
-df_plot = pd.concat([df_plot, df_all], ignore_index=True)
+df_all  = df.copy()
+df_all['Dataset']   = 'Todas as amostras'
+df_plot             = pd.concat([df_plot, df_all], ignore_index=True)
 
 # Define uma cor padrão para a nova categoria "All"
 dataset_colors['Todas as amostras'] = 'dimgray'
-
 plot_prop_boxplots(
     df=df_plot,
     prop_cols=["Speedup_Ratio"],

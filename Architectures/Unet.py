@@ -399,35 +399,15 @@ class Extended_DannyKo(nn.Module):
         
         self.main_model = Base_Unet(
             input_channels=4,
-            output_channels=4,
+            output_channels=3,
             filter_num=9,
-            filter_num_increase=2, # Originally 1
+            filter_num_increase=1,
             filter_size=3,
             activation='selu',
             momentum=0.01,
             dropout=0.001,
             res_num=3,
             bin_input=bin_input)
-        
-        self.main_head = nn.Sequential(
-            nn.Conv3d(in_channels=4,
-                      out_channels=4, 
-                      kernel_size=3,
-                      stride=1, 
-                      padding=1),
-
-            nn.Conv3d(in_channels=4,
-                      out_channels=4, 
-                      kernel_size=1,
-                      stride=1, 
-                      padding=0),
-
-            nn.Conv3d(in_channels=4,
-                      out_channels=4, 
-                      kernel_size=1,
-                      stride=1, 
-                      padding=0),
-        )
     
     # Modified to freeze sub-models
     def train(self, mode=True):
@@ -452,11 +432,9 @@ class Extended_DannyKo(nn.Module):
             p_out = self.p_model.predict(x)
                             
         combined = self.concat(z_out, y_out, x_out, p_out)
-        addition = self.main_model(combined)
-
-        #print(f"Comb: {combined.abs().mean():<10.16f}; Add: {addition.abs().mean():<10.16f}")
         
-        final_out = self.main_head(combined + addition)
+        final_out_zyx = self.main_model(combined)
+        final_out     = self.concat(final_out_zyx, p_out)
         
         """
         # ==========================================

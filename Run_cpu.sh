@@ -20,4 +20,6 @@ conda activate env_cuda
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH # Makes the paths from conda environment visible
 # ---------------- Job Execution --------------------
 
-python main_TestModel_Error_CreateCSV.py
+#python main_TestModel_Error_CreateCSV.py
+#python main____README_CreateStart_fromRawSolid.py
+python main_Train_mainModel.py --config exp/MainModel_DM_SA_DN_silveira1.json
